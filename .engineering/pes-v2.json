@@ -1,0 +1,88 @@
+{
+  "version": 2,
+  "mode": "lite",
+  "authority": {
+    "humanApprovalRequired": [
+      "scope",
+      "policy",
+      "certification",
+      "release",
+      "production-enable"
+    ],
+    "agentMaySelfApprove": false
+  },
+  "budgets": {
+    "maxModelCalls": 8,
+    "maxSubAgents": 0,
+    "maxConcurrentWorkers": 1,
+    "maxToolCalls": 40,
+    "maxTokens": 120000,
+    "maxFinancialCost": 10,
+    "maxWallClockMinutes": 45,
+    "maxRetries": 2,
+    "maxGraphWrites": 100,
+    "minEvidenceItems": 1
+  },
+  "context": {
+    "maxHops": 2,
+    "maxNodes": 40,
+    "maxTokens": 12000,
+    "includeStatuses": [
+      "approved",
+      "verified",
+      "active",
+      "superseded",
+      "failed"
+    ],
+    "preferVerified": true,
+    "includeContradictions": true,
+    "resolveSuperseded": true
+  },
+  "ratchet": {
+    "oneMotivatedChangePerIteration": true,
+    "requireEvaluationBeforeKeep": true,
+    "revertOnRegression": true,
+    "recordFailedAttempts": true,
+    "maxAttemptsPerRun": 5,
+    "recoverInterruptedAttempts": true,
+    "requireVersionedArtifacts": true
+  },
+  "graph": {
+    "enabled": true,
+    "databaseRequired": false,
+    "storage": "versioned-json",
+    "appendOnly": true,
+    "requireWriteProvenance": true,
+    "rejectConflictingIds": true,
+    "immutableSupersession": true,
+    "optimisticRevision": true
+  },
+  "gates": {
+    "enabled": true,
+    "policyFile": "delivery/gates.json",
+    "enforceLifecycleOrder": true,
+    "requireBoundedContext": true,
+    "requireLinkedEvidence": true,
+    "blockStaleContext": true,
+    "blockRelevantContradictionsAtCertification": true,
+    "protectedPathsTriggerDeliveryGraph": true
+  },
+  "certification": {
+    "enabled": true,
+    "policyFile": "delivery/certification-policy.json",
+    "storeFile": "state/certifications.json",
+    "exactShaRequired": true,
+    "candidateHashRequired": true,
+    "humanFinalApprovalRequired": true,
+    "immutableBundles": true
+  },
+  "multiAgent": {
+    "available": true,
+    "enabled": false,
+    "defaultEnabled": false,
+    "activationRequiresBenchmark": true,
+    "policyFile": "delivery/multi-agent-policy.json",
+    "benchmarkStoreFile": "state/execution-benchmarks.json",
+    "riskTriggeredOnly": true
+  }
+}

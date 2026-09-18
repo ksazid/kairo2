@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "requiredPreCertificationApprovals": ["scope", "policy", "implementation"],
+  "finalApprovalType": "certification",
+  "minimumArtifacts": 1,
+  "minimumEvaluations": 1,
+  "minimumEvidenceByRisk": {
+    "low": 1,
+    "medium": 2,
+    "high": 3
+  },
+  "acceptedGraphStatuses": ["verified", "approved", "active"],
+  "maxTraceHops": 4,
+  "blockUnresolvedRiskLevels": ["high", "critical"],
+  "requireCurrentGraphRevision": true,
+  "requireContextHash": true,
+  "requireNoContextContradictions": true,
+  "requireAllowedCertificationGate": true,
+  "requireHumanFinalApproval": true,
+  "storeFile": "state/certifications.json"
+}

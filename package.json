@@ -1,0 +1,22 @@
+{
+  "name": "product-engineering-starter-v2",
+  "version": "0.7.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "test": "node --test",
+    "pes:validate": "node scripts/validate.mjs",
+    "preflight": "npm run pes:validate && npm test",
+    "context:build": "node scripts/context-builder.mjs",
+    "ratchet:evaluate": "node scripts/ratchet-evaluate.mjs",
+    "ratchet:fixture": "node scripts/ratchet-fixture.mjs",
+    "graph:memory": "node scripts/graph-memory.mjs",
+    "graph:validate": "node scripts/graph-memory.mjs validate",
+    "gate:evaluate": "node scripts/gate-evaluate.mjs",
+    "cert": "node scripts/certification.mjs",
+    "multi-agent": "node scripts/multi-agent.mjs"
+  }
+}

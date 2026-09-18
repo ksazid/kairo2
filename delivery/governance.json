@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "approvalTypes": ["scope", "policy", "implementation", "certification", "release", "production-enable"],
+  "approvalStatuses": ["pending", "approved", "rejected", "changes-requested", "revoked", "not-required"],
+  "lifecycle": ["proposed", "discovery", "decision-pending", "approved", "ready-for-implementation", "implementing", "testing", "certification", "certified", "release-pending", "released", "observed", "validated"],
+  "exceptionStates": ["blocked", "rejected", "deferred", "superseded", "rolled-back"],
+  "implementationPermissions": ["specification-only", "contracts-only", "runtime-disabled", "runtime-enabled", "production-enabled"],
+  "riskLevels": ["low", "medium", "high"],
+  "humanOnlyActions": ["approve-scope", "approve-policy", "approve-certification", "approve-release", "approve-production-enable", "accept-security-risk", "merge", "deploy-production"]
+}

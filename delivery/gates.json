@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "requireContextFrom": [
+    "ready-for-implementation",
+    "implementing",
+    "testing",
+    "certification",
+    "certified",
+    "release-pending",
+    "released"
+  ],
+  "requireEvidenceFrom": [
+    "testing",
+    "certification",
+    "certified",
+    "release-pending",
+    "released"
+  ],
+  "maxEvidenceHops": 3,
+  "minEvidenceByRisk": {
+    "low": 1,
+    "medium": 2,
+    "high": 3
+  },
+  "approvalsByState": {
+    "ready-for-implementation": ["scope", "policy"],
+    "implementing": ["scope", "policy"],
+    "testing": ["scope", "policy", "implementation"],
+    "certification": ["scope", "policy", "implementation"],
+    "certified": ["certification"],
+    "release-pending": ["certification"],
+    "released": ["release", "production-enable"]
+  },
+  "minimumPermissionByState": {
+    "ready-for-implementation": "contracts-only",
+    "implementing": "runtime-disabled",
+    "testing": "runtime-enabled",
+    "certification": "runtime-enabled",
+    "certified": "runtime-enabled",
+    "release-pending": "runtime-enabled",
+    "released": "production-enabled"
+  },
+  "blockContradictionsFrom": [
+    "certification",
+    "certified",
+    "release-pending",
+    "released"
+  ],
+  "protectedPaths": [
+    {
+      "pattern": ".engineering/",
+      "approval": "policy",
+      "deliveryGraph": true
+    },
+    {
+      "pattern": "delivery/governance.json",
+      "approval": "policy",
+      "deliveryGraph": true
+    },
+    {
+      "pattern": "delivery/gates.json",
+      "approval": "policy",
+      "deliveryGraph": true
+    },
+    {
+      "pattern": ".github/workflows/",
+      "approval": "policy",
+      "deliveryGraph": true
+    },
+    {
+      "pattern": "infra/",
+      "approval": "implementation",
+      "deliveryGraph": true
+    },
+    {
+      "pattern": "migrations/",
+      "approval": "implementation",
+      "deliveryGraph": true
+    },
+    {
+      "pattern": "src/security/",
+      "approval": "implementation",
+      "deliveryGraph": true
+    }
+  ],
+  "deliveryGraph": {
+    "triggerRiskLevels": ["high"],
+    "triggerSignals": ["crossModule", "securitySensitive"],
+    "repeatedFailureThreshold": 2,
+    "requiredFromStates": [
+      "implementing",
+      "testing",
+      "certification",
+      "certified",
+      "release-pending",
+      "released"
+    ]
+  }
+}

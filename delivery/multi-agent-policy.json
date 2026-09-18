@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "maxWorkers": 4,
+  "maxTasks": 16,
+  "minIndependentTasks": 2,
+  "requireIsolation": true,
+  "requireReducer": true,
+  "rejectConcurrentWriteOverlap": true,
+  "allowedRiskLevels": ["low", "medium"],
+  "benchmark": {
+    "minSamplesPerMode": 3,
+    "maxQualityRegression": 0,
+    "maxFailureRateIncrease": 0,
+    "maxCostIncreasePercent": 50,
+    "minWallClockImprovementPercent": 20,
+    "minCoverageImprovementPercent": 10,
+    "requireAtLeastOneMeasuredBenefit": true
+  }
+}
