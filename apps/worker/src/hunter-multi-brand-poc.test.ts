@@ -61,7 +61,7 @@ const cases: PocCase[] = [
       goals: ["build technical authority"],
       sourceClasses: ["Official sources", "Industry news", "GitHub", "Hacker News", "YouTube"],
     },
-    expectedSources: ["agent-reach", "bluesky", "github", "hacker-news", "rss", "youtube"],
+    expectedSources: ["agent-reach", "github", "hacker-news", "rss", "youtube"],
   },
   {
     name: "Noorpath Umrah / religious travel",
@@ -76,7 +76,7 @@ const cases: PocCase[] = [
       goals: ["guide pilgrims"],
       sourceClasses: ["Official sources", "Industry news", "YouTube"],
     },
-    expectedSources: ["agent-reach", "bluesky", "rss", "youtube"],
+    expectedSources: ["agent-reach", "rss", "youtube"],
   },
   {
     name: "Motorcycle brand",
@@ -91,7 +91,7 @@ const cases: PocCase[] = [
       goals: ["educate riders"],
       sourceClasses: ["Official sources", "Industry news", "Community discussions", "YouTube"],
     },
-    expectedSources: ["agent-reach", "bluesky", "rss", "youtube"],
+    expectedSources: ["agent-reach", "rss", "youtube"],
   },
   {
     name: "UPSC education brand",
@@ -106,7 +106,7 @@ const cases: PocCase[] = [
       goals: ["help exam preparation"],
       sourceClasses: ["Official sources", "Industry news", "YouTube"],
     },
-    expectedSources: ["agent-reach", "bluesky", "rss", "youtube"],
+    expectedSources: ["agent-reach", "rss", "youtube"],
   },
   {
     name: "restaurant / hospitality brand",
@@ -121,7 +121,7 @@ const cases: PocCase[] = [
       goals: ["increase local discovery"],
       sourceClasses: ["Official sources", "Local news", "Instagram", "YouTube"],
     },
-    expectedSources: ["agent-reach", "bluesky", "rss", "youtube"],
+    expectedSources: ["agent-reach", "rss", "youtube"],
   },
 ];
 
