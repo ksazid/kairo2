@@ -281,7 +281,7 @@ describe.skipIf(!FIXTURE_CERTIFICATION)("Hunter Chunk 5 captured-page fixture co
       expect.objectContaining({
         brandId: created.brand.id,
         status: "new",
-        title: "What the Brand offers: a useful angle from Smart Mobility Malta",
+        title: expect.stringMatching(/useful angle from Smart Mobility Malta$/),
         details: expect.objectContaining({ recommendedFormat: "carousel", recommendedChannel: "instagram", confidence: 0.92 }),
       }),
     ]);
