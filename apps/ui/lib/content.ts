@@ -1,4 +1,5 @@
 import type { CampaignDetailView, ContentReviewStatusView, PublishCommandView } from "./api";
+import { presentAiText } from "./ai-presentation";
 
 export type ContentStatus = "draft" | "in-review" | "scheduled" | "published";
 export type ContentFormat = "image" | "reel" | "carousel";
@@ -80,9 +81,9 @@ export function toContentItems(details: CampaignDetailView[], reviews: Record<st
     return {
       id: asset.id,
       campaignId: detail.campaign.id,
-      campaignName: detail.campaign.name,
-      title: asset.topic,
-      summary: summarize(content),
+      campaignName: presentAiText(detail.campaign.name, "title", "Campaign"),
+      title: presentAiText(asset.topic, "title", "Untitled content"),
+      summary: presentAiText(summarize(content), "summary", "Generated content ready for review."),
       caption: captionFrom(content),
       channel: channelLabel(asset.channel),
       format,
@@ -93,9 +94,9 @@ export function toContentItems(details: CampaignDetailView[], reviews: Record<st
       image,
       media: libraryMedia.length ? libraryMedia : [image],
       ...(format === "carousel" ? { cardCount: Math.max(libraryMedia.length, 1) } : {}),
-      audience: asset.audience,
-      objective: detail.campaign.objective,
-      cta: asset.cta,
+      audience: presentAiText(asset.audience, "audience", "Your priority audience"),
+      objective: presentAiText(detail.campaign.objective, "objective", "Build relevant engagement"),
+      cta: presentAiText(asset.cta, "cta", "Learn more"),
       currentVersion: asset.currentVersion,
       rawChannel: asset.channel,
       rawContent: current?.content ?? "",
