@@ -1,0 +1,9 @@
+import{describe,expect,it,vi}from"vitest";
+import{MetaFacebookOAuthClient,requestedFacebookScopes}from"./meta-facebook-oauth";
+function response(body:unknown,status=200){return new Response(JSON.stringify(body),{status,headers:{"content-type":"application/json"}})}
+function discovery(mode:"facebook"|"facebook-instagram",pages:unknown[]){const scopes=requestedFacebookScopes(mode);return vi.fn().mockResolvedValueOnce(response({access_token:"short"})).mockResolvedValueOnce(response({access_token:"user",expires_in:5_184_000})).mockResolvedValueOnce(response({data:scopes.map(permission=>({permission,status:"granted"}))})).mockResolvedValueOnce(response({data:pages}));}
+describe("MetaFacebookOAuthClient",()=>{
+ it("requests Page publishing only for Facebook-only mode",()=>{expect(requestedFacebookScopes("facebook")).toContain("pages_manage_posts");expect(requestedFacebookScopes("facebook")).not.toContain("instagram_content_publish")});
+ it("discovers Pages without requiring a linked Instagram account",async()=>{const fetchImpl=discovery("facebook",[{id:"10",name:"Page",access_token:"page-token"}]);const result=await new MetaFacebookOAuthClient("1","secret","v24.0","https://app.test/callback",fetchImpl).exchangeAndDiscover("code","facebook");expect(result.targets).toEqual([{channel:"facebook",accountRef:"10",displayName:"Page",pageRef:"10",pageName:"Page",accessToken:"page-token"}])});
+ it("keeps linked Instagram discovery separate",async()=>{const fetchImpl=discovery("facebook-instagram",[{id:"10",name:"Page",access_token:"page-token",instagram_business_account:{id:"20"}}]).mockResolvedValueOnce(response({id:"20",username:"brand"}));const result=await new MetaFacebookOAuthClient("1","secret","v24.0","https://app.test/callback",fetchImpl).exchangeAndDiscover("code","facebook-instagram");expect(result.targets[0]).toMatchObject({channel:"instagram",accountRef:"20",pageRef:"10",username:"brand"})});
+});

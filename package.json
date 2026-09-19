@@ -1,15 +1,19 @@
 {
-  "name": "product-engineering-starter-v2",
+  "name": "kairo2",
   "version": "0.7.0",
   "private": true,
   "type": "module",
   "engines": {
     "node": ">=24"
   },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "test": "node --test",
+    "test": "node --test test/*.test.mjs",
     "pes:validate": "node scripts/validate.mjs",
-    "preflight": "npm run pes:validate && npm test",
+    "preflight": "npm run pes:validate && npm test && npm run runtime:verify",
     "context:build": "node scripts/context-builder.mjs",
     "ratchet:evaluate": "node scripts/ratchet-evaluate.mjs",
     "ratchet:fixture": "node scripts/ratchet-fixture.mjs",
@@ -17,6 +21,17 @@
     "graph:validate": "node scripts/graph-memory.mjs validate",
     "gate:evaluate": "node scripts/gate-evaluate.mjs",
     "cert": "node scripts/certification.mjs",
-    "multi-agent": "node scripts/multi-agent.mjs"
+    "multi-agent": "node scripts/multi-agent.mjs",
+    "vercel-build": "npm run build --workspace @kairo/ui && ln -sfn apps/ui/.next .next",
+    "db:migrate": "node scripts/migrate.mjs",
+    "runtime:typecheck": "npm run typecheck --workspaces --if-present",
+    "runtime:test": "npm run test --workspaces --if-present",
+    "runtime:build": "npm run build --workspaces --if-present",
+    "runtime:verify": "npm run runtime:typecheck && npm run runtime:test && npm run runtime:build"
+  },
+  "devDependencies": {
+    "@types/node": "26.1.2",
+    "typescript": "5.9.3",
+    "vitest": "4.1.11"
   }
 }

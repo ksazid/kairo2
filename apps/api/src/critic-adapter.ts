@@ -1,0 +1,4 @@
+import type { AgentRuntimePort } from "@kairo/agent-contracts";
+import type { CriticEvaluationPort } from "@kairo/domain/review-service";
+import { CriticOrchestrator } from "@kairo/worker/reviewer";
+export class CriticEvaluationAdapter implements CriticEvaluationPort {private critic:CriticOrchestrator;constructor(runtime:AgentRuntimePort){this.critic=new CriticOrchestrator(runtime)}async evaluate(input:Parameters<CriticEvaluationPort["evaluate"]>[0]){const result=await this.critic.run({workspaceId:input.workspaceId,brandId:input.brandId,brandContextVersion:input.brandContextVersion,version:{id:input.versionId,content:input.content,supportingClaimIds:input.supportingClaims.map(x=>x.id)},claims:input.supportingClaims,rubric:["truth-consistency","brand-fit","audience-fit","clarity","usefulness","originality","hook-quality","structure","cta","channel-fit"]});return{passed:result.passed,score:result.score,findings:result.findings}}}

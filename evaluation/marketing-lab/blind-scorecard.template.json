@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Human preference evidence template for the four-pair VS-23 motorcycle carousel shadow qualification run.",
+  "instructions": [
+    "Do not reveal which candidate is Kairo Native or the Corey challenger before scoring all four cases.",
+    "Review Candidate A and Candidate B against the same benchmark case.",
+    "Score each candidate from 0 to 100 for overall human preference based on usefulness, clarity, persuasiveness, fit for the stated audience/objective, and likelihood you would approve it with minimal editing.",
+    "Do not infer Truth or technical correctness beyond the supplied benchmark Claims; Truth is evaluated separately.",
+    "Record genuine scores before the identity mapping is opened."
+  ],
+  "cases": [
+    {"caseId":"motorcycle-carousel-01","candidateA":{"humanPreferenceScore":null},"candidateB":{"humanPreferenceScore":null}},
+    {"caseId":"motorcycle-carousel-02","candidateA":{"humanPreferenceScore":null},"candidateB":{"humanPreferenceScore":null}},
+    {"caseId":"motorcycle-carousel-03","candidateA":{"humanPreferenceScore":null},"candidateB":{"humanPreferenceScore":null}},
+    {"caseId":"motorcycle-carousel-04","candidateA":{"humanPreferenceScore":null},"candidateB":{"humanPreferenceScore":null}}
+  ]
+}

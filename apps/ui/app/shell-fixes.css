@@ -1,0 +1,197 @@
+.brand-switcher {
+  position: relative;
+  min-width: 0;
+}
+
+.brand-switcher > .brand-select {
+  width: 100%;
+}
+
+.brand-switcher > .brand-select:disabled {
+  cursor: default;
+  opacity: .82;
+}
+
+.brand-switcher > .brand-select > svg[data-open="true"] {
+  transform: rotate(180deg);
+}
+
+.brand-switcher > .brand-select > svg {
+  transition: transform .16s ease;
+}
+
+.brand-mobile-select {
+  display: none;
+}
+
+.brand-menu {
+  position: absolute;
+  z-index: 80;
+  top: calc(100% + 8px);
+  left: 0;
+  width: max(100%, 250px);
+  max-height: 320px;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #0b131d;
+  padding: 6px;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, .42);
+}
+
+.brand-menu > button {
+  width: 100%;
+  min-height: 48px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--text);
+  padding: 6px 9px;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) 18px;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.brand-menu > button:hover,
+.brand-menu > button[aria-selected="true"] {
+  background: rgba(118, 79, 221, .15);
+}
+
+.brand-menu > button strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 560;
+}
+
+.brand-menu > button > svg {
+  width: 16px;
+  color: var(--violet-2);
+}
+
+.user-menu {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.user-menu-trigger {
+  border: 0;
+  cursor: pointer;
+}
+
+.user-menu-trigger > svg {
+  width: 15px;
+  height: 15px;
+  transition: transform .16s ease;
+}
+
+.user-menu-trigger > svg[data-open="true"] {
+  transform: rotate(180deg);
+}
+
+.user-menu-panel {
+  position: absolute;
+  z-index: 100;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 286px;
+  padding: 7px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #0b131d;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, .42);
+}
+
+.user-menu-panel > a {
+  min-height: 52px;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  align-items: center;
+  gap: 9px;
+  padding: 7px 9px;
+  border-radius: 9px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.user-menu-panel > a:hover,
+.user-menu-panel > a:focus-visible {
+  background: rgba(118, 79, 221, .15);
+  outline: none;
+}
+
+.user-menu-panel > a > svg {
+  width: 17px;
+  color: var(--violet-2);
+}
+
+.user-menu-panel > a > span {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.user-menu-panel > a strong {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.user-menu-panel > a small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.user-menu-divider {
+  height: 1px;
+  margin: 5px 7px;
+  background: var(--line);
+}
+
+.user-menu-panel > .user-menu-logout > svg {
+  color: #f07b86;
+}
+
+@media (max-width: 620px) {
+  /* Keep Insights out of the compact bar, but show both Brain and Settings. */
+  .sidebar nav a:nth-child(6) { display: none; }
+  .sidebar nav a:nth-child(7) { display: flex; }
+
+  .brand-switcher {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* Mobile Safari/Android get the platform picker while the approved visual stays unchanged. */
+  .brand-mobile-select {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    width: 100%;
+    height: 44px;
+    border: 0;
+    opacity: 0;
+    font-size: 16px;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .brand-switcher > .brand-select {
+    pointer-events: none;
+  }
+
+  .brand-menu {
+    display: none;
+  }
+
+  .user-menu-panel {
+    position: fixed;
+    top: 64px;
+    right: 12px;
+    width: min(286px, calc(100vw - 24px));
+  }
+}

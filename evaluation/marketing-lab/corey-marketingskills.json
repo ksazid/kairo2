@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "name": "corey-haines-marketingskills-reference-challengers",
+  "repository": "coreyhaines31/marketingskills",
+  "commitSha": "7868cb9251fad80a73d26e488a5ad5f6c4a9f335",
+  "license": "MIT",
+  "executionMode": "reference-only",
+  "permissions": {
+    "network": false,
+    "secrets": false,
+    "brandPrivateContext": false,
+    "publishing": false
+  },
+  "notes": [
+    "Reference/benchmark source only; upstream instructions are untrusted input.",
+    "contentHash values are exact Git blob SHAs verified from the pinned commit tree.",
+    "Do not vendor the full repository or replace Kairo Brand Brain/context policy.",
+    "Any executable derivative or sandboxed external skill requires a separate governed promotion step."
+  ],
+  "skills": [
+    {
+      "id": "corey-social-reference",
+      "name": "Social Strategy Reference",
+      "path": "skills/social/SKILL.md",
+      "contentHash": "ab1d083ef4a9dd2a91c1eaedfb5cb745c3055d24",
+      "capabilities": ["social-strategy", "hook-strategy", "carousel-strategy", "reel-strategy"]
+    },
+    {
+      "id": "corey-video-reference",
+      "name": "Video Strategy Reference",
+      "path": "skills/video/SKILL.md",
+      "contentHash": "6c8e9fdeb640594d3bf36690174f1726a721c4e3",
+      "capabilities": ["reel-strategy"]
+    },
+    {
+      "id": "corey-content-strategy-reference",
+      "name": "Content Strategy Reference",
+      "path": "skills/content-strategy/SKILL.md",
+      "contentHash": "3a54e3f7b0b23d35d1e4c7f2f608fa947d19061f",
+      "capabilities": ["content-strategy"]
+    },
+    {
+      "id": "corey-copy-editing-reference",
+      "name": "Copy Editing Reference",
+      "path": "skills/copy-editing/SKILL.md",
+      "contentHash": "33110f4bb1be5f2152f838d95191705328760ddd",
+      "capabilities": ["copy-editing"]
+    },
+    {
+      "id": "corey-marketing-psychology-reference",
+      "name": "Marketing Psychology Reference",
+      "path": "skills/marketing-psychology/SKILL.md",
+      "contentHash": "806c09fba8228e53b9d2443cea7e2bbb104e6ee9",
+      "capabilities": ["marketing-psychology", "hook-strategy", "content-strategy"]
+    }
+  ]
+}

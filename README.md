@@ -1,3 +1,17 @@
+# Kairo 2
+
+Standalone Kairo v2: brand intelligence, discovery, content creation, campaign planning, publishing, and learning.
+
+## Application structure
+
+- `apps/ui` — production Next.js user interface
+- `apps/api` — Fastify API and PostgreSQL migrations
+- `apps/worker` — shared Hunter, research, generation, publishing, and learning runtime
+- `packages/*` — domain and UI contracts
+- `services/hermes-runtime` — isolated Hermes support runtime
+
+Kairo 2 uses the PES v2 template below as its governance and certification foundation.
+
 # Product Engineering Starter v2 (PES v2)
 
 PES v2 is a **graph-aware product engineering governance system**. It preserves PES governance—typed approvals, vertical slices, deterministic gates, exact-SHA certification, rollback and human release authority—while making execution, evidence lineage and durable product memory first-class.

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">Kairo</title>
+  <rect x="7" y="8" width="10" height="48" rx="4" fill="#825cff"/>
+  <path d="M20 32 43 8h14L33 32l24 24H43z" fill="#9b7bff"/>
+  <path d="m20 32 11-11 8 8-4 4 4 4-8 8z" fill="#c8ed47"/>
+</svg>

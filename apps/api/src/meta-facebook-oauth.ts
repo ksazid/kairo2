@@ -1,0 +1,37 @@
+type FetchLike = (input: string | URL | Request, init?: RequestInit) => Promise<Response>;
+
+export type FacebookConnectionMode = "facebook-instagram" | "facebook";
+export interface FacebookDiscoveredTarget {
+  channel: "instagram" | "facebook";
+  accountRef: string;
+  displayName: string;
+  pageRef: string;
+  pageName: string;
+  username?: string;
+  accessToken: string;
+}
+export interface FacebookDiscoveryResult { userAccessToken: string; expiresInSeconds: number; grantedScopes: string[]; targets: FacebookDiscoveredTarget[] }
+export interface FacebookOAuthPort { authorizationUrl(state: string, mode: FacebookConnectionMode): string; exchangeAndDiscover(code: string, mode: FacebookConnectionMode): Promise<FacebookDiscoveryResult> }
+
+const COMMON = ["pages_show_list", "business_management", "pages_read_engagement"] as const;
+const INSTAGRAM = ["instagram_basic", "instagram_content_publish", "instagram_manage_insights"] as const;
+const FACEBOOK_PUBLISH = ["pages_manage_posts"] as const;
+
+export class MetaFacebookOAuthClient implements FacebookOAuthPort {
+  constructor(private appId:string,private appSecret:string,private graphVersion:string,private redirectUri:string,private fetchImpl:FetchLike=fetch){required(appId,"META_APP_ID");required(appSecret,"META_APP_SECRET");graph(graphVersion);httpsUrl(redirectUri,"META_OAUTH_REDIRECT_URI")}
+  authorizationUrl(state:string,mode:FacebookConnectionMode){const url=new URL(`https://www.facebook.com/${graph(this.graphVersion)}/dialog/oauth`);url.searchParams.set("client_id",this.appId);url.searchParams.set("redirect_uri",this.redirectUri);url.searchParams.set("state",required(state,"OAuth state"));url.searchParams.set("scope",requestedFacebookScopes(mode).join(","));url.searchParams.set("response_type","code");return url.toString()}
+  async exchangeAndDiscover(code:string,mode:FacebookConnectionMode):Promise<FacebookDiscoveryResult>{const short=await this.exchange(required(code,"authorization code"));const durable=await this.extend(short);const grantedScopes=await this.permissions(durable.accessToken);const requiredScopes=requestedFacebookScopes(mode),missing=requiredScopes.filter(scope=>!grantedScopes.includes(scope));if(missing.length)throw new Error(`Required Meta permissions were not granted: ${missing.join(", ")}`);const pages=await this.pages(durable.accessToken),targets:FacebookDiscoveredTarget[]=[];for(const page of pages){const pageRef=numeric(page.id),accessToken=string(page.access_token);if(!pageRef||!accessToken)continue;const pageName=string(page.name)??pageRef;if(mode==="facebook"){targets.push({channel:"facebook",accountRef:pageRef,displayName:pageName,pageRef,pageName,accessToken});continue}const ig=numeric(page.instagram_business_account?.id);if(!ig)continue;const profile=await this.instagramProfile(ig,accessToken);targets.push({channel:"instagram",accountRef:ig,displayName:profile.name??profile.username??ig,pageRef,pageName,...(profile.username?{username:profile.username}:{}),accessToken})}return{userAccessToken:durable.accessToken,expiresInSeconds:durable.expiresInSeconds,grantedScopes,targets}}
+  private async exchange(code:string){const body=new URLSearchParams({client_id:this.appId,client_secret:this.appSecret,redirect_uri:this.redirectUri,code});const response=await this.fetchImpl(`https://graph.facebook.com/${graph(this.graphVersion)}/oauth/access_token`,{method:"POST",headers:{"content-type":"application/x-www-form-urlencoded"},body:body.toString()});if(!response.ok)throw providerError("oauth-exchange",response.status);const payload=await response.json() as{access_token?:unknown};const token=string(payload.access_token);if(!token)throw new Error("Meta OAuth exchange returned no access token");return token}
+  private async extend(token:string){const url=new URL(`https://graph.facebook.com/${graph(this.graphVersion)}/oauth/access_token`);url.searchParams.set("grant_type","fb_exchange_token");url.searchParams.set("client_id",this.appId);url.searchParams.set("client_secret",this.appSecret);url.searchParams.set("fb_exchange_token",token);const response=await this.fetchImpl(url);if(!response.ok)throw providerError("long-lived-token-exchange",response.status);const payload=await response.json() as{access_token?:unknown;expires_in?:unknown};const accessToken=string(payload.access_token),expiresInSeconds=integer(payload.expires_in,60*24*60*60);if(!accessToken||expiresInSeconds<8*24*60*60)throw new Error("Meta did not return a sufficiently durable Facebook User access token");return{accessToken,expiresInSeconds}}
+  private async permissions(token:string){const response=await this.fetchImpl(`https://graph.facebook.com/${graph(this.graphVersion)}/me/permissions`,{headers:{authorization:`Bearer ${token}`}});if(!response.ok)throw providerError("permissions",response.status);const payload=await response.json() as{data?:Array<{permission?:unknown;status?:unknown}>};return[...new Set((payload.data??[]).filter(row=>row.status==="granted"&&!!string(row.permission)).map(row=>string(row.permission)!))].sort()}
+  private async pages(token:string){const url=new URL(`https://graph.facebook.com/${graph(this.graphVersion)}/me/accounts`);url.searchParams.set("fields","id,name,access_token,tasks,instagram_business_account");url.searchParams.set("limit","100");const response=await this.fetchImpl(url,{headers:{authorization:`Bearer ${token}`}});if(!response.ok)throw providerError("page-discovery",response.status);const payload=await response.json() as{data?:unknown};return Array.isArray(payload.data)?payload.data.filter((row):row is Record<string,any>=>!!row&&typeof row==="object"):[]}
+  private async instagramProfile(id:string,token:string){const url=new URL(`https://graph.facebook.com/${graph(this.graphVersion)}/${id}`);url.searchParams.set("fields","id,username,name");const response=await this.fetchImpl(url,{headers:{authorization:`Bearer ${token}`}});if(!response.ok)throw providerError("instagram-profile",response.status);const payload=await response.json() as Record<string,unknown>;return{...(string(payload.username)?{username:string(payload.username)}:{}),...(string(payload.name)?{name:string(payload.name)}:{})}}
+}
+export function requestedFacebookScopes(mode:FacebookConnectionMode):readonly string[]{return[...COMMON,...(mode==="facebook-instagram"?INSTAGRAM:FACEBOOK_PUBLISH)]}
+function required(value:string,field:string){const normalized=value.trim();if(!normalized)throw new Error(`${field} is required`);return normalized}
+function string(value:unknown){return typeof value==="string"&&value.trim()?value.trim():undefined}
+function numeric(value:unknown){const normalized=typeof value==="number"?String(value):string(value);return normalized&&/^\d+$/.test(normalized)?normalized:undefined}
+function integer(value:unknown,fallback=0){if(value===undefined||value===null)return fallback;const parsed=typeof value==="number"?value:Number(value);return Number.isFinite(parsed)?Math.floor(parsed):0}
+function graph(value:string){if(!/^v\d+\.\d+$/.test(value))throw new Error("META_GRAPH_VERSION is invalid");return value}
+function httpsUrl(value:string,field:string){let url:URL;try{url=new URL(value)}catch{throw new Error(`${field} must be a valid URL`)}if(url.protocol!=="https:")throw new Error(`${field} must use HTTPS`);return url.toString()}
+function providerError(operation:string,status:number){return new Error(`Meta provider ${operation} failed with HTTP ${status}`)}

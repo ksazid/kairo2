@@ -1,0 +1,9 @@
+{
+  "name": "@kairo/contracts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {".": "./src/index.ts", "./presenter": "./src/presenter.ts", "./concept-mockup": "./src/concept-mockup.ts"},
+  "types": "./src/index.ts",
+  "scripts": {"typecheck": "tsc -p tsconfig.json --noEmit"}
+}

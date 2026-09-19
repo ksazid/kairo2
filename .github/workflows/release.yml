@@ -1,0 +1,19 @@
+name: Release gate
+on:
+  workflow_dispatch:
+    inputs:
+      certified_sha:
+        description: Exact certified main SHA
+        required: true
+permissions:
+  contents: read
+jobs:
+  verify:
+    environment: production
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: main}
+      - name: Verify exact SHA
+        run: test "$(git rev-parse HEAD)" = "${{ inputs.certified_sha }}"
+      - run: echo "Deployment adapter intentionally not configured."

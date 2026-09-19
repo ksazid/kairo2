@@ -1,0 +1,48 @@
+.settingsPage { min-width: 0; }
+
+.pageHeader {
+  min-height: 108px;
+  padding: 16px 7px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.pageHeader h1 {
+  margin: 0 0 5px;
+  font-size: clamp(38px, 3.3vw, 48px);
+  line-height: 1.04;
+  letter-spacing: -.044em;
+  font-weight: 720;
+}
+
+.pageHeader p {
+  margin: 0;
+  color: #aeb7c4;
+  font-size: 15px;
+}
+
+.client :global(#settings-content > div:first-child),
+.client :global(#settings-content > header:first-of-type) {
+  display: none;
+}
+
+.client :global(#settings-content > [role="tablist"]) {
+  margin-top: 0;
+}
+
+@media (max-width: 620px) {
+  .pageHeader {
+    min-height: 98px;
+    padding: 2px 0 20px;
+  }
+
+  .pageHeader h1 {
+    font-size: 34px;
+  }
+
+  .pageHeader p {
+    font-size: 14px;
+    line-height: 1.45;
+  }
+}

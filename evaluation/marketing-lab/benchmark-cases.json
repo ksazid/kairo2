@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "fixturePolicy": "Synthetic/public-safe benchmark context only; no private production Brand data.",
+  "cases": [
+    {
+      "id": "ai-carousel-01",
+      "sector": "AI / SaaS / Developer Technology",
+      "format": "carousel",
+      "audience": "technical founders",
+      "objective": "education and saves",
+      "opportunity": "Explain why durable workflows change how teams should think about AI agents.",
+      "claims": [
+        {"id":"ai-c1","text":"Agent workflows can combine model reasoning with tool calls."},
+        {"id":"ai-c2","text":"Persisted state changes how multi-step work can resume after interruption."}
+      ]
+    },
+    {
+      "id": "ai-reel-01",
+      "sector": "AI / SaaS / Developer Technology",
+      "format": "reel",
+      "audience": "software architects",
+      "objective": "reach and discussion",
+      "opportunity": "Turn an architecture shift from chat-style copilots to durable agent workflows into a concise Reel.",
+      "claims": [
+        {"id":"ai-r1","text":"Tool use allows a model-driven workflow to interact with controlled external capabilities."},
+        {"id":"ai-r2","text":"Durable execution can preserve progress across long-running steps."}
+      ]
+    },
+    {
+      "id": "umrah-carousel-01",
+      "sector": "Umrah / Religious Travel",
+      "format": "carousel",
+      "audience": "first-time pilgrims",
+      "objective": "clarity and saves",
+      "opportunity": "Create a calm pre-travel verification checklist without inventing current regulations.",
+      "claims": [
+        {"id":"um-c1","text":"Travelers should verify current official guidance before departure."},
+        {"id":"um-c2","text":"Important travel documents should be checked for completeness before the journey."}
+      ]
+    },
+    {
+      "id": "umrah-reel-01",
+      "sector": "Umrah / Religious Travel",
+      "format": "reel",
+      "audience": "families preparing for Umrah",
+      "objective": "helpfulness and trust",
+      "opportunity": "Explain a simple prepare-before-you-travel routine in a reassuring short-form video.",
+      "claims": [
+        {"id":"um-r1","text":"Preparation benefits from checking travel documents and current official guidance."},
+        {"id":"um-r2","text":"A concise checklist can help travelers organize required preparation steps."}
+      ]
+    },
+    {
+      "id": "motorcycle-carousel-01",
+      "sector": "Motorcycles / Bikes",
+      "format": "carousel",
+      "audience": "enthusiast buyers",
+      "objective": "comparison and saves",
+      "opportunity": "Structure a buyer comparison around actual use case rather than declaring one engine class universally best.",
+      "claims": [
+        {"id":"mc-c1","text":"Motorcycle purchase decisions can involve comfort, price, intended use and performance preferences."},
+        {"id":"mc-c2","text":"A comparison should distinguish rider needs instead of assuming a universal winner."}
+      ]
+    },
+    {
+      "id": "motorcycle-carousel-02",
+      "sector": "Motorcycles / Bikes",
+      "format": "carousel",
+      "audience": "enthusiast buyers",
+      "objective": "comparison and saves",
+      "opportunity": "Compare motorcycle modifications by rider goal without treating every modification as a universal performance upgrade.",
+      "claims": [
+        {"id":"mc2-c1","text":"Motorcycle modifications can serve different goals such as comfort, usability, appearance or rider preference."},
+        {"id":"mc2-c2","text":"Expected benefits from a modification should be separated from verified technical performance claims."}
+      ]
+    },
+    {
+      "id": "motorcycle-carousel-03",
+      "sector": "Motorcycles / Bikes",
+      "format": "carousel",
+      "audience": "enthusiast buyers",
+      "objective": "comparison and saves",
+      "opportunity": "Compare setup priorities for daily commuting and weekend riding without declaring one setup universally better.",
+      "claims": [
+        {"id":"mc3-c1","text":"Daily commuting can emphasize routine usability, comfort and carrying needs."},
+        {"id":"mc3-c2","text":"Recreational riding can emphasize different preferences and trade-offs from daily commuting."}
+      ]
+    },
+    {
+      "id": "motorcycle-carousel-04",
+      "sector": "Motorcycles / Bikes",
+      "format": "carousel",
+      "audience": "enthusiast buyers",
+      "objective": "comparison and saves",
+      "opportunity": "Create a pre-purchase ownership checklist covering intended use, budget, fit and maintenance considerations without inventing model-specific costs or specifications.",
+      "claims": [
+        {"id":"mc4-c1","text":"Purchase price is only one consideration in a motorcycle buying decision."},
+        {"id":"mc4-c2","text":"Riders can also consider intended use, fit or ergonomics, maintenance priorities and available local support."}
+      ]
+    },
+    {
+      "id": "motorcycle-reel-01",
+      "sector": "Motorcycles / Bikes",
+      "format": "reel",
+      "audience": "younger motorcycle enthusiasts",
+      "objective": "reach and comments",
+      "opportunity": "Create a debate-worthy Reel about choosing a bike class without making unsupported performance claims.",
+      "claims": [
+        {"id":"mc-r1","text":"Different riders can prioritize commuting, touring, handling or performance differently."},
+        {"id":"mc-r2","text":"A useful comparison makes the trade-offs visible to the audience."}
+      ]
+    },
+    {
+      "id": "ias-carousel-01",
+      "sector": "IAS / UPSC Education",
+      "format": "carousel",
+      "audience": "UPSC aspirants",
+      "objective": "education and saves",
+      "opportunity": "Turn study-planning discipline into a practical carousel without promising exam outcomes.",
+      "claims": [
+        {"id":"ias-c1","text":"A study plan can organize topics, revision and practice over time."},
+        {"id":"ias-c2","text":"Educational guidance should not guarantee examination results."}
+      ]
+    },
+    {
+      "id": "ias-reel-01",
+      "sector": "IAS / UPSC Education",
+      "format": "reel",
+      "audience": "early-stage UPSC aspirants",
+      "objective": "clarity and engagement",
+      "opportunity": "Create a short Reel about building a repeatable study routine without motivational overclaiming.",
+      "claims": [
+        {"id":"ias-r1","text":"Repeatable study routines can include learning, revision and practice blocks."},
+        {"id":"ias-r2","text":"A content recommendation should separate useful process advice from guaranteed outcomes."}
+      ]
+    }
+  ]
+}

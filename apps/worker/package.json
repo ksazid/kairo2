@@ -1,0 +1,47 @@
+{
+  "name": "@kairo/worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./hunter": "./src/hunter.ts",
+    "./researcher": "./src/researcher.ts",
+    "./strategist": "./src/strategist.ts",
+    "./discovery-provider": "./src/discovery-provider.ts",
+    "./public-discovery-adapters": "./src/public-discovery-adapters.ts",
+    "./research-evidence-adapters": "./src/research-evidence-adapters.ts",
+    "./retrying-discovery-provider": "./src/retrying-discovery-provider.ts",
+    "./brand-brain-builder": "./src/brand-brain-builder.ts",
+    "./drafter": "./src/drafter.ts",
+    "./content-plan-generator": "./src/content-plan-generator.ts",
+    "./content-channel-adapters": "./src/content-channel-adapters.ts",
+    "./reviewer": "./src/reviewer.ts",
+    "./agent-runtime": "./src/agent-runtime.ts",
+    "./model-gateway": "./src/model-gateway.ts",
+    "./publishing": "./src/publishing.ts",
+    "./publishing-adapters": "./src/publishing-adapters.ts",
+    "./performance": "./src/performance.ts",
+    "./instagram-insights": "./src/instagram-insights.ts",
+    "./performance-patterns": "./src/performance-patterns.ts",
+    "./learner": "./src/learner.ts",
+    "./creative-renderer": "./src/creative-renderer.ts",
+    "./adaptive-carousel-renderer": "./src/adaptive-carousel-renderer.ts",
+    "./carousel-quality-adapter": "./src/carousel-quality-adapter.ts",
+    "./marketing-shadow": "./src/marketing-shadow.ts",
+    "./marketing-shadow-qualification": "./src/marketing-shadow-qualification.ts",
+    "./marketing-shadow-evidence-runner": "./src/marketing-shadow-evidence-runner.ts",
+    "./marketing-shadow-comparison": "./src/marketing-shadow-comparison.ts",
+    "./marketing-shadow-quality-evaluator": "./src/marketing-shadow-quality-evaluator.ts",
+    "./publishable-media": "./src/publishable-media.ts",
+    "./reel-encoder": "./src/reel-encoder.ts",
+    "./pilot-readiness": "./src/pilot-readiness.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@kairo/agent-contracts": "0.1.0",
+    "@kairo/domain": "0.1.0"
+  }
+}

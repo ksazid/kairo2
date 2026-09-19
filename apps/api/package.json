@@ -1,0 +1,24 @@
+{
+  "name": "@kairo/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --no-file-parallelism",
+    "build": "node ../../node_modules/rolldown/bin/cli.mjs src/server.ts --file dist/server.js --platform node --format esm --sourcemap --external fastify,jose,pg && node ../../node_modules/rolldown/bin/cli.mjs src/publishing-worker-server.ts --file dist/publishing-worker-server.js --platform node --format esm --sourcemap --external pg && node ../../node_modules/rolldown/bin/cli.mjs src/marketing-shadow-quality-evaluation-worker.ts --file dist/marketing-shadow-quality-evaluation-worker.js --platform node --format esm --sourcemap --external pg",
+    "start": "node dist/server.js",
+    "start:publisher": "node dist/publishing-worker-server.js"
+  },
+  "dependencies": {
+    "@kairo/contracts": "0.1.0",
+    "@kairo/domain": "0.1.0",
+    "@kairo/worker": "0.1.0",
+    "fastify": "5.12.1",
+    "jose": "6.2.4",
+    "pg": "8.22.0"
+  },
+  "devDependencies": {
+    "@types/pg": "8.20.0"
+  }
+}
