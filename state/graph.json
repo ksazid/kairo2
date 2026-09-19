@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "version": 2,
-  "revision": 8,
+  "revision": 9,
   "nodes": [
     {
       "id": "OBJ-001",
@@ -597,8 +597,8 @@
       ],
       "addedEdgeIds": [
         "EDGE-OBJ-008-OBJ-007",
-        "EDGE-TASK-008-01-OBJ-008",
-        "EDGE-DEC-008-01-OBJ-008"
+        "EDGE-OBJ-008-TASK-008-01",
+        "EDGE-DEC-008-01-OBJ-008-ABOUT"
       ],
       "recordedAt": "2026-09-19T18:51:46.203Z"
     },
@@ -617,6 +617,21 @@
         "EDGE-DEC-008-01-OBJ-008"
       ],
       "recordedAt": "2026-09-19T18:52:44.964Z"
+    },
+    {
+      "id": "GM-000009",
+      "revision": 9,
+      "operation": "repair-event-reference",
+      "actorId": "pes-v2-remediation",
+      "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+      "reason": "Repair invalid initial VS-08 event references so graph history remains machine-valid",
+      "sourceIds": [],
+      "addedNodeIds": [],
+      "addedEdgeIds": [],
+      "correctedEventIds": [
+        "GM-000007"
+      ],
+      "recordedAt": "2026-09-19T18:53:15.487Z"
     }
   ]
 }
