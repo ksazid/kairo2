@@ -68,7 +68,6 @@ export function contentFallback(): ContentItem[] {
 }
 
 export function toContentItems(details: CampaignDetailView[], reviews: Record<string, ContentReviewStatusView | null>, commands: PublishCommandView[]): ContentItem[] {
-  const images = ["/malta-car.webp", "/malta-drive.webp", "/malta-harbour.webp", "/car-keys.webp"];
   return details.flatMap((detail) => detail.assets.map(({ asset, versions }, index) => {
     const current = versions.at(-1);
     const command = commands.filter((item) => item.assetId === asset.id).sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
@@ -76,7 +75,7 @@ export function toContentItems(details: CampaignDetailView[], reviews: Record<st
     const status = statusFor(command, review, current?.id);
     const format = normalizeFormat(asset.format);
     const libraryMedia = current?.libraryAssetRefs?.filter((item) => (item.kind === "image" || item.kind === "video") && item.previewRef).map((item) => item.previewRef!) ?? [];
-    const image = libraryMedia[0] ?? images[index % images.length]!;
+    const image = libraryMedia[0] ?? "/kairo-logo.svg";
     const content = current?.content?.trim() || asset.topic;
     return {
       id: asset.id,
