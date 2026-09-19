@@ -178,6 +178,7 @@ describe("BrandBrainBootstrapService", () => {
     ["vehicle rental", "Malta Cars", "Car rental with online booking and a flexible vehicle fleet.", /vehicle rental/i, /rental booking/i],
     ["automotive owner content", "The Duke 390", "Motorcycle rides, ownership notes and maintenance advice for riders.", /automotive|vehicle|mobility/i, /ownership guidance/i],
     ["restaurant", "Harbour Kitchen", "A restaurant menu featuring local food and seasonal dining experiences.", /food, dining, menu/i, /menus, food, dining/i],
+    ["editorial publisher", "Lovin Malta", "Lovin Malta | News, Music, Food, Sport, Shows and more in Malta & Gozo", /editorial news, culture, lifestyle/i, /local news, culture, entertainment/i],
   ])("derives useful, non-placeholder %s Brand DNA without cross-category claims", async (_kind, title, excerpt, offering, pillars) => {
     const repository = new FakeRepository();
     repository.brand = { id: "brand-1", workspaceId: "workspace-1", name: title, publicSourceUrl: "https://example.com/" };
@@ -190,6 +191,36 @@ describe("BrandBrainBootstrapService", () => {
     if (_kind === "automotive owner content") {
       expect(repository.fields.find((field) => field.fieldKey === "identity.products-services")?.value).not.toMatch(/rental|fleet booking/i);
     }
+    if (_kind === "editorial publisher") {
+      expect(repository.fields.find((field) => field.fieldKey === "identity.category")?.value).toMatch(/news.*media publisher/i);
+      expect(repository.fields.find((field) => field.fieldKey === "identity.category")?.value).not.toMatch(/restaurant|hospitality/i);
+    }
+  });
+
+  it("keeps editorial publisher core context truthful when the model returns a conflicting category", async () => {
+    const repository = new FakeRepository();
+    repository.brand = { id: "brand-1", workspaceId: "workspace-1", name: "Lovin Malta", publicSourceUrl: "https://lovinmalta.com/" };
+    const reader: PublicBrandReferenceReader = {
+      read: async (url) => ({
+        url,
+        title: "Lovin Malta | News, Music, Food, Sport, Shows and more in Malta & Gozo",
+        excerpt: "Lovin Malta | News, Music, Food, Sport, Shows and more in Malta & Gozo",
+        retrievedAt: NOW,
+      }),
+    };
+    const generator: BrandBrainProposalGenerator = {
+      propose: async () => [
+        { section: "identity", fieldKey: "identity.category", value: "Automotive, vehicles and mobility", sourceIds: ["source-1"] },
+        { section: "audience", fieldKey: "audience.primary", value: "Drivers and vehicle owners", sourceIds: ["source-1"] },
+        { section: "content-strategy", fieldKey: "content.pillars", value: "Vehicles and ownership guidance", sourceIds: ["source-1"] },
+      ],
+    };
+
+    await new BrandBrainBootstrapService(repository, generator, reader).build("account-1", "brand-1", {});
+
+    expect(repository.fields.find((field) => field.fieldKey === "identity.category")?.value).toBe("News, culture and lifestyle media publisher");
+    expect(repository.fields.find((field) => field.fieldKey === "audience.primary")?.value).toMatch(/local news, culture, entertainment/i);
+    expect(repository.fields.find((field) => field.fieldKey === "content.pillars")?.value).toMatch(/local news, culture, entertainment/i);
   });
 
   it("fails closed when a persisted Brand URL is malformed", async () => {

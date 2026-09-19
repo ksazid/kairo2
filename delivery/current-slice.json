@@ -1,3 +1,39 @@
 {
-  "activeSlice": null
+  "activeSlice": {
+    "id": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+    "objectiveId": "OBJ-008",
+    "state": "certified",
+    "riskLevel": "medium",
+    "implementationPermission": "runtime-enabled",
+    "scope": "Make Brand Brain retain source-grounded editorial publisher context during live onboarding; prove it with a disposable public-brand validation before Hunter runs.",
+    "budget": {
+      "maxModelCalls": 0,
+      "maxSubAgents": 0,
+      "maxConcurrentWorkers": 1,
+      "maxToolCalls": 40,
+      "maxWallClockMinutes": 45,
+      "maxRetries": 2,
+      "maxGraphWrites": 12
+    },
+    "approvals": [
+      { "type": "scope", "status": "approved", "actorType": "human", "scopeId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION" },
+      { "type": "policy", "status": "approved", "actorType": "human", "scopeId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION" },
+      { "type": "implementation", "status": "approved", "actorType": "human", "scopeId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION" },
+      { "type": "certification", "status": "approved", "actorType": "human", "scopeId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION", "commitSha": "f19d7624e5c3099bdc994e7b64981ca694de0d62", "candidateHash": "4ed0d2e35c0067d020abdbeefe0eb776c01f3a168f98a609da2ec38ec3c21aa9", "approvedAt": "2026-09-19T21:37:45Z" }
+    ],
+    "successCriteria": [
+      "A news or editorial website cannot persist conflicting automotive or food core Brand DNA when its source evidence identifies it as a publisher.",
+      "A model-conflict regression test passes.",
+      "The deployed production route is identified before any production re-test.",
+      "No Hunter run starts until the real Brand DNA is truthful and required owner confirmations are complete."
+    ],
+    "context": {
+      "contextHash": "f1e6caec14de81cd3aa04d0ac41d7dd4b99c41c57be03845cc942220008493cb",
+      "graphRevision": 10,
+      "requestedSeeds": ["OBJ-008", "TASK-008-01", "ART-008-01", "EVID-008-01", "EVID-008-02", "EVAL-008-01"],
+      "resolvedSeeds": ["OBJ-008", "TASK-008-01", "ART-008-01", "EVID-008-01", "EVID-008-02", "EVAL-008-01"],
+      "contradictions": []
+    },
+    "evidenceIds": ["EVID-008-01", "EVID-008-02"]
+  }
 }

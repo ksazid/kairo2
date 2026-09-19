@@ -127,6 +127,7 @@ export type CreatedBrand = {
   id: string;
   name: string;
   workspaceId: string;
+  runtime?: string;
 };
 
 const apiBase = () => (process.env.KAIRO_API_URL ?? "http://127.0.0.1:4000").replace(/\/$/, "");
@@ -225,14 +226,13 @@ export async function createBrand(input: { brandName: string; publicSourceUrl: s
         "Kairo could not create your first workspace and Brand.",
       )).brand;
 
-  await bodyOrError(
-    await api(token, `/api/v1/brands/${encodeURIComponent(brand.id)}/brain/bootstrap`, {
-      method: "POST",
-      body: JSON.stringify({ publicReferenceUrl: input.publicSourceUrl }),
-    }),
-    "The Brand was created, but Kairo could not build its Brand Brain.",
-  );
-  return brand;
+  const bootstrapResponse = await api(token, `/api/v1/brands/${encodeURIComponent(brand.id)}/brain/bootstrap`, {
+    method: "POST",
+    body: JSON.stringify({ publicReferenceUrl: input.publicSourceUrl }),
+  });
+  const runtime = bootstrapResponse.headers.get("x-kairo-runtime") ?? undefined;
+  await bodyOrError(bootstrapResponse, "The Brand was created, but Kairo could not build its Brand Brain.");
+  return { ...brand, ...(runtime ? { runtime } : {}) };
 }
 
 export async function getSettingsData(requestedBrandId?: string): Promise<SettingsData> {

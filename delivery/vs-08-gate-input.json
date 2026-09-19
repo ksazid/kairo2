@@ -1,0 +1,25 @@
+{
+  "slice": {
+    "id": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+    "objectiveId": "OBJ-008",
+    "state": "certified",
+    "riskLevel": "medium",
+    "implementationPermission": "runtime-enabled"
+  },
+  "context": {
+    "contextHash": "f1e6caec14de81cd3aa04d0ac41d7dd4b99c41c57be03845cc942220008493cb",
+    "graphRevision": 10,
+    "requestedSeeds": ["OBJ-008", "TASK-008-01", "ART-008-01", "EVID-008-01", "EVID-008-02", "EVAL-008-01"],
+    "resolvedSeeds": ["OBJ-008", "TASK-008-01", "ART-008-01", "EVID-008-01", "EVID-008-02", "EVAL-008-01"],
+    "contradictions": []
+  },
+  "approvals": [
+    { "type": "scope", "status": "approved", "actorType": "human", "scopeId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION" },
+    { "type": "policy", "status": "approved", "actorType": "human", "scopeId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION" },
+    { "type": "implementation", "status": "approved", "actorType": "human", "scopeId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION" },
+    { "type": "certification", "status": "approved", "actorType": "human", "scopeId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION", "commitSha": "f19d7624e5c3099bdc994e7b64981ca694de0d62", "candidateHash": "4ed0d2e35c0067d020abdbeefe0eb776c01f3a168f98a609da2ec38ec3c21aa9", "approvedAt": "2026-09-19T21:37:45Z" }
+  ],
+  "evidenceIds": ["EVID-008-01", "EVID-008-02"],
+  "changedPaths": ["packages/domain/src/brand-brain-bootstrap.ts", "packages/domain/src/brand-brain-bootstrap.test.ts"],
+  "deliveryGraph": { "status": "not-required" }
+}

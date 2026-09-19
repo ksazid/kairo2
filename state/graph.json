@@ -1,38 +1,807 @@
 {
   "schemaVersion": 1,
   "version": 2,
-  "revision": 6,
+  "revision": 10,
   "nodes": [
-    {"id":"OBJ-001","type":"Objective","status":"verified","title":"Establish PES v2 foundation","successCriteria":["Repository validates","Graph invariants are enforced","Context retrieval is bounded","Ratchet decisions are deterministic"],"memoryProvenance":{"eventId":"GM-000001","revision":1,"actorId":"pes-v2-migration","runId":null,"sourceIds":[],"recordedAt":"2026-09-01T00:00:00.000Z"}},
-    {"id":"OBJ-002","type":"Objective","status":"verified","title":"Implement native Ratchet Execution","successCriteria":["Multiple attempts keep only measured improvement","Failed attempts remain durable lineage","Interrupted attempts recover to a known checkpoint","Evaluator contracts require evidence","Repository and worktree execution are reversible"],"memoryProvenance":{"eventId":"GM-000001","revision":1,"actorId":"pes-v2-migration","runId":null,"sourceIds":[],"recordedAt":"2026-09-01T00:00:00.000Z"}},
-    {"id":"OBJ-003","type":"Objective","status":"active","title":"Implement durable Graph Memory","successCriteria":["Graph writes are append-oriented and provenance-bearing","Conflicting id rewrites are rejected","Corrections and supersessions preserve old state","Cross-session queries explain accepted artifacts and failed attempts","Graph persistence detects stale revisions"],"memoryProvenance":{"eventId":"GM-000002","revision":2,"actorId":"pes-v2-governance","runId":"VS-03","sourceIds":[],"recordedAt":"2026-09-01T00:00:01.000Z"}},
-    {"id":"OBJ-003-V2","logicalId":"OBJ-003","supersedesId":"OBJ-003","type":"Objective","status":"verified","title":"Implement durable Graph Memory","successCriteria":["Graph writes are append-oriented and provenance-bearing","Conflicting id rewrites are rejected","Corrections and supersessions preserve old state","Cross-session queries explain accepted artifacts and failed attempts","Graph persistence detects stale revisions"],"memoryProvenance":{"eventId":"GM-000003","revision":3,"actorId":"pes-v2-governance","runId":"VS-04","sourceIds":[],"recordedAt":"2026-09-01T00:00:02.000Z"}},
-    {"id":"OBJ-004","type":"Objective","status":"active","title":"Implement ranked bounded Context Builder","successCriteria":["Relevant nodes are ranked before low-value history","Verified and recent state is preferred without hiding contradictions","Superseded seeds resolve to current state","Serialized context remains inside a declared token budget","Context hashing detects unchanged task context"],"memoryProvenance":{"eventId":"GM-000003","revision":3,"actorId":"pes-v2-governance","runId":"VS-04","sourceIds":[],"recordedAt":"2026-09-01T00:00:02.000Z"}},
-    {"id":"OBJ-004-V2","logicalId":"OBJ-004","supersedesId":"OBJ-004","type":"Objective","status":"verified","title":"Implement ranked bounded Context Builder","successCriteria":["Relevant nodes are ranked before low-value history","Verified and recent state is preferred without hiding contradictions","Superseded seeds resolve to current state","Serialized context remains inside a declared token budget","Context hashing detects unchanged task context"],"memoryProvenance":{"eventId":"GM-000004","revision":4,"actorId":"pes-v2-governance","runId":"VS-05","sourceIds":[],"recordedAt":"2026-09-01T00:00:03.000Z"}},
-    {"id":"OBJ-005","type":"Objective","status":"active","title":"Integrate graph-aware PES gates","successCriteria":["Unsafe lifecycle transitions are blocked deterministically","Required approvals respect human authority boundaries","Evidence must be verified and linked to the slice objective","Protected paths and risk signals trigger delivery-graph requirements","Stale context and certification contradictions are blocked"],"memoryProvenance":{"eventId":"GM-000004","revision":4,"actorId":"pes-v2-governance","runId":"VS-05","sourceIds":[],"recordedAt":"2026-09-01T00:00:03.000Z"}},
-    {"id":"OBJ-005-V2","logicalId":"OBJ-005","supersedesId":"OBJ-005","type":"Objective","status":"verified","title":"Integrate graph-aware PES gates","successCriteria":["Unsafe lifecycle transitions are blocked deterministically","Required approvals respect human authority boundaries","Evidence must be verified and linked to the slice objective","Protected paths and risk signals trigger delivery-graph requirements","Stale context and certification contradictions are blocked"],"memoryProvenance":{"eventId":"GM-000005","revision":5,"actorId":"pes-v2-governance","runId":"VS-06","sourceIds":[],"recordedAt":"2026-09-01T00:00:04.000Z"}},
-    {"id":"OBJ-006","type":"Objective","status":"active","title":"Implement exact-SHA certification bundles","successCriteria":["Certification candidate binds exact commit SHA","Candidate binds bounded context and allowed gate decision","Artifacts, evidence and evaluations are graph-linked to the objective","Human certification approval binds candidate hash and SHA","Stored bundles remain immutable and machine-verifiable after later graph revisions"],"memoryProvenance":{"eventId":"GM-000005","revision":5,"actorId":"pes-v2-governance","runId":"VS-06","sourceIds":[],"recordedAt":"2026-09-01T00:00:04.000Z"}},
-    {"id":"OBJ-006-V2","logicalId":"OBJ-006","supersedesId":"OBJ-006","type":"Objective","status":"verified","title":"Implement exact-SHA certification bundles","successCriteria":["Certification candidate binds exact commit SHA","Candidate binds bounded context and allowed gate decision","Artifacts, evidence and evaluations are graph-linked to the objective","Human certification approval binds candidate hash and SHA","Stored bundles remain immutable and machine-verifiable after later graph revisions"],"memoryProvenance":{"eventId":"GM-000006","revision":6,"actorId":"pes-v2-governance","runId":"VS-07","sourceIds":[],"recordedAt":"2026-09-01T00:00:05.000Z"}},
-    {"id":"OBJ-007","type":"Objective","status":"active","title":"Implement measured multi-agent execution","successCriteria":["Parallel work requires independent isolated tasks and a declared reducer","Concurrent write overlaps are serialized instead of guessed safe","Multi-agent benchmarks cannot trade quality or failure-rate regressions for speed","PES budgets can veto a benchmark-qualified plan","Multi-agent execution remains disabled by default until real workload evidence and explicit enablement"],"memoryProvenance":{"eventId":"GM-000006","revision":6,"actorId":"pes-v2-governance","runId":"VS-07","sourceIds":[],"recordedAt":"2026-09-01T00:00:05.000Z"}}
+    {
+      "id": "OBJ-001",
+      "type": "Objective",
+      "status": "verified",
+      "title": "Establish PES v2 foundation",
+      "successCriteria": [
+        "Repository validates",
+        "Graph invariants are enforced",
+        "Context retrieval is bounded",
+        "Ratchet decisions are deterministic"
+      ],
+      "memoryProvenance": {
+        "eventId": "GM-000001",
+        "revision": 1,
+        "actorId": "pes-v2-migration",
+        "runId": null,
+        "sourceIds": [],
+        "recordedAt": "2026-09-01T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "OBJ-002",
+      "type": "Objective",
+      "status": "verified",
+      "title": "Implement native Ratchet Execution",
+      "successCriteria": [
+        "Multiple attempts keep only measured improvement",
+        "Failed attempts remain durable lineage",
+        "Interrupted attempts recover to a known checkpoint",
+        "Evaluator contracts require evidence",
+        "Repository and worktree execution are reversible"
+      ],
+      "memoryProvenance": {
+        "eventId": "GM-000001",
+        "revision": 1,
+        "actorId": "pes-v2-migration",
+        "runId": null,
+        "sourceIds": [],
+        "recordedAt": "2026-09-01T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "OBJ-003",
+      "type": "Objective",
+      "status": "active",
+      "title": "Implement durable Graph Memory",
+      "successCriteria": [
+        "Graph writes are append-oriented and provenance-bearing",
+        "Conflicting id rewrites are rejected",
+        "Corrections and supersessions preserve old state",
+        "Cross-session queries explain accepted artifacts and failed attempts",
+        "Graph persistence detects stale revisions"
+      ],
+      "memoryProvenance": {
+        "eventId": "GM-000002",
+        "revision": 2,
+        "actorId": "pes-v2-governance",
+        "runId": "VS-03",
+        "sourceIds": [],
+        "recordedAt": "2026-09-01T00:00:01.000Z"
+      }
+    },
+    {
+      "id": "OBJ-003-V2",
+      "logicalId": "OBJ-003",
+      "supersedesId": "OBJ-003",
+      "type": "Objective",
+      "status": "verified",
+      "title": "Implement durable Graph Memory",
+      "successCriteria": [
+        "Graph writes are append-oriented and provenance-bearing",
+        "Conflicting id rewrites are rejected",
+        "Corrections and supersessions preserve old state",
+        "Cross-session queries explain accepted artifacts and failed attempts",
+        "Graph persistence detects stale revisions"
+      ],
+      "memoryProvenance": {
+        "eventId": "GM-000003",
+        "revision": 3,
+        "actorId": "pes-v2-governance",
+        "runId": "VS-04",
+        "sourceIds": [],
+        "recordedAt": "2026-09-01T00:00:02.000Z"
+      }
+    },
+    {
+      "id": "OBJ-004",
+      "type": "Objective",
+      "status": "active",
+      "title": "Implement ranked bounded Context Builder",
+      "successCriteria": [
+        "Relevant nodes are ranked before low-value history",
+        "Verified and recent state is preferred without hiding contradictions",
+        "Superseded seeds resolve to current state",
+        "Serialized context remains inside a declared token budget",
+        "Context hashing detects unchanged task context"
+      ],
+      "memoryProvenance": {
+        "eventId": "GM-000003",
+        "revision": 3,
+        "actorId": "pes-v2-governance",
+        "runId": "VS-04",
+        "sourceIds": [],
+        "recordedAt": "2026-09-01T00:00:02.000Z"
+      }
+    },
+    {
+      "id": "OBJ-004-V2",
+      "logicalId": "OBJ-004",
+      "supersedesId": "OBJ-004",
+      "type": "Objective",
+      "status": "verified",
+      "title": "Implement ranked bounded Context Builder",
+      "successCriteria": [
+        "Relevant nodes are ranked before low-value history",
+        "Verified and recent state is preferred without hiding contradictions",
+        "Superseded seeds resolve to current state",
+        "Serialized context remains inside a declared token budget",
+        "Context hashing detects unchanged task context"
+      ],
+      "memoryProvenance": {
+        "eventId": "GM-000004",
+        "revision": 4,
+        "actorId": "pes-v2-governance",
+        "runId": "VS-05",
+        "sourceIds": [],
+        "recordedAt": "2026-09-01T00:00:03.000Z"
+      }
+    },
+    {
+      "id": "OBJ-005",
+      "type": "Objective",
+      "status": "active",
+      "title": "Integrate graph-aware PES gates",
+      "successCriteria": [
+        "Unsafe lifecycle transitions are blocked deterministically",
+        "Required approvals respect human authority boundaries",
+        "Evidence must be verified and linked to the slice objective",
+        "Protected paths and risk signals trigger delivery-graph requirements",
+        "Stale context and certification contradictions are blocked"
+      ],
+      "memoryProvenance": {
+        "eventId": "GM-000004",
+        "revision": 4,
+        "actorId": "pes-v2-governance",
+        "runId": "VS-05",
+        "sourceIds": [],
+        "recordedAt": "2026-09-01T00:00:03.000Z"
+      }
+    },
+    {
+      "id": "OBJ-005-V2",
+      "logicalId": "OBJ-005",
+      "supersedesId": "OBJ-005",
+      "type": "Objective",
+      "status": "verified",
+      "title": "Integrate graph-aware PES gates",
+      "successCriteria": [
+        "Unsafe lifecycle transitions are blocked deterministically",
+        "Required approvals respect human authority boundaries",
+        "Evidence must be verified and linked to the slice objective",
+        "Protected paths and risk signals trigger delivery-graph requirements",
+        "Stale context and certification contradictions are blocked"
+      ],
+      "memoryProvenance": {
+        "eventId": "GM-000005",
+        "revision": 5,
+        "actorId": "pes-v2-governance",
+        "runId": "VS-06",
+        "sourceIds": [],
+        "recordedAt": "2026-09-01T00:00:04.000Z"
+      }
+    },
+    {
+      "id": "OBJ-006",
+      "type": "Objective",
+      "status": "active",
+      "title": "Implement exact-SHA certification bundles",
+      "successCriteria": [
+        "Certification candidate binds exact commit SHA",
+        "Candidate binds bounded context and allowed gate decision",
+        "Artifacts, evidence and evaluations are graph-linked to the objective",
+        "Human certification approval binds candidate hash and SHA",
+        "Stored bundles remain immutable and machine-verifiable after later graph revisions"
+      ],
+      "memoryProvenance": {
+        "eventId": "GM-000005",
+        "revision": 5,
+        "actorId": "pes-v2-governance",
+        "runId": "VS-06",
+        "sourceIds": [],
+        "recordedAt": "2026-09-01T00:00:04.000Z"
+      }
+    },
+    {
+      "id": "OBJ-006-V2",
+      "logicalId": "OBJ-006",
+      "supersedesId": "OBJ-006",
+      "type": "Objective",
+      "status": "verified",
+      "title": "Implement exact-SHA certification bundles",
+      "successCriteria": [
+        "Certification candidate binds exact commit SHA",
+        "Candidate binds bounded context and allowed gate decision",
+        "Artifacts, evidence and evaluations are graph-linked to the objective",
+        "Human certification approval binds candidate hash and SHA",
+        "Stored bundles remain immutable and machine-verifiable after later graph revisions"
+      ],
+      "memoryProvenance": {
+        "eventId": "GM-000006",
+        "revision": 6,
+        "actorId": "pes-v2-governance",
+        "runId": "VS-07",
+        "sourceIds": [],
+        "recordedAt": "2026-09-01T00:00:05.000Z"
+      }
+    },
+    {
+      "id": "OBJ-007",
+      "type": "Objective",
+      "status": "active",
+      "title": "Implement measured multi-agent execution",
+      "successCriteria": [
+        "Parallel work requires independent isolated tasks and a declared reducer",
+        "Concurrent write overlaps are serialized instead of guessed safe",
+        "Multi-agent benchmarks cannot trade quality or failure-rate regressions for speed",
+        "PES budgets can veto a benchmark-qualified plan",
+        "Multi-agent execution remains disabled by default until real workload evidence and explicit enablement"
+      ],
+      "memoryProvenance": {
+        "eventId": "GM-000006",
+        "revision": 6,
+        "actorId": "pes-v2-governance",
+        "runId": "VS-07",
+        "sourceIds": [],
+        "recordedAt": "2026-09-01T00:00:05.000Z"
+      }
+    },
+    {
+      "id": "OBJ-008",
+      "type": "Objective",
+      "status": "active",
+      "title": "Restore truthful live editorial Brand DNA",
+      "successCriteria": [
+        "Editorial public evidence overrides conflicting model category claims for core discovery context.",
+        "A model-conflict regression test passes.",
+        "The production API target is verified before re-testing.",
+        "Hunter remains blocked until truthful context is owner-confirmed."
+      ],
+      "memoryProvenance": {
+        "eventId": "GM-000007",
+        "revision": 7,
+        "actorId": "pes-v2-remediation",
+        "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+        "sourceIds": [],
+        "recordedAt": "2026-09-19T18:51:46.203Z"
+      }
+    },
+    {
+      "id": "TASK-008-01",
+      "type": "Task",
+      "status": "active",
+      "objectiveId": "OBJ-008",
+      "title": "Trace production onboarding runtime and validate the source-grounded editorial guard",
+      "memoryProvenance": {
+        "eventId": "GM-000007",
+        "revision": 7,
+        "actorId": "pes-v2-remediation",
+        "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+        "sourceIds": [],
+        "recordedAt": "2026-09-19T18:51:46.203Z"
+      }
+    },
+    {
+      "id": "DEC-008-01",
+      "type": "Decision",
+      "status": "accepted",
+      "objectiveId": "OBJ-008",
+      "title": "Treat public editorial source evidence as authoritative for core Brand DNA over model output",
+      "memoryProvenance": {
+        "eventId": "GM-000007",
+        "revision": 7,
+        "actorId": "pes-v2-remediation",
+        "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+        "sourceIds": [],
+        "recordedAt": "2026-09-19T18:51:46.203Z"
+      }
+    },
+    {
+      "id": "RUN-008-01",
+      "type": "AgentRun",
+      "status": "verified",
+      "objectiveId": "OBJ-008",
+      "title": "Governed Brand Brain remediation validation",
+      "memoryProvenance": {
+        "eventId": "GM-000010",
+        "revision": 10,
+        "actorId": "pes-v2-remediation",
+        "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+        "sourceIds": [],
+        "recordedAt": "2026-09-19T20:18:30.000Z"
+      }
+    },
+    {
+      "id": "ART-008-01",
+      "type": "Artifact",
+      "status": "verified",
+      "title": "Brand Brain runtime trace and editorial-context guard",
+      "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+      "version": "708d367f7b627035105e1857ae10094eac9a2eb8",
+      "memoryProvenance": {
+        "eventId": "GM-000010",
+        "revision": 10,
+        "actorId": "pes-v2-remediation",
+        "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+        "sourceIds": [],
+        "recordedAt": "2026-09-19T20:18:30.000Z"
+      }
+    },
+    {
+      "id": "EVAL-008-01",
+      "type": "Evaluation",
+      "status": "verified",
+      "title": "Full deterministic preflight passed",
+      "rubricId": "runtime-preflight-pass",
+      "memoryProvenance": {
+        "eventId": "GM-000010",
+        "revision": 10,
+        "actorId": "pes-v2-remediation",
+        "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+        "sourceIds": [],
+        "recordedAt": "2026-09-19T20:18:30.000Z"
+      }
+    },
+    {
+      "id": "EVID-008-01",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "GitHub PES v2 CI passed for PR head 708d367f7b627035105e1857ae10094eac9a2eb8",
+      "memoryProvenance": {
+        "eventId": "GM-000010",
+        "revision": 10,
+        "actorId": "pes-v2-remediation",
+        "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+        "sourceIds": [],
+        "recordedAt": "2026-09-19T20:18:30.000Z"
+      }
+    },
+    {
+      "id": "EVID-008-02",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "Local full preflight passed: governance, runtime tests, typechecks and production builds",
+      "memoryProvenance": {
+        "eventId": "GM-000010",
+        "revision": 10,
+        "actorId": "pes-v2-remediation",
+        "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+        "sourceIds": [],
+        "recordedAt": "2026-09-19T20:18:30.000Z"
+      }
+    }
   ],
   "edges": [
-    {"id":"EDGE-OBJ-002-OBJ-001","type":"DEPENDS_ON","from":"OBJ-002","to":"OBJ-001","memoryProvenance":{"eventId":"GM-000001","revision":1,"actorId":"pes-v2-migration","runId":null,"sourceIds":[],"recordedAt":"2026-09-01T00:00:00.000Z"}},
-    {"id":"EDGE-OBJ-003-OBJ-002","type":"DEPENDS_ON","from":"OBJ-003","to":"OBJ-002","memoryProvenance":{"eventId":"GM-000002","revision":2,"actorId":"pes-v2-governance","runId":"VS-03","sourceIds":[],"recordedAt":"2026-09-01T00:00:01.000Z"}},
-    {"id":"EDGE-SUPERSEDES-OBJ-003-V2-OBJ-003","type":"SUPERSEDES","from":"OBJ-003-V2","to":"OBJ-003","memoryProvenance":{"eventId":"GM-000003","revision":3,"actorId":"pes-v2-governance","runId":"VS-04","sourceIds":[],"recordedAt":"2026-09-01T00:00:02.000Z"}},
-    {"id":"EDGE-OBJ-004-OBJ-003-V2","type":"DEPENDS_ON","from":"OBJ-004","to":"OBJ-003-V2","memoryProvenance":{"eventId":"GM-000003","revision":3,"actorId":"pes-v2-governance","runId":"VS-04","sourceIds":[],"recordedAt":"2026-09-01T00:00:02.000Z"}},
-    {"id":"EDGE-SUPERSEDES-OBJ-004-V2-OBJ-004","type":"SUPERSEDES","from":"OBJ-004-V2","to":"OBJ-004","memoryProvenance":{"eventId":"GM-000004","revision":4,"actorId":"pes-v2-governance","runId":"VS-05","sourceIds":[],"recordedAt":"2026-09-01T00:00:03.000Z"}},
-    {"id":"EDGE-OBJ-005-OBJ-004-V2","type":"DEPENDS_ON","from":"OBJ-005","to":"OBJ-004-V2","memoryProvenance":{"eventId":"GM-000004","revision":4,"actorId":"pes-v2-governance","runId":"VS-05","sourceIds":[],"recordedAt":"2026-09-01T00:00:03.000Z"}},
-    {"id":"EDGE-SUPERSEDES-OBJ-005-V2-OBJ-005","type":"SUPERSEDES","from":"OBJ-005-V2","to":"OBJ-005","memoryProvenance":{"eventId":"GM-000005","revision":5,"actorId":"pes-v2-governance","runId":"VS-06","sourceIds":[],"recordedAt":"2026-09-01T00:00:04.000Z"}},
-    {"id":"EDGE-OBJ-006-OBJ-005-V2","type":"DEPENDS_ON","from":"OBJ-006","to":"OBJ-005-V2","memoryProvenance":{"eventId":"GM-000005","revision":5,"actorId":"pes-v2-governance","runId":"VS-06","sourceIds":[],"recordedAt":"2026-09-01T00:00:04.000Z"}},
-    {"id":"EDGE-SUPERSEDES-OBJ-006-V2-OBJ-006","type":"SUPERSEDES","from":"OBJ-006-V2","to":"OBJ-006","memoryProvenance":{"eventId":"GM-000006","revision":6,"actorId":"pes-v2-governance","runId":"VS-07","sourceIds":[],"recordedAt":"2026-09-01T00:00:05.000Z"}},
-    {"id":"EDGE-OBJ-007-OBJ-006-V2","type":"DEPENDS_ON","from":"OBJ-007","to":"OBJ-006-V2","memoryProvenance":{"eventId":"GM-000006","revision":6,"actorId":"pes-v2-governance","runId":"VS-07","sourceIds":[],"recordedAt":"2026-09-01T00:00:05.000Z"}}
+    {
+      "id": "EDGE-OBJ-002-OBJ-001",
+      "type": "DEPENDS_ON",
+      "from": "OBJ-002",
+      "to": "OBJ-001",
+      "memoryProvenance": {
+        "eventId": "GM-000001",
+        "revision": 1,
+        "actorId": "pes-v2-migration",
+        "runId": null,
+        "sourceIds": [],
+        "recordedAt": "2026-09-01T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "EDGE-OBJ-003-OBJ-002",
+      "type": "DEPENDS_ON",
+      "from": "OBJ-003",
+      "to": "OBJ-002",
+      "memoryProvenance": {
+        "eventId": "GM-000002",
+        "revision": 2,
+        "actorId": "pes-v2-governance",
+        "runId": "VS-03",
+        "sourceIds": [],
+        "recordedAt": "2026-09-01T00:00:01.000Z"
+      }
+    },
+    {
+      "id": "EDGE-SUPERSEDES-OBJ-003-V2-OBJ-003",
+      "type": "SUPERSEDES",
+      "from": "OBJ-003-V2",
+      "to": "OBJ-003",
+      "memoryProvenance": {
+        "eventId": "GM-000003",
+        "revision": 3,
+        "actorId": "pes-v2-governance",
+        "runId": "VS-04",
+        "sourceIds": [],
+        "recordedAt": "2026-09-01T00:00:02.000Z"
+      }
+    },
+    {
+      "id": "EDGE-OBJ-004-OBJ-003-V2",
+      "type": "DEPENDS_ON",
+      "from": "OBJ-004",
+      "to": "OBJ-003-V2",
+      "memoryProvenance": {
+        "eventId": "GM-000003",
+        "revision": 3,
+        "actorId": "pes-v2-governance",
+        "runId": "VS-04",
+        "sourceIds": [],
+        "recordedAt": "2026-09-01T00:00:02.000Z"
+      }
+    },
+    {
+      "id": "EDGE-SUPERSEDES-OBJ-004-V2-OBJ-004",
+      "type": "SUPERSEDES",
+      "from": "OBJ-004-V2",
+      "to": "OBJ-004",
+      "memoryProvenance": {
+        "eventId": "GM-000004",
+        "revision": 4,
+        "actorId": "pes-v2-governance",
+        "runId": "VS-05",
+        "sourceIds": [],
+        "recordedAt": "2026-09-01T00:00:03.000Z"
+      }
+    },
+    {
+      "id": "EDGE-OBJ-005-OBJ-004-V2",
+      "type": "DEPENDS_ON",
+      "from": "OBJ-005",
+      "to": "OBJ-004-V2",
+      "memoryProvenance": {
+        "eventId": "GM-000004",
+        "revision": 4,
+        "actorId": "pes-v2-governance",
+        "runId": "VS-05",
+        "sourceIds": [],
+        "recordedAt": "2026-09-01T00:00:03.000Z"
+      }
+    },
+    {
+      "id": "EDGE-SUPERSEDES-OBJ-005-V2-OBJ-005",
+      "type": "SUPERSEDES",
+      "from": "OBJ-005-V2",
+      "to": "OBJ-005",
+      "memoryProvenance": {
+        "eventId": "GM-000005",
+        "revision": 5,
+        "actorId": "pes-v2-governance",
+        "runId": "VS-06",
+        "sourceIds": [],
+        "recordedAt": "2026-09-01T00:00:04.000Z"
+      }
+    },
+    {
+      "id": "EDGE-OBJ-006-OBJ-005-V2",
+      "type": "DEPENDS_ON",
+      "from": "OBJ-006",
+      "to": "OBJ-005-V2",
+      "memoryProvenance": {
+        "eventId": "GM-000005",
+        "revision": 5,
+        "actorId": "pes-v2-governance",
+        "runId": "VS-06",
+        "sourceIds": [],
+        "recordedAt": "2026-09-01T00:00:04.000Z"
+      }
+    },
+    {
+      "id": "EDGE-SUPERSEDES-OBJ-006-V2-OBJ-006",
+      "type": "SUPERSEDES",
+      "from": "OBJ-006-V2",
+      "to": "OBJ-006",
+      "memoryProvenance": {
+        "eventId": "GM-000006",
+        "revision": 6,
+        "actorId": "pes-v2-governance",
+        "runId": "VS-07",
+        "sourceIds": [],
+        "recordedAt": "2026-09-01T00:00:05.000Z"
+      }
+    },
+    {
+      "id": "EDGE-OBJ-007-OBJ-006-V2",
+      "type": "DEPENDS_ON",
+      "from": "OBJ-007",
+      "to": "OBJ-006-V2",
+      "memoryProvenance": {
+        "eventId": "GM-000006",
+        "revision": 6,
+        "actorId": "pes-v2-governance",
+        "runId": "VS-07",
+        "sourceIds": [],
+        "recordedAt": "2026-09-01T00:00:05.000Z"
+      }
+    },
+    {
+      "id": "EDGE-OBJ-008-OBJ-007",
+      "type": "DEPENDS_ON",
+      "from": "OBJ-008",
+      "to": "OBJ-007",
+      "memoryProvenance": {
+        "eventId": "GM-000007",
+        "revision": 7,
+        "actorId": "pes-v2-remediation",
+        "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+        "sourceIds": [],
+        "recordedAt": "2026-09-19T18:51:46.203Z"
+      }
+    },
+    {
+      "id": "EDGE-OBJ-008-TASK-008-01",
+      "type": "IMPLEMENTED_BY",
+      "from": "OBJ-008",
+      "to": "TASK-008-01",
+      "memoryProvenance": {
+        "eventId": "GM-000008",
+        "revision": 8,
+        "actorId": "pes-v2-remediation",
+        "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+        "sourceIds": [],
+        "recordedAt": "2026-09-19T18:52:44.964Z"
+      }
+    },
+    {
+      "id": "EDGE-DEC-008-01-OBJ-008-ABOUT",
+      "type": "ABOUT",
+      "from": "DEC-008-01",
+      "to": "OBJ-008",
+      "memoryProvenance": {
+        "eventId": "GM-000008",
+        "revision": 8,
+        "actorId": "pes-v2-remediation",
+        "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+        "sourceIds": [],
+        "recordedAt": "2026-09-19T18:52:44.964Z"
+      }
+    },
+    {
+      "id": "EDGE-TASK-008-01-PRODUCED-ART-008-01",
+      "type": "PRODUCED",
+      "from": "TASK-008-01",
+      "to": "ART-008-01",
+      "memoryProvenance": {
+        "eventId": "GM-000010",
+        "revision": 10,
+        "actorId": "pes-v2-remediation",
+        "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+        "sourceIds": [],
+        "recordedAt": "2026-09-19T20:18:30.000Z"
+      }
+    },
+    {
+      "id": "EDGE-RUN-008-01-PRODUCED-ART-008-01",
+      "type": "PRODUCED",
+      "from": "RUN-008-01",
+      "to": "ART-008-01",
+      "memoryProvenance": {
+        "eventId": "GM-000010",
+        "revision": 10,
+        "actorId": "pes-v2-remediation",
+        "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+        "sourceIds": [],
+        "recordedAt": "2026-09-19T20:18:30.000Z"
+      }
+    },
+    {
+      "id": "EDGE-EVAL-008-01-EVALUATES-ART-008-01",
+      "type": "EVALUATES",
+      "from": "EVAL-008-01",
+      "to": "ART-008-01",
+      "memoryProvenance": {
+        "eventId": "GM-000010",
+        "revision": 10,
+        "actorId": "pes-v2-remediation",
+        "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+        "sourceIds": [],
+        "recordedAt": "2026-09-19T20:18:30.000Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-008-01-SUPPORTS-ART-008-01",
+      "type": "SUPPORTS",
+      "from": "EVID-008-01",
+      "to": "ART-008-01",
+      "provenance": { "kind": "github-actions", "runId": "35466890477" },
+      "memoryProvenance": {
+        "eventId": "GM-000010",
+        "revision": 10,
+        "actorId": "pes-v2-remediation",
+        "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+        "sourceIds": [],
+        "recordedAt": "2026-09-19T20:18:30.000Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-008-02-SUPPORTS-ART-008-01",
+      "type": "SUPPORTS",
+      "from": "EVID-008-02",
+      "to": "ART-008-01",
+      "provenance": { "kind": "deterministic-check", "command": "npm run preflight" },
+      "memoryProvenance": {
+        "eventId": "GM-000010",
+        "revision": 10,
+        "actorId": "pes-v2-remediation",
+        "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+        "sourceIds": [],
+        "recordedAt": "2026-09-19T20:18:30.000Z"
+      }
+    }
   ],
   "events": [
-    {"id":"GM-000001","revision":1,"operation":"migration-import","actorId":"pes-v2-migration","runId":null,"reason":"Import pre-VS-03 graph state without changing semantic content","sourceIds":[],"addedNodeIds":["OBJ-001","OBJ-002"],"addedEdgeIds":["EDGE-OBJ-002-OBJ-001"],"recordedAt":"2026-09-01T00:00:00.000Z"},
-    {"id":"GM-000002","revision":2,"operation":"append","actorId":"pes-v2-governance","runId":"VS-03","reason":"Activate VS-03 Graph Memory objective","sourceIds":[],"addedNodeIds":["OBJ-003"],"addedEdgeIds":["EDGE-OBJ-003-OBJ-002"],"recordedAt":"2026-09-01T00:00:01.000Z"},
-    {"id":"GM-000003","revision":3,"operation":"supersede-and-append","actorId":"pes-v2-governance","runId":"VS-04","reason":"Record VS-03 completion immutably and activate VS-04 Context Builder","sourceIds":[],"addedNodeIds":["OBJ-003-V2","OBJ-004"],"addedEdgeIds":["EDGE-SUPERSEDES-OBJ-003-V2-OBJ-003","EDGE-OBJ-004-OBJ-003-V2"],"recordedAt":"2026-09-01T00:00:02.000Z"},
-    {"id":"GM-000004","revision":4,"operation":"supersede-and-append","actorId":"pes-v2-governance","runId":"VS-05","reason":"Record VS-04 completion immutably and activate VS-05 PES Gate Integration","sourceIds":[],"addedNodeIds":["OBJ-004-V2","OBJ-005"],"addedEdgeIds":["EDGE-SUPERSEDES-OBJ-004-V2-OBJ-004","EDGE-OBJ-005-OBJ-004-V2"],"recordedAt":"2026-09-01T00:00:03.000Z"},
-    {"id":"GM-000005","revision":5,"operation":"supersede-and-append","actorId":"pes-v2-governance","runId":"VS-06","reason":"Record VS-05 completion immutably and activate VS-06 exact-SHA Certification","sourceIds":[],"addedNodeIds":["OBJ-005-V2","OBJ-006"],"addedEdgeIds":["EDGE-SUPERSEDES-OBJ-005-V2-OBJ-005","EDGE-OBJ-006-OBJ-005-V2"],"recordedAt":"2026-09-01T00:00:04.000Z"},
-    {"id":"GM-000006","revision":6,"operation":"supersede-and-append","actorId":"pes-v2-governance","runId":"VS-07","reason":"Record VS-06 completion immutably and activate VS-07 measured multi-agent execution","sourceIds":[],"addedNodeIds":["OBJ-006-V2","OBJ-007"],"addedEdgeIds":["EDGE-SUPERSEDES-OBJ-006-V2-OBJ-006","EDGE-OBJ-007-OBJ-006-V2"],"recordedAt":"2026-09-01T00:00:05.000Z"}
+    {
+      "id": "GM-000001",
+      "revision": 1,
+      "operation": "migration-import",
+      "actorId": "pes-v2-migration",
+      "runId": null,
+      "reason": "Import pre-VS-03 graph state without changing semantic content",
+      "sourceIds": [],
+      "addedNodeIds": [
+        "OBJ-001",
+        "OBJ-002"
+      ],
+      "addedEdgeIds": [
+        "EDGE-OBJ-002-OBJ-001"
+      ],
+      "recordedAt": "2026-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "GM-000002",
+      "revision": 2,
+      "operation": "append",
+      "actorId": "pes-v2-governance",
+      "runId": "VS-03",
+      "reason": "Activate VS-03 Graph Memory objective",
+      "sourceIds": [],
+      "addedNodeIds": [
+        "OBJ-003"
+      ],
+      "addedEdgeIds": [
+        "EDGE-OBJ-003-OBJ-002"
+      ],
+      "recordedAt": "2026-09-01T00:00:01.000Z"
+    },
+    {
+      "id": "GM-000003",
+      "revision": 3,
+      "operation": "supersede-and-append",
+      "actorId": "pes-v2-governance",
+      "runId": "VS-04",
+      "reason": "Record VS-03 completion immutably and activate VS-04 Context Builder",
+      "sourceIds": [],
+      "addedNodeIds": [
+        "OBJ-003-V2",
+        "OBJ-004"
+      ],
+      "addedEdgeIds": [
+        "EDGE-SUPERSEDES-OBJ-003-V2-OBJ-003",
+        "EDGE-OBJ-004-OBJ-003-V2"
+      ],
+      "recordedAt": "2026-09-01T00:00:02.000Z"
+    },
+    {
+      "id": "GM-000004",
+      "revision": 4,
+      "operation": "supersede-and-append",
+      "actorId": "pes-v2-governance",
+      "runId": "VS-05",
+      "reason": "Record VS-04 completion immutably and activate VS-05 PES Gate Integration",
+      "sourceIds": [],
+      "addedNodeIds": [
+        "OBJ-004-V2",
+        "OBJ-005"
+      ],
+      "addedEdgeIds": [
+        "EDGE-SUPERSEDES-OBJ-004-V2-OBJ-004",
+        "EDGE-OBJ-005-OBJ-004-V2"
+      ],
+      "recordedAt": "2026-09-01T00:00:03.000Z"
+    },
+    {
+      "id": "GM-000005",
+      "revision": 5,
+      "operation": "supersede-and-append",
+      "actorId": "pes-v2-governance",
+      "runId": "VS-06",
+      "reason": "Record VS-05 completion immutably and activate VS-06 exact-SHA Certification",
+      "sourceIds": [],
+      "addedNodeIds": [
+        "OBJ-005-V2",
+        "OBJ-006"
+      ],
+      "addedEdgeIds": [
+        "EDGE-SUPERSEDES-OBJ-005-V2-OBJ-005",
+        "EDGE-OBJ-006-OBJ-005-V2"
+      ],
+      "recordedAt": "2026-09-01T00:00:04.000Z"
+    },
+    {
+      "id": "GM-000006",
+      "revision": 6,
+      "operation": "supersede-and-append",
+      "actorId": "pes-v2-governance",
+      "runId": "VS-07",
+      "reason": "Record VS-06 completion immutably and activate VS-07 measured multi-agent execution",
+      "sourceIds": [],
+      "addedNodeIds": [
+        "OBJ-006-V2",
+        "OBJ-007"
+      ],
+      "addedEdgeIds": [
+        "EDGE-SUPERSEDES-OBJ-006-V2-OBJ-006",
+        "EDGE-OBJ-007-OBJ-006-V2"
+      ],
+      "recordedAt": "2026-09-01T00:00:05.000Z"
+    },
+    {
+      "id": "GM-000007",
+      "revision": 7,
+      "operation": "append",
+      "actorId": "pes-v2-remediation",
+      "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+      "reason": "Open governed remediation objective after failed live editorial Brand DNA validation",
+      "sourceIds": [],
+      "addedNodeIds": [
+        "OBJ-008",
+        "TASK-008-01",
+        "DEC-008-01"
+      ],
+      "addedEdgeIds": [
+        "EDGE-OBJ-008-OBJ-007",
+        "EDGE-OBJ-008-TASK-008-01",
+        "EDGE-DEC-008-01-OBJ-008-ABOUT"
+      ],
+      "recordedAt": "2026-09-19T18:51:46.203Z"
+    },
+    {
+      "id": "GM-000008",
+      "revision": 8,
+      "operation": "correct-and-append",
+      "actorId": "pes-v2-remediation",
+      "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+      "reason": "Correct VS-08 graph relationship types after deterministic graph validation",
+      "sourceIds": [],
+      "addedNodeIds": [],
+      "addedEdgeIds": [],
+      "correctedEdgeIds": [
+        "EDGE-TASK-008-01-OBJ-008",
+        "EDGE-DEC-008-01-OBJ-008"
+      ],
+      "recordedAt": "2026-09-19T18:52:44.964Z"
+    },
+    {
+      "id": "GM-000009",
+      "revision": 9,
+      "operation": "repair-event-reference",
+      "actorId": "pes-v2-remediation",
+      "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+      "reason": "Repair invalid initial VS-08 event references so graph history remains machine-valid",
+      "sourceIds": [],
+      "addedNodeIds": [],
+      "addedEdgeIds": [],
+      "correctedEventIds": [
+        "GM-000007"
+      ],
+      "recordedAt": "2026-09-19T18:53:15.487Z"
+    },
+    {
+      "id": "GM-000010",
+      "revision": 10,
+      "operation": "append",
+      "actorId": "pes-v2-remediation",
+      "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+      "reason": "Record CI and deterministic preflight evidence for exact-SHA certification candidate",
+      "sourceIds": [],
+      "addedNodeIds": [
+        "RUN-008-01",
+        "ART-008-01",
+        "EVAL-008-01",
+        "EVID-008-01",
+        "EVID-008-02"
+      ],
+      "addedEdgeIds": [
+        "EDGE-TASK-008-01-PRODUCED-ART-008-01",
+        "EDGE-RUN-008-01-PRODUCED-ART-008-01",
+        "EDGE-EVAL-008-01-EVALUATES-ART-008-01",
+        "EDGE-EVID-008-01-SUPPORTS-ART-008-01",
+        "EDGE-EVID-008-02-SUPPORTS-ART-008-01"
+      ],
+      "recordedAt": "2026-09-19T20:18:30.000Z"
+    }
   ]
 }

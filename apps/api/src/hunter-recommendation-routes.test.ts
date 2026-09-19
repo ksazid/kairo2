@@ -21,6 +21,7 @@ const emptyResult: HunterRunResult = {
   evidenceCount: 0,
   candidateCount: 0,
   opportunityCount: 0,
+  sourcesScanned: [],
 };
 
 async function setupBrand(store: MemoryKairoRepository, subject = "alice") {
@@ -241,7 +242,7 @@ describe("VS-97 Hunter recommendations API", () => {
     const second = request();
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(runs).toBe(1);
-    release({ evidenceCount: 3, candidateCount: 2, opportunityCount: 1 });
+    release({ evidenceCount: 3, candidateCount: 2, opportunityCount: 1, sourcesScanned: [] });
 
     const responses = await Promise.all([first, second]);
     expect(responses.map((response) => response.statusCode)).toEqual([200, 200]);

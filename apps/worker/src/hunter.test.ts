@@ -119,7 +119,7 @@ describe("Hunter orchestration", () => {
     const hunter = new HunterOrchestrator(tools, runtime, sink as never);
     const result = await hunter.runForAuthorizedBrand({ accountId: "account-1", brand, query: "AI agents", intelligenceVersion: 4 });
 
-    expect(result).toEqual({ evidenceCount: 1, candidateCount: 1, opportunityCount: 1 });
+    expect(result).toEqual({ evidenceCount: 1, candidateCount: 1, opportunityCount: 1, sourcesScanned: ["agent-reach"] });
     const searches = tools.requests.filter((request) => request.capability === "public-content-search");
     expect(searches).toHaveLength(1);
     expect(searches[0]?.input.query).toBe("AI agents");
@@ -222,7 +222,13 @@ describe("Hunter orchestration", () => {
       maxEvidence: 8,
     });
 
-    expect(result).toEqual({ evidenceCount: 1, candidateCount: 0, opportunityCount: 0, degradedSources: ["hacker-news"] });
+    expect(result).toEqual({
+      evidenceCount: 1,
+      candidateCount: 0,
+      opportunityCount: 0,
+      sourcesScanned: ["agent-reach", "github", "hacker-news", "rss", "youtube"],
+      degradedSources: ["hacker-news"],
+    });
     expect(tools.requests.filter((request) => request.input.source === "hacker-news")).toHaveLength(1);
     expect(tools.requests.some((request) => request.input.source === "rss")).toBe(true);
     expect(runtime.calls).toBe(1);
@@ -267,7 +273,7 @@ describe("Hunter orchestration", () => {
 
     const result = await hunter.runForAuthorizedBrand({ accountId: "account-1", brand, query: "no evidence" });
 
-    expect(result).toEqual({ evidenceCount: 0, candidateCount: 0, opportunityCount: 0 });
+    expect(result).toEqual({ evidenceCount: 0, candidateCount: 0, opportunityCount: 0, sourcesScanned: ["agent-reach"] });
     expect(runtime.lastRequest).toBeNull();
     expect(sink.records).toHaveLength(0);
   });
@@ -276,7 +282,7 @@ describe("Hunter orchestration", () => {
     const sink = new FakeSink();
     const hunter = new HunterOrchestrator(new FakeTools(), new FakeRuntime({ candidates: [] }), sink as never);
     const result = await hunter.runForAuthorizedBrand({ accountId: "account-1", brand, query: "AI agents" });
-    expect(result).toEqual({ evidenceCount: 1, candidateCount: 0, opportunityCount: 0 });
+    expect(result).toEqual({ evidenceCount: 1, candidateCount: 0, opportunityCount: 0, sourcesScanned: ["agent-reach"] });
     expect(sink.records).toHaveLength(0);
   });
 

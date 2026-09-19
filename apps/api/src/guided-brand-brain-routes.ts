@@ -28,6 +28,8 @@ export function registerGuidedBrandBrainRoutes(app: FastifyInstance, options: {
     async (request, reply) => {
       const account = await authenticate(request, reply, core, options.identityVerifier);
       if (!account) return;
+      // Safe deployment identity only: never expose the configured API URL or secrets.
+      reply.header("x-kairo-runtime", process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 12) ?? "local");
       return service.build(account.id, request.params.brandId, request.body ?? ({} as BuildBrandBrainRequest));
     },
   );
