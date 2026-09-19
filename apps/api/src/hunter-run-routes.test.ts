@@ -87,7 +87,7 @@ describe("Hunter run records", () => {
     const { brand } = await readyBrand(store);
     const runs = new MemoryRuns();
     const captured: HunterRunInput[] = [];
-    const runner: HunterRecommendationRunner = { async runForAuthorizedBrand(input) { captured.push(input); return { evidenceCount: 9, candidateCount: 4, opportunityCount: 2, degradedSources: ["youtube"] }; } };
+    const runner: HunterRecommendationRunner = { async runForAuthorizedBrand(input) { captured.push(input); return { evidenceCount: 9, candidateCount: 4, opportunityCount: 2, sourcesScanned: [], degradedSources: ["youtube"] }; } };
     const app = buildApp({ store, identityVerifier: new Verifier() });
     registerHunterRecommendationRoutes(app, { store, identityVerifier: new Verifier(), runner, hunterRunStore: runs });
 
@@ -112,7 +112,7 @@ describe("Hunter run records", () => {
     let release!: () => void;
     const gate = new Promise<void>((resolve) => { release = resolve; });
     let calls = 0;
-    const runner: HunterRecommendationRunner = { async runForAuthorizedBrand() { calls += 1; await gate; return { evidenceCount: 1, candidateCount: 1, opportunityCount: 1 }; } };
+    const runner: HunterRecommendationRunner = { async runForAuthorizedBrand() { calls += 1; await gate; return { evidenceCount: 1, candidateCount: 1, opportunityCount: 1, sourcesScanned: [] }; } };
     const app = buildApp({ store, identityVerifier: new Verifier() });
     registerHunterRecommendationRoutes(app, { store, identityVerifier: new Verifier(), runner, hunterRunStore: runs });
 
