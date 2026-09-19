@@ -140,7 +140,12 @@ describe("Hunter Chunk 2.1 multi-brand POC", () => {
         refreshSeed: "2026-09-01T11:30:00.000Z",
       });
 
-      expect(result).toEqual({ evidenceCount: 0, candidateCount: 0, opportunityCount: 0 });
+      expect(result).toEqual({
+        evidenceCount: 0,
+        candidateCount: 0,
+        opportunityCount: 0,
+        sourcesScanned: [...testCase.expectedSources].sort(),
+      });
       expect(runtime.calls).toBe(0);
 
       const searches = tools.requests.filter((request) => request.capability === "public-content-search");
