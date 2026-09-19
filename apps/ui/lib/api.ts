@@ -202,15 +202,29 @@ export async function createBrand(input: { brandName: string; publicSourceUrl: s
   const token = await accessToken();
   if (!token) throw new Error("Sign in to add a Brand.");
   const directory = await loadAccessibleBrandDirectory({ token, apiBase: apiBase() });
+  if (!directory.authenticated) throw new Error("Sign in to add a Brand.");
+
   const workspace = directory.workspaces[0];
-  if (!directory.authenticated || !workspace) throw new Error("Choose a workspace before adding a Brand.");
-  const brand = await bodyOrError<CreatedBrand>(
-    await api(token, `/api/v1/workspaces/${encodeURIComponent(workspace.id)}/brands`, {
-      method: "POST",
-      body: JSON.stringify(input),
-    }),
-    "Kairo could not create this Brand.",
-  );
+  const brand = workspace
+    ? await bodyOrError<CreatedBrand>(
+        await api(token, `/api/v1/workspaces/${encodeURIComponent(workspace.id)}/brands`, {
+          method: "POST",
+          body: JSON.stringify(input),
+        }),
+        "Kairo could not create this Brand.",
+      )
+    : (await bodyOrError<{ workspace: { id: string }; brand: CreatedBrand }>(
+        await api(token, "/api/v1/workspaces", {
+          method: "POST",
+          body: JSON.stringify({
+            workspaceName: input.brandName,
+            brandName: input.brandName,
+            publicSourceUrl: input.publicSourceUrl,
+          }),
+        }),
+        "Kairo could not create your first workspace and Brand.",
+      )).brand;
+
   await bodyOrError(
     await api(token, `/api/v1/brands/${encodeURIComponent(brand.id)}/brain/bootstrap`, {
       method: "POST",
