@@ -61,6 +61,8 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: "learning", label: "Learning" },
 ];
 
+const NO_EXCLUDED_TOPICS = "No excluded topics";
+
 export function BrandBrainClient({ brandId, activation }: { brandId?: string; activation?: BrandBrainRuntimeData }) {
   const [activeTab, setActiveTab] = useState<TabId>("overview");
   const [runtime, setRuntime] = useState<BrandBrainRuntimeData | undefined>(activation);
@@ -112,6 +114,38 @@ export function BrandBrainClient({ brandId, activation }: { brandId?: string; ac
       setNotice(`${field.label} confirmed. Brand Intelligence and the Discovery Plan were recalculated.`);
     } catch (error) {
       setNotice(error instanceof Error ? error.message : "Kairo could not save this field.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function confirmNoBoundaries(field: BrandBrainField) {
+    if (!brandId || field.key !== "boundaries") {
+      setNotice(!brandId ? "Choose a Brand before confirming Brand boundaries." : "Only Brand boundaries can be confirmed as none.");
+      return;
+    }
+    setSaving(true);
+    try {
+      const response = await fetch("/api/brain", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          action: "edit-field",
+          brandId,
+          fieldKey: "boundaries.excluded-topics",
+          section: "boundaries",
+          value: NO_EXCLUDED_TOPICS,
+          ...(field.version ? { expectedVersion: field.version } : {}),
+        }),
+      });
+      const body = await response.json() as BrandBrainRuntimeData & { error?: string };
+      if (!response.ok) throw new Error(body.error ?? "Kairo could not confirm Brand boundaries.");
+      applyRuntime(body);
+      setEditingField(null);
+      setFieldDraft("");
+      setNotice("No excluded topics confirmed. Discovery readiness was recalculated.");
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "Kairo could not confirm Brand boundaries.");
     } finally {
       setSaving(false);
     }
@@ -228,7 +262,7 @@ export function BrandBrainClient({ brandId, activation }: { brandId?: string; ac
     <p className="brand-sr-status" role="status" aria-live="polite">{notice}</p>
 
     {activeTab === "overview" ? <OverviewPanel runtime={runtime} fields={fields} editingField={editingField} fieldDraft={fieldDraft} setFieldDraft={setFieldDraft} startFieldEdit={startFieldEdit} saveField={saveField} cancelEdit={() => setEditingField(null)} reviewSuggestions={reviewSuggestions} brandId={brandId} saving={saving}/> : null}
-    {activeTab === "dna" ? <DnaPanel fields={fields} editingField={editingField} fieldDraft={fieldDraft} setFieldDraft={setFieldDraft} startFieldEdit={startFieldEdit} saveField={saveField} cancelEdit={() => setEditingField(null)} saving={saving}/> : null}
+    {activeTab === "dna" ? <DnaPanel fields={fields} editingField={editingField} fieldDraft={fieldDraft} setFieldDraft={setFieldDraft} startFieldEdit={startFieldEdit} saveField={saveField} confirmNoBoundaries={confirmNoBoundaries} cancelEdit={() => setEditingField(null)} saving={saving}/> : null}
     {activeTab === "discovery" ? <DiscoveryPanel runtime={runtime} topics={topics} brandId={brandId} onEditTopic={editTopic} saving={saving}/> : null}
     {activeTab === "sources" ? <SourcesPanel runtime={runtime} sources={sources} onAddSource={addSource} saving={saving}/> : null}
     {activeTab === "learning" ? <LearningPanel learnings={learnings} brandId={brandId}/> : null}
@@ -283,10 +317,10 @@ function OverviewPanel({ runtime, fields, editingField, fieldDraft, setFieldDraf
   </div>;
 }
 
-function DnaPanel({ fields, editingField, fieldDraft, setFieldDraft, startFieldEdit, saveField, cancelEdit, saving }: { fields: BrandBrainField[]; editingField: string | null; fieldDraft: string; setFieldDraft: (value: string) => void; startFieldEdit: (field: BrandBrainField) => void; saveField: (field: BrandBrainField) => void; cancelEdit: () => void; saving: boolean }) {
+function DnaPanel({ fields, editingField, fieldDraft, setFieldDraft, startFieldEdit, saveField, confirmNoBoundaries, cancelEdit, saving }: { fields: BrandBrainField[]; editingField: string | null; fieldDraft: string; setFieldDraft: (value: string) => void; startFieldEdit: (field: BrandBrainField) => void; saveField: (field: BrandBrainField) => void; confirmNoBoundaries: (field: BrandBrainField) => void; cancelEdit: () => void; saving: boolean }) {
   return <div id="brand-panel-dna" role="tabpanel" aria-labelledby="brand-tab-dna" className="brand-section-panel">
     <header className="brand-section-header"><div><span><Brain aria-hidden="true"/>Editable Brand model</span><h2>Brand DNA</h2><p>Click any value to correct or confirm what Kairo uses for recommendations and creation.</p></div><div className="brand-legend"><span><i className="confirmed"/>Confirmed</span><span><i className="suggested"/>AI suggested</span><span><i className="review"/>Needs review</span></div></header>
-    <div className="brand-field-table" role="list"><div className="brand-field-head" aria-hidden="true"><span>Brand context</span><span>Source / evidence</span><span>Status</span><span>Edit</span></div>{fields.map((field) => <BrandFieldRow key={field.key} field={field} editing={editingField === field.key} draft={editingField === field.key ? fieldDraft : field.value} setDraft={setFieldDraft} onEdit={() => startFieldEdit(field)} onSave={() => saveField(field)} onCancel={cancelEdit} saving={saving}/>)}</div>
+    <div className="brand-field-table" role="list"><div className="brand-field-head" aria-hidden="true"><span>Brand context</span><span>Source / evidence</span><span>Status</span><span>Edit</span></div>{fields.map((field) => <BrandFieldRow key={field.key} field={field} editing={editingField === field.key} draft={editingField === field.key ? fieldDraft : field.value} setDraft={setFieldDraft} onEdit={() => startFieldEdit(field)} onSave={() => saveField(field)} onConfirmNone={field.key === "boundaries" && field.state !== "confirmed" ? () => confirmNoBoundaries(field) : undefined} onCancel={cancelEdit} saving={saving}/>)}</div>
   </div>;
 }
 
@@ -333,8 +367,8 @@ function FieldReviewRow({ field, expanded, draft, setDraft, onEdit, onSave, onCa
   return <section className={`brand-review-row ${expanded ? "is-expanded" : ""}`}><header><span><UserRound aria-hidden="true"/><span><strong>{field.label}</strong><small>{field.description}</small></span></span><StateLabel state={field.state}/>{expanded ? <ChevronDown aria-hidden="true"/> : <button type="button" onClick={onEdit} aria-label={`Edit ${field.label}`}><ChevronRight aria-hidden="true"/></button>}</header>{expanded ? <div className="brand-inline-editor"><label htmlFor={`overview-${field.key}`}>{field.description}</label><textarea id={`overview-${field.key}`} value={draft} onChange={(event) => setFieldDraftOrNoop(setDraft, event.target.value)} rows={3}/><div className="brand-evidence"><small>Evidence</small><span>{field.evidence.map((item) => <i key={item}>{item}</i>)}</span><p>{field.origin ? `${originLabel(field.origin)} · ${confidenceLabel(field.confidence)}` : "Evidence unavailable"}</p></div><div className="brand-editor-actions"><button type="button" onClick={onSave} disabled={saving}>{saving ? "Saving…" : "Save & confirm"}</button><button type="button" onClick={onCancel} disabled={saving}>Cancel</button></div></div> : <p>{field.value}</p>}</section>;
 }
 
-function BrandFieldRow({ field, editing, draft, setDraft, onEdit, onSave, onCancel, saving }: { field: BrandBrainField; editing: boolean; draft: string; setDraft: (value: string) => void; onEdit: () => void; onSave: () => void; onCancel: () => void; saving: boolean }) {
-  return <div className={`brand-field-row ${editing ? "is-editing" : ""}`} role="listitem"><div className="brand-field-value"><span><strong>{field.label}</strong><small>{field.description}</small></span>{editing ? <textarea aria-label={`Edit ${field.label}`} value={draft} onChange={(event) => setDraft(event.target.value)} rows={2}/> : <p>{field.value}</p>}</div><div className="brand-field-evidence">{field.evidence.map((item) => <span key={item}>{item}</span>)}</div><StateLabel state={field.state}/><div className="brand-field-actions">{editing ? <><button className="save" type="button" onClick={onSave} disabled={saving}><Check aria-hidden="true"/>{saving ? "Saving…" : "Save"}</button><button type="button" onClick={onCancel} disabled={saving}><X aria-hidden="true"/>Cancel</button></> : <button type="button" onClick={onEdit} aria-label={`Edit ${field.label}`}><Pencil aria-hidden="true"/></button>}</div></div>;
+function BrandFieldRow({ field, editing, draft, setDraft, onEdit, onSave, onConfirmNone, onCancel, saving }: { field: BrandBrainField; editing: boolean; draft: string; setDraft: (value: string) => void; onEdit: () => void; onSave: () => void; onConfirmNone?: () => void; onCancel: () => void; saving: boolean }) {
+  return <div className={`brand-field-row ${editing ? "is-editing" : ""}`} role="listitem"><div className="brand-field-value"><span><strong>{field.label}</strong><small>{field.description}</small></span>{editing ? <textarea aria-label={`Edit ${field.label}`} value={draft} onChange={(event) => setDraft(event.target.value)} rows={2}/> : <p>{field.value}</p>}</div><div className="brand-field-evidence">{field.evidence.map((item) => <span key={item}>{item}</span>)}</div><StateLabel state={field.state}/><div className="brand-field-actions">{editing ? <><button className="save" type="button" onClick={onSave} disabled={saving}><Check aria-hidden="true"/>{saving ? "Saving…" : "Save"}</button><button type="button" onClick={onCancel} disabled={saving}><X aria-hidden="true"/>Cancel</button></> : <>{onConfirmNone ? <button className="save" type="button" onClick={onConfirmNone} disabled={saving}><Check aria-hidden="true"/>Confirm none</button> : null}<button type="button" onClick={onEdit} aria-label={`Edit ${field.label}`}><Pencil aria-hidden="true"/></button></>}</div></div>;
 }
 
 function TopicRow({ topic, index, onEdit, saving }: { topic: DiscoveryTopic; index: number; onEdit: () => void; saving: boolean }) {

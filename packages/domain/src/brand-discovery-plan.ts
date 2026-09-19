@@ -122,10 +122,10 @@ export function projectInitialBrandDiscoveryPlan(snapshot: BrandIntelligenceSnap
       sourceClasses: channelClasses,
     })),
     excludedTopics: unique([
-      ...splitList(field("boundaries.excluded-topics")),
-      ...splitList(field("boundaries.prohibited-subjects")),
-      ...splitList(field("boundaries.claims-to-avoid")),
-      ...splitList(field("boundaries.owner-directive")),
+      ...splitExcludedTopics(field("boundaries.excluded-topics")),
+      ...splitExcludedTopics(field("boundaries.prohibited-subjects")),
+      ...splitExcludedTopics(field("boundaries.claims-to-avoid")),
+      ...splitExcludedTopics(field("boundaries.owner-directive")),
     ]).slice(0, 20),
     updatedAt: snapshot.updatedAt,
   };
@@ -169,6 +169,10 @@ function sourceClasses(channels: string[]): string[] {
     if (channel.includes("reddit")) values.add("Community discussions");
   }
   return [...values];
+}
+
+function splitExcludedTopics(value: string): string[] {
+  return splitList(value).filter((item) => !/^(?:none|nothing|no\s+(?:explicit\s+)?(?:excluded\s+)?topics?|no\s+exclusions?|no\s+topics?\s+to\s+avoid)\.?$/i.test(item));
 }
 
 function splitList(value: string): string[] {

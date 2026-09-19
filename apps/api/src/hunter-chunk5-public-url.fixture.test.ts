@@ -238,9 +238,34 @@ describe.skipIf(!FIXTURE_CERTIFICATION)("Hunter Chunk 5 captured-page fixture co
     expect(bootstrap.statusCode).toBe(200);
     expect(bootstrap.json()).toMatchObject({ generatorStatus: "generated", proposedCount: expect.any(Number) });
 
+    const needsConfirmation = await app.inject({ method: "GET", url: `/api/v1/brands/${created.brand.id}/brain/activation`, headers: AUTH });
+    expect(needsConfirmation.statusCode).toBe(200);
+    expect(needsConfirmation.json()).toMatchObject({
+      hunterReady: false,
+      readiness: { gaps: expect.arrayContaining(["boundaries"]) },
+      schedule: null,
+      discoveryRun: null,
+    });
+
+    const boundary = bootstrap.json().brain.find((field: { fieldKey: string }) => field.fieldKey === "boundaries.excluded-topics");
+    expect(boundary).toMatchObject({ state: "inferred" });
+    const confirmNone = await app.inject({
+      method: "PUT",
+      url: `/api/v1/brands/${created.brand.id}/brain/boundaries.excluded-topics`,
+      headers: AUTH,
+      payload: { section: "boundaries", value: "No excluded topics", expectedVersion: boundary.version },
+    });
+    expect(confirmNone.statusCode, confirmNone.body).toBe(200);
+
     const beforeRun = await app.inject({ method: "GET", url: `/api/v1/brands/${created.brand.id}/brain/activation`, headers: AUTH });
     expect(beforeRun.statusCode).toBe(200);
-    expect(beforeRun.json()).toMatchObject({ hunterReady: true, schedule: null, discoveryRun: null });
+    expect(beforeRun.json()).toMatchObject({
+      hunterReady: true,
+      readiness: { gaps: [] },
+      discoveryPlan: { excludedTopics: [] },
+      schedule: null,
+      discoveryRun: null,
+    });
 
     const manualRun = await app.inject({ method: "POST", url: `/api/v1/brands/${created.brand.id}/recommendations`, headers: AUTH });
     expect(manualRun.statusCode, manualRun.body).toBe(200);
