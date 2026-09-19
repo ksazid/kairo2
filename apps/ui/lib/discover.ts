@@ -1,3 +1,4 @@
+import { presentAiText, presentOpportunityCopy } from "./ai-presentation";
 import { normalizeCreationFormat, type CreationFormat } from "./home";
 import type { HomeOpportunity } from "./api";
 import type { ConceptMockupView } from "./concept-mockup";
@@ -44,8 +45,26 @@ export function toDiscoverCards(opportunities: HomeOpportunity[]): DiscoverCard[
     const format = opportunity.conceptMockup?.format === "text"
       ? "image"
       : normalizeCreationFormat(item.details?.recommendedFormat);
+    const copy = presentOpportunityCopy({
+      title: item.title,
+      rationale: item.rationale,
+      whyNow: item.whyNow,
+      developmentDirection: item.developmentDirection,
+      audience: item.details?.targetAudience,
+    });
     return {
       ...item,
+      title: copy.title,
+      rationale: copy.fit,
+      whyNow: copy.timing,
+      developmentDirection: copy.action,
+      ...(item.details ? {
+        details: {
+          ...item.details,
+          ...(item.details.targetAudience ? { targetAudience: copy.audience } : {}),
+          ...(item.details.proposedAngle ? { proposedAngle: presentAiText(item.details.proposedAngle, "action") } : {}),
+        },
+      } : {}),
       ...(opportunity.conceptMockup ? { conceptMockup: opportunity.conceptMockup } : {}),
       ...(opportunity.conceptMockupGeneratedAt ? { conceptMockupGeneratedAt: opportunity.conceptMockupGeneratedAt } : {}),
       image: media[index % media.length]!,
@@ -55,18 +74,10 @@ export function toDiscoverCards(opportunities: HomeOpportunity[]): DiscoverCard[
       trend: index % 4 === 3 ? "Rising" : "Trending",
       fit: score >= .8 ? "Great fit" : "Good fit",
       opportunity: score >= .8 ? "High opportunity" : "Medium opportunity",
-      source: opportunity.details?.source?.trim() || opportunity.details?.evidenceSource?.trim() || "Hunter evidence",
+      source: presentAiText(opportunity.details?.source?.trim() || opportunity.details?.evidenceSource?.trim() || "Hunter evidence", "label"),
       confidence: Math.round(score * 100),
     };
   });
-}
-
-export function compactOpportunityText(value: string | undefined, fallback: string, maxWords = 24) {
-  const cleaned = (value ?? fallback).replace(/\s+/g, " ").trim();
-  const firstSentence = cleaned.split(/(?<=[.!?])\s+/)[0] ?? cleaned;
-  const words = firstSentence.split(" ").filter(Boolean);
-  if (words.length <= maxWords) return firstSentence;
-  return `${words.slice(0, maxWords).join(" ").replace(/[,:;—-]+$/, "")}…`;
 }
 
 export function filterDiscoverCards(cards: DiscoverCard[], input: { query: string; filter: DiscoverFilter; format: string; channel: string; source?: string }): DiscoverCard[] {

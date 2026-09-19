@@ -1,4 +1,5 @@
 import type { CampaignDetailView, ContentReviewStatusView, PublishCommandView } from "./api";
+import { presentCampaignCopy } from "./ai-presentation";
 import { contentFallback, toContentItems, type ContentItem } from "./content";
 
 export type CampaignStatus = "draft" | "in-progress" | "scheduled" | "published";
@@ -125,11 +126,18 @@ export function toCampaignItems(
     const readyAssets = assets.filter((asset) => asset.status !== "draft").length;
     const formats = Array.from(new Set(assets.map((asset) => asset.formatLabel))) as CampaignItem["formats"];
     const channels = Array.from(new Set(assets.map((asset) => asset.channel))) as CampaignItem["channels"];
-    return {
-      id: detail.campaign.id,
+    const copy = presentCampaignCopy({
       name: detail.campaign.name,
       objective: detail.campaign.objective,
-      previewObjective: detail.campaign.objective,
+      audience: assets[0]?.audience,
+      message: assets[0]?.summary ?? detail.campaign.objective,
+      cta: assets[0]?.cta,
+    });
+    return {
+      id: detail.campaign.id,
+      name: copy.name,
+      objective: copy.objective,
+      previewObjective: copy.objective,
       status,
       statusLabel: statusLabel(status),
       image: assets[0]?.image ?? "/malta-car.webp",
@@ -140,9 +148,9 @@ export function toCampaignItems(
       startsAt: created.toISOString(),
       endsAt: end.toISOString(),
       previewEndsAt: end.toISOString(),
-      audience: assets[0]?.audience ?? "Your Brand's priority audience.",
-      message: assets[0]?.summary ?? detail.campaign.objective,
-      cta: assets[0]?.cta ?? "Learn more.",
+      audience: copy.audience,
+      message: copy.message,
+      cta: copy.cta,
       assets,
     };
   });

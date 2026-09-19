@@ -34,6 +34,25 @@ describe("Discover presentation", () => {
     ]);
   });
 
+  it("uses the shared presentation policy for verbose Hunter output", () => {
+    const cards = toDiscoverCards([{
+      id: "verbose",
+      title: "How to Make AI Cooking Videos for Free With Gemini and Google Flow for a Local Maltese Publisher",
+      rationale: "AI-generated media is exploding in 2026, and audiences are eager for quick content. The source gives Lovin Malta a practical local-food angle.",
+      whyNow: "AI-generated media is exploding in 2026. Accessible tools can now support local publishers.",
+      developmentDirection: "Produce a series of AI-assisted cooking videos that demonstrate traditional Maltese recipes and publish them with written guides.",
+      status: "new",
+      scores: { relevance: .9, audienceFit: .9, overall: .9 },
+      details: { recommendedFormat: "reel", recommendedChannel: "instagram", targetAudience: "Readers in Malta who enjoy local food, recipes, lifestyle stories and practical digital content." },
+    }]);
+
+    expect(cards[0]!.title.split(/\s+/).length).toBeLessThanOrEqual(12);
+    expect(cards[0]!.rationale!.split(/\s+/).length).toBeLessThanOrEqual(18);
+    expect(cards[0]!.whyNow!.split(/\s+/).length).toBeLessThanOrEqual(18);
+    expect(cards[0]!.developmentDirection!.split(/\s+/).length).toBeLessThanOrEqual(20);
+    expect(cards[0]!.details?.targetAudience?.split(/\s+/).length).toBeLessThanOrEqual(14);
+  });
+
   it("filters by search, state, format and channel", () => {
     const cards = toDiscoverCards(discoverFallback);
     expect(filterDiscoverCards(cards, { query: "airport", filter: "all", format: "all", channel: "all" }).map((card) => card.id)).toEqual(["six"]);

@@ -24,6 +24,25 @@ describe("Kairo UI v2 Content behavior", () => {
     expect(filterContent(items, { query: "instagram", status: "all", format: "carousel" }).map((item) => item.id)).toEqual(["content-one"]);
   });
 
+  it("keeps raw generated content intact while sanitizing Content metadata", () => {
+    const rawCaption = "This is the complete generated caption and it must remain available for editing and publishing even when UI metadata is shortened.";
+    const details = [{
+      campaign: { id: "campaign", ideaId: "idea", name: "A Very Long Campaign Name for Maltese Food Stories and AI Video Experiments Across Social Media", objective: "Increase engagement by publishing useful local stories with clear practical value for readers across several channels.", status: "draft", createdAt: "2026-09-19T00:00:00Z" },
+      assets: [{
+        asset: { id: "asset", campaignId: "campaign", topic: "A Very Long Generated Topic About Creating AI Cooking Videos With Gemini and Google Flow for Local Readers", format: "reel", channel: "instagram", audience: "Readers in Malta who enjoy local food, recipes, lifestyle stories and practical digital content.", cta: "Read the full story and share it with somebody who would enjoy it today.", createdAt: "2026-09-19T00:00:00Z" },
+        versions: [{ id: "version", assetId: "asset", content: rawCaption, createdAt: "2026-09-19T01:00:00Z" }],
+      }],
+    }] as CampaignDetailView[];
+
+    const item = toContentItems(details, {}, [])[0]!;
+    expect(item.title.split(/\s+/).length).toBeLessThanOrEqual(12);
+    expect(item.objective.split(/\s+/).length).toBeLessThanOrEqual(14);
+    expect(item.audience.split(/\s+/).length).toBeLessThanOrEqual(14);
+    expect(item.cta.split(/\s+/).length).toBeLessThanOrEqual(10);
+    expect(item.caption).toBe(rawCaption);
+    expect(item.rawContent).toBe(rawCaption);
+  });
+
   it("creates encoded v2 preview routes with optional Brand context", () => {
     const item = { campaignId: "Malta Summer", id: "asset/one" };
     expect(contentPreviewHref(item)).toBe("/content/Malta%20Summer/asset%2Fone");
