@@ -90,7 +90,7 @@ export function campaignFallback(): CampaignItem[] {
     return {
       ...campaign,
       statusLabel: statusLabel(campaign.status),
-      image: assets[0]?.image ?? "/malta-car.webp",
+      image: assets[0]?.image ?? "/kairo-logo.svg",
       formats: ["Post", "Reel", "Carousel"],
       channels: ["Instagram", "LinkedIn"],
       readyAssets: 2,
