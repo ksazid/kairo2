@@ -12,13 +12,15 @@ export default async function NewBrandPage({ searchParams }: { searchParams: Sea
     const brandName = String(formData.get("brandName") ?? "").trim();
     const publicSourceUrl = String(formData.get("publicSourceUrl") ?? "").trim();
     if (!brandName || !publicSourceUrl) redirect("/brands/new?error=Enter+a+Brand+name+and+a+public+website.");
+    let brandId: string;
     try {
       const brand = await createBrand({ brandName, publicSourceUrl });
-      redirect(`/brand?brand=${encodeURIComponent(brand.id)}&setup=created`);
+      brandId = brand.id;
     } catch (error) {
       const message = error instanceof Error ? error.message : "Kairo could not create this Brand.";
       redirect(`/brands/new?error=${encodeURIComponent(message.slice(0, 180))}`);
     }
+    redirect(`/brand?brand=${encodeURIComponent(brandId)}&setup=created`);
   }
 
   return <main className="onboarding-page">
