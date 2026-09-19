@@ -6,6 +6,7 @@ on:
     paths:
       - ".github/workflows/certify.yml"
       - "apps/api/**"
+      - "apps/worker/**"
       - "apps/ui/**"
       - "packages/**"
       - "services/**"
