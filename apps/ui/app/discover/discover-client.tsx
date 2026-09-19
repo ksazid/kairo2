@@ -166,6 +166,12 @@ export function DiscoverClient({
     <div className="discover-result-line"><p>Showing <strong>{visible.length}</strong> of {cards.length} opportunities</p><span>{view === "table" ? "Detailed view" : "Visual view"} · grounded in Hunter results and your Brand fit</span></div>
     {error ? <p className="discover-inline-error" role="alert">{error}</p> : null}
     {refreshMessage ? <p className="discover-inline-status" role="status">{refreshMessage}</p> : null}
+    {latestRun ? <div className="discover-run-status" role="status" aria-label="Latest Hunter run status">
+      <strong>Latest Hunter</strong>
+      <span>{latestRun.status} · {latestRun.evidenceCount} evidence · {latestRun.candidateCount} candidates · {latestRun.opportunityCount} opportunities</span>
+      <span>Sources: {latestRun.sourcesScanned?.length ? latestRun.sourcesScanned.map(sourceLabel).join(", ") : "no source telemetry recorded"}</span>
+      {latestRun.degradedSources?.length ? <span>Unavailable: {latestRun.degradedSources.map(sourceLabel).join(", ")}</span> : null}
+    </div> : null}
 
     {visible.length ? view === "table" ? <DiscoverTable cards={visible} brandId={brandId} pending={pending} onAct={act}/> : <DiscoverGrid cards={visible} brandId={brandId} pending={pending} onAct={act}/> : cards.length === 0 ? <section className="discover-empty" aria-live="polite"><RefreshCw aria-hidden="true"/><h2>{emptyState.title}</h2><p>{emptyState.message}</p>{brandId ? <button type="button" onClick={() => void refreshDiscovery()} disabled={pending === "refresh"}>{pending === "refresh" ? "Refreshing…" : "Refresh discovery"}</button> : null}</section> : <section className="discover-empty" aria-live="polite"><Search aria-hidden="true"/><h2>No ideas match these filters</h2><p>Clear a filter or try a broader search. Kairo will not fill Discover with weak matches.</p><button type="button" onClick={resetDiscovery}>Clear filters</button></section>}
   </>;
@@ -221,4 +227,9 @@ function channelIcon(channel: string) {
   if (channel === "Facebook") return Facebook;
   if (channel === "YouTube") return Youtube;
   return Instagram;
+}
+
+
+function sourceLabel(source: string) {
+  return source.replaceAll("-", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
 }

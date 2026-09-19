@@ -195,3 +195,50 @@
     width: min(286px, calc(100vw - 24px));
   }
 }
+
+
+.discover-run-status {
+  margin: 0 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #0d151f;
+  padding: 10px 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  align-items: center;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.discover-run-status strong {
+  color: #d8ccff;
+  font-size: 11px;
+}
+
+@media (max-width: 620px) {
+  .topbar .brand-switcher {
+    max-width: calc(100vw - 132px);
+  }
+
+  .brand-switcher > .brand-select {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .brand-switcher > .brand-select .brand-avatar {
+    flex: 0 0 34px;
+  }
+
+  .brand-switcher > .brand-select strong {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .discover-run-status {
+    display: grid;
+    gap: 4px;
+  }
+}

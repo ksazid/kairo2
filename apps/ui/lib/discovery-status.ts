@@ -7,6 +7,7 @@ export type HunterRunStatus = {
   evidenceCount: number;
   candidateCount: number;
   opportunityCount: number;
+  sourcesScanned?: string[];
   degradedSources?: string[];
   failureCode?: string;
   failureMessage?: string;

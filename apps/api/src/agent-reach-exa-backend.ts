@@ -14,6 +14,7 @@ export class ExaAgentReachSearchBackend implements AgentReachSearchBackend {
   constructor(private readonly apiKey: string, private readonly fetchImpl: FetchLike = fetch) {}
 
   async search(query: string, options: { maxResults: number; timeoutMs: number; signal: AbortSignal }): Promise<RawPublicSearchResult[]> {
+    const startedAt = Date.now();
     const response = await this.fetchImpl(EXA_SEARCH_URL, {
       method: "POST",
       signal: options.signal,
@@ -29,10 +30,18 @@ export class ExaAgentReachSearchBackend implements AgentReachSearchBackend {
         contents: { highlights: { maxCharacters: 1_200 } },
       }),
     });
-    if (!response.ok) throw new Error(`Agent Reach search upstream returned ${response.status}`);
+    if (!response.ok) {
+      console.warn(JSON.stringify({
+        event: "agent_reach_exa_search_failed",
+        status: response.status,
+        durationMs: Date.now() - startedAt,
+        maxResults: options.maxResults,
+      }));
+      throw new Error(`Agent Reach search upstream returned ${response.status}`);
+    }
     const payload = asRecord(await readBoundedJson(response));
     const results = Array.isArray(payload?.results) ? payload.results : [];
-    return results.flatMap((raw) => {
+    const normalized = results.flatMap((raw) => {
       const item = asRecord(raw);
       const title = text(item?.title);
       const url = text(item?.url);
@@ -49,6 +58,14 @@ export class ExaAgentReachSearchBackend implements AgentReachSearchBackend {
         ...(text(item?.publishedDate) ? { publishedAt: text(item?.publishedDate) } : {}),
       } satisfies RawPublicSearchResult];
     }).slice(0, options.maxResults);
+    console.info(JSON.stringify({
+      event: "agent_reach_exa_search_completed",
+      status: response.status,
+      durationMs: Date.now() - startedAt,
+      maxResults: options.maxResults,
+      resultCount: normalized.length,
+    }));
+    return normalized;
   }
 }
 
