@@ -2,7 +2,7 @@
   "activeSlice": {
     "id": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
     "objectiveId": "OBJ-008",
-    "state": "proposed",
+    "state": "ready-for-implementation",
     "riskLevel": "medium",
     "implementationPermission": "runtime-enabled",
     "scope": "Make Brand Brain retain source-grounded editorial publisher context during live onboarding; prove it with a disposable public-brand validation before Hunter runs.",
@@ -16,15 +16,51 @@
       "maxGraphWrites": 12
     },
     "approvals": [
-      { "type": "scope", "status": "approved", "actorType": "human", "scopeId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION" },
-      { "type": "policy", "status": "approved", "actorType": "human", "scopeId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION" },
-      { "type": "implementation", "status": "approved", "actorType": "human", "scopeId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION" }
+      {
+        "type": "scope",
+        "status": "approved",
+        "actorType": "human",
+        "scopeId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION"
+      },
+      {
+        "type": "policy",
+        "status": "approved",
+        "actorType": "human",
+        "scopeId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION"
+      },
+      {
+        "type": "implementation",
+        "status": "approved",
+        "actorType": "human",
+        "scopeId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION"
+      }
     ],
     "successCriteria": [
       "A news or editorial website cannot persist conflicting automotive or food core Brand DNA when its source evidence identifies it as a publisher.",
       "A model-conflict regression test passes.",
       "The deployed production route is identified before any production re-test.",
       "No Hunter run starts until the real Brand DNA is truthful and required owner confirmations are complete."
-    ]
+    ],
+    "context": {
+      "contextHash": "257dd419620143d43de7166c0eed54ef789c3377a9f96365c823b56393d02766",
+      "graphRevision": 9,
+      "requestedSeeds": [
+        "OBJ-008"
+      ],
+      "resolvedSeeds": [
+        "OBJ-008"
+      ]
+    },
+    "gateEvidence": {
+      "transitionPath": [
+        "proposed",
+        "discovery",
+        "decision-pending",
+        "approved",
+        "ready-for-implementation"
+      ],
+      "allowed": true,
+      "evaluatedAt": "2026-09-19T18:54:12.187Z"
+    }
   }
 }
