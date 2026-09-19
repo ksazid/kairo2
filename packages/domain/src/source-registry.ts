@@ -43,8 +43,10 @@ export const DEFAULT_SOURCE_REGISTRY = [
   {
     key: "bluesky",
     capabilities: ["discovery"],
-    enabled: true,
-    requiresCredential: false,
+    // Full-network search currently requires authenticated Bluesky access.
+    // Keep this fail-closed until the runtime has an authenticated provider.
+    enabled: false,
+    requiresCredential: true,
     maxQueriesPerRun: 2,
   },
   {
