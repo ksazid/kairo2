@@ -5,6 +5,10 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/certify.yml"
+      - "apps/api/**"
+      - "apps/ui/**"
+      - "packages/**"
+      - "services/**"
 permissions:
   contents: read
 jobs:
