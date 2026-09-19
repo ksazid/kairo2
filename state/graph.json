@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "version": 2,
-  "revision": 7,
+  "revision": 8,
   "nodes": [
     {
       "id": "OBJ-001",
@@ -448,31 +448,31 @@
       }
     },
     {
-      "id": "EDGE-TASK-008-01-OBJ-008",
-      "type": "IMPLEMENTS",
-      "from": "TASK-008-01",
-      "to": "OBJ-008",
+      "id": "EDGE-OBJ-008-TASK-008-01",
+      "type": "IMPLEMENTED_BY",
+      "from": "OBJ-008",
+      "to": "TASK-008-01",
       "memoryProvenance": {
-        "eventId": "GM-000007",
-        "revision": 7,
+        "eventId": "GM-000008",
+        "revision": 8,
         "actorId": "pes-v2-remediation",
         "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
         "sourceIds": [],
-        "recordedAt": "2026-09-19T18:51:46.203Z"
+        "recordedAt": "2026-09-19T18:52:44.964Z"
       }
     },
     {
-      "id": "EDGE-DEC-008-01-OBJ-008",
-      "type": "SUPPORTS",
+      "id": "EDGE-DEC-008-01-OBJ-008-ABOUT",
+      "type": "ABOUT",
       "from": "DEC-008-01",
       "to": "OBJ-008",
       "memoryProvenance": {
-        "eventId": "GM-000007",
-        "revision": 7,
+        "eventId": "GM-000008",
+        "revision": 8,
         "actorId": "pes-v2-remediation",
         "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
         "sourceIds": [],
-        "recordedAt": "2026-09-19T18:51:46.203Z"
+        "recordedAt": "2026-09-19T18:52:44.964Z"
       }
     }
   ],
@@ -601,6 +601,22 @@
         "EDGE-DEC-008-01-OBJ-008"
       ],
       "recordedAt": "2026-09-19T18:51:46.203Z"
+    },
+    {
+      "id": "GM-000008",
+      "revision": 8,
+      "operation": "correct-and-append",
+      "actorId": "pes-v2-remediation",
+      "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+      "reason": "Correct VS-08 graph relationship types after deterministic graph validation",
+      "sourceIds": [],
+      "addedNodeIds": [],
+      "addedEdgeIds": [],
+      "correctedEdgeIds": [
+        "EDGE-TASK-008-01-OBJ-008",
+        "EDGE-DEC-008-01-OBJ-008"
+      ],
+      "recordedAt": "2026-09-19T18:52:44.964Z"
     }
   ]
 }
