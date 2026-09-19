@@ -30,7 +30,8 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
   const featuredIndex = Math.max(0, opportunities.findIndex((item) => item.id === params.idea));
   const featured = opportunities[featuredIndex] ?? opportunities[0]!;
   const featuredMockup = (featured as OpportunityWithConcept).conceptMockup;
-  const featuredCopy = presentOpportunityCopy({ title: featured.title, rationale: featured.rationale, whyNow: featured.whyNow, developmentDirection: featured.developmentDirection, audience: featured.details?.targetAudience });
+  const featuredAudience = featured.details && "targetAudience" in featured.details ? featured.details.targetAudience : undefined;
+  const featuredCopy = presentOpportunityCopy({ title: featured.title, rationale: featured.rationale, whyNow: featured.whyNow, developmentDirection: featured.developmentDirection, audience: featuredAudience });
   const nextFeatured = opportunities[(featuredIndex + 1) % opportunities.length] ?? featured;
   const discoverHref = `/discover${data.brandId ? `?brand=${encodeURIComponent(data.brandId)}` : ""}`;
   const featuredHref = previewMode ? discoverHref : `/discover/${encodeURIComponent(featured.id)}${data.brandId ? `?brand=${encodeURIComponent(data.brandId)}` : ""}`;
