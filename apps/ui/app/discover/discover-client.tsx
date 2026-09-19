@@ -25,7 +25,6 @@ import {
 } from "lucide-react";
 import { ConceptMockupPreview } from "../../components/concept-mockup";
 import {
-  compactOpportunityText,
   discoverPreviewHref,
   filterDiscoverCards,
   toDiscoverCards,
@@ -185,9 +184,9 @@ function DiscoverTable({ cards, brandId, pending, onAct }: ViewProps) {
       const ChannelIcon = channelIcon(card.channel);
       const confidenceLabel = card.confidence >= 90 ? "Very high" : card.confidence >= 82 ? "High" : "Good";
       return <div className="discover-table-row" role="row" key={card.id}>
-        <div className="discover-opportunity-cell" role="cell"><Link className={card.conceptMockup ? "discover-concept-thumb" : undefined} href={discoverPreviewHref(card.id, brandId)}>{card.conceptMockup ? <ConceptMockupPreview mockup={card.conceptMockup} mode="compact"/> : <Image src={card.image} alt={card.title} width={112} height={92}/>}</Link><span><strong><Link href={discoverPreviewHref(card.id, brandId)}>{card.title}</Link></strong><small>{compactOpportunityText(card.developmentDirection ?? card.rationale, "A timely Brand-fit direction ready for review.", 16)}</small></span></div>
-        <div className="discover-reason-cell" role="cell"><p><ShieldCheck aria-hidden="true"/>{compactOpportunityText(card.rationale, "Strong Brand alignment", 22)}</p><small>Relevant to {card.details?.targetAudience ?? "your priority audience"}</small></div>
-        <div className="discover-trend-cell" role="cell"><p><TrendingUp aria-hidden="true"/>{compactOpportunityText(card.whyNow, "Public interest is growing around this topic.", 22)}</p><small>Strong {card.formatLabel.toLowerCase()} engagement potential</small></div>
+        <div className="discover-opportunity-cell" role="cell"><Link className={card.conceptMockup ? "discover-concept-thumb" : undefined} href={discoverPreviewHref(card.id, brandId)}>{card.conceptMockup ? <ConceptMockupPreview mockup={card.conceptMockup} mode="compact"/> : <Image src={card.image} alt={card.title} width={112} height={92}/>}</Link><span><strong><Link href={discoverPreviewHref(card.id, brandId)}>{card.title}</Link></strong><small>{card.developmentDirection ?? card.rationale}</small></span></div>
+        <div className="discover-reason-cell" role="cell"><p><ShieldCheck aria-hidden="true"/>{card.rationale ?? "Strong Brand alignment"}</p><small>Relevant to {card.details?.targetAudience ?? "your priority audience"}</small></div>
+        <div className="discover-trend-cell" role="cell"><p><TrendingUp aria-hidden="true"/>{card.whyNow ?? "Public interest is growing around this topic."}</p><small>Strong {card.formatLabel.toLowerCase()} engagement potential</small></div>
         <div className="discover-format-cell" role="cell"><span><ChannelIcon aria-hidden="true"/><FormatIcon aria-hidden="true"/>{card.formatLabel}</span><small>{card.channel}</small></div>
         <div className="discover-source-cell" role="cell">{card.source}</div>
         <div className="discover-confidence-cell" role="cell"><span className="confidence-ring" style={{ "--confidence": `${card.confidence * 3.6}deg` } as CSSProperties}><b>{card.confidence}</b></span><small>{confidenceLabel}</small></div>
@@ -203,7 +202,7 @@ function DiscoverGrid({ cards, brandId, pending, onAct }: ViewProps) {
     const ChannelIcon = channelIcon(card.channel);
     return <article className="discover-card" key={card.id}>
       <Link className={`discover-card-media${card.conceptMockup ? " discover-card-concept" : ""}`} href={discoverPreviewHref(card.id, brandId)} aria-label={`Preview ${card.title}`}>{card.conceptMockup ? <ConceptMockupPreview mockup={card.conceptMockup} mode="card"/> : <><Image src={card.image} alt="" fill sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"/><span className="discover-media-shade"/></>}<span className="discover-badges"><i><TrendingUp aria-hidden="true"/>{card.trend}</i><i><ShieldCheck aria-hidden="true"/>{card.fit}</i></span><span className="discover-channel"><ChannelIcon aria-hidden="true"/>{card.channel}</span></Link>
-      <div className="discover-card-body"><div className="discover-card-meta"><span><FormatIcon aria-hidden="true"/>{card.formatLabel}</span><span>{card.opportunity}</span></div><h2><Link href={discoverPreviewHref(card.id, brandId)}>{card.title}</Link></h2><p>{compactOpportunityText(card.rationale, "A timely, Brand-fit direction ready for your review.", 22)}</p><CardActions card={card} brandId={brandId} pending={pending} onAct={onAct}/></div>
+      <div className="discover-card-body"><div className="discover-card-meta"><span><FormatIcon aria-hidden="true"/>{card.formatLabel}</span><span>{card.opportunity}</span></div><h2><Link href={discoverPreviewHref(card.id, brandId)}>{card.title}</Link></h2><p>{card.rationale ?? "A timely, Brand-fit direction ready for your review."}</p><CardActions card={card} brandId={brandId} pending={pending} onAct={onAct}/></div>
     </article>;
   })}</section>;
 }
