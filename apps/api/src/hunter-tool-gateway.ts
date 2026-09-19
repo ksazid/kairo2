@@ -1,6 +1,5 @@
 import { AgentReachDiscoveryProvider, DiscoveryProviderError, SourceRoutingToolGateway } from "@kairo/worker/discovery-provider";
 import {
-  BlueskyDiscoveryProvider,
   GitHubDiscoveryProvider,
   HackerNewsDiscoveryProvider,
   RssAtomDiscoveryProvider,
@@ -20,7 +19,7 @@ import { agentReachSearchBackendFromEnv } from "./agent-reach-exa-backend";
  */
 export function createHunterToolGateway(env: NodeJS.ProcessEnv = process.env) {
   const hackerNews = new RetryingDiscoverySourceProvider(new HackerNewsDiscoveryProvider());
-  const bluesky = new RetryingDiscoverySourceProvider(new BlueskyDiscoveryProvider());
+  const bluesky = new UnavailableDiscoverySourceProvider("Bluesky search requires authenticated runtime support and is disabled.");
   const github = new RetryingDiscoverySourceProvider(new GitHubDiscoveryProvider());
   const feeds = rssFeedsFromEnv(env.KAIRO_HUNTER_RSS_FEEDS_JSON);
   const rss = new RetryingDiscoverySourceProvider(new RssAtomDiscoveryProvider({ feeds }));
