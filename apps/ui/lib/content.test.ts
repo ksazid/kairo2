@@ -30,6 +30,17 @@ describe("Kairo UI v2 Content behavior", () => {
     expect(contentPreviewHref(item, "Brand One")).toBe("/content/Malta%20Summer/asset%2Fone?brand=Brand%20One");
   });
 
+  it("uses a neutral Kairo placeholder when real Content has no media", () => {
+    const details = [{
+      campaign: { id: "campaign", ideaId: "idea", name: "Restaurant Guide", objective: "Help diners", status: "draft", createdAt: "2026-09-19T00:00:00Z" },
+      assets: [{
+        asset: { id: "asset", campaignId: "campaign", topic: "Seasonal menu", format: "carousel", channel: "instagram", audience: "Diners", cta: "View menu", createdAt: "2026-09-19T00:00:00Z" },
+        versions: [{ id: "version", assetId: "asset", content: "Try our seasonal menu.", createdAt: "2026-09-19T00:00:00Z" }],
+      }],
+    }] as CampaignDetailView[];
+    expect(toContentItems(details, {}, [])[0]?.image).toBe("/kairo-logo.svg");
+  });
+
   it("projects real Campaign assets and lifecycle evidence into Content items", () => {
     const details = [{
       campaign: { id: "campaign", ideaId: "idea", name: "Summer Guide", objective: "Drive bookings", status: "draft", createdAt: "2026-08-01T00:00:00Z" },
