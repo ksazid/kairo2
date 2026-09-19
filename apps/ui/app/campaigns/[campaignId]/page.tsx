@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getContentData } from "../../../lib/api";
-import { campaignFallback, toCampaignItems } from "../../../lib/campaigns";
+import { toCampaignItems } from "../../../lib/campaigns";
 import { requirePageAuthentication } from "../../../lib/page-auth";
 import { KairoShell } from "../../kairo-shell";
 import { CampaignPreviewClient } from "./campaign-preview-client";
@@ -12,7 +12,7 @@ export default async function CampaignPreviewPage({ params, searchParams }: { pa
   const [{ campaignId }, query] = await Promise.all([params, searchParams]);
   const data = requirePageAuthentication(await getContentData(query.brand), `/campaigns/${encodeURIComponent(campaignId)}`);
   const projected = toCampaignItems(data.details, data.reviews, data.commands);
-  const campaigns = projected.length ? projected : campaignFallback();
+  const campaigns = projected;
   const campaign = campaigns.find((candidate) => candidate.id === campaignId);
   if (!campaign) notFound();
   const campaignsHref = data.brandId ? `/campaigns?brand=${encodeURIComponent(data.brandId)}` : "/campaigns";
