@@ -194,8 +194,8 @@ describe("Hunter orchestration", () => {
     const umrahSearches = umrahTools.requests.filter((request) => request.capability === "public-content-search");
     const aiSources = new Set(aiSearches.map((request) => request.input.source));
     const umrahSources = new Set(umrahSearches.map((request) => request.input.source));
-    expect(aiSources).toEqual(new Set(["github", "hacker-news", "rss", "youtube", "bluesky", "agent-reach"]));
-    expect(umrahSources).toEqual(new Set(["rss", "youtube", "agent-reach", "bluesky"]));
+    expect(aiSources).toEqual(new Set(["github", "hacker-news", "rss", "youtube", "agent-reach"]));
+    expect(umrahSources).toEqual(new Set(["rss", "youtube", "agent-reach"]));
     expect(umrahSources.has("hacker-news")).toBe(false);
     expect(aiSearches.length).toBeLessThanOrEqual(16);
     expect(umrahSearches.length).toBeLessThanOrEqual(16);
