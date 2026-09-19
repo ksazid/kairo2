@@ -172,7 +172,7 @@ export class HunterOrchestrator {
       approvedContextVersion: input.brand.contextVersion,
       capabilities: ["public-content-search", "public-content-fetch"],
       task: {
-        instruction: "Evaluate the supplied public evidence for this Brand. Return only genuinely worthwhile, evidence-linked opportunities; returning zero candidates is preferred to filler.",
+        instruction: "Evaluate the supplied public evidence for this Brand. Review the strongest evidence first and assess at least the top five items (or every item when fewer than five exist) against Brand/topic/audience relevance, concrete source support, timeliness and novelty. Return 1-6 evidence-linked candidates when any item clears those minimums. Zero candidates is valid only when none of the supplied evidence supports a credible Brand-relevant content move. Do not require exceptional or viral certainty: Kairo applies deterministic quality gates after your judgment. Never invent evidence, and every candidate must use an exact sourceUrl supplied in the evidence.",
         context: compactHunterContext(input, evidence, enrichedDocuments),
       },
       outputSchema: { name: "hunter-opportunities", version: "2" },
@@ -202,8 +202,36 @@ export class HunterOrchestrator {
       }, new Set([...degradedSources, "hunter-model"]), sourcesScanned);
     }
 
+    const initialCandidateCount = judgment.output.candidates.length;
+    let judgmentOutput = judgment.output;
+    let retryCandidateCount: number | undefined;
+    if (!input.query?.trim() && initialCandidateCount === 0) {
+      try {
+        const retry = await this.runtime.invoke<HunterJudgmentOutput>(prepareAgentInvocation({
+          role: "hunter",
+          scope: { visibility: "brand-private", workspaceId: input.brand.workspaceId, brandId: input.brand.brandId },
+          approvedContextVersion: input.brand.contextVersion,
+          capabilities: ["public-content-search", "public-content-fetch"],
+          task: {
+            instruction: "Recheck the strongest supplied evidence before returning zero candidates. Evaluate the top five evidence items (or all items when fewer than five exist) individually. Propose a candidate whenever the source gives concrete support for a timely Brand/topic/audience-relevant angle with reasonable novelty. A candidate does not need to be exceptional or provably viral; it must be useful, grounded and specific. Return zero only if every reviewed item fails those minimums. Use only exact supplied sourceUrl values and do not invent facts.",
+            context: compactHunterContext(input, evidence, enrichedDocuments),
+          },
+          outputSchema: { name: "hunter-opportunities", version: "2" },
+          budget: { maxOutputTokens: 3_000, maxToolCalls: 0, maxCostUsd: 0.08, timeoutMs: 30_000 },
+        }));
+        if (isHunterJudgmentOutput(retry.output)) {
+          judgmentOutput = retry.output;
+          retryCandidateCount = retry.output.candidates.length;
+        } else {
+          this.diagnose("judgment", "hunter-model", { kind: "invalid-response" });
+        }
+      } catch (error) {
+        this.diagnose("judgment", "hunter-model", error);
+      }
+    }
+
     const byUrl = new Map(evidence.map((item) => [item.sourceUrl, item]));
-    const qualified = rankAndFilterHunterCandidates(judgment.output.candidates, {
+    const qualified = rankAndFilterHunterCandidates(judgmentOutput.candidates, {
       evidenceByUrl: byUrl,
       documentsByUrl: enrichedDocuments,
       ...(input.intelligenceProfile ? { intelligenceProfile: input.intelligenceProfile } : {}),
@@ -212,6 +240,16 @@ export class HunterOrchestrator {
       ...(input.refreshSeed ? { referenceTime: input.refreshSeed } : {}),
       maxCandidates: 12,
     });
+
+    console.info(JSON.stringify({
+      event: "hunter_candidate_pipeline",
+      evidenceCount: evidence.length,
+      initialCandidateCount,
+      ...(retryCandidateCount !== undefined ? { retryCandidateCount } : {}),
+      modelCandidateCount: judgmentOutput.candidates.length,
+      qualityAcceptedCount: qualified.length,
+      qualityRejectedCount: Math.max(0, judgmentOutput.candidates.length - qualified.length),
+    }));
 
     let opportunityCount = 0;
     for (const { candidate, source, scores: adjustedScores } of qualified) {
@@ -241,9 +279,17 @@ export class HunterOrchestrator {
       if (saved.opportunity) opportunityCount += 1;
     }
 
+    console.info(JSON.stringify({
+      event: "hunter_candidate_persistence",
+      modelCandidateCount: judgmentOutput.candidates.length,
+      qualityAcceptedCount: qualified.length,
+      persistedOpportunityCount: opportunityCount,
+      domainRejectedCount: Math.max(0, qualified.length - opportunityCount),
+    }));
+
     return withDegraded({
       evidenceCount: evidence.length,
-      candidateCount: judgment.output.candidates.length,
+      candidateCount: judgmentOutput.candidates.length,
       opportunityCount,
     }, degradedSources, sourcesScanned);
   }
