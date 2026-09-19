@@ -211,6 +211,11 @@ export class BrandBrainBootstrapService {
         sourceIds: syntheticFallback ? [] : successfulReferences.map((item) => item.sourceId).filter(Boolean),
       };
     }
+    const editorialFallback = editorialWebsiteFallback(successfulReferences);
+    if (editorialFallback.length) {
+      const authoritative = new Set(editorialFallback.map((proposal) => proposal.fieldKey));
+      proposals = [...proposals.filter((proposal) => !authoritative.has(proposal.fieldKey)), ...editorialFallback];
+    }
     if (!proposals.length) {
       const fallback = fallbackProposals(successfulReferences);
       const brain = await this.persistFallback(accountId, brandId, fallback);
@@ -379,6 +384,30 @@ function optionalText(value: unknown, maxLength: number): string | undefined {
   if (!normalized) return undefined;
   if (normalized.length > maxLength) throw new DomainValidationError("ownerBoundary is too long");
   return normalized;
+}
+
+function editorialWebsiteFallback(references: Array<PublicBrandReference & { sourceId: string }>): BrandBrainProposal[] {
+  const website = references.find((reference) => {
+    try {
+      const host = new URL(reference.url).hostname.toLowerCase();
+      return !["github.com", "instagram.com", "www.instagram.com", "facebook.com", "www.facebook.com"].includes(host)
+        && !["substack.com", "www.substack.com", "on.substack.com"].includes(host)
+        && !host.endsWith(".substack.com")
+        && isEditorialPublisherText(`${reference.title ?? ""} ${reference.excerpt}`);
+    } catch {
+      return false;
+    }
+  });
+  if (!website) return [];
+  const authoritativeFields = new Set([
+    "identity.category",
+    "identity.products-services",
+    "positioning.value-proposition",
+    "audience.primary",
+    "content.pillars",
+    "content.preferred-topics",
+  ]);
+  return fallbackProposals([website]).filter((proposal) => authoritativeFields.has(proposal.fieldKey));
 }
 
 function fallbackProposals(references: Array<PublicBrandReference & { sourceId: string }>): BrandBrainProposal[] {
