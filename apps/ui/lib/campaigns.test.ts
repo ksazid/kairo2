@@ -16,6 +16,22 @@ describe("Kairo UI v2 Campaign behavior", () => {
     expect(filterCampaigns(campaigns, { query: "", status: "draft" }).map((item) => item.id)).toEqual(["local-car-hire"]);
   });
 
+  it("sanitizes verbose generated campaign metadata through the shared policy", () => {
+    const details = [{
+      campaign: { id: "campaign", workspaceId: "workspace", brandId: "brand", ideaId: "idea", name: "A Very Long Campaign Name About Maltese Food Stories and AI Video Experiments Across Social Media", objective: "Increase engagement and audience interest by publishing a coordinated set of useful local stories across social channels.", status: "draft", createdAt: "2026-08-01T00:00:00Z" },
+      assets: [{
+        asset: { id: "asset", campaignId: "campaign", topic: "AI cooking videos", format: "reel", channel: "instagram", audience: "People in Malta who follow local food, entertainment, travel and lifestyle stories.", hookType: "list", cta: "Read the full story and share it with somebody who would enjoy it.", currentVersion: 1, status: "draft", createdAt: "2026-08-01T00:00:00Z" },
+        versions: [{ id: "version", assetId: "asset", version: 1, content: "A long generated explanation about creating useful local content with practical value for the audience.", actor: "ai", createdAt: "2026-08-01T00:00:00Z" }],
+      }],
+    }] as CampaignDetailView[];
+
+    const item = toCampaignItems(details, {}, [])[0]!;
+    expect(item.name.split(/\s+/).length).toBeLessThanOrEqual(12);
+    expect(item.objective.split(/\s+/).length).toBeLessThanOrEqual(14);
+    expect(item.audience.split(/\s+/).length).toBeLessThanOrEqual(14);
+    expect(item.cta.split(/\s+/).length).toBeLessThanOrEqual(10);
+  });
+
   it("builds encoded v2 Campaign Preview routes", () => {
     expect(campaignHref("summer guide", "brand/one")).toBe("/campaigns/summer%20guide?brand=brand%2Fone");
   });
