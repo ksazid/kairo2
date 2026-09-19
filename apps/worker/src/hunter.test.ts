@@ -39,11 +39,13 @@ class FakeTools implements ToolGatewayPort {
 class FakeRuntime implements AgentRuntimePort {
   lastRequest: AgentInvocationRequest | null = null;
   calls = 0;
-  constructor(private readonly output: HunterJudgmentOutput) {}
+  constructor(private readonly output: HunterJudgmentOutput | HunterJudgmentOutput[]) {}
   async invoke<TOutput>(request: AgentInvocationRequest): Promise<AgentRuntimeResult<TOutput>> {
     this.calls += 1;
     this.lastRequest = request;
-    return { output: this.output as TOutput, metadata: { runtime: "fixture", latencyMs: 1 } };
+    const outputs = Array.isArray(this.output) ? this.output : [this.output];
+    const selected = outputs[Math.min(this.calls - 1, outputs.length - 1)] ?? { candidates: [] };
+    return { output: selected as TOutput, metadata: { runtime: "fixture", latencyMs: 1 } };
   }
 }
 
@@ -231,7 +233,7 @@ describe("Hunter orchestration", () => {
     });
     expect(tools.requests.filter((request) => request.input.source === "hacker-news")).toHaveLength(1);
     expect(tools.requests.some((request) => request.input.source === "rss")).toBe(true);
-    expect(runtime.calls).toBe(1);
+    expect(runtime.calls).toBe(2);
   });
 
   it("deduplicates the same canonical URL across providers before model judgment", async () => {
@@ -284,6 +286,37 @@ describe("Hunter orchestration", () => {
     const result = await hunter.runForAuthorizedBrand({ accountId: "account-1", brand, query: "AI agents" });
     expect(result).toEqual({ evidenceCount: 1, candidateCount: 0, opportunityCount: 0, sourcesScanned: ["agent-reach"] });
     expect(sink.records).toHaveLength(0);
+  });
+
+  it("rechecks automatic discovery once when the first Hunter judgment is empty", async () => {
+    const sink = new FakeSink();
+    const runtime = new FakeRuntime([
+      { candidates: [] },
+      { candidates: [{
+        sourceUrl: evidence[0]!.sourceUrl,
+        title: "Persistent AI agents create a new architecture tradeoff",
+        rationale: "The evidence is directly relevant to AI agent architecture for technical founders.",
+        whyNow: "Durable agent runtime behavior is changing current implementation choices.",
+        developmentDirection: "Explain when durable agent state changes SaaS architecture decisions.",
+        topic: "AI agents",
+        targetAudience: "technical founders",
+        scores,
+      }] },
+    ]);
+    const hunter = new HunterOrchestrator(new FakeTools(), runtime, sink as never);
+    const result = await hunter.runForAuthorizedBrand({
+      accountId: "account-1",
+      brand,
+      intelligenceProfile: aiProfile,
+      maxEvidence: 8,
+      refreshSeed: "2026-09-19T23:27:14.000Z",
+    });
+
+    expect(runtime.calls).toBe(2);
+    expect(runtime.lastRequest?.task.instruction).toContain("Recheck the strongest supplied evidence");
+    expect(result.candidateCount).toBe(1);
+    expect(result.opportunityCount).toBe(1);
+    expect(sink.records).toHaveLength(1);
   });
 
   it("drops candidates that do not reference supplied evidence", async () => {
