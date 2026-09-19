@@ -80,6 +80,7 @@ export interface HunterRunResult {
   evidenceCount: number;
   candidateCount: number;
   opportunityCount: number;
+  sourcesScanned: string[];
   degradedSources?: string[];
 }
 
@@ -118,7 +119,8 @@ export class HunterOrchestrator {
   async runForAuthorizedBrand(input: HunterRunInput): Promise<HunterRunResult> {
     const maxEvidence = normalizeMaxEvidence(input.maxEvidence);
     const plans = executablePlans(input, this.sourceRegistry);
-    if (!plans.length) return { evidenceCount: 0, candidateCount: 0, opportunityCount: 0 };
+    if (!plans.length) return { evidenceCount: 0, candidateCount: 0, opportunityCount: 0, sourcesScanned: [] };
+    const sourcesScanned = new Set<string>();
 
     // Source Registry/query planning owns the provider request ceilings. maxEvidence bounds the
     // evidence set sent to the model, not which relevant providers are allowed to participate.
@@ -128,6 +130,7 @@ export class HunterOrchestrator {
 
     for (const plan of plans) {
       if (degradedSources.has(plan.source)) continue;
+      sourcesScanned.add(plan.source);
       const toolRequest = prepareToolRequest({
         capability: "public-content-search",
         scope: { visibility: "global-public" },
@@ -161,7 +164,7 @@ export class HunterOrchestrator {
         evidence.push(enrichDiscoveryEvidence(item, fetched.output.document));
       } catch (error) { this.diagnose("enrichment", "public-content-fetch", error); evidence.push(item); }
     }
-    if (!evidence.length) return withDegraded({ evidenceCount: 0, candidateCount: 0, opportunityCount: 0 }, degradedSources);
+    if (!evidence.length) return withDegraded({ evidenceCount: 0, candidateCount: 0, opportunityCount: 0 }, degradedSources, sourcesScanned);
 
     const invocation = prepareAgentInvocation({
       role: "hunter",
@@ -188,7 +191,7 @@ export class HunterOrchestrator {
         evidenceCount: evidence.length,
         candidateCount: 0,
         opportunityCount: 0,
-      }, new Set([...degradedSources, "hunter-model"]));
+      }, new Set([...degradedSources, "hunter-model"]), sourcesScanned);
     }
     if (!isHunterJudgmentOutput(judgment.output)) {
       this.diagnose("judgment", "hunter-model", { kind: "invalid-response" });
@@ -196,7 +199,7 @@ export class HunterOrchestrator {
         evidenceCount: evidence.length,
         candidateCount: 0,
         opportunityCount: 0,
-      }, new Set([...degradedSources, "hunter-model"]));
+      }, new Set([...degradedSources, "hunter-model"]), sourcesScanned);
     }
 
     const byUrl = new Map(evidence.map((item) => [item.sourceUrl, item]));
@@ -242,7 +245,7 @@ export class HunterOrchestrator {
       evidenceCount: evidence.length,
       candidateCount: judgment.output.candidates.length,
       opportunityCount,
-    }, degradedSources);
+    }, degradedSources, sourcesScanned);
   }
 }
 
@@ -321,9 +324,16 @@ function canonicalEvidenceKey(sourceUrl: string): string {
   }
 }
 
-function withDegraded(result: Omit<HunterRunResult, "degradedSources">, degraded: ReadonlySet<string>): HunterRunResult {
-  const sources = [...degraded].sort();
-  return sources.length ? { ...result, degradedSources: sources } : result;
+function withDegraded(
+  result: Omit<HunterRunResult, "degradedSources" | "sourcesScanned">,
+  degraded: ReadonlySet<string>,
+  scanned: ReadonlySet<string>,
+): HunterRunResult {
+  const sourcesScanned = [...scanned].sort();
+  const degradedSources = [...degraded].sort();
+  return degradedSources.length
+    ? { ...result, sourcesScanned, degradedSources }
+    : { ...result, sourcesScanned };
 }
 
 function compactBrand(brand: BrandContextProjection) {
