@@ -20,6 +20,12 @@ jobs:
         env:
           FLOW_1A_LIVE_CERTIFICATION: "1"
         run: npm test --workspace @kairo/api -- src/flow-1a-12-site-certification.live.test.ts
+      - name: Onboarding to Hunter to Discover journey
+        env:
+          KAIRO_CHUNK5_FIXTURE_CERTIFICATION: "1"
+        run: npm test --workspace @kairo/api -- src/hunter-chunk5-public-url.fixture.test.ts
+      - name: Opportunity to content to campaign to insights journey
+        run: npm test --workspace @kairo/api -- src/simple-creation-lineage.test.ts src/simple-creation-generation-v1.test.ts src/campaign-api.test.ts src/analytics-api.test.ts
       - run: |
           mkdir -p artifacts
           printf '# Certification\n\n- Exact SHA: %s\n- Result: passed\n' "$GITHUB_SHA" > artifacts/certification-summary.md
