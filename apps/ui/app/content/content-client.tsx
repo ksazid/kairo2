@@ -72,7 +72,7 @@ export function ContentClient({ initialItems, brandId }: { initialItems: Content
     </section>
 
     <section id="content-list" aria-label="Content items">
-      {visible.length ? view === "table" ? <ContentTable items={visible} brandId={brandId}/> : <ContentGrid items={visible} brandId={brandId}/> : <div className="content-empty"><Search aria-hidden="true"/><h2>No content matches these filters</h2><p>Clear a filter or try a broader search.</p><button type="button" onClick={clearFilters}>Clear filters</button></div>}
+      {visible.length ? view === "table" ? <ContentTable items={visible} brandId={brandId}/> : <ContentGrid items={visible} brandId={brandId}/> : <div className="content-empty"><Search aria-hidden="true"/><h2>{initialItems.length ? "No content matches these filters" : "No content yet"}</h2><p>{initialItems.length ? "Clear a filter or try a broader search." : "Create content from Home or develop a real Discovery opportunity."}</p>{initialItems.length ? <button type="button" onClick={clearFilters}>Clear filters</button> : null}</div>}
     </section>
 
     <footer className="content-pagination"><span>Showing 1–{visible.length} of {visible.length} content items</span><nav aria-label="Content pages"><button type="button" disabled aria-label="Previous page"><ChevronLeft aria-hidden="true"/></button><button className="active" type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><ChevronRight aria-hidden="true"/></button></nav></footer>
