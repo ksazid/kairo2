@@ -16,6 +16,10 @@ jobs:
         with: {node-version: 24}
       - run: npm ci --no-audit --no-fund
       - run: npm run preflight
+      - name: Live Brand Brain 12-site certification
+        env:
+          FLOW_1A_LIVE_CERTIFICATION: "1"
+        run: npm test --workspace @kairo/api -- src/flow-1a-12-site-certification.live.test.ts
       - run: |
           mkdir -p artifacts
           printf '# Certification\n\n- Exact SHA: %s\n- Result: passed\n' "$GITHUB_SHA" > artifacts/certification-summary.md
