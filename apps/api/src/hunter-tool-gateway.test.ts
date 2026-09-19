@@ -7,6 +7,7 @@ describe("configured Hunter source registry", () => {
     expect(registry.find((source) => source.key === "youtube")?.enabled).toBe(false);
     expect(registry.find((source) => source.key === "rss")?.enabled).toBe(false);
     expect(registry.find((source) => source.key === "agent-reach")?.enabled).toBe(false);
+    expect(registry.find((source) => source.key === "bluesky")).toMatchObject({ enabled: false, requiresCredential: true });
     expect(registry.find((source) => source.key === "github")?.enabled).toBe(true);
   });
 
@@ -19,6 +20,14 @@ describe("configured Hunter source registry", () => {
     expect(registry.find((source) => source.key === "youtube")?.enabled).toBe(true);
     expect(registry.find((source) => source.key === "rss")?.enabled).toBe(true);
     expect(registry.find((source) => source.key === "agent-reach")?.enabled).toBe(true);
+  });
+
+  it("keeps Bluesky unavailable until authenticated search is implemented", async () => {
+    const gateway = createHunterToolGateway({});
+    await expect(gateway.invoke({
+      capability: "public-content-search", scope: { visibility: "brand-private", workspaceId: "workspace", brandId: "brand" }, timeoutMs: 1_000,
+      input: { source: "bluesky", query: "restaurant Malta", maxResults: 2 },
+    })).rejects.toThrow("Bluesky search requires authenticated runtime support");
   });
 
   it("does not disguise public providers as Agent Reach when its binding is absent", async () => {
