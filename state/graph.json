@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "version": 2,
-  "revision": 9,
+  "revision": 10,
   "nodes": [
     {
       "id": "OBJ-001",
@@ -290,6 +290,80 @@
         "sourceIds": [],
         "recordedAt": "2026-09-19T18:51:46.203Z"
       }
+    },
+    {
+      "id": "RUN-008-01",
+      "type": "AgentRun",
+      "status": "verified",
+      "objectiveId": "OBJ-008",
+      "title": "Governed Brand Brain remediation validation",
+      "memoryProvenance": {
+        "eventId": "GM-000010",
+        "revision": 10,
+        "actorId": "pes-v2-remediation",
+        "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+        "sourceIds": [],
+        "recordedAt": "2026-09-19T20:18:30.000Z"
+      }
+    },
+    {
+      "id": "ART-008-01",
+      "type": "Artifact",
+      "status": "verified",
+      "title": "Brand Brain runtime trace and editorial-context guard",
+      "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+      "version": "708d367f7b627035105e1857ae10094eac9a2eb8",
+      "memoryProvenance": {
+        "eventId": "GM-000010",
+        "revision": 10,
+        "actorId": "pes-v2-remediation",
+        "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+        "sourceIds": [],
+        "recordedAt": "2026-09-19T20:18:30.000Z"
+      }
+    },
+    {
+      "id": "EVAL-008-01",
+      "type": "Evaluation",
+      "status": "verified",
+      "title": "Full deterministic preflight passed",
+      "rubricId": "runtime-preflight-pass",
+      "memoryProvenance": {
+        "eventId": "GM-000010",
+        "revision": 10,
+        "actorId": "pes-v2-remediation",
+        "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+        "sourceIds": [],
+        "recordedAt": "2026-09-19T20:18:30.000Z"
+      }
+    },
+    {
+      "id": "EVID-008-01",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "GitHub PES v2 CI passed for PR head 708d367f7b627035105e1857ae10094eac9a2eb8",
+      "memoryProvenance": {
+        "eventId": "GM-000010",
+        "revision": 10,
+        "actorId": "pes-v2-remediation",
+        "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+        "sourceIds": [],
+        "recordedAt": "2026-09-19T20:18:30.000Z"
+      }
+    },
+    {
+      "id": "EVID-008-02",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "Local full preflight passed: governance, runtime tests, typechecks and production builds",
+      "memoryProvenance": {
+        "eventId": "GM-000010",
+        "revision": 10,
+        "actorId": "pes-v2-remediation",
+        "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+        "sourceIds": [],
+        "recordedAt": "2026-09-19T20:18:30.000Z"
+      }
     }
   ],
   "edges": [
@@ -474,6 +548,78 @@
         "sourceIds": [],
         "recordedAt": "2026-09-19T18:52:44.964Z"
       }
+    },
+    {
+      "id": "EDGE-TASK-008-01-PRODUCED-ART-008-01",
+      "type": "PRODUCED",
+      "from": "TASK-008-01",
+      "to": "ART-008-01",
+      "memoryProvenance": {
+        "eventId": "GM-000010",
+        "revision": 10,
+        "actorId": "pes-v2-remediation",
+        "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+        "sourceIds": [],
+        "recordedAt": "2026-09-19T20:18:30.000Z"
+      }
+    },
+    {
+      "id": "EDGE-RUN-008-01-PRODUCED-ART-008-01",
+      "type": "PRODUCED",
+      "from": "RUN-008-01",
+      "to": "ART-008-01",
+      "memoryProvenance": {
+        "eventId": "GM-000010",
+        "revision": 10,
+        "actorId": "pes-v2-remediation",
+        "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+        "sourceIds": [],
+        "recordedAt": "2026-09-19T20:18:30.000Z"
+      }
+    },
+    {
+      "id": "EDGE-EVAL-008-01-EVALUATES-ART-008-01",
+      "type": "EVALUATES",
+      "from": "EVAL-008-01",
+      "to": "ART-008-01",
+      "memoryProvenance": {
+        "eventId": "GM-000010",
+        "revision": 10,
+        "actorId": "pes-v2-remediation",
+        "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+        "sourceIds": [],
+        "recordedAt": "2026-09-19T20:18:30.000Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-008-01-SUPPORTS-ART-008-01",
+      "type": "SUPPORTS",
+      "from": "EVID-008-01",
+      "to": "ART-008-01",
+      "provenance": { "kind": "github-actions", "runId": "35466890477" },
+      "memoryProvenance": {
+        "eventId": "GM-000010",
+        "revision": 10,
+        "actorId": "pes-v2-remediation",
+        "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+        "sourceIds": [],
+        "recordedAt": "2026-09-19T20:18:30.000Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-008-02-SUPPORTS-ART-008-01",
+      "type": "SUPPORTS",
+      "from": "EVID-008-02",
+      "to": "ART-008-01",
+      "provenance": { "kind": "deterministic-check", "command": "npm run preflight" },
+      "memoryProvenance": {
+        "eventId": "GM-000010",
+        "revision": 10,
+        "actorId": "pes-v2-remediation",
+        "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+        "sourceIds": [],
+        "recordedAt": "2026-09-19T20:18:30.000Z"
+      }
     }
   ],
   "events": [
@@ -632,6 +778,30 @@
         "GM-000007"
       ],
       "recordedAt": "2026-09-19T18:53:15.487Z"
+    },
+    {
+      "id": "GM-000010",
+      "revision": 10,
+      "operation": "append",
+      "actorId": "pes-v2-remediation",
+      "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+      "reason": "Record CI and deterministic preflight evidence for exact-SHA certification candidate",
+      "sourceIds": [],
+      "addedNodeIds": [
+        "RUN-008-01",
+        "ART-008-01",
+        "EVAL-008-01",
+        "EVID-008-01",
+        "EVID-008-02"
+      ],
+      "addedEdgeIds": [
+        "EDGE-TASK-008-01-PRODUCED-ART-008-01",
+        "EDGE-RUN-008-01-PRODUCED-ART-008-01",
+        "EDGE-EVAL-008-01-EVALUATES-ART-008-01",
+        "EDGE-EVID-008-01-SUPPORTS-ART-008-01",
+        "EDGE-EVID-008-02-SUPPORTS-ART-008-01"
+      ],
+      "recordedAt": "2026-09-19T20:18:30.000Z"
     }
   ]
 }
