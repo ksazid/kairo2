@@ -56,7 +56,7 @@ export function CampaignsClient({ initialCampaigns, brandId }: { initialCampaign
     </section>
 
     <section id="campaign-list" aria-label="Campaigns">
-      {visible.length ? view === "table" ? <CampaignTable items={visible} brandId={brandId}/> : <CampaignGrid items={visible} brandId={brandId}/> : <div className="content-empty"><Search aria-hidden="true"/><h2>No campaigns match these filters</h2><p>Clear the search or choose another status.</p><button type="button" onClick={() => { setQuery(""); setStatus("all"); }}>Clear filters</button></div>}
+      {visible.length ? view === "table" ? <CampaignTable items={visible} brandId={brandId}/> : <CampaignGrid items={visible} brandId={brandId}/> : <div className="content-empty"><Search aria-hidden="true"/><h2>{initialCampaigns.length ? "No campaigns match these filters" : "No campaigns yet"}</h2><p>{initialCampaigns.length ? "Clear the search or choose another status." : "Create a campaign from Home when you are ready."}</p>{initialCampaigns.length ? <button type="button" onClick={() => { setQuery(""); setStatus("all"); }}>Clear filters</button> : null}</div>}
     </section>
 
     <footer className="content-pagination"><span>Showing 1–{visible.length} of {visible.length} campaigns</span><nav aria-label="Campaign pages"><button type="button" disabled aria-label="Previous page"><ChevronLeft/></button><button className="active" type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><ChevronRight/></button></nav></footer>
