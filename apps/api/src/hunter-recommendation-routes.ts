@@ -153,7 +153,17 @@ export function registerHunterRecommendationRoutes(app: FastifyInstance, options
         }).finally(() => inFlight.delete(key));
         inFlight.set(key, run);
       }
-      return run;
+      const result = await run;
+      request.log.info({
+        event: "hunter_run_completed",
+        brandId: brand.id,
+        evidenceCount: result.evidenceCount,
+        candidateCount: result.candidateCount,
+        opportunityCount: result.opportunityCount,
+        sourcesScanned: authoritativeSources(result),
+        degradedSources: result.degradedSources ?? [],
+      }, "Hunter run completed");
+      return result;
     },
   );
 
