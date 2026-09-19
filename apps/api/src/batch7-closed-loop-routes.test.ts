@@ -58,7 +58,7 @@ async function setup() {
   const runner: HunterRecommendationRunner = {
     async runForAuthorizedBrand(input) {
       captured.push(input);
-      return { evidenceCount: 2, candidateCount: 1, opportunityCount: 1 };
+      return { evidenceCount: 2, candidateCount: 1, opportunityCount: 1, sourcesScanned: [] };
     },
   };
   const closedLoop = new ClosedLoopFixture();
