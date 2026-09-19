@@ -1,3 +1,30 @@
 {
-  "activeSlice": null
+  "activeSlice": {
+    "id": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+    "objectiveId": "OBJ-008",
+    "state": "proposed",
+    "riskLevel": "medium",
+    "implementationPermission": "runtime-enabled",
+    "scope": "Make Brand Brain retain source-grounded editorial publisher context during live onboarding; prove it with a disposable public-brand validation before Hunter runs.",
+    "budget": {
+      "maxModelCalls": 0,
+      "maxSubAgents": 0,
+      "maxConcurrentWorkers": 1,
+      "maxToolCalls": 40,
+      "maxWallClockMinutes": 45,
+      "maxRetries": 2,
+      "maxGraphWrites": 12
+    },
+    "approvals": [
+      { "type": "scope", "status": "approved", "actorType": "human", "scopeId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION" },
+      { "type": "policy", "status": "approved", "actorType": "human", "scopeId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION" },
+      { "type": "implementation", "status": "approved", "actorType": "human", "scopeId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION" }
+    ],
+    "successCriteria": [
+      "A news or editorial website cannot persist conflicting automotive or food core Brand DNA when its source evidence identifies it as a publisher.",
+      "A model-conflict regression test passes.",
+      "The deployed production route is identified before any production re-test.",
+      "No Hunter run starts until the real Brand DNA is truthful and required owner confirmations are complete."
+    ]
+  }
 }
