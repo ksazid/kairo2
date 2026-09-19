@@ -1,5 +1,5 @@
 import { getContentData } from "../../lib/api";
-import { campaignFallback, toCampaignItems } from "../../lib/campaigns";
+import { toCampaignItems } from "../../lib/campaigns";
 import { requirePageAuthentication } from "../../lib/page-auth";
 import { KairoShell } from "../kairo-shell";
 import { CampaignsClient } from "./campaigns-client";
@@ -10,7 +10,7 @@ export default async function CampaignsPage({ searchParams }: { searchParams: Se
   const params = await searchParams;
   const data = requirePageAuthentication(await getContentData(params.brand), "/campaigns");
   const projected = toCampaignItems(data.details, data.reviews, data.commands);
-  const campaigns = projected.length ? projected : campaignFallback();
+  const campaigns = projected;
 
   return <KairoShell
     active="Campaigns"
