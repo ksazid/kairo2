@@ -33,6 +33,7 @@ import {
 import { selectSectorIntelligencePack } from "@kairo/domain/sector-packs";
 import {
   ReadOnlyHunterShadowLaneExecutor,
+  type HunterShadowCandidateTrace,
   type HunterShadowExecutionContext,
 } from "@kairo/worker/hunter-shadow-lane-adapters";
 import {
@@ -59,6 +60,8 @@ export interface HunterShadowOperationalRequest {
   runsPerBrand: number;
   allowEphemeralPublicBrands: boolean;
   allowDisposablePersistedAnchor: boolean;
+  preGate: boolean;
+  includeDetails: boolean;
   anchorBrandId?: string;
 }
 
@@ -73,6 +76,7 @@ export interface HunterShadowOperationalEvidence {
   pairCount: number;
   cohort: { persistedBrands: number; disposablePersistedBrands: number; ephemeralPublicBrands: number };
   costScope: "model-plus-configured-search";
+  gateMode: "pre-gate" | "full";
   readiness: HunterShadowEvidenceBatch["readiness"];
   observations: Array<{
     comparisonId: string;
@@ -89,11 +93,23 @@ export interface HunterShadowOperationalEvidence {
     maximumTopicShare: number;
     criticalViolations?: string[];
   }>;
+  brandEvidence?: Array<{
+    brandKey: string;
+    brandName: string;
+    discoveryTopics: Array<{ id: string; name: string; audience: string }>;
+    intents: HunterShadowCandidateTrace["intents"];
+    runs: Array<{
+      comparisonId: string;
+      selected: HunterShadowCandidateTrace["selected"];
+      diagnostics: HunterShadowCandidateTrace["diagnostics"];
+    }>;
+  }>;
 }
 
 export const HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE = {
   maxIntents: 6,
   maxSourcesPerIntent: 2,
+  maxPaidIntents: 3,
   maxExternalCalls: 6,
   maxSemanticCalls: 0,
   deepLimit: 2,
@@ -133,6 +149,11 @@ export function hunterShadowEvidenceRequestFromEnv(
     );
   }
 
+  const preGate =
+    env.KAIRO_HUNTER_SHADOW_EVIDENCE_PRE_GATE?.trim().toLowerCase() === "true";
+  const includeDetails =
+    env.KAIRO_HUNTER_SHADOW_EVIDENCE_INCLUDE_DETAILS?.trim().toLowerCase() === "true";
+
   const brandCount = boundedInteger(
     env.KAIRO_HUNTER_SHADOW_EVIDENCE_BRANDS,
     3,
@@ -147,8 +168,11 @@ export function hunterShadowEvidenceRequestFromEnv(
     1,
     20,
   );
-  if (brandCount * runsPerBrand < 30) {
-    throw new Error("Hunter shadow evidence requires at least 30 paired runs");
+  const minimumPairs = preGate ? 9 : 30;
+  if (brandCount * runsPerBrand < minimumPairs) {
+    throw new Error(
+      "Hunter shadow evidence requires at least " + minimumPairs + " paired runs",
+    );
   }
 
   if (
@@ -177,6 +201,8 @@ export function hunterShadowEvidenceRequestFromEnv(
       env.KAIRO_HUNTER_SHADOW_EVIDENCE_EPHEMERAL_PUBLIC_BRANDS?.trim().toLowerCase() === "true",
     allowDisposablePersistedAnchor:
       env.KAIRO_HUNTER_SHADOW_EVIDENCE_DISPOSABLE_PERSISTED_ANCHOR?.trim().toLowerCase() === "true",
+    preGate,
+    includeDetails,
     ...(anchorBrandIdRaw ? { anchorBrandId: anchorBrandIdRaw } : {}),
   };
 }
@@ -362,6 +388,7 @@ export async function executeHunterShadowEvidenceRun(
       disposablePersistedBrands: baseContexts.filter((item) => item.origin === "disposable-persisted").length,
       ephemeralPublicBrands: baseContexts.filter((item) => item.origin === "ephemeral-public").length,
     },
+    executor,
   );
   } finally {
     if (disposableAnchor) {
@@ -756,6 +783,7 @@ function redactOperationalEvidence(
   completedAt: string,
   batch: HunterShadowEvidenceBatch,
   cohort: { persistedBrands: number; disposablePersistedBrands: number; ephemeralPublicBrands: number },
+  executor: ReadOnlyHunterShadowLaneExecutor,
 ): HunterShadowOperationalEvidence {
   return {
     schemaVersion: 1,
@@ -768,6 +796,7 @@ function redactOperationalEvidence(
     pairCount: batch.pairs.length,
     cohort,
     costScope: "model-plus-configured-search",
+    gateMode: request.preGate ? "pre-gate" : "full",
     readiness: batch.readiness,
     observations: batch.pairs.map((pair) => ({
       comparisonId: pair.pair.comparisonId,
@@ -786,7 +815,51 @@ function redactOperationalEvidence(
         ? { criticalViolations: [...pair.observation.criticalViolations] }
         : {}),
     })),
+    ...(request.includeDetails
+      ? { brandEvidence: buildBrandEvidence(batch, executor) }
+      : {}),
   };
+}
+
+function buildBrandEvidence(
+  batch: HunterShadowEvidenceBatch,
+  executor: ReadOnlyHunterShadowLaneExecutor,
+): NonNullable<HunterShadowOperationalEvidence["brandEvidence"]> {
+  const grouped = new Map<string, {
+    brandKey: string;
+    brandName: string;
+    discoveryTopics: HunterShadowCandidateTrace["discoveryTopics"];
+    intents: HunterShadowCandidateTrace["intents"];
+    runs: Array<{
+      comparisonId: string;
+      selected: HunterShadowCandidateTrace["selected"];
+      diagnostics: HunterShadowCandidateTrace["diagnostics"];
+    }>;
+  }>();
+
+  for (const pair of batch.pairs) {
+    const trace = executor.traceFor(pair.pair.comparisonId);
+    if (!trace) continue;
+    const brandKey = opaqueBrandKey(pair.pair.workspaceId, pair.pair.brandId);
+    const existing = grouped.get(brandKey);
+    const run = {
+      comparisonId: pair.pair.comparisonId,
+      selected: trace.selected,
+      diagnostics: trace.diagnostics,
+    };
+    if (existing) {
+      existing.runs.push(run);
+      continue;
+    }
+    grouped.set(brandKey, {
+      brandKey,
+      brandName: trace.brandName,
+      discoveryTopics: trace.discoveryTopics,
+      intents: trace.intents,
+      runs: [run],
+    });
+  }
+  return [...grouped.values()].sort((a, b) => a.brandKey.localeCompare(b.brandKey));
 }
 
 function projectBrandContext(

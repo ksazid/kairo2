@@ -131,6 +131,9 @@ export async function runShadowTrendIntelligence(
     for (let right = left + 1; right < observations.length; right += 1) {
       const a = observations[left]!;
       const b = observations[right]!;
+      if (isExplorationOnly(a.generatorKeys) !== isExplorationOnly(b.generatorKeys)) {
+        continue;
+      }
       if (a.corroboratingSignalIds.includes(b.signalId) || b.corroboratingSignalIds.includes(a.signalId)) {
         if (union(left, right)) lexicalMergeCount += 1;
         continue;

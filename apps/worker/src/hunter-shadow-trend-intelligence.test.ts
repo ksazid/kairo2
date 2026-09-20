@@ -101,6 +101,36 @@ describe("runShadowTrendIntelligence", () => {
     expect(run.clusters[0]!.intelligence.topic).not.toBe("EV battery health");
   });
 
+  it("does not collapse exploration evidence into a lexically similar core cluster", async () => {
+    const run = await runShadowTrendIntelligence([
+      candidate({
+        key: "core-signal",
+        title: "AI agent evaluation workflows",
+        summary: "Teams evaluate AI agent workflows before production.",
+        topicIds: ["agents"],
+        generatorKeys: ["brand-core"],
+      }),
+      candidate({
+        key: "explore-signal",
+        title: "AI agent evaluation workflows",
+        summary: "Teams evaluate AI agent workflows before production.",
+        sourceUrl: "https://example.org/explore",
+        publisher: "Publisher B",
+        topicIds: ["agents"],
+        generatorKeys: ["adjacent-exploration"],
+      }),
+    ], {
+      now: new Date("2026-09-20T08:00:00Z"),
+      topicLabels: { agents: "AI agents" },
+    });
+
+    expect(run.clusters).toHaveLength(2);
+    expect(run.clusters.some((cluster) =>
+      cluster.generatorKeys.includes("adjacent-exploration") &&
+      cluster.intelligence.topic === "AI agent evaluation workflows"
+    )).toBe(true);
+  });
+
   it("marks missing engagement/outlier features unknown instead of fabricating evidence", async () => {
     const run = await runShadowTrendIntelligence([
       candidate({ key: "signal-only", corroboratingKeys: [] }),

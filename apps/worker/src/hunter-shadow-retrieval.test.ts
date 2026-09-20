@@ -62,6 +62,29 @@ describe("runShadowRetrieval", () => {
     expect(run.candidates.every((candidate) => candidate.generatorKeys.includes("cross-source-confirmation"))).toBe(true);
   });
 
+  it("executes independent lexical intents concurrently and merges results deterministically", async () => {
+    let active = 0;
+    let maxActive = 0;
+    const search = {
+      search: vi.fn(async (intent: any) => {
+        active += 1;
+        maxActive = Math.max(maxActive, active);
+        await new Promise((resolve) => setTimeout(resolve, intent.id === "i1" ? 8 : 2));
+        active -= 1;
+        return [evidence({
+          title: "Result " + intent.id,
+          sourceUrl: "https://example.com/" + intent.id,
+          contentHash: intent.id.padEnd(64, "a").slice(0, 64),
+        })];
+      }),
+    };
+
+    const run = await runShadowRetrieval(basePlan, search);
+    expect(maxActive).toBe(2);
+    expect(run.diagnostics.executedLexicalIntentCount).toBe(2);
+    expect(run.candidates.map((candidate) => candidate.title)).toEqual(["Result i1", "Result i2"]);
+  });
+
   it("enforces external and semantic call ceilings", async () => {
     const search = { search: vi.fn(async () => [evidence()]) };
     const semantic = { expand: vi.fn(async () => []) };

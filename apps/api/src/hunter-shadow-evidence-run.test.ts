@@ -61,6 +61,8 @@ describe("Hunter shadow operational evidence", () => {
       runsPerBrand: 10,
       allowEphemeralPublicBrands: false,
       allowDisposablePersistedAnchor: false,
+      preGate: false,
+      includeDetails: false,
     });
 
     expect(() => hunterShadowEvidenceRequestFromEnv({
@@ -69,6 +71,30 @@ describe("Hunter shadow operational evidence", () => {
       KAIRO_RELEASE_SHA: "a".repeat(40),
       KAIRO_HUNTER_SHADOW_EVIDENCE_BRANDS: "3",
       KAIRO_HUNTER_SHADOW_EVIDENCE_RUNS_PER_BRAND: "5",
+    })).toThrow(/at least 30/);
+  });
+
+  it("allows an explicit 3-by-3 pre-gate while retaining the 30-pair full gate", () => {
+    const request = hunterShadowEvidenceRequestFromEnv({
+      KAIRO_HUNTER_SHADOW_EVIDENCE_RUN_ID: "hi2-11-pre-001",
+      KAIRO_HUNTER_SHADOW_EVIDENCE_RELEASE_SHA: "a".repeat(40),
+      KAIRO_RELEASE_SHA: "a".repeat(40),
+      KAIRO_HUNTER_SHADOW_EVIDENCE_BRANDS: "3",
+      KAIRO_HUNTER_SHADOW_EVIDENCE_RUNS_PER_BRAND: "3",
+      KAIRO_HUNTER_SHADOW_EVIDENCE_PRE_GATE: "true",
+      KAIRO_HUNTER_SHADOW_EVIDENCE_INCLUDE_DETAILS: "true",
+    });
+    expect(request?.preGate).toBe(true);
+    expect(request?.includeDetails).toBe(true);
+    expect(request?.brandCount).toBe(3);
+    expect(request?.runsPerBrand).toBe(3);
+
+    expect(() => hunterShadowEvidenceRequestFromEnv({
+      KAIRO_HUNTER_SHADOW_EVIDENCE_RUN_ID: "hi2-11-full-too-small",
+      KAIRO_HUNTER_SHADOW_EVIDENCE_RELEASE_SHA: "a".repeat(40),
+      KAIRO_RELEASE_SHA: "a".repeat(40),
+      KAIRO_HUNTER_SHADOW_EVIDENCE_BRANDS: "3",
+      KAIRO_HUNTER_SHADOW_EVIDENCE_RUNS_PER_BRAND: "3",
     })).toThrow(/at least 30/);
   });
 
@@ -165,6 +191,7 @@ describe("Hunter shadow operational evidence", () => {
     expect(HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE).toEqual({
       maxIntents: 6,
       maxSourcesPerIntent: 2,
+      maxPaidIntents: 3,
       maxExternalCalls: 6,
       maxSemanticCalls: 0,
       deepLimit: 2,

@@ -143,26 +143,35 @@ export async function runShadowMultiStageIntelligence(input: {
   let deepFailedCount = 0;
 
   if (input.deepAnalysis) {
-    for (const item of deepCandidates) {
-      try {
-        const raw = await input.deepAnalysis.analyze({
-          candidateId: item.candidateId,
-          topic: item.cluster.intelligence.topic,
-          stage: item.cluster.intelligence.stage,
-          ...(item.audience ? { audience: item.audience } : {}),
-          evidenceSummary: evidenceSummary(item.cluster),
-          supportingSignalIds: [...item.cluster.intelligence.supportingSignalIds],
-          sourceClasses: [...item.sourceClasses],
-          preRankScore: item.preRank.overall,
-        });
-        const analysis = prepareHunterDeepAnalysisResult(raw);
-        if (analysis.candidateId !== item.candidateId) {
-          throw new Error("Deep analysis candidateId must match request");
+    const outcomes = await Promise.all(
+      deepCandidates.map(async (item) => {
+        try {
+          const raw = await input.deepAnalysis!.analyze({
+            candidateId: item.candidateId,
+            topic: item.cluster.intelligence.topic,
+            stage: item.cluster.intelligence.stage,
+            ...(item.audience ? { audience: item.audience } : {}),
+            evidenceSummary: evidenceSummary(item.cluster),
+            supportingSignalIds: [...item.cluster.intelligence.supportingSignalIds],
+            sourceClasses: [...item.sourceClasses],
+            preRankScore: item.preRank.overall,
+          });
+          const analysis = prepareHunterDeepAnalysisResult(raw);
+          if (analysis.candidateId !== item.candidateId) {
+            throw new Error("Deep analysis candidateId must match request");
+          }
+          return {
+            ok: true as const,
+            item: { candidateId: item.candidateId, preRank: item.preRank, analysis },
+          };
+        } catch {
+          return { ok: false as const };
         }
-        deepIntelligence.push({ candidateId: item.candidateId, preRank: item.preRank, analysis });
-      } catch {
-        deepFailedCount += 1;
-      }
+      }),
+    );
+    for (const outcome of outcomes) {
+      if (outcome.ok) deepIntelligence.push(outcome.item);
+      else deepFailedCount += 1;
     }
   }
 

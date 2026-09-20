@@ -176,6 +176,41 @@ describe("runShadowMultiStageIntelligence", () => {
     expect(run.diagnostics.deepSkippedCount).toBe(2);
   });
 
+  it("executes bounded deep-analysis requests concurrently while preserving output order", async () => {
+    let active = 0;
+    let maxActive = 0;
+    const analyze = vi.fn(async (request: any) => {
+      active += 1;
+      maxActive = Math.max(maxActive, active);
+      await new Promise((resolve) => setTimeout(resolve, request.candidateId === "t1" ? 8 : 2));
+      active -= 1;
+      return {
+        version: HUNTER_DEEP_INTELLIGENCE_VERSION,
+        candidateId: request.candidateId,
+        brandReason: "Relevant.",
+        audienceReason: "Useful.",
+        whyNow: "Recent.",
+        contentGap: "Gap.",
+        proposedAngle: "Angle.",
+        originality: 0.6,
+        actionability: 0.7,
+        confidence: 0.7,
+      };
+    });
+
+    const run = await runShadowMultiStageIntelligence({
+      clusters: [cluster("t1", "EV battery health"), cluster("t2", "EV charging")],
+      plan,
+      deepAnalysis: { analyze },
+      options: { preRankLimit: 2, deepLimit: 2 },
+    });
+
+    expect(maxActive).toBe(2);
+    expect(run.deepIntelligence.map((item) => item.candidateId)).toEqual(
+      run.preRanked.slice(0, 2).map((item) => item.candidateId),
+    );
+  });
+
   it("isolates deep-analysis failures without changing the deterministic pre-rank", async () => {
     const analyze = vi.fn(async (request: any) => {
       if (request.candidateId === "t1") throw new Error("provider unavailable");
