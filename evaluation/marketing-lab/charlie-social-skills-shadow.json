@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "name": "charlie-social-skills-shadow-suite",
+  "upstream": {
+    "repository": "charlie947/social-media-skills",
+    "commitSha": "8cefb5b6d03757885faa6918bd8bfaef202a83db",
+    "license": "MIT"
+  },
+  "dataPolicy": "synthetic-public-safe-only",
+  "manifests": [
+    {
+      "id": "charlie-content-matrix-shadow",
+      "version": "1.1.0+8cefb5b6",
+      "name": "Charlie Content Matrix Shadow",
+      "capabilities": [
+        "content-strategy",
+        "social-strategy"
+      ],
+      "source": {
+        "kind": "github",
+        "repository": "charlie947/social-media-skills",
+        "commitSha": "8cefb5b6d03757885faa6918bd8bfaef202a83db",
+        "path": "skills/content-matrix/SKILL.md",
+        "contentHash": "7e03b865c1754fc54941bf714fd24db754be72dd",
+        "license": "MIT"
+      },
+      "executionMode": "sandboxed",
+      "permissions": {
+        "network": false,
+        "secrets": false,
+        "brandPrivateContext": true,
+        "publishing": false
+      },
+      "status": "evaluation",
+      "benchmarkStatus": "shadow"
+    },
+    {
+      "id": "charlie-hook-generator-shadow",
+      "version": "1.1.0+8cefb5b6",
+      "name": "Charlie Hook Generator Shadow",
+      "capabilities": [
+        "hook-strategy"
+      ],
+      "source": {
+        "kind": "github",
+        "repository": "charlie947/social-media-skills",
+        "commitSha": "8cefb5b6d03757885faa6918bd8bfaef202a83db",
+        "path": "skills/hook-generator/SKILL.md",
+        "contentHash": "ccfecdc8d30b282ce359dfe96750735b2bae2435",
+        "license": "MIT"
+      },
+      "executionMode": "sandboxed",
+      "permissions": {
+        "network": false,
+        "secrets": false,
+        "brandPrivateContext": true,
+        "publishing": false
+      },
+      "status": "evaluation",
+      "benchmarkStatus": "shadow"
+    },
+    {
+      "id": "charlie-gemini-carousel-shadow",
+      "version": "1.1.0+8cefb5b6",
+      "name": "Charlie Gemini Carousel Shadow",
+      "capabilities": [
+        "carousel-strategy"
+      ],
+      "source": {
+        "kind": "github",
+        "repository": "charlie947/social-media-skills",
+        "commitSha": "8cefb5b6d03757885faa6918bd8bfaef202a83db",
+        "path": "skills/gemini-carousel/SKILL.md",
+        "contentHash": "1f6bd521c2fe6813d1c11477a0c6565ca375b9a2",
+        "license": "MIT"
+      },
+      "executionMode": "sandboxed",
+      "permissions": {
+        "network": false,
+        "secrets": false,
+        "brandPrivateContext": true,
+        "publishing": false
+      },
+      "status": "evaluation",
+      "benchmarkStatus": "shadow"
+    },
+    {
+      "id": "charlie-reels-scripting-shadow",
+      "version": "1.1.0+8cefb5b6",
+      "name": "Charlie Reels Scripting Shadow",
+      "capabilities": [
+        "reel-strategy"
+      ],
+      "source": {
+        "kind": "github",
+        "repository": "charlie947/social-media-skills",
+        "commitSha": "8cefb5b6d03757885faa6918bd8bfaef202a83db",
+        "path": "skills/reels-scripting/SKILL.md",
+        "contentHash": "75d054e468b12c95a76a8ebef4a1ae78d18bcf18",
+        "license": "MIT"
+      },
+      "executionMode": "sandboxed",
+      "permissions": {
+        "network": false,
+        "secrets": false,
+        "brandPrivateContext": true,
+        "publishing": false
+      },
+      "status": "evaluation",
+      "benchmarkStatus": "shadow"
+    }
+  ],
+  "notes": [
+    "Evaluation only. External skill text is untrusted reference material and never Kairo policy.",
+    "No network, secrets or publishing authority is granted in shadow execution.",
+    "Brand Brain, Truth Gate, EEI, Critic/Judge and Kairo typed output contracts remain authoritative.",
+    "Provider-specific instructions, interactive auto-start flows and global style defaults are inert unless explicitly represented by a Kairo benchmark case."
+  ]
+}
