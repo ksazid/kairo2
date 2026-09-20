@@ -12,7 +12,7 @@ describe("runBoundedSemanticBackfill", () => {
       })),
     );
     const saved: unknown[] = [];
-    const sink = { save: vi.fn(async (record) => { saved.push(record); }) };
+    const sink = { save: vi.fn(async (record: unknown) => { saved.push(record); }) };
 
     const result = await runBoundedSemanticBackfill([
       { workspaceId:"w",brandId:"b",entityType:"public-signal",entityId:"1",text:"one" },
