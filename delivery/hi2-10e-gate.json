@@ -1,0 +1,60 @@
+{
+  "allowed": true,
+  "sliceId": "HI2-10E",
+  "fromState": "testing",
+  "requestedState": "certification",
+  "blockers": [],
+  "warnings": [
+    {
+      "code": "high-risk-certification-review",
+      "message": "High-risk release path should retain explicit certification approval through release."
+    }
+  ],
+  "requiredApprovals": [
+    "scope",
+    "policy",
+    "implementation"
+  ],
+  "validApprovals": [
+    "scope",
+    "policy",
+    "implementation"
+  ],
+  "protectedPaths": [],
+  "evidence": {
+    "accepted": [
+      {
+        "id": "EVID-HI2-10E-01",
+        "type": "Evidence",
+        "status": "verified",
+        "distance": 3
+      },
+      {
+        "id": "EVID-HI2-10E-02",
+        "type": "Evidence",
+        "status": "verified",
+        "distance": 3
+      },
+      {
+        "id": "EVID-HI2-10E-03",
+        "type": "Evidence",
+        "status": "verified",
+        "distance": 3
+      }
+    ],
+    "rejected": []
+  },
+  "deliveryGraph": {
+    "required": true,
+    "blocking": false,
+    "status": "ready",
+    "reasons": [
+      "risk:high"
+    ]
+  },
+  "context": {
+    "hash": "541686847352fce38a2509cb3b39bf650ab1262191282925dadc73882baf1482",
+    "graphRevision": 25,
+    "contradictions": 0
+  }
+}
