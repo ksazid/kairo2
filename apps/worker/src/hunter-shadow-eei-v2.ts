@@ -222,6 +222,8 @@ export function runShadowPreferenceAwareEEI(input: {
     );
   }
 
+  enforceFinalTopicShare(selected, HUNTER_EEI_V2_SHADOW_POLICY.maximumTopicShare);
+
   const selectedTopicCounts = new Map<string, number>();
   for (const item of selected) {
     const topic = normalize(item.topic);
@@ -346,6 +348,36 @@ function classifyBucket(topicFit: number, affinity: number | undefined): ShadowE
   if (topicFit >= 0.72 || preference >= 0.68) return "core";
   if (topicFit >= 0.32 || preference >= 0.35) return "adjacent";
   return "exploration";
+}
+
+function enforceFinalTopicShare(items: ShadowEEIRankedItem[], maximumShare: number): void {
+  if (items.length < 3) return;
+
+  while (items.length >= 3) {
+    const counts = new Map<string, number>();
+    for (const item of items) {
+      const topic = normalize(item.topic);
+      counts.set(topic, (counts.get(topic) ?? 0) + 1);
+    }
+
+    const overrepresented = [...counts.entries()]
+      .filter(([, count]) => count / items.length > maximumShare)
+      .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]))[0];
+
+    if (!overrepresented) return;
+
+    const [topic] = overrepresented;
+    const removable = items
+      .map((item, index) => ({ item, index }))
+      .filter(({ item }) => normalize(item.topic) === topic)
+      .sort((left, right) =>
+        left.item.eeiScore - right.item.eeiScore ||
+        right.index - left.index
+      )[0];
+
+    if (!removable) return;
+    items.splice(removable.index, 1);
+  }
 }
 
 function buildExplanation(
