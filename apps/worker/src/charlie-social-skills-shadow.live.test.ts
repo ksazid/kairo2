@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { prepareAgentInvocation, type AgentRuntimePort } from "@kairo/agent-contracts";
+import { prepareAgentInvocation, type AgentRuntimePort, type JsonValue } from "@kairo/agent-contracts";
 import {
   createMarketingSkillRegistry,
   type MarketingSkillManifest,
@@ -260,11 +260,15 @@ async function executeNative(runtime: AgentRuntimePort, benchmarkCase: Marketing
           format: benchmarkCase.format,
           objective: benchmarkCase.objective,
           audience: benchmarkCase.audience,
-          claims: benchmarkCase.claims,
-          requiredClaimIds: benchmarkCase.requiredClaimIds,
-          prohibitedPatterns: benchmarkCase.prohibitedPatterns ?? [],
+          claims: benchmarkCase.claims.map((claim) => ({
+            id: claim.id,
+            statement: claim.statement,
+            evidenceRefs: [...claim.evidenceRefs],
+          })),
+          requiredClaimIds: [...benchmarkCase.requiredClaimIds],
+          prohibitedPatterns: [...(benchmarkCase.prohibitedPatterns ?? [])],
         },
-      },
+      } as JsonValue,
     },
     outputSchema: {
       name: benchmarkCase.format === "carousel" ? "marketing-carousel-plan" : "marketing-reel-plan",
