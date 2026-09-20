@@ -1,0 +1,8 @@
+{
+  "sliceId": "HI2-01",
+  "certifiedImplementationSha": "96aa95843702bc7da1e5f7aee10731f08e203df4",
+  "certifiedHash": "ef4527f3d4fab7ec7bddeb84b746a767147436841b26623002982742e766458e",
+  "syncedMainSha": "32a5a51e2fbdc1a8a466d5c19d6174450f7f63ee",
+  "strategy": "retain current main runtime/code; carry forward immutable HI2-01 certification evidence only",
+  "runtimeDowngrade": false
+}
