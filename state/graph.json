@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "version": 2,
-  "revision": 27,
+  "revision": 28,
   "nodes": [
     {
       "id": "OBJ-001",
@@ -2061,6 +2061,134 @@
         "sourceIds": [],
         "recordedAt": "2026-09-20T16:17:44.367Z"
       }
+    },
+    {
+      "id": "OBJ-HI2-10V",
+      "type": "Objective",
+      "status": "active",
+      "title": "Complete the disposable Vercel shadow anchor without weakening Hunter readiness",
+      "successCriteria": [
+        "The Vercel fixture uses active source records derived from Vercel About and Vercel Acceptable Use Policy public references.",
+        "Exactly the six canonical Hunter readiness groups receive at least one non-placeholder source-backed inferred field: business, offerings, audience, positioning, topics and boundaries.",
+        "No owner-confirmed field is created and no existing user Brand field is modified.",
+        "The unchanged createBrandBrainActivationSnapshot readiness evaluator must return hunterReady=true before the fixture can enter the evidence cohort.",
+        "Missing About or policy source evidence fails closed before paired evidence starts.",
+        "The disposable Brand is deleted after success or failure.",
+        "The evidence cohort remains at least 3 distinct real Brands and 30 paired V1/V2 runs.",
+        "Hunter V1 remains production authority; no canary or production enablement is introduced.",
+        "PES v2 CI and Security baseline pass before merge/deployment."
+      ],
+      "memoryProvenance": {
+        "eventId": "GM-000028",
+        "revision": 28,
+        "actorId": "pes-v2-hunter-shadow-vercel-readiness",
+        "runId": "HI2-10V",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T17:13:49.893Z"
+      }
+    },
+    {
+      "id": "TASK-HI2-10V",
+      "type": "Task",
+      "status": "active",
+      "objectiveId": "OBJ-HI2-10V",
+      "title": "Persist six source-backed inferred fixture fields and require canonical readiness",
+      "memoryProvenance": {
+        "eventId": "GM-000028",
+        "revision": 28,
+        "actorId": "pes-v2-hunter-shadow-vercel-readiness",
+        "runId": "HI2-10V",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T17:13:49.893Z"
+      }
+    },
+    {
+      "id": "RUN-HI2-10V-01",
+      "type": "AgentRun",
+      "status": "verified",
+      "objectiveId": "OBJ-HI2-10V",
+      "title": "Exact HI2-10V implementation passed PESv2 CI and Security",
+      "memoryProvenance": {
+        "eventId": "GM-000028",
+        "revision": 28,
+        "actorId": "pes-v2-hunter-shadow-vercel-readiness",
+        "runId": "HI2-10V",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T17:13:49.893Z"
+      }
+    },
+    {
+      "id": "ART-HI2-10V",
+      "type": "Artifact",
+      "status": "verified",
+      "title": "Source-backed Vercel readiness completion for disposable Hunter shadow anchor",
+      "runId": "HI2-10V",
+      "version": "f1a419b802b1961caf703d720a2c665c803bd534",
+      "memoryProvenance": {
+        "eventId": "GM-000028",
+        "revision": 28,
+        "actorId": "pes-v2-hunter-shadow-vercel-readiness",
+        "runId": "HI2-10V",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T17:13:49.893Z"
+      }
+    },
+    {
+      "id": "EVAL-HI2-10V",
+      "type": "Evaluation",
+      "status": "verified",
+      "title": "PESv2 validated six canonical source-backed fields, unchanged readiness, source fail-closed behavior and disposable cleanup",
+      "rubricId": "hunter-shadow-vercel-readiness-high-risk",
+      "memoryProvenance": {
+        "eventId": "GM-000028",
+        "revision": 28,
+        "actorId": "pes-v2-hunter-shadow-vercel-readiness",
+        "runId": "HI2-10V",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T17:13:49.893Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-10V-01",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "GitHub PES v2 CI run 35525086443 passed for PR #21 head f1a419b802b1961caf703d720a2c665c803bd534",
+      "memoryProvenance": {
+        "eventId": "GM-000028",
+        "revision": 28,
+        "actorId": "pes-v2-hunter-shadow-vercel-readiness",
+        "runId": "HI2-10V",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T17:13:49.893Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-10V-02",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "GitHub Security baseline run 35525086447 passed for PR #21 head f1a419b802b1961caf703d720a2c665c803bd534",
+      "memoryProvenance": {
+        "eventId": "GM-000028",
+        "revision": 28,
+        "actorId": "pes-v2-hunter-shadow-vercel-readiness",
+        "runId": "HI2-10V",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T17:13:49.893Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-10V-03",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "HI2-10V delivery graph is ready; public Vercel sources back all six canonical groups and Hunter V1 remains authoritative",
+      "memoryProvenance": {
+        "eventId": "GM-000028",
+        "revision": 28,
+        "actorId": "pes-v2-hunter-shadow-vercel-readiness",
+        "runId": "HI2-10V",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T17:13:49.893Z"
+      }
     }
   ],
   "edges": [
@@ -3805,6 +3933,116 @@
         "sourceIds": [],
         "recordedAt": "2026-09-20T16:17:44.367Z"
       }
+    },
+    {
+      "id": "EDGE-OBJ-HI2-10V-TASK",
+      "type": "IMPLEMENTED_BY",
+      "from": "OBJ-HI2-10V",
+      "to": "TASK-HI2-10V",
+      "memoryProvenance": {
+        "eventId": "GM-000028",
+        "revision": 28,
+        "actorId": "pes-v2-hunter-shadow-vercel-readiness",
+        "runId": "HI2-10V",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T17:13:49.893Z"
+      }
+    },
+    {
+      "id": "EDGE-TASK-HI2-10V-PRODUCED-ART",
+      "type": "PRODUCED",
+      "from": "TASK-HI2-10V",
+      "to": "ART-HI2-10V",
+      "memoryProvenance": {
+        "eventId": "GM-000028",
+        "revision": 28,
+        "actorId": "pes-v2-hunter-shadow-vercel-readiness",
+        "runId": "HI2-10V",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T17:13:49.893Z"
+      }
+    },
+    {
+      "id": "EDGE-RUN-HI2-10V-01-PRODUCED-ART",
+      "type": "PRODUCED",
+      "from": "RUN-HI2-10V-01",
+      "to": "ART-HI2-10V",
+      "memoryProvenance": {
+        "eventId": "GM-000028",
+        "revision": 28,
+        "actorId": "pes-v2-hunter-shadow-vercel-readiness",
+        "runId": "HI2-10V",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T17:13:49.893Z"
+      }
+    },
+    {
+      "id": "EDGE-EVAL-HI2-10V-EVALUATES-ART",
+      "type": "EVALUATES",
+      "from": "EVAL-HI2-10V",
+      "to": "ART-HI2-10V",
+      "memoryProvenance": {
+        "eventId": "GM-000028",
+        "revision": 28,
+        "actorId": "pes-v2-hunter-shadow-vercel-readiness",
+        "runId": "HI2-10V",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T17:13:49.893Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-10V-01-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-10V-01",
+      "to": "ART-HI2-10V",
+      "provenance": {
+        "kind": "github-actions",
+        "runId": "35525086443"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000028",
+        "revision": 28,
+        "actorId": "pes-v2-hunter-shadow-vercel-readiness",
+        "runId": "HI2-10V",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T17:13:49.893Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-10V-02-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-10V-02",
+      "to": "ART-HI2-10V",
+      "provenance": {
+        "kind": "github-actions",
+        "runId": "35525086447"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000028",
+        "revision": 28,
+        "actorId": "pes-v2-hunter-shadow-vercel-readiness",
+        "runId": "HI2-10V",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T17:13:49.893Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-10V-03-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-10V-03",
+      "to": "ART-HI2-10V",
+      "provenance": {
+        "kind": "delivery-graph",
+        "path": "delivery/hi2-10v-delivery-graph.json"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000028",
+        "revision": 28,
+        "actorId": "pes-v2-hunter-shadow-vercel-readiness",
+        "runId": "HI2-10V",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T17:13:49.893Z"
+      }
     }
   ],
   "events": [
@@ -4432,6 +4670,35 @@
         "EDGE-EVID-HI2-10T-03-SUPPORTS-ART"
       ],
       "recordedAt": "2026-09-20T16:17:44.367Z"
+    },
+    {
+      "id": "GM-000028",
+      "revision": 28,
+      "operation": "append",
+      "actorId": "pes-v2-hunter-shadow-vercel-readiness",
+      "runId": "HI2-10V",
+      "reason": "Record exact HI2-10V implementation, CI/Security evidence and source-backed readiness delivery graph",
+      "sourceIds": [],
+      "addedNodeIds": [
+        "OBJ-HI2-10V",
+        "TASK-HI2-10V",
+        "RUN-HI2-10V-01",
+        "ART-HI2-10V",
+        "EVAL-HI2-10V",
+        "EVID-HI2-10V-01",
+        "EVID-HI2-10V-02",
+        "EVID-HI2-10V-03"
+      ],
+      "addedEdgeIds": [
+        "EDGE-OBJ-HI2-10V-TASK",
+        "EDGE-TASK-HI2-10V-PRODUCED-ART",
+        "EDGE-RUN-HI2-10V-01-PRODUCED-ART",
+        "EDGE-EVAL-HI2-10V-EVALUATES-ART",
+        "EDGE-EVID-HI2-10V-01-SUPPORTS-ART",
+        "EDGE-EVID-HI2-10V-02-SUPPORTS-ART",
+        "EDGE-EVID-HI2-10V-03-SUPPORTS-ART"
+      ],
+      "recordedAt": "2026-09-20T17:13:49.893Z"
     }
   ]
 }
