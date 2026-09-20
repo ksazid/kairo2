@@ -1,0 +1,84 @@
+{
+  "status": "ready",
+  "sliceId": "HI2-11R",
+  "riskLevel": "high",
+  "purpose": "Correct the HI2-11 pre-gate coverage and exploration-overallocation findings without changing rollout thresholds or losing the achieved cost/latency improvements.",
+  "baseline": {
+    "runId": "hi2-11-pre-20260920-01",
+    "releaseSha": "e67120b5e1965ae6d25e93c83ddcf80ddd41361d",
+    "pairCount": 9,
+    "metrics": {
+      "averageQualityDelta": 0.3748074074074074,
+      "averageRetrievalCoverage": 0.6,
+      "v2FailureRate": 0,
+      "p95LatencyRatio": 0.693610253531668,
+      "averageCostRatio": 1.4455816359524358,
+      "minimumExplorationShare": 0.3,
+      "maximumExplorationShare": 0.4,
+      "maximumObservedTopicShare": 0.3
+    }
+  },
+  "stages": [
+    {
+      "id": "three-topic-plan",
+      "dependsOn": [],
+      "output": "two core intents plus one exploration intent on distinct topics",
+      "authority": "shadow-only",
+      "rollback": "Revert HI2-11R."
+    },
+    {
+      "id": "topic-rotation",
+      "dependsOn": [
+        "three-topic-plan"
+      ],
+      "output": "deterministic comparison-scoped rotation across discovery topics",
+      "authority": "shadow-only",
+      "rollback": "Revert rotation seed logic."
+    },
+    {
+      "id": "exploration-cap",
+      "dependsOn": [],
+      "output": "EEI fallback cannot exceed certified exploration maximum",
+      "authority": "shadow-only",
+      "rollback": "Revert fallback cap."
+    },
+    {
+      "id": "corrected-pre-gate",
+      "dependsOn": [
+        "topic-rotation",
+        "exploration-cap"
+      ],
+      "output": "3 brands x 3 runs under unchanged thresholds",
+      "authority": "read-only",
+      "rollback": "Do not run full gate."
+    },
+    {
+      "id": "full-shadow-gate",
+      "dependsOn": [
+        "corrected-pre-gate"
+      ],
+      "output": "3 brands x 10 runs under unchanged thresholds",
+      "authority": "read-only",
+      "rollback": "Canary remains disabled."
+    }
+  ],
+  "killSwitchOn": [
+    "tenant-isolation",
+    "manipulation-safety",
+    "persistence-authority",
+    "evidence-provenance",
+    "production-guard-bypass",
+    "critical-rollout-violation"
+  ],
+  "constraints": {
+    "rolloutThresholdChanges": false,
+    "maxOperationalIntents": 3,
+    "paidAgentReachIntents": 3,
+    "distinctTopicsWhenAvailable": 3,
+    "maximumExplorationShare": 0.2,
+    "productionHunterAuthority": "v1-only",
+    "hunterV2Persistence": false,
+    "canaryExposure": false,
+    "productionEnable": false
+  }
+}

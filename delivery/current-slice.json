@@ -1,56 +1,56 @@
 {
   "activeSlice": {
-    "id": "HI2-11",
-    "objectiveId": "OBJ-HI2-11",
+    "id": "HI2-11R",
+    "objectiveId": "OBJ-HI2-11R",
     "state": "certified",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Reduce Hunter V2 shadow cost and latency under unchanged rollout thresholds, stabilize genuine exploration across brands, and emit explicit human-readable test evidence (brand name, discovery topics, sanitized queries, paid-search selection, selected recommendation topics/buckets) only when an explicit evidence-detail flag is enabled.",
+    "scope": "Correct the HI2-11 pre-gate findings without changing rollout thresholds: use a three-topic-per-run operational retrieval plan with deterministic topic rotation and one distinct exploration topic, and enforce the certified EEI exploration maximum during fallback selection. Preserve the achieved cost/latency gains and detailed evidence output.",
     "budget": {
-      "maxModelCalls": 120,
+      "maxModelCalls": 80,
       "maxSubAgents": 0,
-      "maxWallClockMinutes": 45,
-      "maxExternalWrites": 20
+      "maxWallClockMinutes": 30,
+      "maxExternalWrites": 14
     },
     "approvals": [
       {
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11"
+        "scopeId": "HI2-11R"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11"
+        "scopeId": "HI2-11R"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11"
+        "scopeId": "HI2-11R"
       }
     ],
     "successCriteria": [
-      "Operational V2 uses at most three paid Agent Reach intents per run while keeping all planned lexical intents active on available free sources.",
-      "Paid intent selection is deterministic and always reserves an exploration paid slot when lexical adjacent exploration exists.",
-      "Independent source calls and lexical intents execute concurrently while final evidence ordering remains deterministic.",
-      "Deep-analysis requests execute concurrently with deterministic result ordering and isolated failure handling.",
-      "Exploration-only retrieval signals are not merged into non-exploration clusters, preserving genuine adjacent evidence through EEI.",
-      "Explicit test-only evidence detail records brand name, discovery topics, sanitized intent queries, paid-search selection and selected recommendation topics/buckets without raw source content or account identifiers.",
-      "A 3-brand x 3-run pre-gate must meet cost ratio <=1.5, p95 latency ratio <=1.5, retrieval coverage >=0.85, failure rate <=0.05, exploration share >=0.08, and quality delta >=-0.02 before a full 30-pair gate is attempted.",
-      "The full 30-pair gate uses unchanged HI2-09 thresholds.",
-      "Hunter V1 remains production authority and Hunter V2 performs no opportunity persistence.",
-      "Canary remains disabled unless the completed full shadow gate passes.",
+      "Operational V2 retrieves exactly three bounded lexical intents per run when at least three topics exist.",
+      "Two core topic intents and one exploration intent use three distinct topic IDs when the discovery plan has at least three topics.",
+      "Topic selection rotates deterministically by comparison ID across repeated runs so a six-topic Brand is not permanently narrowed to the same three topics.",
+      "All three operational intents are eligible for the existing three-paid-intent budget; no additional paid searches are introduced.",
+      "Per-run retrieval coverage remains >=0.85 under the unchanged readiness metric.",
+      "EEI fallback selection never raises exploration above the certified explorationMax=0.20 while preserving the exploration minimum target when eligible evidence exists.",
+      "3x3 pre-gate cost ratio remains <=1.5 and p95 latency ratio <=1.5.",
+      "3x3 pre-gate quality delta remains >=-0.02, failure rate <=0.05, and topic share <=0.34.",
+      "Only after the corrected 3x3 pre-gate passes may the full 30-pair shadow gate run.",
+      "Hunter V1 remains production authority; no V2 persistence, canary, scheduler, or production enablement.",
       "PES v2 CI and Security baseline pass before merge/deployment."
     ],
     "certification": {
-      "bundleId": "CERT-HI2-11-0C0900E5",
-      "commitSha": "0c0900e5d8472b56785288e9effc13363365d486",
-      "candidateHash": "33b9174ecf554e9ff929639e056e2c88449d6f1be8020bfaf92b86f05eecaecd",
-      "certifiedHash": "dabed868c1b317f68cbb255ed6f639c40230172af478faf6af048d2b1e7b22c0",
-      "certifiedAt": "2026-09-20T21:13:33.106Z"
+      "bundleId": "CERT-HI2-11R-8ED6E933",
+      "commitSha": "8ed6e933dc1a06c18c9d292ab19df8dec3e9734d",
+      "candidateHash": "07de3c4a958f18cc29b5578c21bcf19c03ac966010a75b827b948b7d8e724564",
+      "certifiedHash": "65d2574558c94d157754d78b24024c17a9ee93ea4dc583986e18c5cb4cb3ff29",
+      "certifiedAt": "2026-09-20T21:36:41.729Z"
     }
   }
 }

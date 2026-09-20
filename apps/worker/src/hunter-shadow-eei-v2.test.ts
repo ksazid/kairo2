@@ -147,6 +147,23 @@ describe("shadow Preference-aware EEI V2", () => {
     expect(run.diagnostics.explorationSelectedCount).toBe(1);
   });
 
+  it("does not let fallback selection exceed the certified exploration maximum", () => {
+    const input = [
+      ...Array.from({ length: 8 }, (_, i) => item("core-cap-" + i, "core cap " + i, 0.9, "core-cap-source-" + i)),
+      ...Array.from({ length: 6 }, (_, i) => item("exp-cap-" + i, "explore cap " + i, 0.1, "exp-cap-source-" + i)),
+    ];
+
+    const run = runShadowPreferenceAwareEEI({
+      preRanked: input,
+      preferenceState: { ...preferenceState, explorationBudget: 0.1 },
+      options: { maxCandidates: 10, adjacentShare: 0.2 },
+    });
+
+    expect(run.selected).toHaveLength(10);
+    expect(run.diagnostics.explorationSelectedCount).toBeLessThanOrEqual(2);
+    expect(run.diagnostics.explorationSelectedCount / run.selected.length).toBeLessThanOrEqual(0.2);
+  });
+
   it("blocks manipulation, strong negative preferences and exhausted saturated duplicates", () => {
     const run = runShadowPreferenceAwareEEI({
       preRanked: [

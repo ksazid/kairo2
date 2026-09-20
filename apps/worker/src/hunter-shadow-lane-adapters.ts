@@ -180,7 +180,7 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
     const retrievalPlan = balancedShadowRetrievalPlan(buildHunterRetrievalPlan({
       plan: context.discoveryPlan,
       ...(context.preferenceState ? { preferenceState: context.preferenceState } : {}),
-    }), this.options.candidate?.maxIntents ?? 12);
+    }), this.options.candidate?.maxIntents ?? 12, run.comparisonId);
     const paidIntentIds = selectPaidShadowIntentIds(
       retrievalPlan,
       this.options.candidate?.maxPaidIntents ?? 3,
@@ -522,20 +522,11 @@ export function selectPaidShadowIntentIds(
 export function balancedShadowRetrievalPlan(
   plan: HunterRetrievalPlan,
   maxIntentsInput: number,
+  rotationSeed = "",
 ): HunterRetrievalPlan {
   const maxIntents = Math.max(1, Math.min(24, Math.trunc(maxIntentsInput)));
-  const topicIds = [...new Set(plan.intents.map((intent) => intent.topicId))];
-  const lexicalExploration = plan.intents
-    .filter(
-      (intent) =>
-        intent.generator === "adjacent-exploration" &&
-        intent.mode === "lexical-search",
-    )
-    .sort((left, right) =>
-      left.topicId.localeCompare(right.topicId) || left.id.localeCompare(right.id)
-    )[0];
-  const reserveExploration = Boolean(lexicalExploration && maxIntents >= 2);
-  const nonExplorationLimit = maxIntents - (reserveExploration ? 1 : 0);
+  const allTopicIds = [...new Set(plan.intents.map((intent) => intent.topicId))].sort();
+  const topicIds = rotateStable(allTopicIds, rotationSeed);
   const generatorOrder = new Map<string, number>([
     ["brand-core", 0],
     ["rising-breaking", 1],
@@ -545,41 +536,79 @@ export function balancedShadowRetrievalPlan(
     ["evergreen", 5],
     ["category-competitor", 6],
   ]);
-  const byTopic = new Map(topicIds.map((topicId) => [
+  const bestNonExplorationByTopic = new Map(topicIds.map((topicId) => [
     topicId,
     plan.intents
       .filter(
         (intent) =>
           intent.topicId === topicId &&
-          intent.mode !== "corroboration" &&
+          intent.mode === "lexical-search" &&
           intent.generator !== "adjacent-exploration",
       )
       .sort((left, right) =>
         (generatorOrder.get(left.generator) ?? 99) -
-        (generatorOrder.get(right.generator) ?? 99) ||
+          (generatorOrder.get(right.generator) ?? 99) ||
         left.id.localeCompare(right.id)
-      ),
+      )[0],
   ] as const));
 
   const selected: HunterRetrievalPlan["intents"] = [];
-  let round = 0;
-  while (selected.length < nonExplorationLimit) {
-    let added = false;
-    for (const topicId of topicIds) {
-      const candidate = byTopic.get(topicId)?.[round];
-      if (!candidate) continue;
-      selected.push(candidate);
-      added = true;
-      if (selected.length >= nonExplorationLimit) break;
-    }
-    if (!added) break;
-    round += 1;
+  const selectedTopics = new Set<string>();
+  const reserveExploration = maxIntents >= 2 &&
+    plan.intents.some(
+      (intent) =>
+        intent.mode === "lexical-search" &&
+        intent.generator === "adjacent-exploration",
+    );
+  const coreTarget = Math.max(0, maxIntents - (reserveExploration ? 1 : 0));
+
+  for (const topicId of topicIds) {
+    if (selected.length >= coreTarget) break;
+    const intent = bestNonExplorationByTopic.get(topicId);
+    if (!intent) continue;
+    selected.push(intent);
+    selectedTopics.add(topicId);
   }
 
-  if (reserveExploration && lexicalExploration) {
-    selected.push(lexicalExploration);
+  if (reserveExploration) {
+    const exploration = plan.intents
+      .filter(
+        (intent) =>
+          intent.mode === "lexical-search" &&
+          intent.generator === "adjacent-exploration",
+      )
+      .sort((left, right) => {
+        const leftIndex = topicIds.indexOf(left.topicId);
+        const rightIndex = topicIds.indexOf(right.topicId);
+        return leftIndex - rightIndex || left.id.localeCompare(right.id);
+      });
+    const distinct = exploration.find((intent) => !selectedTopics.has(intent.topicId));
+    const chosen = distinct ?? exploration[0];
+    if (chosen) selected.push(chosen);
+  }
+
+  if (selected.length < maxIntents) {
+    const selectedIds = new Set(selected.map((intent) => intent.id));
+    for (const topicId of topicIds) {
+      const intent = bestNonExplorationByTopic.get(topicId);
+      if (!intent || selectedIds.has(intent.id)) continue;
+      selected.push(intent);
+      selectedIds.add(intent.id);
+      if (selected.length >= maxIntents) break;
+    }
   }
   return { ...plan, intents: selected.slice(0, maxIntents) };
+}
+
+function rotateStable<T>(values: readonly T[], seed: string): T[] {
+  if (values.length < 2) return [...values];
+  let hash = 2166136261;
+  for (let index = 0; index < seed.length; index += 1) {
+    hash ^= seed.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  const offset = (hash >>> 0) % values.length;
+  return [...values.slice(offset), ...values.slice(0, offset)];
 }
 
 function validateExecutionContext(

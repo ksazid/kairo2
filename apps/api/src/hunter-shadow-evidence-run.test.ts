@@ -189,10 +189,10 @@ describe("Hunter shadow operational evidence", () => {
 
   it("keeps the operational V2 profile on bounded multi-source retrieval with a reserved exploration-capable plan", () => {
     expect(HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE).toEqual({
-      maxIntents: 6,
+      maxIntents: 3,
       maxSourcesPerIntent: 2,
       maxPaidIntents: 3,
-      maxExternalCalls: 6,
+      maxExternalCalls: 3,
       maxSemanticCalls: 0,
       deepLimit: 2,
       maxCandidates: 10,
