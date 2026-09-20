@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "version": 2,
-  "revision": 26,
+  "revision": 27,
   "nodes": [
     {
       "id": "OBJ-001",
@@ -1933,6 +1933,134 @@
         "sourceIds": [],
         "recordedAt": "2026-09-20T16:08:17.424Z"
       }
+    },
+    {
+      "id": "OBJ-HI2-10T",
+      "type": "Objective",
+      "status": "active",
+      "title": "Target the disposable Hunter shadow anchor tenant from an explicit existing Brand",
+      "successCriteria": [
+        "Target Brand ID is accepted only through an explicit runtime variable and must be a valid UUID.",
+        "The target must resolve to an existing persisted Brand with an active workspace membership; missing targets fail closed.",
+        "Workspace/account are derived only from the target Brand rather than guessed across multiple workspaces.",
+        "The target Brand is read-only and is never mutated by the shadow setup.",
+        "The disposable Vercel anchor is created only in the target Brand workspace, writes only audited source-backed inferred fields, and is deleted in finally.",
+        "The unchanged canonical Hunter readiness gate remains mandatory for the disposable anchor.",
+        "The evidence cohort remains at least 3 distinct real Brands and 30 paired V1/V2 runs.",
+        "Hunter V1 remains production authority; no canary or production enablement is introduced.",
+        "PES v2 CI and Security baseline pass before merge/deployment."
+      ],
+      "memoryProvenance": {
+        "eventId": "GM-000027",
+        "revision": 27,
+        "actorId": "pes-v2-hunter-shadow-targeted-anchor",
+        "runId": "HI2-10T",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T16:17:44.367Z"
+      }
+    },
+    {
+      "id": "TASK-HI2-10T",
+      "type": "Task",
+      "status": "active",
+      "objectiveId": "OBJ-HI2-10T",
+      "title": "Resolve target Brand workspace read-only and create the disposable Vercel anchor there",
+      "memoryProvenance": {
+        "eventId": "GM-000027",
+        "revision": 27,
+        "actorId": "pes-v2-hunter-shadow-targeted-anchor",
+        "runId": "HI2-10T",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T16:17:44.367Z"
+      }
+    },
+    {
+      "id": "RUN-HI2-10T-01",
+      "type": "AgentRun",
+      "status": "verified",
+      "objectiveId": "OBJ-HI2-10T",
+      "title": "Exact HI2-10T implementation passed PESv2 CI and Security",
+      "memoryProvenance": {
+        "eventId": "GM-000027",
+        "revision": 27,
+        "actorId": "pes-v2-hunter-shadow-targeted-anchor",
+        "runId": "HI2-10T",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T16:17:44.367Z"
+      }
+    },
+    {
+      "id": "ART-HI2-10T",
+      "type": "Artifact",
+      "status": "verified",
+      "title": "Explicit target-Brand tenant selector for disposable Hunter shadow anchor",
+      "runId": "HI2-10T",
+      "version": "015cd48ddedee01cc3fa8fb4a1350cbd6da50ffa",
+      "memoryProvenance": {
+        "eventId": "GM-000027",
+        "revision": 27,
+        "actorId": "pes-v2-hunter-shadow-targeted-anchor",
+        "runId": "HI2-10T",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T16:17:44.367Z"
+      }
+    },
+    {
+      "id": "EVAL-HI2-10T",
+      "type": "Evaluation",
+      "status": "verified",
+      "title": "PESv2 validated UUID parsing, direct target lookup, read-only target authority, disposable cleanup and unchanged rollout guards",
+      "rubricId": "hunter-shadow-targeted-anchor-high-risk",
+      "memoryProvenance": {
+        "eventId": "GM-000027",
+        "revision": 27,
+        "actorId": "pes-v2-hunter-shadow-targeted-anchor",
+        "runId": "HI2-10T",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T16:17:44.367Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-10T-01",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "GitHub PES v2 CI run 35522123223 passed for PR #20 head 015cd48ddedee01cc3fa8fb4a1350cbd6da50ffa",
+      "memoryProvenance": {
+        "eventId": "GM-000027",
+        "revision": 27,
+        "actorId": "pes-v2-hunter-shadow-targeted-anchor",
+        "runId": "HI2-10T",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T16:17:44.367Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-10T-02",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "GitHub Security baseline run 35522123244 passed for PR #20 head 015cd48ddedee01cc3fa8fb4a1350cbd6da50ffa",
+      "memoryProvenance": {
+        "eventId": "GM-000027",
+        "revision": 27,
+        "actorId": "pes-v2-hunter-shadow-targeted-anchor",
+        "runId": "HI2-10T",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T16:17:44.367Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-10T-03",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "HI2-10T delivery graph is ready; target Brand is tenant-resolution-only, Vercel anchor is disposable, and Hunter V1 remains authoritative",
+      "memoryProvenance": {
+        "eventId": "GM-000027",
+        "revision": 27,
+        "actorId": "pes-v2-hunter-shadow-targeted-anchor",
+        "runId": "HI2-10T",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T16:17:44.367Z"
+      }
     }
   ],
   "edges": [
@@ -3567,6 +3695,116 @@
         "sourceIds": [],
         "recordedAt": "2026-09-20T16:08:17.424Z"
       }
+    },
+    {
+      "id": "EDGE-OBJ-HI2-10T-TASK",
+      "type": "IMPLEMENTED_BY",
+      "from": "OBJ-HI2-10T",
+      "to": "TASK-HI2-10T",
+      "memoryProvenance": {
+        "eventId": "GM-000027",
+        "revision": 27,
+        "actorId": "pes-v2-hunter-shadow-targeted-anchor",
+        "runId": "HI2-10T",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T16:17:44.367Z"
+      }
+    },
+    {
+      "id": "EDGE-TASK-HI2-10T-PRODUCED-ART",
+      "type": "PRODUCED",
+      "from": "TASK-HI2-10T",
+      "to": "ART-HI2-10T",
+      "memoryProvenance": {
+        "eventId": "GM-000027",
+        "revision": 27,
+        "actorId": "pes-v2-hunter-shadow-targeted-anchor",
+        "runId": "HI2-10T",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T16:17:44.367Z"
+      }
+    },
+    {
+      "id": "EDGE-RUN-HI2-10T-01-PRODUCED-ART",
+      "type": "PRODUCED",
+      "from": "RUN-HI2-10T-01",
+      "to": "ART-HI2-10T",
+      "memoryProvenance": {
+        "eventId": "GM-000027",
+        "revision": 27,
+        "actorId": "pes-v2-hunter-shadow-targeted-anchor",
+        "runId": "HI2-10T",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T16:17:44.367Z"
+      }
+    },
+    {
+      "id": "EDGE-EVAL-HI2-10T-EVALUATES-ART",
+      "type": "EVALUATES",
+      "from": "EVAL-HI2-10T",
+      "to": "ART-HI2-10T",
+      "memoryProvenance": {
+        "eventId": "GM-000027",
+        "revision": 27,
+        "actorId": "pes-v2-hunter-shadow-targeted-anchor",
+        "runId": "HI2-10T",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T16:17:44.367Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-10T-01-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-10T-01",
+      "to": "ART-HI2-10T",
+      "provenance": {
+        "kind": "github-actions",
+        "runId": "35522123223"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000027",
+        "revision": 27,
+        "actorId": "pes-v2-hunter-shadow-targeted-anchor",
+        "runId": "HI2-10T",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T16:17:44.367Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-10T-02-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-10T-02",
+      "to": "ART-HI2-10T",
+      "provenance": {
+        "kind": "github-actions",
+        "runId": "35522123244"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000027",
+        "revision": 27,
+        "actorId": "pes-v2-hunter-shadow-targeted-anchor",
+        "runId": "HI2-10T",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T16:17:44.367Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-10T-03-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-10T-03",
+      "to": "ART-HI2-10T",
+      "provenance": {
+        "kind": "delivery-graph",
+        "path": "delivery/hi2-10t-delivery-graph.json"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000027",
+        "revision": 27,
+        "actorId": "pes-v2-hunter-shadow-targeted-anchor",
+        "runId": "HI2-10T",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T16:17:44.367Z"
+      }
     }
   ],
   "events": [
@@ -4165,6 +4403,35 @@
         "EDGE-EVID-HI2-10P-03-SUPPORTS-ART"
       ],
       "recordedAt": "2026-09-20T16:08:17.424Z"
+    },
+    {
+      "id": "GM-000027",
+      "revision": 27,
+      "operation": "append",
+      "actorId": "pes-v2-hunter-shadow-targeted-anchor",
+      "runId": "HI2-10T",
+      "reason": "Record exact HI2-10T implementation, CI/Security evidence and targeted-anchor delivery graph",
+      "sourceIds": [],
+      "addedNodeIds": [
+        "OBJ-HI2-10T",
+        "TASK-HI2-10T",
+        "RUN-HI2-10T-01",
+        "ART-HI2-10T",
+        "EVAL-HI2-10T",
+        "EVID-HI2-10T-01",
+        "EVID-HI2-10T-02",
+        "EVID-HI2-10T-03"
+      ],
+      "addedEdgeIds": [
+        "EDGE-OBJ-HI2-10T-TASK",
+        "EDGE-TASK-HI2-10T-PRODUCED-ART",
+        "EDGE-RUN-HI2-10T-01-PRODUCED-ART",
+        "EDGE-EVAL-HI2-10T-EVALUATES-ART",
+        "EDGE-EVID-HI2-10T-01-SUPPORTS-ART",
+        "EDGE-EVID-HI2-10T-02-SUPPORTS-ART",
+        "EDGE-EVID-HI2-10T-03-SUPPORTS-ART"
+      ],
+      "recordedAt": "2026-09-20T16:17:44.367Z"
     }
   ]
 }
