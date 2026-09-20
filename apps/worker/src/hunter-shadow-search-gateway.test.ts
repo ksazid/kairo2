@@ -6,7 +6,7 @@ const intent = {
   id:"rising:t1",generator:"rising-breaking",mode:"lexical-search",topicId:"t1",topicName:"AI agents",
   query:"AI agents latest",semanticQuery:"AI agents rising",audience:"engineers",sourceClasses:["Industry news"],
   priority:"high",maxResults:3,reason:"rising",
-} as const;
+} satisfies import("@kairo/domain/hunter-retrieval").HunterRetrievalIntent;
 
 describe("GatewayShadowSearchPort", () => {
   it("bounds source fan-out and tolerates one unavailable provider", async () => {
