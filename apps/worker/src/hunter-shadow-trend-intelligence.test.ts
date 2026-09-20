@@ -1,6 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 import type { ShadowRetrievalCandidate } from "./hunter-shadow-retrieval";
-import { runShadowTrendIntelligence } from "./hunter-shadow-trend-intelligence";
+import {
+  hunterTrendSignalReference,
+  runShadowTrendIntelligence,
+} from "./hunter-shadow-trend-intelligence";
 
 function candidate(overrides: Partial<ShadowRetrievalCandidate> = {}): ShadowRetrievalCandidate {
   return {
@@ -128,6 +131,47 @@ describe("runShadowTrendIntelligence", () => {
     expect(run.clusters.some((cluster) =>
       cluster.generatorKeys.includes("adjacent-exploration") &&
       cluster.intelligence.topic === "AI agent evaluation workflows"
+    )).toBe(true);
+  });
+
+  it("maps raw signal keys longer than the domain limit to deterministic bounded references", async () => {
+    const longKey = "agent-reach:" + "x".repeat(260);
+    const run = await runShadowTrendIntelligence([
+      candidate({ key: longKey }),
+    ], {
+      now: new Date("2026-09-20T08:00:00Z"),
+    });
+
+    const refs = run.clusters[0]!.intelligence.supportingSignalIds;
+    expect(refs).toEqual([hunterTrendSignalReference(longKey)]);
+    expect(refs[0]!.length).toBeLessThanOrEqual(200);
+    expect(hunterTrendSignalReference(longKey)).toBe(hunterTrendSignalReference(longKey));
+    expect(hunterTrendSignalReference(longKey)).not.toBe(
+      hunterTrendSignalReference(longKey + "-different"),
+    );
+  });
+
+  it("caps a large merged cluster at the domain maximum of 100 supporting signal references", async () => {
+    const candidates = Array.from({ length: 101 }, (_, index) =>
+      candidate({
+        key: "signal-" + index + "-" + "z".repeat(220),
+        title: "Same bounded trend cluster",
+        summary: "Shared evidence that should merge into one deterministic cluster.",
+        sourceUrl: "https://example.com/" + index,
+        publisher: "Publisher " + index,
+      }),
+    );
+
+    const run = await runShadowTrendIntelligence(candidates, {
+      now: new Date("2026-09-20T08:00:00Z"),
+      maxSignals: 120,
+    });
+
+    expect(run.clusters).toHaveLength(1);
+    expect(run.clusters[0]!.features.signalCount).toBe(101);
+    expect(run.clusters[0]!.intelligence.supportingSignalIds).toHaveLength(100);
+    expect(run.clusters[0]!.intelligence.supportingSignalIds.every(
+      (value) => value.length <= 200,
     )).toBe(true);
   });
 
