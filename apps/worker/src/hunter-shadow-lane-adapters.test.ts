@@ -185,13 +185,6 @@ describe("read-only Hunter shadow lane adapters", () => {
       loadContext: async () => context,
       tools,
       runtime,
-      sourceRegistry: [{
-        key: "agent-reach",
-        capabilities: ["discovery"],
-        enabled: true,
-        requiresCredential: false,
-        maxQueriesPerRun: 2,
-      }],
       candidate: {
         maxExternalCalls: 8,
         maxSemanticCalls: 0,
