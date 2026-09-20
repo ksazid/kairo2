@@ -373,12 +373,23 @@ class MeteredRuntime implements AgentRuntimePort {
 }
 
 
-function balancedShadowRetrievalPlan(
+export function balancedShadowRetrievalPlan(
   plan: HunterRetrievalPlan,
   maxIntentsInput: number,
 ): HunterRetrievalPlan {
   const maxIntents = Math.max(1, Math.min(24, Math.trunc(maxIntentsInput)));
   const topicIds = [...new Set(plan.intents.map((intent) => intent.topicId))];
+  const lexicalExploration = plan.intents
+    .filter(
+      (intent) =>
+        intent.generator === "adjacent-exploration" &&
+        intent.mode === "lexical-search",
+    )
+    .sort((left, right) =>
+      left.topicId.localeCompare(right.topicId) || left.id.localeCompare(right.id)
+    )[0];
+  const reserveExploration = Boolean(lexicalExploration && maxIntents >= 2);
+  const nonExplorationLimit = maxIntents - (reserveExploration ? 1 : 0);
   const generatorOrder = new Map<string, number>([
     ["brand-core", 0],
     ["rising-breaking", 1],
@@ -387,12 +398,16 @@ function balancedShadowRetrievalPlan(
     ["outlier", 4],
     ["evergreen", 5],
     ["category-competitor", 6],
-    ["adjacent-exploration", 7],
   ]);
   const byTopic = new Map(topicIds.map((topicId) => [
     topicId,
     plan.intents
-      .filter((intent) => intent.topicId === topicId && intent.mode !== "corroboration")
+      .filter(
+        (intent) =>
+          intent.topicId === topicId &&
+          intent.mode !== "corroboration" &&
+          intent.generator !== "adjacent-exploration",
+      )
       .sort((left, right) =>
         (generatorOrder.get(left.generator) ?? 99) -
         (generatorOrder.get(right.generator) ?? 99) ||
@@ -402,19 +417,23 @@ function balancedShadowRetrievalPlan(
 
   const selected: HunterRetrievalPlan["intents"] = [];
   let round = 0;
-  while (selected.length < maxIntents) {
+  while (selected.length < nonExplorationLimit) {
     let added = false;
     for (const topicId of topicIds) {
       const candidate = byTopic.get(topicId)?.[round];
       if (!candidate) continue;
       selected.push(candidate);
       added = true;
-      if (selected.length >= maxIntents) break;
+      if (selected.length >= nonExplorationLimit) break;
     }
     if (!added) break;
     round += 1;
   }
-  return { ...plan, intents: selected };
+
+  if (reserveExploration && lexicalExploration) {
+    selected.push(lexicalExploration);
+  }
+  return { ...plan, intents: selected.slice(0, maxIntents) };
 }
 
 function validateExecutionContext(
