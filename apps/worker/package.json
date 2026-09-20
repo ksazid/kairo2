@@ -37,7 +37,8 @@
     "./pilot-readiness": "./src/pilot-readiness.ts",
     "./hunter-semantic-backfill": "./src/hunter-semantic-backfill.ts",
     "./hunter-shadow-retrieval": "./src/hunter-shadow-retrieval.ts",
-    "./hunter-shadow-search-gateway": "./src/hunter-shadow-search-gateway.ts"
+    "./hunter-shadow-search-gateway": "./src/hunter-shadow-search-gateway.ts",
+    "./hunter-shadow-trend-intelligence": "./src/hunter-shadow-trend-intelligence.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",

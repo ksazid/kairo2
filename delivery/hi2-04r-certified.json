@@ -1,0 +1,470 @@
+{
+  "schemaVersion": 1,
+  "bundleId": "CERT-HI2-04R-43B78206",
+  "status": "certified",
+  "sliceId": "HI2-04R",
+  "objectiveId": "OBJ-HI2-04R",
+  "riskLevel": "medium",
+  "commitSha": "43b78206d262edcbcb30e4b06938beed0149b5f4",
+  "graphRevision": 17,
+  "contextHash": "62a0a1a9cae539869fc245c59338ef96bfd01e8feae9adb412be7acff9e65b68",
+  "contextSnapshot": {
+    "schemaVersion": 1,
+    "graphRevision": 17,
+    "requestedSeeds": [
+      "OBJ-HI2-04R",
+      "TASK-HI2-04R",
+      "ART-HI2-04R",
+      "EVAL-HI2-04R",
+      "EVID-HI2-04R-01",
+      "EVID-HI2-04R-02"
+    ],
+    "resolvedSeeds": [
+      "OBJ-HI2-04R",
+      "TASK-HI2-04R",
+      "ART-HI2-04R",
+      "EVAL-HI2-04R",
+      "EVID-HI2-04R-01",
+      "EVID-HI2-04R-02"
+    ],
+    "resolution": [
+      {
+        "requestedId": "OBJ-HI2-04R",
+        "currentId": "OBJ-HI2-04R",
+        "chain": [
+          "OBJ-HI2-04R"
+        ]
+      },
+      {
+        "requestedId": "TASK-HI2-04R",
+        "currentId": "TASK-HI2-04R",
+        "chain": [
+          "TASK-HI2-04R"
+        ]
+      },
+      {
+        "requestedId": "ART-HI2-04R",
+        "currentId": "ART-HI2-04R",
+        "chain": [
+          "ART-HI2-04R"
+        ]
+      },
+      {
+        "requestedId": "EVAL-HI2-04R",
+        "currentId": "EVAL-HI2-04R",
+        "chain": [
+          "EVAL-HI2-04R"
+        ]
+      },
+      {
+        "requestedId": "EVID-HI2-04R-01",
+        "currentId": "EVID-HI2-04R-01",
+        "chain": [
+          "EVID-HI2-04R-01"
+        ]
+      },
+      {
+        "requestedId": "EVID-HI2-04R-02",
+        "currentId": "EVID-HI2-04R-02",
+        "chain": [
+          "EVID-HI2-04R-02"
+        ]
+      }
+    ],
+    "nodes": [
+      {
+        "id": "EVID-HI2-04R-01",
+        "type": "Evidence",
+        "status": "verified",
+        "title": "GitHub PES v2 CI run 35498559485 passed for PR #11 head 43b78206d262edcbcb30e4b06938beed0149b5f4",
+        "memoryProvenance": {
+          "eventId": "GM-000017",
+          "revision": 17,
+          "actorId": "pes-v2-hunter-trend",
+          "runId": "HI2-04R",
+          "sourceIds": [],
+          "recordedAt": "2026-09-20T08:06:00.000Z"
+        }
+      },
+      {
+        "id": "EVID-HI2-04R-02",
+        "type": "Evidence",
+        "status": "verified",
+        "title": "GitHub Security baseline run 35498559461 passed for PR #11 head 43b78206d262edcbcb30e4b06938beed0149b5f4",
+        "memoryProvenance": {
+          "eventId": "GM-000017",
+          "revision": 17,
+          "actorId": "pes-v2-hunter-trend",
+          "runId": "HI2-04R",
+          "sourceIds": [],
+          "recordedAt": "2026-09-20T08:06:00.000Z"
+        }
+      },
+      {
+        "id": "ART-HI2-04R",
+        "type": "Artifact",
+        "status": "verified",
+        "title": "Hunter Trend Intelligence shadow engine",
+        "runId": "HI2-04R",
+        "version": "43b78206d262edcbcb30e4b06938beed0149b5f4",
+        "memoryProvenance": {
+          "eventId": "GM-000017",
+          "revision": 17,
+          "actorId": "pes-v2-hunter-trend",
+          "runId": "HI2-04R",
+          "sourceIds": [],
+          "recordedAt": "2026-09-20T08:06:00.000Z"
+        }
+      },
+      {
+        "id": "EVAL-HI2-04R",
+        "type": "Evaluation",
+        "status": "verified",
+        "title": "PESv2 preflight validated shadow trend clustering and feature invariants",
+        "rubricId": "hunter-trend-shadow-preflight",
+        "memoryProvenance": {
+          "eventId": "GM-000017",
+          "revision": 17,
+          "actorId": "pes-v2-hunter-trend",
+          "runId": "HI2-04R",
+          "sourceIds": [],
+          "recordedAt": "2026-09-20T08:06:00.000Z"
+        }
+      },
+      {
+        "id": "OBJ-HI2-04R",
+        "type": "Objective",
+        "status": "active",
+        "title": "Establish shadow-only Trend Intelligence for Hunter",
+        "successCriteria": [
+          "Equivalent public signals cluster deterministically with optional bounded semantic assistance.",
+          "Cross-source, cross-platform and independent-publisher corroboration are measured.",
+          "Velocity, acceleration and creator/category outlier features use observable metrics only.",
+          "Missing engagement/baseline metrics remain explicitly unknown.",
+          "Trend stage, freshness, saturation and evidence confidence are deterministic and versioned."
+        ],
+        "memoryProvenance": {
+          "eventId": "GM-000017",
+          "revision": 17,
+          "actorId": "pes-v2-hunter-trend",
+          "runId": "HI2-04R",
+          "sourceIds": [],
+          "recordedAt": "2026-09-20T08:06:00.000Z"
+        }
+      },
+      {
+        "id": "TASK-HI2-04R",
+        "type": "Task",
+        "status": "active",
+        "objectiveId": "OBJ-HI2-04R",
+        "title": "Implement story clustering, trend features, outlier intelligence and diagnostics",
+        "memoryProvenance": {
+          "eventId": "GM-000017",
+          "revision": 17,
+          "actorId": "pes-v2-hunter-trend",
+          "runId": "HI2-04R",
+          "sourceIds": [],
+          "recordedAt": "2026-09-20T08:06:00.000Z"
+        }
+      },
+      {
+        "id": "RUN-HI2-04R-01",
+        "type": "AgentRun",
+        "status": "verified",
+        "title": "HI2-04R deterministic trend-intelligence validation passed on first implementation head",
+        "memoryProvenance": {
+          "eventId": "GM-000017",
+          "revision": 17,
+          "actorId": "pes-v2-hunter-trend",
+          "runId": "HI2-04R",
+          "sourceIds": [],
+          "recordedAt": "2026-09-20T08:06:00.000Z"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "EDGE-OBJ-HI2-04R-TASK",
+        "type": "IMPLEMENTED_BY",
+        "from": "OBJ-HI2-04R",
+        "to": "TASK-HI2-04R",
+        "memoryProvenance": {
+          "eventId": "GM-000017",
+          "revision": 17,
+          "actorId": "pes-v2-hunter-trend",
+          "runId": "HI2-04R",
+          "sourceIds": [],
+          "recordedAt": "2026-09-20T08:06:00.000Z"
+        }
+      },
+      {
+        "id": "EDGE-TASK-HI2-04R-PRODUCED-ART",
+        "type": "PRODUCED",
+        "from": "TASK-HI2-04R",
+        "to": "ART-HI2-04R",
+        "memoryProvenance": {
+          "eventId": "GM-000017",
+          "revision": 17,
+          "actorId": "pes-v2-hunter-trend",
+          "runId": "HI2-04R",
+          "sourceIds": [],
+          "recordedAt": "2026-09-20T08:06:00.000Z"
+        }
+      },
+      {
+        "id": "EDGE-RUN-HI2-04R-01-PRODUCED-ART",
+        "type": "PRODUCED",
+        "from": "RUN-HI2-04R-01",
+        "to": "ART-HI2-04R",
+        "memoryProvenance": {
+          "eventId": "GM-000017",
+          "revision": 17,
+          "actorId": "pes-v2-hunter-trend",
+          "runId": "HI2-04R",
+          "sourceIds": [],
+          "recordedAt": "2026-09-20T08:06:00.000Z"
+        }
+      },
+      {
+        "id": "EDGE-EVAL-HI2-04R-EVALUATES-ART",
+        "type": "EVALUATES",
+        "from": "EVAL-HI2-04R",
+        "to": "ART-HI2-04R",
+        "memoryProvenance": {
+          "eventId": "GM-000017",
+          "revision": 17,
+          "actorId": "pes-v2-hunter-trend",
+          "runId": "HI2-04R",
+          "sourceIds": [],
+          "recordedAt": "2026-09-20T08:06:00.000Z"
+        }
+      },
+      {
+        "id": "EDGE-EVID-HI2-04R-01-SUPPORTS-ART",
+        "type": "SUPPORTS",
+        "from": "EVID-HI2-04R-01",
+        "to": "ART-HI2-04R",
+        "provenance": {
+          "kind": "github-actions",
+          "runId": "35498559485"
+        },
+        "memoryProvenance": {
+          "eventId": "GM-000017",
+          "revision": 17,
+          "actorId": "pes-v2-hunter-trend",
+          "runId": "HI2-04R",
+          "sourceIds": [],
+          "recordedAt": "2026-09-20T08:06:00.000Z"
+        }
+      },
+      {
+        "id": "EDGE-EVID-HI2-04R-02-SUPPORTS-ART",
+        "type": "SUPPORTS",
+        "from": "EVID-HI2-04R-02",
+        "to": "ART-HI2-04R",
+        "provenance": {
+          "kind": "github-actions",
+          "runId": "35498559461"
+        },
+        "memoryProvenance": {
+          "eventId": "GM-000017",
+          "revision": 17,
+          "actorId": "pes-v2-hunter-trend",
+          "runId": "HI2-04R",
+          "sourceIds": [],
+          "recordedAt": "2026-09-20T08:06:00.000Z"
+        }
+      }
+    ],
+    "ranking": [
+      {
+        "id": "EVID-HI2-04R-01",
+        "score": 1119,
+        "hop": 0,
+        "status": "verified"
+      },
+      {
+        "id": "EVID-HI2-04R-02",
+        "score": 1119,
+        "hop": 0,
+        "status": "verified"
+      },
+      {
+        "id": "ART-HI2-04R",
+        "score": 1118,
+        "hop": 0,
+        "status": "verified"
+      },
+      {
+        "id": "EVAL-HI2-04R",
+        "score": 1118,
+        "hop": 0,
+        "status": "verified"
+      },
+      {
+        "id": "OBJ-HI2-04R",
+        "score": 1117,
+        "hop": 0,
+        "status": "active"
+      },
+      {
+        "id": "TASK-HI2-04R",
+        "score": 1113,
+        "hop": 0,
+        "status": "active"
+      },
+      {
+        "id": "RUN-HI2-04R-01",
+        "score": 101,
+        "hop": 1,
+        "status": "verified"
+      }
+    ],
+    "contradictions": [],
+    "omittedNodeIds": [],
+    "policy": {
+      "maxHops": 2,
+      "maxNodes": 40,
+      "maxTokens": 12000,
+      "includeStatuses": [
+        "approved",
+        "verified",
+        "active",
+        "superseded",
+        "failed"
+      ],
+      "preferVerified": true,
+      "includeContradictions": true,
+      "resolveSuperseded": true
+    },
+    "contextHash": "62a0a1a9cae539869fc245c59338ef96bfd01e8feae9adb412be7acff9e65b68",
+    "estimatedTokens": 1492,
+    "truncated": false
+  },
+  "gateDecisionHash": "efd11bac6729356d4697304fe36f61c149428436d44bcfe68ff7518bdc56964e",
+  "gateSnapshot": {
+    "allowed": true,
+    "sliceId": "HI2-04R",
+    "fromState": "testing",
+    "requestedState": "certification",
+    "blockers": [],
+    "warnings": [],
+    "requiredApprovals": [
+      "scope",
+      "policy",
+      "implementation"
+    ],
+    "validApprovals": [
+      "scope",
+      "policy",
+      "implementation"
+    ],
+    "protectedPaths": [],
+    "evidence": {
+      "accepted": [
+        {
+          "id": "EVID-HI2-04R-01",
+          "type": "Evidence",
+          "status": "verified",
+          "distance": 3
+        },
+        {
+          "id": "EVID-HI2-04R-02",
+          "type": "Evidence",
+          "status": "verified",
+          "distance": 3
+        }
+      ],
+      "rejected": []
+    },
+    "deliveryGraph": {
+      "required": false,
+      "blocking": false,
+      "status": null,
+      "reasons": []
+    },
+    "context": {
+      "hash": "62a0a1a9cae539869fc245c59338ef96bfd01e8feae9adb412be7acff9e65b68",
+      "graphRevision": 17,
+      "contradictions": 0
+    }
+  },
+  "approvals": [
+    {
+      "type": "scope",
+      "status": "approved",
+      "actorType": "human",
+      "scopeId": "HI2-04R"
+    },
+    {
+      "type": "policy",
+      "status": "approved",
+      "actorType": "human",
+      "scopeId": "HI2-04R"
+    },
+    {
+      "type": "implementation",
+      "status": "approved",
+      "actorType": "human",
+      "scopeId": "HI2-04R"
+    }
+  ],
+  "artifactIds": [
+    "ART-HI2-04R"
+  ],
+  "evidenceIds": [
+    "EVID-HI2-04R-01",
+    "EVID-HI2-04R-02"
+  ],
+  "evaluationIds": [
+    "EVAL-HI2-04R"
+  ],
+  "unresolvedRisks": [],
+  "trace": [
+    {
+      "id": "ART-HI2-04R",
+      "type": "Artifact",
+      "status": "verified",
+      "nodeHash": "e5193db4415ae06fd0b597750c15935c756df2200bcd6d35f4272ef820aedce4",
+      "memoryEventId": "GM-000017",
+      "distanceFromObjective": 2
+    },
+    {
+      "id": "EVAL-HI2-04R",
+      "type": "Evaluation",
+      "status": "verified",
+      "nodeHash": "533a2b594d9347996619cc9d0bc404f616cc082b3fa5079759ede17b3218b10d",
+      "memoryEventId": "GM-000017",
+      "distanceFromObjective": 3
+    },
+    {
+      "id": "EVID-HI2-04R-01",
+      "type": "Evidence",
+      "status": "verified",
+      "nodeHash": "b0ba6b06d3495a71ea103fecbf33c8f5efc5e530d1604b6a164f9dd4486d1efb",
+      "memoryEventId": "GM-000017",
+      "distanceFromObjective": 3
+    },
+    {
+      "id": "EVID-HI2-04R-02",
+      "type": "Evidence",
+      "status": "verified",
+      "nodeHash": "d59f57ca3d4460857fb26251978b840287f35eed54ac69db862511d6c382199c",
+      "memoryEventId": "GM-000017",
+      "distanceFromObjective": 3
+    }
+  ],
+  "createdAt": "2026-09-20T08:08:00.000Z",
+  "candidateHash": "f3a248bc7b04eb1c14a779db0c2fa4c430cb1a06f2654bd68a4ee5072abf8144",
+  "certificationApproval": {
+    "type": "certification",
+    "status": "approved",
+    "actorType": "human",
+    "scopeId": "HI2-04R",
+    "commitSha": "43b78206d262edcbcb30e4b06938beed0149b5f4",
+    "candidateHash": "f3a248bc7b04eb1c14a779db0c2fa4c430cb1a06f2654bd68a4ee5072abf8144",
+    "approvedAt": "2026-09-20T08:09:00Z"
+  },
+  "certifiedAt": "2026-09-20T08:09:00Z",
+  "certifiedHash": "0538c7463846f601695e3c67368845154e31e8543b5cf72a238436155e52b72c"
+}
