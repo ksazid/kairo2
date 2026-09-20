@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "version": 2,
-  "revision": 10,
+  "revision": 11,
   "nodes": [
     {
       "id": "OBJ-001",
@@ -364,6 +364,100 @@
         "sourceIds": [],
         "recordedAt": "2026-09-19T20:18:30.000Z"
       }
+    },
+    {
+      "id": "OBJ-HI2-01",
+      "type": "Objective",
+      "status": "active",
+      "title": "Freeze Hunter Intelligence V2 contracts and EEI guardrails",
+      "successCriteria": [
+        "Opportunity Intelligence V2, Trend Intelligence, Brand Preference State, ranking and EEI contracts are versioned and fail closed.",
+        "Feedback V2 accepts only the approved event vocabulary.",
+        "EEI rejects manipulative engagement objectives.",
+        "No migrations, provider calls, UI behavior or production ranking behavior are enabled."
+      ],
+      "memoryProvenance": {
+        "eventId": "GM-000011",
+        "revision": 11,
+        "actorId": "pes-v2-hunter-intelligence",
+        "runId": "HI2-01",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T01:08:00.000Z"
+      }
+    },
+    {
+      "id": "TASK-HI2-01",
+      "type": "Task",
+      "status": "active",
+      "objectiveId": "OBJ-HI2-01",
+      "title": "Implement runtime-disabled Hunter V2 domain contracts and deterministic tests",
+      "memoryProvenance": {
+        "eventId": "GM-000011",
+        "revision": 11,
+        "actorId": "pes-v2-hunter-intelligence",
+        "runId": "HI2-01",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T01:08:00.000Z"
+      }
+    },
+    {
+      "id": "ART-HI2-01",
+      "type": "Artifact",
+      "status": "verified",
+      "title": "Hunter Intelligence V2 + EEI contracts and deterministic tests",
+      "runId": "HI2-01",
+      "version": "96aa95843702bc7da1e5f7aee10731f08e203df4",
+      "memoryProvenance": {
+        "eventId": "GM-000011",
+        "revision": 11,
+        "actorId": "pes-v2-hunter-intelligence",
+        "runId": "HI2-01",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T01:08:00.000Z"
+      }
+    },
+    {
+      "id": "EVAL-HI2-01",
+      "type": "Evaluation",
+      "status": "verified",
+      "title": "PESv2 preflight and contract regression suite passed",
+      "rubricId": "hunter-v2-contracts-preflight",
+      "memoryProvenance": {
+        "eventId": "GM-000011",
+        "revision": 11,
+        "actorId": "pes-v2-hunter-intelligence",
+        "runId": "HI2-01",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T01:08:00.000Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-01",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "GitHub PES v2 CI run 35479139576 passed for PR #7 head 96aa95843702bc7da1e5f7aee10731f08e203df4",
+      "memoryProvenance": {
+        "eventId": "GM-000011",
+        "revision": 11,
+        "actorId": "pes-v2-hunter-intelligence",
+        "runId": "HI2-01",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T01:08:00.000Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-02",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "GitHub Security baseline run 35479139590 passed for PR #7 head 96aa95843702bc7da1e5f7aee10731f08e203df4",
+      "memoryProvenance": {
+        "eventId": "GM-000011",
+        "revision": 11,
+        "actorId": "pes-v2-hunter-intelligence",
+        "runId": "HI2-01",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T01:08:00.000Z"
+      }
     }
   ],
   "edges": [
@@ -596,7 +690,10 @@
       "type": "SUPPORTS",
       "from": "EVID-008-01",
       "to": "ART-008-01",
-      "provenance": { "kind": "github-actions", "runId": "35466890477" },
+      "provenance": {
+        "kind": "github-actions",
+        "runId": "35466890477"
+      },
       "memoryProvenance": {
         "eventId": "GM-000010",
         "revision": 10,
@@ -611,7 +708,10 @@
       "type": "SUPPORTS",
       "from": "EVID-008-02",
       "to": "ART-008-01",
-      "provenance": { "kind": "deterministic-check", "command": "npm run preflight" },
+      "provenance": {
+        "kind": "deterministic-check",
+        "command": "npm run preflight"
+      },
       "memoryProvenance": {
         "eventId": "GM-000010",
         "revision": 10,
@@ -619,6 +719,84 @@
         "runId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
         "sourceIds": [],
         "recordedAt": "2026-09-19T20:18:30.000Z"
+      }
+    },
+    {
+      "id": "EDGE-OBJ-HI2-01-TASK-HI2-01",
+      "type": "IMPLEMENTED_BY",
+      "from": "OBJ-HI2-01",
+      "to": "TASK-HI2-01",
+      "memoryProvenance": {
+        "eventId": "GM-000011",
+        "revision": 11,
+        "actorId": "pes-v2-hunter-intelligence",
+        "runId": "HI2-01",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T01:08:00.000Z"
+      }
+    },
+    {
+      "id": "EDGE-TASK-HI2-01-PRODUCED-ART-HI2-01",
+      "type": "PRODUCED",
+      "from": "TASK-HI2-01",
+      "to": "ART-HI2-01",
+      "memoryProvenance": {
+        "eventId": "GM-000011",
+        "revision": 11,
+        "actorId": "pes-v2-hunter-intelligence",
+        "runId": "HI2-01",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T01:08:00.000Z"
+      }
+    },
+    {
+      "id": "EDGE-EVAL-HI2-01-EVALUATES-ART-HI2-01",
+      "type": "EVALUATES",
+      "from": "EVAL-HI2-01",
+      "to": "ART-HI2-01",
+      "memoryProvenance": {
+        "eventId": "GM-000011",
+        "revision": 11,
+        "actorId": "pes-v2-hunter-intelligence",
+        "runId": "HI2-01",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T01:08:00.000Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-01-SUPPORTS-ART-HI2-01",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-01",
+      "to": "ART-HI2-01",
+      "provenance": {
+        "kind": "github-actions",
+        "runId": "35479139576"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000011",
+        "revision": 11,
+        "actorId": "pes-v2-hunter-intelligence",
+        "runId": "HI2-01",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T01:08:00.000Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-02-SUPPORTS-ART-HI2-01",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-02",
+      "to": "ART-HI2-01",
+      "provenance": {
+        "kind": "github-actions",
+        "runId": "35479139590"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000011",
+        "revision": 11,
+        "actorId": "pes-v2-hunter-intelligence",
+        "runId": "HI2-01",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T01:08:00.000Z"
       }
     }
   ],
@@ -802,6 +980,31 @@
         "EDGE-EVID-008-02-SUPPORTS-ART-008-01"
       ],
       "recordedAt": "2026-09-19T20:18:30.000Z"
+    },
+    {
+      "id": "GM-000011",
+      "revision": 11,
+      "operation": "append",
+      "actorId": "pes-v2-hunter-intelligence",
+      "runId": "HI2-01",
+      "reason": "Record HI2-01 contracts, CI evidence, security evidence and evaluation for exact-SHA certification",
+      "sourceIds": [],
+      "addedNodeIds": [
+        "OBJ-HI2-01",
+        "TASK-HI2-01",
+        "ART-HI2-01",
+        "EVAL-HI2-01",
+        "EVID-HI2-01",
+        "EVID-HI2-02"
+      ],
+      "addedEdgeIds": [
+        "EDGE-OBJ-HI2-01-TASK-HI2-01",
+        "EDGE-TASK-HI2-01-PRODUCED-ART-HI2-01",
+        "EDGE-EVAL-HI2-01-EVALUATES-ART-HI2-01",
+        "EDGE-EVID-HI2-01-SUPPORTS-ART-HI2-01",
+        "EDGE-EVID-HI2-02-SUPPORTS-ART-HI2-01"
+      ],
+      "recordedAt": "2026-09-20T01:08:00.000Z"
     }
   ]
 }

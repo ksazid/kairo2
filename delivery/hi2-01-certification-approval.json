@@ -1,0 +1,9 @@
+{
+  "type": "certification",
+  "status": "approved",
+  "actorType": "human",
+  "scopeId": "HI2-01",
+  "commitSha": "96aa95843702bc7da1e5f7aee10731f08e203df4",
+  "candidateHash": "22e8c497c257aee28bd70b3eb393217071fbe8fecd1c2b72fa682ef6311dda49",
+  "approvedAt": "2026-09-20T01:10:53Z"
+}
