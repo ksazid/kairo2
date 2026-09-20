@@ -36,7 +36,7 @@ export const HUNTER_SHADOW_PUBLIC_BRAND_FIXTURES: readonly EphemeralPublicBrandF
     id: "openai-public",
     brandName: "OpenAI",
     referenceUrls: [
-      "https://openai.com/",
+      "https://openai.com/about/",
       "https://openai.com/policies/usage-policies/",
     ],
   },
@@ -44,7 +44,7 @@ export const HUNTER_SHADOW_PUBLIC_BRAND_FIXTURES: readonly EphemeralPublicBrandF
     id: "anthropic-public",
     brandName: "Anthropic",
     referenceUrls: [
-      "https://www.anthropic.com/",
+      "https://www.anthropic.com/company",
       "https://www.anthropic.com/news/usage-policy-update",
     ],
   },
