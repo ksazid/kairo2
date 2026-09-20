@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "version": 2,
-  "revision": 18,
+  "revision": 19,
   "nodes": [
     {
       "id": "OBJ-001",
@@ -961,6 +961,20 @@
         "sourceIds": [],
         "recordedAt": "2026-09-20T08:33:00.000Z"
       }
+    },
+    {
+      "id": "RUN-HI2-05R-02",
+      "type": "AgentRun",
+      "status": "failed",
+      "title": "Intermediate Security run 35499867962 failed before secret scanning because Gitleaks received an invalid Git revision range; current candidate-head Security passed",
+      "memoryProvenance": {
+        "eventId": "GM-000019",
+        "revision": 19,
+        "actorId": "pes-v2-hunter-multistage",
+        "runId": "HI2-05R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T08:35:00.000Z"
+      }
     }
   ],
   "edges": [
@@ -1739,6 +1753,20 @@
         "sourceIds": [],
         "recordedAt": "2026-09-20T08:33:00.000Z"
       }
+    },
+    {
+      "id": "EDGE-RUN-HI2-05R-02-ABOUT-TASK",
+      "type": "ABOUT",
+      "from": "RUN-HI2-05R-02",
+      "to": "TASK-HI2-05R",
+      "memoryProvenance": {
+        "eventId": "GM-000019",
+        "revision": 19,
+        "actorId": "pes-v2-hunter-multistage",
+        "runId": "HI2-05R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T08:35:00.000Z"
+      }
     }
   ],
   "events": [
@@ -2106,6 +2134,22 @@
         "EDGE-EVID-HI2-05R-02-SUPPORTS-ART"
       ],
       "recordedAt": "2026-09-20T08:33:00.000Z"
+    },
+    {
+      "id": "GM-000019",
+      "revision": 19,
+      "operation": "append",
+      "actorId": "pes-v2-hunter-multistage",
+      "runId": "HI2-05R",
+      "reason": "Record transient governance Security failure caused by invalid Gitleaks Git revision range; no secret finding was reported",
+      "sourceIds": [],
+      "addedNodeIds": [
+        "RUN-HI2-05R-02"
+      ],
+      "addedEdgeIds": [
+        "EDGE-RUN-HI2-05R-02-ABOUT-TASK"
+      ],
+      "recordedAt": "2026-09-20T08:35:00.000Z"
     }
   ]
 }
