@@ -2,7 +2,7 @@
   "activeSlice": {
     "id": "HI2-10R",
     "objectiveId": "OBJ-HI2-10R",
-    "state": "implementing",
+    "state": "certified",
     "riskLevel": "high",
     "implementationPermission": "runtime-enabled",
     "scope": "Build read-only Hunter V2 shadow-evidence collection and deterministic rollout observations for the HI2-09R shadow-to-canary gate. Hunter V1 retains production authority. No opportunity persistence, scheduler change, canary exposure, feature activation or production-enable action is permitted.",
@@ -43,6 +43,13 @@
       "Hunter V1 remains the only production-authoritative recommendation path.",
       "No canary exposure, scheduler activation, Vercel deployment or production-enable action occurs in this slice.",
       "PES v2 CI and Security baseline pass before certification."
-    ]
+    ],
+    "certification": {
+      "bundleId": "CERT-HI2-10R-7E4AF04C",
+      "commitSha": "7e4af04ce5e762b517c368a7f5d4dc8288b0fe7a",
+      "candidateHash": "1cf68a551199de92a250cafc2c57d4e19c7d026d12a2118403ffa00125e9bee7",
+      "certifiedHash": "77a2cd689423891e8d14184ded512289f7f4088e560e9ec007fcf6935a731c60",
+      "certifiedAt": "2026-09-20T14:45:48.139Z"
+    }
   }
 }
