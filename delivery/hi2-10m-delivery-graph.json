@@ -1,0 +1,59 @@
+{
+  "status": "ready",
+  "sliceId": "HI2-10M",
+  "riskLevel": "high",
+  "purpose": "Restore the approved, release-pinned migration-range startup action needed to apply Hunter Intelligence schema 0039 through 0043 before shadow evidence.",
+  "stages": [
+    {
+      "id": "range-validate",
+      "dependsOn": [],
+      "output": "validated inclusive migration endpoints",
+      "authority": "none",
+      "rollback": "Abort before database connection on invalid range."
+    },
+    {
+      "id": "checksum-verify",
+      "dependsOn": [
+        "range-validate"
+      ],
+      "output": "unchanged already-applied migrations skipped",
+      "authority": "read-only",
+      "rollback": "Abort on checksum mismatch."
+    },
+    {
+      "id": "transactional-apply",
+      "dependsOn": [
+        "checksum-verify"
+      ],
+      "output": "only unapplied migrations in requested range committed and recorded",
+      "authority": "schema-write",
+      "rollback": "Rollback current migration transaction on failure."
+    },
+    {
+      "id": "runtime-package",
+      "dependsOn": [
+        "range-validate"
+      ],
+      "output": "migrate-range.mjs available in production container",
+      "authority": "deployment-only",
+      "rollback": "Redeploy prior certified image."
+    }
+  ],
+  "killSwitchOn": [
+    "range-endpoint-missing",
+    "range-reversed",
+    "checksum-mismatch",
+    "migration-transaction-failure",
+    "release-sha-mismatch",
+    "concurrent-startup-action"
+  ],
+  "constraints": {
+    "approvedRange": "0039_hunter_feedback_v2.sql..0043_hunter_eei_metrics.sql",
+    "schemaDefinitionChanges": false,
+    "hunterShadowConcurrent": false,
+    "productionHunterAuthority": "v1-only",
+    "canaryExposure": false,
+    "featureActivation": false,
+    "productionEnable": false
+  }
+}
