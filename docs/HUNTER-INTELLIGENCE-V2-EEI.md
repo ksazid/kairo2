@@ -2,7 +2,7 @@
 
 Status: **Proposed production architecture**
 Scope approval: **Human-approved for specification only**
-Runtime status: **Disabled / no production behaviour changed**
+Runtime status: **Phase 1 enabled on implementation branch: deterministic EEI rerank + explicit feedback V2; trend clustering, preference persistence and canonical Opportunity Intelligence runtime wiring remain staged behind additive schemas.**
 Target repository: `ksazid/kairo2`
 Baseline: `main` as inspected 2026-09-20
 

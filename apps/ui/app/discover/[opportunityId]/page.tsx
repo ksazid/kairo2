@@ -3,7 +3,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   ArrowLeft,
-  ExternalLink,
   Facebook,
   FileImage,
   Instagram,
@@ -48,28 +47,28 @@ export default async function DiscoverPreviewPage({ params, searchParams }: { pa
       </div>
       <div className="discover-preview-copy">
         <div className="discover-preview-label"><Sparkles aria-hidden="true"/>Kairo recommends</div>
-        <h2>{card.title}</h2>
-        <div className="discover-reason"><h3><ShieldCheck aria-hidden="true"/>Why this fits your Brand</h3><p>{card.rationale ?? "This direction fits your Brand and audience."}</p></div>
-        <div className="discover-reason trend"><h3><TrendingUp aria-hidden="true"/>Why it is trending</h3><p>{card.whyNow ?? "Public interest is growing around this topic."}</p></div>
+        <h2>Create this as a {card.formatLabel}</h2>
+        <p className="discover-recommendation-direction">{card.developmentDirection ?? card.details?.proposedAngle ?? card.rationale ?? "Turn the strongest insight into useful content."}</p>
+        <div className="discover-signal-row" aria-label="Recommendation signals">
+          <span><ShieldCheck aria-hidden="true"/>{card.fit}</span>
+          <span><TrendingUp aria-hidden="true"/>{card.trend}</span>
+        </div>
         <DiscoverPreviewActions brandId={data.brandId} opportunityId={card.id} title={card.title} direction={card.developmentDirection ?? card.rationale} format={card.format} initiallySaved={card.status === "saved"}/>
       </div>
       <aside className="discover-preview-meta">
         <small>Recommended format</small>
         <strong><FormatIcon aria-hidden="true"/>{card.formatLabel}</strong>
-        <p>Selected for the strongest mix of clarity, engagement and Brand fit.</p>
+        <p>Chosen for this content direction.</p>
         <hr/>
         <small>Primary channel</small>
         <strong><ChannelIcon aria-hidden="true"/>{card.channel}</strong>
-        <p>{card.details?.targetAudience ?? "Your most relevant audience"}</p>
-        <hr/>
-        <small>Source</small>
-        <a href="#public-evidence">Trend &amp; public evidence <ExternalLink aria-hidden="true"/></a>
+        <p>Best-fit publishing channel for this opportunity.</p>
       </aside>
     </section>
     <section className="discover-evidence" id="public-evidence">
-      <div><span>01</span><h2>Public momentum</h2><p>{card.whyNow ?? "The topic is showing timely public interest."}</p></div>
-      <div><span>02</span><h2>Brand relevance</h2><p>{card.rationale ?? "The topic fits your Brand context and audience."}</p></div>
-      <div><span>03</span><h2>Creation direction</h2><p>{card.developmentDirection ?? card.details?.proposedAngle ?? "Turn the strongest insight into a clear, useful piece of content."}</p></div>
+      <div><span>01</span><h2>Source</h2><p>{card.source}</p></div>
+      <div><span>02</span><h2>Audience</h2><p>{card.details?.targetAudience ?? "Your most relevant audience"}</p></div>
+      <div><span>03</span><h2>Confidence</h2><p>{card.confidence}% Brand Intelligence confidence for this opportunity.</p></div>
     </section>
   </KairoShell>;
 }

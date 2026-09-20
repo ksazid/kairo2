@@ -23,7 +23,9 @@ import {
   hunterClosedLoopStoreFromEnvironment,
   type HunterClosedLoopStore,
   type RecommendationFeedbackAction,
+  type RecommendationFeedbackMetadata,
 } from "./batch7-closed-loop-store";
+import { OPPORTUNITY_FEEDBACK_ACTIONS } from "@kairo/domain/opportunity-intelligence";
 
 let runtimePlanPool: Pool | undefined;
 let runtimeRunPool: Pool | undefined;
@@ -167,7 +169,7 @@ export function registerHunterRecommendationRoutes(app: FastifyInstance, options
     },
   );
 
-  app.post<{ Params: { brandId: string; opportunityId: string; action: string } }>(
+  app.post<{ Params: { brandId: string; opportunityId: string; action: string }; Body: RecommendationFeedbackMetadata }>(
     "/api/v1/brands/:brandId/opportunities/:opportunityId/feedback/:action",
     async (request, reply) => {
       const account = await authenticate(request, reply, core, options.identityVerifier);
@@ -179,12 +181,12 @@ export function registerHunterRecommendationRoutes(app: FastifyInstance, options
           type: "about:blank",
           title: "Invalid feedback",
           status: 400,
-          detail: "Recommendation feedback must be seen or dismissed.",
+          detail: "Recommendation feedback action is not supported.",
           code: "invalid_feedback_action",
           correlationId: request.id,
         });
       }
-      return closedLoop.recordFeedback(account.id, request.params.brandId, request.params.opportunityId, request.params.action);
+      return closedLoop.recordFeedback(account.id, request.params.brandId, request.params.opportunityId, request.params.action, request.body ?? {});
     },
   );
 
@@ -196,6 +198,12 @@ export function registerHunterRecommendationRoutes(app: FastifyInstance, options
       await core.getBrand(account.id, request.params.brandId);
       if (!closedLoop) return unavailableClosedLoop(reply, request.id);
       const result = await closedLoop.developOpportunity(account.id, request.params.brandId, request.params.opportunityId);
+      await closedLoop.recordFeedback(account.id, request.params.brandId, request.params.opportunityId, "developed", {
+        surface: "discover",
+        rankingVersion: "hunter-v2-deterministic-1",
+      }).catch((error) => {
+        request.log.warn({ err: error, opportunityId: request.params.opportunityId }, "Development feedback learning deferred");
+      });
       // An idea is the explicit selection point. Asset rendering is best-effort here:
       // it must never undo the persisted idea if storage is temporarily unavailable.
       await options.onOpportunityDeveloped?.({ accountId: account.id, brandId: request.params.brandId, opportunityId: request.params.opportunityId, ideaId: result.ideaId }).catch((error) => {
@@ -227,7 +235,12 @@ async function executeRecordedHunterRun(options: {
     startedAt: options.startedAt,
   }) : undefined;
   try {
-    const result = await options.runner.runForAuthorizedBrand(options.input);
+    const result = await options.runner.runForAuthorizedBrand({
+      ...options.input,
+      snapshotVersion: options.snapshotVersion,
+      planVersion: options.planVersion,
+      hunterRunId: record?.runId ?? `untracked:${options.brandId}:${options.startedAt}`,
+    });
     if (record && options.runStore) {
       const completedAt = new Date().toISOString();
       await options.runStore.complete(options.accountId, record.runId, {
@@ -333,7 +346,7 @@ function unique(values: readonly string[]): string[] {
 }
 
 function isFeedbackAction(value: string): value is RecommendationFeedbackAction {
-  return value === "seen" || value === "dismissed";
+  return value === "seen" || (OPPORTUNITY_FEEDBACK_ACTIONS as readonly string[]).includes(value);
 }
 
 function unavailableClosedLoop(reply: FastifyReply, correlationId: string) {

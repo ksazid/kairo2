@@ -1,11 +1,11 @@
 {
   "activeSlice": {
-    "id": "HI2-01",
-    "objectiveId": "OBJ-HI2-01",
+    "id": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
+    "objectiveId": "OBJ-008",
     "state": "certified",
-    "riskLevel": "low",
+    "riskLevel": "medium",
     "implementationPermission": "runtime-enabled",
-    "scope": "Define and validate runtime-disabled Hunter Intelligence V2 domain contracts and EEI guardrails. No migrations, provider calls, UI behavior changes, or production ranking changes.",
+    "scope": "Make Brand Brain retain source-grounded editorial publisher context during live onboarding; prove it with a disposable public-brand validation before Hunter runs.",
     "budget": {
       "maxModelCalls": 0,
       "maxSubAgents": 0,
@@ -16,68 +16,24 @@
       "maxGraphWrites": 12
     },
     "approvals": [
-      {
-        "type": "scope",
-        "status": "approved",
-        "actorType": "human",
-        "scopeId": "HI2-01"
-      },
-      {
-        "type": "policy",
-        "status": "approved",
-        "actorType": "human",
-        "scopeId": "HI2-01"
-      },
-      {
-        "type": "implementation",
-        "status": "approved",
-        "actorType": "human",
-        "scopeId": "HI2-01"
-      }
+      { "type": "scope", "status": "approved", "actorType": "human", "scopeId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION" },
+      { "type": "policy", "status": "approved", "actorType": "human", "scopeId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION" },
+      { "type": "implementation", "status": "approved", "actorType": "human", "scopeId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION" },
+      { "type": "certification", "status": "approved", "actorType": "human", "scopeId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION", "commitSha": "f19d7624e5c3099bdc994e7b64981ca694de0d62", "candidateHash": "4ed0d2e35c0067d020abdbeefe0eb776c01f3a168f98a609da2ec38ec3c21aa9", "approvedAt": "2026-09-19T21:37:45Z" }
     ],
     "successCriteria": [
-      "Opportunity Intelligence V2, Trend Intelligence, Brand Preference State, ranking and EEI contracts are versioned and fail closed.",
-      "Feedback V2 accepts only the approved event vocabulary.",
-      "EEI rejects manipulative engagement objectives.",
-      "PES v2 CI and Security baseline pass for the exact implementation SHA.",
-      "No migrations, provider calls, UI behavior or production ranking behavior are enabled."
+      "A news or editorial website cannot persist conflicting automotive or food core Brand DNA when its source evidence identifies it as a publisher.",
+      "A model-conflict regression test passes.",
+      "The deployed production route is identified before any production re-test.",
+      "No Hunter run starts until the real Brand DNA is truthful and required owner confirmations are complete."
     ],
     "context": {
-      "contextHash": "4ea4b7efb57aee1871f0a805e5febb0ff484301044859b274ac71867ac38eb17",
-      "graphRevision": 11,
-      "requestedSeeds": [
-        "OBJ-HI2-01",
-        "TASK-HI2-01",
-        "ART-HI2-01",
-        "EVID-HI2-01",
-        "EVID-HI2-02",
-        "EVAL-HI2-01"
-      ],
-      "resolvedSeeds": [
-        "OBJ-HI2-01",
-        "TASK-HI2-01",
-        "ART-HI2-01",
-        "EVID-HI2-01",
-        "EVID-HI2-02",
-        "EVAL-HI2-01"
-      ],
+      "contextHash": "f1e6caec14de81cd3aa04d0ac41d7dd4b99c41c57be03845cc942220008493cb",
+      "graphRevision": 10,
+      "requestedSeeds": ["OBJ-008", "TASK-008-01", "ART-008-01", "EVID-008-01", "EVID-008-02", "EVAL-008-01"],
+      "resolvedSeeds": ["OBJ-008", "TASK-008-01", "ART-008-01", "EVID-008-01", "EVID-008-02", "EVAL-008-01"],
       "contradictions": []
     },
-    "evidenceIds": [
-      "EVID-HI2-01",
-      "EVID-HI2-02"
-    ],
-    "certificationCandidate": {
-      "bundleId": "CERT-HI2-01-96AA9584",
-      "commitSha": "96aa95843702bc7da1e5f7aee10731f08e203df4",
-      "candidateHash": "22e8c497c257aee28bd70b3eb393217071fbe8fecd1c2b72fa682ef6311dda49"
-    },
-    "certification": {
-      "bundleId": "CERT-HI2-01-96AA9584",
-      "commitSha": "96aa95843702bc7da1e5f7aee10731f08e203df4",
-      "candidateHash": "22e8c497c257aee28bd70b3eb393217071fbe8fecd1c2b72fa682ef6311dda49",
-      "certifiedHash": "ef4527f3d4fab7ec7bddeb84b746a767147436841b26623002982742e766458e",
-      "certifiedAt": "2026-09-20T01:10:53Z"
-    }
+    "evidenceIds": ["EVID-008-01", "EVID-008-02"]
   }
 }
