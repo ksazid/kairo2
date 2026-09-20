@@ -1,55 +1,45 @@
 {
   "activeSlice": {
-    "id": "HI2-11R1",
-    "objectiveId": "OBJ-HI2-11R1",
-    "state": "certified",
+    "id": "HI2-11R2",
+    "objectiveId": "OBJ-HI2-11R2",
+    "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Remediate the failed HI2-11R pre-gate by preserving raw retrieval keys internally while emitting deterministic bounded Trend supporting-signal references that satisfy the existing domain contract. Deduplicate and cap domain supportingSignalIds at 100 and use the same bounded reference mapping for provenance verification. Do not change rollout thresholds, retrieval policy, EEI policy, persistence authority, or production authority.",
+    "scope": "Align the operational Hunter V2 shadow candidate capacity with the six recommendations actually selected so the existing certified explorationMax=0.20 is enforced against the effective output size. Change only the shadow operational maxCandidates from 10 to 6; do not change EEI thresholds, retrieval policy, cost budget, latency policy, persistence, canary, scheduler, or production authority.",
     "budget": {
-      "maxModelCalls": 40,
+      "maxModelCalls": 30,
       "maxSubAgents": 0,
       "maxWallClockMinutes": 20,
-      "maxExternalWrites": 12
+      "maxExternalWrites": 10
     },
     "approvals": [
       {
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R1"
+        "scopeId": "HI2-11R2"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R1"
+        "scopeId": "HI2-11R2"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R1"
+        "scopeId": "HI2-11R2"
       }
     ],
     "successCriteria": [
-      "Raw retrieval candidate keys remain unchanged for internal clustering and corroboration.",
-      "Every TrendIntelligence supportingSignalId is deterministic, non-empty, <=200 characters, deduplicated, and the list contains at most 100 items.",
-      "Long raw candidate keys are represented by collision-resistant compact references rather than lossy string truncation.",
-      "Candidate provenance verification maps retrieval candidates through the exact same bounded signal-reference function.",
-      "A regression test covers a raw signal key longer than 200 characters.",
-      "A regression test covers a cluster with more than 100 signals without violating the Trend Intelligence contract.",
-      "Existing trend clustering, EEI, learned exploration, cost, latency and rollout thresholds remain unchanged.",
-      "Corrected 3x3 pre-gate reruns before any 30-pair full gate.",
+      "Operational shadow maxCandidates is exactly 6.",
+      "Existing EEI explorationMax remains 0.20 and explorationMin remains 0.08.",
+      "With six selected recommendations, the maximum exploration count is one, producing 16.67 percent exploration.",
+      "Three-topic retrieval, three paid Agent Reach intents, topic rotation, signal-reference bounds, cost and latency optimizations remain unchanged.",
+      "Corrected 3x3 pre-gate must meet all metric thresholds before the 30-pair full gate is attempted.",
       "Hunter V1 remains production authority; no V2 persistence or canary enablement.",
       "PES v2 CI and Security baseline pass before merge/deployment."
-    ],
-    "certification": {
-      "bundleId": "CERT-HI2-11R1-36336194",
-      "commitSha": "36336194e80975968b44954a561a2550c1b7eca8",
-      "candidateHash": "2b4381b2717ce4bb494cc063d107b80e5bca2d8587915d5082c54d7a907dcfac",
-      "certifiedHash": "9318a92b2aac467df38930898b584195d7727a55f1b8c459b32b8910a4e66b71",
-      "certifiedAt": "2026-09-20T21:46:54.081Z"
-    }
+    ]
   }
 }
