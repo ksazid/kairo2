@@ -2,7 +2,7 @@
   "activeSlice": {
     "id": "HI2-10M",
     "objectiveId": "OBJ-HI2-10M",
-    "state": "implementing",
+    "state": "certified",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
     "scope": "Restore the already-approved startup migration-range runtime path so production can idempotently apply the certified Hunter schema range 0039 through 0043 before shadow evidence. Add the missing migrate-range script and package it in the runtime image. No schema definition changes and no Hunter activation.",
@@ -42,6 +42,13 @@
       "No Hunter shadow evidence startup action may run in the same process as the migration range.",
       "No production Hunter V2 activation, canary exposure, scheduler change, or user Brand mutation is introduced.",
       "PES v2 CI and Security baseline pass before merge/deployment."
-    ]
+    ],
+    "certification": {
+      "bundleId": "CERT-HI2-10M-02751B56",
+      "commitSha": "02751b562cdf311b9124b1faa67720010e480082",
+      "candidateHash": "316403b474306a6d86de6b1ebe6ea0e4e1363af909fb39e48bb8cbbb5269cb79",
+      "certifiedHash": "8fdc0fcc28b4924381f081daf39e287c7a07537bbf57dcdb68c50a843c97a3fc",
+      "certifiedAt": "2026-09-20T17:24:39.609Z"
+    }
   }
 }
