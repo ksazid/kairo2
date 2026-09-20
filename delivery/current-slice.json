@@ -2,7 +2,7 @@
   "activeSlice": {
     "id": "HI2-10T",
     "objectiveId": "OBJ-HI2-10T",
-    "state": "implementing",
+    "state": "certified",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
     "scope": "Add an explicit existing Brand ID selector for the disposable persisted Hunter shadow anchor. The selected Brand is used only to derive its authorized workspace/account; it is never modified. The temporary Vercel anchor remains source-backed, inferred-only, canonical-readiness-gated and deleted in finally.",
@@ -42,6 +42,13 @@
       "The evidence cohort remains at least 3 distinct real Brands and 30 paired V1/V2 runs.",
       "Hunter V1 remains production authority; no canary or production enablement is introduced.",
       "PES v2 CI and Security baseline pass before merge/deployment."
-    ]
+    ],
+    "certification": {
+      "bundleId": "CERT-HI2-10T-015CD48D",
+      "commitSha": "015cd48ddedee01cc3fa8fb4a1350cbd6da50ffa",
+      "candidateHash": "a943f4b1f65a123de903e37f8b444e1b7d480c47d7dbcfeb84ac4199b13ac27c",
+      "certifiedHash": "974149a5dafb96034cc74360eb13d7c79ed27906670b79920cc95e925306527c",
+      "certifiedAt": "2026-09-20T16:17:44.367Z"
+    }
   }
 }
