@@ -133,7 +133,7 @@ function intentsForTopic(topic: BrandDiscoveryTopic, preferenceState: BrandPrefe
   const make = (generator: HunterRetrievalGenerator, mode: HunterRetrievalMode, query: string, semanticQuery: string, reason: string, intentPriority: HunterRetrievalIntent["priority"] = priority, boundedMax = maxResults): HunterRetrievalIntent => ({
     id: uniqueIntentId(generator, topic.id, query),
     generator, mode, topicId: requiredText(topic.id, "topic id", 120), topicName: requiredText(topic.name, "topic name", 180),
-    query: normalizeQuery(query), semanticQuery: normalizeQuery(semanticQuery), audience, sourceClasses, intentPriority,
+    query: normalizeQuery(query), semanticQuery: normalizeQuery(semanticQuery), audience, sourceClasses,
     priority: intentPriority, maxResults: boundedInteger(boundedMax, "intent.maxResults", 1, 20), reason,
   });
 
