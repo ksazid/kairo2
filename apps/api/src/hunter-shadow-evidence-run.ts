@@ -133,7 +133,7 @@ export function hunterShadowEvidenceRequestFromEnv(
 
   if (
     env.EXA_API_KEY?.trim() &&
-    env.KAIRO_HUNTER_AGENT_REACH_SEARCH_COST_USD?.trim() === undefined
+    !env.KAIRO_HUNTER_AGENT_REACH_SEARCH_COST_USD?.trim()
   ) {
     throw new Error(
       "KAIRO_HUNTER_AGENT_REACH_SEARCH_COST_USD is required when Agent Reach/Exa is enabled for shadow evidence",
