@@ -268,7 +268,7 @@ async function executeNative(runtime: AgentRuntimePort, benchmarkCase: Marketing
           requiredClaimIds: [...benchmarkCase.requiredClaimIds],
           prohibitedPatterns: [...(benchmarkCase.prohibitedPatterns ?? [])],
         },
-      } as JsonValue,
+      } as Record<string, JsonValue>,
     },
     outputSchema: {
       name: benchmarkCase.format === "carousel" ? "marketing-carousel-plan" : "marketing-reel-plan",
