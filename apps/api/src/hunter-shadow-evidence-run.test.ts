@@ -102,7 +102,36 @@ describe("Hunter shadow operational evidence", () => {
     })?.allowDisposablePersistedAnchor).toBe(false);
   });
 
-  it("selects only one unambiguous existing workspace for a disposable anchor", () => {
+  it("accepts a targeted anchor Brand only as a validated UUID", () => {
+    expect(hunterShadowEvidenceRequestFromEnv({
+      KAIRO_HUNTER_SHADOW_EVIDENCE_RUN_ID: "hi2-10t-shadow-001",
+      KAIRO_HUNTER_SHADOW_EVIDENCE_RELEASE_SHA: "a".repeat(40),
+      KAIRO_RELEASE_SHA: "a".repeat(40),
+      KAIRO_HUNTER_SHADOW_EVIDENCE_ANCHOR_BRAND_ID:
+        "0fbb9882-af46-4cd8-a86c-f7ffe33aac2b",
+    })?.anchorBrandId).toBe("0fbb9882-af46-4cd8-a86c-f7ffe33aac2b");
+
+    expect(() => hunterShadowEvidenceRequestFromEnv({
+      KAIRO_HUNTER_SHADOW_EVIDENCE_RUN_ID: "hi2-10t-shadow-001",
+      KAIRO_HUNTER_SHADOW_EVIDENCE_RELEASE_SHA: "a".repeat(40),
+      KAIRO_RELEASE_SHA: "a".repeat(40),
+      KAIRO_HUNTER_SHADOW_EVIDENCE_ANCHOR_BRAND_ID: "not-a-uuid",
+    })).toThrow(/valid lowercase UUID/);
+  });
+
+  it("selects only the explicitly targeted Brand workspace for a disposable anchor", () => {
+    expect(selectDisposableAnchorTenant([
+      { accountId: "account-z", workspaceId: "workspace-2", brandId: "brand-other" },
+      { accountId: "account-b", workspaceId: "workspace-1", brandId: "brand-target" },
+      { accountId: "account-a", workspaceId: "workspace-1", brandId: "brand-target" },
+    ], "brand-target")).toEqual({ accountId: "account-a", workspaceId: "workspace-1" });
+
+    expect(() => selectDisposableAnchorTenant([
+      { accountId: "account-z", workspaceId: "workspace-2", brandId: "brand-other" },
+    ], "brand-target")).toThrow(/Target Hunter shadow anchor Brand is unavailable/);
+  });
+
+  it("retains the untargeted single-workspace fail-closed guard", () => {
     expect(selectDisposableAnchorTenant([
       { accountId: "account-b", workspaceId: "workspace-1", brandId: "brand-1" },
       { accountId: "account-a", workspaceId: "workspace-1", brandId: "brand-2" },
