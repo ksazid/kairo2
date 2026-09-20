@@ -1,11 +1,11 @@
 {
   "activeSlice": {
-    "id": "HI2-05R",
-    "objectiveId": "OBJ-HI2-05R",
-    "state": "certified",
+    "id": "HI2-06R",
+    "objectiveId": "OBJ-HI2-06R",
+    "state": "implementing",
     "riskLevel": "medium",
     "implementationPermission": "runtime-disabled",
-    "scope": "Add shadow-only Hunter multi-stage intelligence: deterministic pre-rank, bounded candidate funnel, provider-neutral deep-analysis port, validated deep intelligence outputs and funnel diagnostics. Existing production Hunter ranking/persistence remains authoritative.",
+    "scope": "Add shadow-only Preference-aware EEI V2 reranking: real exploration allocation, diversity enforcement, manipulation-risk blocking, saturation controls, Preference State affinity and recommendation explanations. Existing production Hunter EEI remains authoritative.",
     "budget": {
       "maxModelCalls": 0,
       "maxSubAgents": 0,
@@ -20,36 +20,29 @@
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-05R"
+        "scopeId": "HI2-06R"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-05R"
+        "scopeId": "HI2-06R"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-05R"
+        "scopeId": "HI2-06R"
       }
     ],
     "successCriteria": [
-      "Pre-rank deterministically reduces trend candidates using Brand fit, topic fit, evidence, freshness, momentum, diversity and explicit penalties.",
-      "Unknown optional signals are excluded from the weighted denominator and reported explicitly rather than treated as zero.",
-      "Only a bounded top set may enter deep analysis; deep analysis is provided through an injected port and has no persistence authority.",
-      "Deep intelligence output validates mechanism, Brand interpretation, audience interpretation, gap analysis, actionable angle, originality, actionability and confidence.",
-      "Diagnostics expose funnel sizes, unknown-feature rates, deep-analysis success/failure and score distribution.",
+      "Final shadow selection allocates a bounded exploration share derived from Brand Preference State and EEI policy rather than configuration-only metadata.",
+      "Core, adjacent and exploration candidates remain deterministic and explainable.",
+      "Strong negative preference matches and manipulation-risk candidates are blocked before final selection.",
+      "Topic concentration, source diversity and saturation controls are enforced without mutating production Hunter behavior.",
+      "Recommendation explanations expose why selected, evidence, Brand fit, uncertainty and user control.",
       "No provider credentials, scheduled execution, production Hunter wiring, UI changes, opportunity persistence or production enablement are introduced.",
       "PES v2 CI and Security baseline pass before certification."
-    ],
-    "certification": {
-      "bundleId": "CERT-HI2-05R-4321BA21",
-      "commitSha": "4321ba2149f68498daca51a36e4b7fb69488a487",
-      "candidateHash": "74474352dec0a55301fc30062b1c842dcfc8bb01d572b4a5d0ad3095e9d2f0ef",
-      "certifiedHash": "556af3fbb296f9889ad663552ef13799213d8b5748b2c79d98b24d2a4a7911f4",
-      "certifiedAt": "2026-09-20T10:38:49+02:00"
-    }
+    ]
   }
 }
