@@ -198,6 +198,12 @@ export function registerHunterRecommendationRoutes(app: FastifyInstance, options
       await core.getBrand(account.id, request.params.brandId);
       if (!closedLoop) return unavailableClosedLoop(reply, request.id);
       const result = await closedLoop.developOpportunity(account.id, request.params.brandId, request.params.opportunityId);
+      await closedLoop.recordFeedback(account.id, request.params.brandId, request.params.opportunityId, "developed", {
+        surface: "discover",
+        rankingVersion: "hunter-eei-v1",
+      }).catch((error) => {
+        request.log.warn({ err: error, opportunityId: request.params.opportunityId }, "Development feedback learning deferred");
+      });
       // An idea is the explicit selection point. Asset rendering is best-effort here:
       // it must never undo the persisted idea if storage is temporarily unavailable.
       await options.onOpportunityDeveloped?.({ accountId: account.id, brandId: request.params.brandId, opportunityId: request.params.opportunityId, ideaId: result.ideaId }).catch((error) => {

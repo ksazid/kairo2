@@ -393,10 +393,16 @@ export async function ensureConceptAssets(brandId: string, opportunityId: string
 export async function actOnHomeOpportunity(brandId: string, opportunityId: string, action: "save" | "ignore"): Promise<HomeOpportunity> {
   const token = await accessToken();
   if (!token) throw new Error("Sign in to update this opportunity.");
-  return bodyOrError<HomeOpportunity>(
+  const opportunity = await bodyOrError<HomeOpportunity>(
     await api(token, `/api/v1/brands/${encodeURIComponent(brandId)}/opportunities/${encodeURIComponent(opportunityId)}/${action}`, { method: "POST" }),
     action === "save" ? "Kairo could not save this opportunity." : "Kairo could not dismiss this opportunity.",
   );
+  const feedbackAction = action === "save" ? "saved" : "dismissed";
+  await api(token, `/api/v1/brands/${encodeURIComponent(brandId)}/opportunities/${encodeURIComponent(opportunityId)}/feedback/${feedbackAction}`, {
+    method: "POST",
+    body: JSON.stringify({ surface: "discover", rankingVersion: opportunity.intelligence?.provenance.rankingVersion ?? "hunter-eei-v1" }),
+  }).catch(() => undefined);
+  return opportunity;
 }
 
 export async function runManualHunter(brandId: string): Promise<ManualHunterRun> {

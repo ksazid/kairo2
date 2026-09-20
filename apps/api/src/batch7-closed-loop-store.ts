@@ -3,6 +3,8 @@ import { Pool, type PoolClient } from "pg";
 import type { ConceptMockupDto } from "@kairo/contracts/concept-mockup";
 import { ResourceNotFoundError } from "@kairo/domain";
 import type { OpportunityFeedbackAction } from "@kairo/domain/opportunity-intelligence";
+import type { BrandPreferenceState } from "@kairo/domain/brand-preference-state";
+import { evolveBrandPreferenceState, summarizeBrandPreferenceState } from "./feedback-preference-state";
 
 export type RecommendationFeedbackAction = "seen" | OpportunityFeedbackAction;
 
@@ -61,7 +63,7 @@ export class PgHunterClosedLoopStore implements HunterClosedLoopStore {
     const client = await this.pool.connect();
     try {
       const workspaceId = await requireBrandWorkspace(client, accountId, brandId);
-      const [learning, choices, feedback] = await Promise.all([
+      const [learning, choices, feedback, preference] = await Promise.all([
         client.query<{ statement: string; interpretation: string }>(
           `select statement,interpretation from brand_learnings
             where workspace_id=$1 and brand_id=$2 and status='accepted'
@@ -81,6 +83,10 @@ export class PgHunterClosedLoopStore implements HunterClosedLoopStore {
             order by f.created_at desc,f.id limit 8`,
           [workspaceId, brandId],
         ).catch(() => ({ rows: [] as Array<{ title: string; action: RecommendationFeedbackAction }> })),
+        client.query<{ state: BrandPreferenceState }>(
+          `select state from brand_preference_states where workspace_id=$1 and brand_id=$2`,
+          [workspaceId, brandId],
+        ).catch(() => ({ rows: [] as Array<{ state: BrandPreferenceState }> })),
       ]);
       const parts: string[] = [];
       if (learning.rows.length) {
@@ -92,6 +98,8 @@ export class PgHunterClosedLoopStore implements HunterClosedLoopStore {
       if (feedback.rows.length) {
         parts.push(`Recommendation feedback: ${feedback.rows.map((item) => `${item.action}: ${item.title}`).join(" | ")}`);
       }
+      const preferenceSummary = summarizeBrandPreferenceState(preference.rows[0]?.state);
+      if (preferenceSummary) parts.push(preferenceSummary);
       return parts.length ? parts.join("\n").slice(0, 4_000) : undefined;
     } finally {
       client.release();
@@ -109,8 +117,8 @@ export class PgHunterClosedLoopStore implements HunterClosedLoopStore {
     try {
       await client.query("begin");
       const workspaceId = await requireBrandWorkspace(client, accountId, brandId);
-      const current = await client.query<{ status: RecommendationFeedbackResult["status"] }>(
-        `select status from brand_opportunities where workspace_id=$1 and brand_id=$2 and id=$3 for update`,
+      const current = await client.query<{ status: RecommendationFeedbackResult["status"]; title: string; opportunity_details: { topic?: string; targetAudience?: string; recommendedFormat?: string; recommendedChannel?: string } | null }>(
+        `select status,title,opportunity_details from brand_opportunities where workspace_id=$1 and brand_id=$2 and id=$3 for update`,
         [workspaceId, brandId, opportunityId],
       );
       const row = current.rows[0];
@@ -134,7 +142,34 @@ export class PgHunterClosedLoopStore implements HunterClosedLoopStore {
       if (status !== row.status) {
         await client.query(`update brand_opportunities set status=$1,updated_at=now() where workspace_id=$2 and brand_id=$3 and id=$4`, [status, workspaceId, brandId, opportunityId]);
       }
-      if (inserted.rowCount) await audit(client, workspaceId, accountId, `opportunity.feedback.${action}`, opportunityId);
+      if (inserted.rowCount) {
+        await audit(client, workspaceId, accountId, `opportunity.feedback.${action}`, opportunityId);
+        const stateResult = await client.query<{ state: BrandPreferenceState }>(
+          `select state from brand_preference_states where workspace_id=$1 and brand_id=$2 for update`,
+          [workspaceId, brandId],
+        );
+        const at = new Date().toISOString();
+        const nextState = evolveBrandPreferenceState(stateResult.rows[0]?.state, {
+          workspaceId,
+          brandId,
+          action,
+          at,
+          topic: row.opportunity_details?.topic?.trim() || row.title,
+          ...(row.opportunity_details?.targetAudience?.trim() ? { audience: row.opportunity_details.targetAudience } : {}),
+          ...(row.opportunity_details?.recommendedFormat?.trim() ? { format: row.opportunity_details.recommendedFormat } : {}),
+          ...(row.opportunity_details?.recommendedChannel?.trim() ? { channel: row.opportunity_details.recommendedChannel } : {}),
+          ...(metadata.reason?.trim() ? { reason: metadata.reason } : {}),
+        });
+        if (nextState) {
+          await client.query(
+            `insert into brand_preference_states(workspace_id,brand_id,schema_version,snapshot_version,state,updated_at)
+             values($1,$2,$3,$4,$5::jsonb,$6)
+             on conflict(workspace_id,brand_id) do update
+             set schema_version=excluded.schema_version,snapshot_version=excluded.snapshot_version,state=excluded.state,updated_at=excluded.updated_at`,
+            [workspaceId, brandId, nextState.schemaVersion, nextState.snapshotVersion, JSON.stringify(nextState), nextState.updatedAt],
+          );
+        }
+      }
       await client.query("commit");
       return { opportunityId, action, status };
     } catch (error) {

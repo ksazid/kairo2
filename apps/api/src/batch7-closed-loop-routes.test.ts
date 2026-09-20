@@ -133,6 +133,7 @@ describe("VS-104 closed-loop routes", () => {
     });
     expect(forbidden.statusCode).toBe(404);
     expect(context.closedLoop.developments).toHaveLength(1);
+    expect(context.closedLoop.feedback.map((item) => item.action)).toContain("developed");
     await context.app.close();
   });
 });
