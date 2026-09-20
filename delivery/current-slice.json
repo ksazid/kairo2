@@ -2,7 +2,7 @@
   "activeSlice": {
     "id": "HI2-10V",
     "objectiveId": "OBJ-HI2-10V",
-    "state": "implementing",
+    "state": "certified",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
     "scope": "Make the disposable persisted Vercel Hunter shadow anchor satisfy the unchanged canonical Hunter readiness contract by writing six explicit source-backed inferred fixture fields after normal public-reference bootstrap. The target user Brand remains read-only, the fixture remains temporary, and all one-shot evidence gates remain explicit.",
@@ -42,6 +42,13 @@
       "The evidence cohort remains at least 3 distinct real Brands and 30 paired V1/V2 runs.",
       "Hunter V1 remains production authority; no canary or production enablement is introduced.",
       "PES v2 CI and Security baseline pass before merge/deployment."
-    ]
+    ],
+    "certification": {
+      "bundleId": "CERT-HI2-10V-F1A419B8",
+      "commitSha": "f1a419b802b1961caf703d720a2c665c803bd534",
+      "candidateHash": "ee7b1605b5e21dc9d661a977101484278d1d4ad86dbe38e3908ff020c126609e",
+      "certifiedHash": "4a7fe2b4aab0781df9e168bb1ebc097ec858bcb4272f7293a2db4dbb5e5c06f5",
+      "certifiedAt": "2026-09-20T17:13:49.893Z"
+    }
   }
 }
