@@ -400,7 +400,7 @@ export async function actOnHomeOpportunity(brandId: string, opportunityId: strin
   const feedbackAction = action === "save" ? "saved" : "dismissed";
   await api(token, `/api/v1/brands/${encodeURIComponent(brandId)}/opportunities/${encodeURIComponent(opportunityId)}/feedback/${feedbackAction}`, {
     method: "POST",
-    body: JSON.stringify({ surface: "discover", rankingVersion: opportunity.intelligence?.provenance.rankingVersion ?? "hunter-eei-v1" }),
+    body: JSON.stringify({ surface: "discover", rankingVersion: opportunity.intelligence?.provenance.rankingVersion ?? "hunter-v2-deterministic-1" }),
   }).catch(() => undefined);
   return opportunity;
 }

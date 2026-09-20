@@ -105,7 +105,7 @@ describe("VS-104 closed-loop routes", () => {
         method: "POST",
         url: `/api/v1/brands/${context.brand.id}/opportunities/opportunity-1/feedback/${action}`,
         headers: auth,
-        payload: { surface: "discover", reason: "explicit user choice", rankingVersion: "hunter-eei-v1" },
+        payload: { surface: "discover", reason: "explicit user choice", rankingVersion: "hunter-v2-deterministic-1" },
       });
       expect(response.statusCode).toBe(200);
       expect(response.json()).toMatchObject({ opportunityId: "opportunity-1", action });

@@ -200,7 +200,7 @@ export function registerHunterRecommendationRoutes(app: FastifyInstance, options
       const result = await closedLoop.developOpportunity(account.id, request.params.brandId, request.params.opportunityId);
       await closedLoop.recordFeedback(account.id, request.params.brandId, request.params.opportunityId, "developed", {
         surface: "discover",
-        rankingVersion: "hunter-eei-v1",
+        rankingVersion: "hunter-v2-deterministic-1",
       }).catch((error) => {
         request.log.warn({ err: error, opportunityId: request.params.opportunityId }, "Development feedback learning deferred");
       });

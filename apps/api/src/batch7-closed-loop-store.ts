@@ -131,7 +131,7 @@ export class PgHunterClosedLoopStore implements HunterClosedLoopStore {
         [
           randomUUID(), workspaceId, brandId, opportunityId, accountId, action,
           metadata.surface?.trim() || "discover",
-          metadata.rankingVersion?.trim() || "hunter-eei-v1",
+          metadata.rankingVersion?.trim() || "hunter-v2-deterministic-1",
           metadata.position ?? null,
           metadata.reason?.trim().slice(0, 500) || null,
           metadata.contentId?.trim().slice(0, 200) || null,
