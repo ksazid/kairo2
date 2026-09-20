@@ -2,7 +2,7 @@
   "activeSlice": {
     "id": "HI2-10P",
     "objectiveId": "OBJ-HI2-10P",
-    "state": "implementing",
+    "state": "certified",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
     "scope": "Add an explicitly gated disposable persisted real-public Brand anchor for HI2 shadow evidence when no existing persisted Brand is Hunter-ready. The fixture is created in the single unambiguous existing workspace, populated only with source-backed inferred Brand Brain fields through normal audited services, used read-only for paired evidence, and deleted in finally. Existing user Brands are not modified.",
@@ -42,6 +42,13 @@
       "The evidence cohort remains at least 3 distinct real Brands and 30 paired V1/V2 runs.",
       "Hunter V1 remains production authority; no canary or production enablement is introduced.",
       "PES v2 CI and Security baseline pass before merge/deployment."
-    ]
+    ],
+    "certification": {
+      "bundleId": "CERT-HI2-10P-13F29370",
+      "commitSha": "13f29370cd089259f8c31bded09980a676fafcaa",
+      "candidateHash": "b71e6a4472aa07dd78949d2f3a0d370e8648eddb5db06c1c8b3fb25abb8cf961",
+      "certifiedHash": "8f806706334fa24e465a052fbab8f19118138790cc0a5453506d2190be755159",
+      "certifiedAt": "2026-09-20T16:08:17.424Z"
+    }
   }
 }
