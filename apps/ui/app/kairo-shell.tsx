@@ -3,7 +3,6 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import {
   BarChart3,
-  Bell,
   BrainCircuit,
   CalendarDays,
   Compass,
@@ -16,6 +15,7 @@ import {
 import { getShellBrandOptions } from "../lib/shell-data";
 import { BrandSwitcher } from "./brand-switcher";
 import { UserMenu } from "./user-menu";
+import { Notifications } from "./notifications";
 
 type ActiveDestination = "Home" | "Discover" | "Content" | "Campaigns" | "Calendar" | "Insights" | "Brain" | "Settings";
 
@@ -67,7 +67,7 @@ export async function KairoShell({
         <BrandSwitcher authenticated={authenticated} brandId={brandId} brandName={brandName} brands={brandOptions}/>
         <span className="ready-dot"><i/>{statusLabel ?? (authenticated ? "Brand ready" : "Preview mode")}</span>
         <div className="top-spacer"/>
-        <button className="bell" type="button" aria-label="Notifications"><Bell aria-hidden="true"/><b>3</b></button>
+        <Notifications/>
         {authenticated ? <UserMenu brandId={brandId}/> : <a className="profile auth-profile" href="/auth/login"><span>SK</span><strong>Sign in</strong></a>}
       </header>
       <div className={`workspace ${workspaceClassName}`.trim()}>{children}</div>

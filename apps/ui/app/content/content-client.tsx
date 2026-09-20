@@ -119,7 +119,8 @@ function ChannelBadge({ item }: { item: ContentItem }) {
 }
 
 function ContentActions({ item, brandId, role }: { item: ContentItem; brandId?: string; role?: "cell" }) {
-  return <div className="content-actions" role={role}><Link href={contentPreviewHref(item, brandId)}><Eye aria-hidden="true"/>Open preview</Link><button type="button" aria-label={`More actions for ${item.title}`} title="More actions"><MoreHorizontal aria-hidden="true"/></button></div>;
+  const href = contentPreviewHref(item, brandId);
+  return <div className="content-actions" role={role}><Link href={href}><Eye aria-hidden="true"/>Open preview</Link><details className="action-menu"><summary aria-label={`More actions for ${item.title}`} title="More actions"><MoreHorizontal aria-hidden="true"/></summary><div role="menu"><Link href={href} role="menuitem">Open preview</Link><button type="button" role="menuitem" onClick={() => void navigator.clipboard?.writeText(new URL(href, window.location.origin).toString())}>Copy link</button></div></details></div>;
 }
 
 function formatDate(value: string) {

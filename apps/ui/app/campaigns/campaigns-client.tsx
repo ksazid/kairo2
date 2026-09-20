@@ -34,7 +34,13 @@ export function CampaignsClient({ initialCampaigns, brandId }: { initialCampaign
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<"all" | CampaignStatus>("all");
   const [view, setView] = useState<ListingView>(DEFAULT_LISTING_VIEW);
-  const visible = useMemo(() => filterCampaigns(initialCampaigns, { query, status }), [initialCampaigns, query, status]);
+  const [dateFilter, setDateFilter] = useState("all");
+  const visible = useMemo(() => {
+    const filtered = filterCampaigns(initialCampaigns, { query, status });
+    if (dateFilter === "all") return filtered;
+    const now = Date.now();
+    return filtered.filter((item) => dateFilter === "upcoming" ? new Date(item.endsAt).getTime() >= now : new Date(item.endsAt).getTime() < now);
+  }, [initialCampaigns, query, status, dateFilter]);
 
   useEffect(() => setView(normalizeListingView(window.localStorage.getItem(preferenceKey))), []);
 
@@ -52,7 +58,7 @@ export function CampaignsClient({ initialCampaigns, brandId }: { initialCampaign
     <section className="campaigns-toolbar" aria-label="Campaign filters">
       <label className="campaigns-search"><Search aria-hidden="true"/><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search campaigns by name or objective" aria-label="Search campaigns"/></label>
       <div className="campaigns-status-tabs" role="group" aria-label="Campaign status">{statuses.map((item) => <button type="button" key={item.value} aria-pressed={status === item.value} onClick={() => setStatus(item.value)}>{item.label}</button>)}</div>
-      <button className="campaigns-date-filter" type="button"><CalendarDays aria-hidden="true"/>All dates<ChevronDown aria-hidden="true"/></button>
+      <label className="campaigns-date-filter"><CalendarDays aria-hidden="true"/><select aria-label="Campaign date filter" value={dateFilter} onChange={(event) => setDateFilter(event.target.value)}><option value="all">All dates</option><option value="upcoming">Upcoming</option><option value="past">Past</option></select><ChevronDown aria-hidden="true"/></label>
     </section>
 
     <section id="campaign-list" aria-label="Campaigns">
@@ -98,7 +104,8 @@ function CampaignProgress({ item, role }: { item: CampaignItem; role?: "cell" })
 }
 
 function CampaignActions({ item, brandId, role }: { item: CampaignItem; brandId?: string; role?: "cell" }) {
-  return <div className="campaign-actions" role={role}><Link href={campaignHref(item.id, brandId)}><Eye/>Open campaign</Link><button type="button" aria-label={`More actions for ${item.name}`}><MoreHorizontal/></button></div>;
+  const href = campaignHref(item.id, brandId);
+  return <div className="campaign-actions" role={role}><Link href={href}><Eye/>Open campaign</Link><details className="action-menu"><summary aria-label={`More actions for ${item.name}`} title="More actions"><MoreHorizontal/></summary><div role="menu"><Link href={href} role="menuitem">Open campaign</Link><button type="button" role="menuitem" onClick={() => void navigator.clipboard?.writeText(new URL(href, window.location.origin).toString())}>Copy link</button></div></details></div>;
 }
 
 function datePart(value: string, includeYear = false) {
