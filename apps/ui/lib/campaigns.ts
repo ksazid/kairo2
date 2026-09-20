@@ -91,7 +91,7 @@ export function campaignFallback(): CampaignItem[] {
     return {
       ...campaign,
       statusLabel: statusLabel(campaign.status),
-      image: assets[0]?.image ?? "/kairo-logo.svg",
+      image: assets[0]?.image ?? "/kairo-media-placeholder.svg",
       formats: ["Post", "Reel", "Carousel"],
       channels: ["Instagram", "LinkedIn"],
       readyAssets: 2,
