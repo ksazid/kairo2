@@ -11,6 +11,7 @@ import type { BrandDiscoveryPlan } from "@kairo/domain/brand-discovery-plan";
 import {
   ReadOnlyHunterShadowLaneExecutor,
   isHunterDeepAnalysisOutput,
+  selectPaidShadowIntentIds,
   type HunterShadowExecutionContext,
 } from "./hunter-shadow-lane-adapters";
 import { runHunterShadowEvidencePair } from "./hunter-shadow-evidence-runner";
@@ -198,6 +199,7 @@ describe("read-only Hunter shadow lane adapters", () => {
       candidate: {
         maxIntents: 6,
         maxSourcesPerIntent: 2,
+        maxPaidIntents: 3,
         maxExternalCalls: 6,
         maxSemanticCalls: 0,
         deepLimit: 2,
@@ -211,6 +213,13 @@ describe("read-only Hunter shadow lane adapters", () => {
     expect(pair.pair.candidate.qualityScore).toBeGreaterThan(0.5);
     expect(pair.observation.retrievalCoverage).toBeGreaterThan(0);
     expect(pair.observation.v2CostUsd).toBeGreaterThan(0);
+    expect(pair.observation.v2CostUsd).toBeLessThanOrEqual(0.021 + 0.011);
+    const trace = executor.traceFor(run.comparisonId);
+    expect(trace).toBeDefined();
+    expect(trace!.brandName).toBe("Example");
+    expect(trace!.intents.filter((item) => item.paidAgentReach).length).toBeLessThanOrEqual(3);
+    expect(trace!.selected.length).toBeGreaterThan(0);
+    expect(trace!.selected.some((item) => item.bucket === "exploration")).toBe(true);
     expect(pair.observation.explorationShare).toBeGreaterThan(0);
     expect(pair.pair.candidate.persistenceAttempted).toBe(false);
     expect(pair.pair.candidate.productionGuardIntact).toBe(true);
@@ -233,6 +242,30 @@ describe("read-only Hunter shadow lane adapters", () => {
     });
 
     await expect(executor.runControl(run)).rejects.toThrow(/workspace and Brand/);
+  });
+
+  it("selects at most three deterministic paid intents and always reserves lexical exploration", () => {
+    const plan = {
+      schemaVersion: "1" as const,
+      workspaceId: "workspace-1",
+      brandId: "brand-1",
+      snapshotVersion: "snapshot-1",
+      planVersion: "plan-1",
+      explorationBudget: 0.1,
+      intents: [
+        { id:"core-a",generator:"brand-core",mode:"lexical-search",topicId:"a",topicName:"A",query:"A",semanticQuery:"A",audience:"x",sourceClasses:["Official sources"],priority:"high",maxResults:5,reason:"core" },
+        { id:"rise-a",generator:"rising-breaking",mode:"lexical-search",topicId:"a",topicName:"A",query:"A latest",semanticQuery:"A latest",audience:"x",sourceClasses:["Industry news"],priority:"high",maxResults:5,reason:"rise" },
+        { id:"core-b",generator:"brand-core",mode:"lexical-search",topicId:"b",topicName:"B",query:"B",semanticQuery:"B",audience:"y",sourceClasses:["Official sources"],priority:"high",maxResults:5,reason:"core" },
+        { id:"explore-a",generator:"adjacent-exploration",mode:"lexical-search",topicId:"a",topicName:"A",query:"A adjacent",semanticQuery:"A adjacent",audience:"x",sourceClasses:["Industry news"],priority:"exploration",maxResults:5,reason:"explore" },
+      ],
+      hardNegatives: [],
+    } satisfies import("@kairo/domain/hunter-retrieval").HunterRetrievalPlan;
+
+    const selected = selectPaidShadowIntentIds(plan, 3);
+    expect(selected).toHaveLength(3);
+    expect(selected).toContain("explore-a");
+    expect(selected).toContain("core-b");
+    expect(selectPaidShadowIntentIds(plan, 3)).toEqual(selected);
   });
 
   it("validates deep-analysis outputs through the certified domain contract", () => {
