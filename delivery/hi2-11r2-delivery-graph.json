@@ -1,0 +1,48 @@
+{
+  "status": "ready",
+  "sliceId": "HI2-11R2",
+  "riskLevel": "high",
+  "purpose": "Align effective Hunter V2 shadow output capacity with the existing EEI exploration ceiling after the corrected 3x3 run passed every metric except exploration share.",
+  "baseline": {
+    "runId": "hi2-11r1-pre-20260921-01",
+    "releaseSha": "7d732550669c57f303cf80bd1d228c179180ec38",
+    "pairCount": 9,
+    "metrics": {
+      "averageQualityDelta": 0.48924629629629635,
+      "averageRetrievalCoverage": 1,
+      "v2FailureRate": 0,
+      "p95LatencyRatio": 1.1673204999543838,
+      "averageCostRatio": 1.4803121830768553,
+      "minimumExplorationShare": 0.3333333333333333,
+      "maximumExplorationShare": 0.3333333333333333,
+      "maximumObservedTopicShare": 0.3333333333333333
+    },
+    "finding": "The shadow lane selected six recommendations, but maxCandidates=10 allowed two exploration items under the 20 percent ceiling, yielding 2/6 = 33.33 percent effective exploration."
+  },
+  "unchangedPolicy": {
+    "explorationMin": 0.08,
+    "explorationMax": 0.2,
+    "maximumTopicShare": 0.34,
+    "maximumAverageCostRatio": 1.5,
+    "maximumP95LatencyRatio": 1.5
+  },
+  "change": {
+    "operationalMaxCandidates": {
+      "from": 10,
+      "to": 6
+    },
+    "expectedExplorationMaximumCount": 1,
+    "expectedExplorationShare": 0.16666666666666666
+  },
+  "constraints": {
+    "rolloutThresholdChanges": false,
+    "retrievalPolicyChanges": false,
+    "eeiPolicyChanges": false,
+    "paidAgentReachIntents": 3,
+    "maxOperationalIntents": 3,
+    "productionHunterAuthority": "v1-only",
+    "hunterV2Persistence": false,
+    "canaryExposure": false,
+    "productionEnable": false
+  }
+}
