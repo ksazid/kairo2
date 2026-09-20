@@ -34,6 +34,18 @@ export interface HunterRetrievalIntent {
   reason: string;
 }
 
+
+export interface HunterSemanticReference {
+  entityId: string;
+  similarity: number;
+  provider: string;
+  model: string;
+}
+
+export interface HunterSemanticExpansionPort {
+  expand(input: { brandId: string; queryText: string; limit: number }): Promise<readonly HunterSemanticReference[]>;
+}
+
 export interface HunterHardNegative {
   key: string;
   source: "discovery-plan" | "preference-topic" | "preference-audience" | "preference-mechanism" | "preference-source-class";
