@@ -57,6 +57,8 @@ export interface ShadowTrendFeatureDetails {
 
 export interface ShadowTrendCluster {
   intelligence: TrendIntelligence;
+  dominantTopicId: string;
+  topicIds: string[];
   features: ShadowTrendFeatureDetails;
   sourceKeys: string[];
   platformKeys: string[];
@@ -294,9 +296,8 @@ function buildCluster(
   );
 
   const topicId = dominantTopicId(sorted);
-  const topic = isExplorationOnly(generatorKeys)
-    ? representativeExplorationTopic(sorted)
-    : topicLabels?.[topicId] ?? topicId ?? sorted[0]?.title ?? "Untitled trend";
+  const topicIds = unique(sorted.flatMap((signal) => signal.topicIds));
+  const topic = representativeEvidenceTopic(sorted);
   const stage = classifyStage({
     signalCount: sorted.length,
     freshness,
@@ -328,6 +329,8 @@ function buildCluster(
 
   return {
     intelligence,
+    dominantTopicId: topicId,
+    topicIds,
     features: {
       featureVersion: HUNTER_TREND_FEATURE_VERSION,
       signalCount: sorted.length,
@@ -361,7 +364,7 @@ function isExplorationOnly(generatorKeys: readonly string[]): boolean {
   );
 }
 
-function representativeExplorationTopic(
+function representativeEvidenceTopic(
   signals: readonly TrendSignalObservation[],
 ): string {
   const representative = [...signals]
