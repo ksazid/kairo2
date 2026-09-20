@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">Media preview unavailable</title>
+  <desc id="desc">A quiet Kairo placeholder for content without preview media.</desc>
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#241d4b"/><stop offset="1" stop-color="#122b3a"/></linearGradient></defs>
+  <rect width="1200" height="800" fill="url(#g)"/>
+  <circle cx="930" cy="120" r="250" fill="#825cff" opacity=".2"/>
+  <circle cx="180" cy="720" r="260" fill="#c8ed47" opacity=".08"/>
+  <path d="M560 290h80l40 80 40-80h80l-80 140v100h-80V430z" fill="#f6f7fb" opacity=".9"/>
+  <text x="600" y="610" text-anchor="middle" fill="#cbd3df" font-family="Arial, sans-serif" font-size="30" letter-spacing="3">PREVIEW PENDING</text>
+</svg>
