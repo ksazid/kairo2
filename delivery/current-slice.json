@@ -1,54 +1,47 @@
 {
   "activeSlice": {
-    "id": "HI2-10V",
-    "objectiveId": "OBJ-HI2-10V",
-    "state": "certified",
+    "id": "HI2-10M",
+    "objectiveId": "OBJ-HI2-10M",
+    "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Make the disposable persisted Vercel Hunter shadow anchor satisfy the unchanged canonical Hunter readiness contract by writing six explicit source-backed inferred fixture fields after normal public-reference bootstrap. The target user Brand remains read-only, the fixture remains temporary, and all one-shot evidence gates remain explicit.",
+    "scope": "Restore the already-approved startup migration-range runtime path so production can idempotently apply the certified Hunter schema range 0039 through 0043 before shadow evidence. Add the missing migrate-range script and package it in the runtime image. No schema definition changes and no Hunter activation.",
     "budget": {
-      "maxModelCalls": 90,
+      "maxModelCalls": 0,
       "maxSubAgents": 0,
-      "maxWallClockMinutes": 30,
-      "maxExternalWrites": 18
+      "maxWallClockMinutes": 20,
+      "maxExternalWrites": 8
     },
     "approvals": [
       {
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-10V"
+        "scopeId": "HI2-10M"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-10V"
+        "scopeId": "HI2-10M"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-10V"
+        "scopeId": "HI2-10M"
       }
     ],
     "successCriteria": [
-      "The Vercel fixture uses active source records derived from Vercel About and Vercel Acceptable Use Policy public references.",
-      "Exactly the six canonical Hunter readiness groups receive at least one non-placeholder source-backed inferred field: business, offerings, audience, positioning, topics and boundaries.",
-      "No owner-confirmed field is created and no existing user Brand field is modified.",
-      "The unchanged createBrandBrainActivationSnapshot readiness evaluator must return hunterReady=true before the fixture can enter the evidence cohort.",
-      "Missing About or policy source evidence fails closed before paired evidence starts.",
-      "The disposable Brand is deleted after success or failure.",
-      "The evidence cohort remains at least 3 distinct real Brands and 30 paired V1/V2 runs.",
-      "Hunter V1 remains production authority; no canary or production enablement is introduced.",
+      "migrate-range.mjs requires an explicit inclusive start..end migration range and validates both endpoints exist.",
+      "Only migration files inside the requested inclusive range can execute.",
+      "Existing kairo_schema_migrations checksum records are verified and already-applied migrations are skipped.",
+      "Each unapplied migration executes transactionally and records its checksum only after success.",
+      "The runtime Docker image contains migrate-range.mjs at the path referenced by start-api.mjs.",
+      "The approved 0039_hunter_feedback_v2.sql..0043_hunter_eei_metrics.sql startup action can run on an exact release-pinned Render deploy.",
+      "No Hunter shadow evidence startup action may run in the same process as the migration range.",
+      "No production Hunter V2 activation, canary exposure, scheduler change, or user Brand mutation is introduced.",
       "PES v2 CI and Security baseline pass before merge/deployment."
-    ],
-    "certification": {
-      "bundleId": "CERT-HI2-10V-F1A419B8",
-      "commitSha": "f1a419b802b1961caf703d720a2c665c803bd534",
-      "candidateHash": "ee7b1605b5e21dc9d661a977101484278d1d4ad86dbe38e3908ff020c126609e",
-      "certifiedHash": "4a7fe2b4aab0781df9e168bb1ebc097ec858bcb4272f7293a2db4dbb5e5c06f5",
-      "certifiedAt": "2026-09-20T17:13:49.893Z"
-    }
+    ]
   }
 }
