@@ -15,6 +15,8 @@ export interface ShadowPreRankedTrend {
   cluster: ShadowTrendCluster;
   topicFit: number;
   matchedTopicId?: string;
+  matchedTopicName?: string;
+  matchedTopicEntities?: string[];
   audience?: string;
   sourceClasses: string[];
   explorationEligible: boolean;
@@ -77,7 +79,7 @@ export async function runShadowMultiStageIntelligence(input: {
 
   const boundedClusters = input.clusters.slice(0, maxInputClusters);
   const allPreRanked = boundedClusters.map((cluster) => {
-    const topicMatch = bestTopicMatch(cluster.intelligence.topic, input.plan.topics);
+    const topicMatch = bestTopicMatch(cluster, input.plan.topics);
     const candidateId = cluster.intelligence.trendId;
     const explorationEligible =
       cluster.generatorKeys.includes("adjacent-exploration") &&
@@ -123,7 +125,12 @@ export async function runShadowMultiStageIntelligence(input: {
       candidateId,
       cluster,
       topicFit,
-      ...(topicMatch ? { matchedTopicId: topicMatch.topic.id, audience: topicMatch.topic.audience } : {}),
+      ...(topicMatch ? {
+        matchedTopicId: topicMatch.topic.id,
+        matchedTopicName: topicMatch.topic.name,
+        matchedTopicEntities: [...topicMatch.topic.entities],
+        audience: topicMatch.topic.audience,
+      } : {}),
       sourceClasses: topicMatch ? [...topicMatch.topic.sourceClasses] : [],
       explorationEligible,
       preRank,
@@ -210,13 +217,25 @@ export async function runShadowMultiStageIntelligence(input: {
   };
 }
 
-function bestTopicMatch(value: string, topics: readonly BrandDiscoveryTopic[]): { topic: BrandDiscoveryTopic; fit: number } | undefined {
+function bestTopicMatch(
+  cluster: ShadowTrendCluster,
+  topics: readonly BrandDiscoveryTopic[],
+): { topic: BrandDiscoveryTopic; fit: number } | undefined {
+  const explicit = topics.find((topic) => topic.id === cluster.dominantTopicId);
+  if (explicit) {
+    return {
+      topic: explicit,
+      fit: explicit.priority === "High" ? 1 : 0.78,
+    };
+  }
+
+  const value = cluster.intelligence.topic;
   let best: { topic: BrandDiscoveryTopic; fit: number } | undefined;
   for (const topic of topics) {
     const overlap = Math.max(
       tokenSimilarity(value, topic.name),
       ...topic.entities.map((entity) => tokenSimilarity(value, entity)),
-      value.trim().toLowerCase() === topic.id.trim().toLowerCase() ? 1 : 0,
+      cluster.topicIds.includes(topic.id) ? 1 : 0,
     );
     const priority = topic.priority === "High" ? 1 : 0.78;
     const fit = clamp01(overlap * priority);
