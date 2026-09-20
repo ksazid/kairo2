@@ -5,22 +5,33 @@ import type { ShadowDiscoverySearchPort } from "./hunter-shadow-retrieval";
 export interface GatewayShadowSearchOptions {
   timeoutMs?: number;
   maxSourcesPerIntent?: number;
+  paidIntentIds?: readonly string[];
 }
 
 export class GatewayShadowSearchPort implements ShadowDiscoverySearchPort {
   private readonly timeoutMs: number;
   private readonly maxSourcesPerIntent: number;
+  private readonly paidIntentIds?: ReadonlySet<string>;
 
   constructor(private readonly gateway: ToolGatewayPort, options: GatewayShadowSearchOptions = {}) {
     this.timeoutMs = boundedInteger(options.timeoutMs ?? 12_000, "timeoutMs", 100, 120_000);
     this.maxSourcesPerIntent = boundedInteger(options.maxSourcesPerIntent ?? 2, "maxSourcesPerIntent", 1, 4);
+    this.paidIntentIds = options.paidIntentIds
+      ? new Set(options.paidIntentIds.map((value) => value.trim()).filter(Boolean))
+      : undefined;
   }
 
   async search(intent: HunterRetrievalIntent): Promise<readonly DiscoveryEvidence[]> {
-    const sources = sourceKeysForIntent(intent).slice(0, this.maxSourcesPerIntent);
-    const combined: DiscoveryEvidence[] = [];
-    let successCount = 0;
-    for (const source of sources) {
+    const allowPaid =
+      this.paidIntentIds === undefined || this.paidIntentIds.has(intent.id);
+    const sources = sourceKeysForIntent(intent)
+      .filter((source) => source !== "agent-reach" || allowPaid)
+      .slice(0, this.maxSourcesPerIntent);
+    if (!sources.length) {
+      throw new Error("No permitted shadow discovery source is available for intent");
+    }
+
+    const results = await Promise.all(sources.map(async (source) => {
       try {
         const result = await this.gateway.invoke<DiscoveryEvidence[]>({
           capability: "public-content-search",
@@ -28,14 +39,27 @@ export class GatewayShadowSearchPort implements ShadowDiscoverySearchPort {
           input: { query: intent.query, maxResults: intent.maxResults, source },
           timeoutMs: this.timeoutMs,
         });
-        successCount += 1;
-        combined.push(...result.output.slice(0, intent.maxResults));
+        return {
+          source,
+          ok: true as const,
+          output: result.output.slice(0, intent.maxResults),
+        };
       } catch {
-        // One unavailable source must not collapse the shadow retrieval intent.
+        return {
+          source,
+          ok: false as const,
+          output: [] as DiscoveryEvidence[],
+        };
       }
+    }));
+
+    const successful = results.filter((item) => item.ok);
+    if (!successful.length) {
+      throw new Error("No shadow discovery source completed successfully");
     }
-    if (!successCount) throw new Error("No shadow discovery source completed successfully");
-    return combined.slice(0, intent.maxResults * this.maxSourcesPerIntent);
+    return results
+      .flatMap((item) => item.output)
+      .slice(0, intent.maxResults * this.maxSourcesPerIntent);
   }
 }
 
