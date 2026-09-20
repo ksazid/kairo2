@@ -85,7 +85,6 @@ export interface HunterRunResult {
   opportunityCount: number;
   sourcesScanned: string[];
   degradedSources?: string[];
-  eeiVersion?: string;
 }
 
 export interface HunterFailureDiagnostic {
@@ -404,8 +403,8 @@ function withDegraded(
   const sourcesScanned = [...scanned].sort();
   const degradedSources = [...degraded].sort();
   return degradedSources.length
-    ? { ...result, sourcesScanned, degradedSources, eeiVersion: HUNTER_EEI_VERSION }
-    : { ...result, sourcesScanned, eeiVersion: HUNTER_EEI_VERSION };
+    ? { ...result, sourcesScanned, degradedSources }
+    : { ...result, sourcesScanned };
 }
 
 function compactBrand(brand: BrandContextProjection) {
