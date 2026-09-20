@@ -1,10 +1,11 @@
 import { randomUUID } from "node:crypto";
 import type { Pool, PoolClient } from "pg";
-import type { OpportunityStatus, PublicSignalDto } from "@kairo/contracts";
+import type { OpportunityIntelligenceDto, OpportunityStatus, PublicSignalDto } from "@kairo/contracts";
 import type { BrandOpportunityWithConceptDto, ConceptMockupDto } from "@kairo/contracts/concept-mockup";
 import { ResourceNotFoundError } from "@kairo/domain";
 import type { PreparedPublicSignal } from "@kairo/domain/discovery";
 import type { CreateBrandOpportunityInput, DiscoveryRepository } from "@kairo/domain/discovery-service";
+import { projectOpportunityFromIntelligence, type OpportunityIntelligence } from "@kairo/domain/opportunity-intelligence";
 
 export class PgDiscoveryRepository implements DiscoveryRepository {
   constructor(private readonly pool: Pool) {}
@@ -167,6 +168,7 @@ type OpportunityRow = {
   concept_mockup: ConceptMockupDto | null;
   concept_mockup_version: number | null;
   concept_mockup_generated_at: Date | string | null;
+  opportunity_intelligence: OpportunityIntelligenceDto | null;
 };
 
 function opportunitySelect(tail: string): string {
@@ -174,9 +176,11 @@ function opportunitySelect(tail: string): string {
                  o.relevance,o.evidence,o.novelty,o.timeliness,o.brand_authority,o.audience_fit,o.overall,
                  o.scoring_version,o.brand_context_version,o.opportunity_details,o.concept_mockup,o.concept_mockup_version,
                  o.concept_mockup_generated_at,o.created_at,o.updated_at,
+                 max(oi.payload::text)::jsonb as opportunity_intelligence,
                  coalesce(array_agg(os.signal_id order by os.signal_id) filter (where os.signal_id is not null),'{}'::text[]) as signal_ids
             from brand_opportunities o
             left join brand_opportunity_signals os on os.opportunity_id=o.id and os.workspace_id=o.workspace_id and os.brand_id=o.brand_id
+            left join opportunity_intelligence_v2 oi on oi.opportunity_id=o.id and oi.workspace_id=o.workspace_id and oi.brand_id=o.brand_id
             ${tail}`;
 }
 
@@ -233,7 +237,7 @@ function toSignal(row: SignalRow): PublicSignalDto {
 }
 
 function toOpportunity(row: OpportunityRow): BrandOpportunityWithConceptDto {
-  return {
+  const base: BrandOpportunityWithConceptDto = {
     id: row.id,
     workspaceId: row.workspace_id,
     brandId: row.brand_id,
@@ -254,6 +258,9 @@ function toOpportunity(row: OpportunityRow): BrandOpportunityWithConceptDto {
     createdAt: iso(row.created_at),
     updatedAt: iso(row.updated_at),
   };
+  return row.opportunity_intelligence
+    ? projectOpportunityFromIntelligence(base, row.opportunity_intelligence as OpportunityIntelligence)
+    : base;
 }
 
 function iso(value: Date | string): string {

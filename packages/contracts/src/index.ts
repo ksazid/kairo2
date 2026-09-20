@@ -196,6 +196,69 @@ export interface OpportunityDetailsDto {
   intelligenceVersion?: number;
 }
 
+export interface OpportunityIntelligenceDto {
+  schemaVersion: "2";
+  id: string;
+  workspaceId: string;
+  brandId: string;
+  title: string;
+  sanitizedSummary: string;
+  whyNow: string;
+  brandReason: string;
+  audienceReason: string;
+  proposedAngle: string;
+  hook?: string;
+  targetAudience?: string;
+  objective?: string;
+  recommendedFormat?: string;
+  recommendedChannel?: string;
+  evidence: {
+    signalIds: string[];
+    sourceCount: number;
+    independentPublisherCount: number;
+    sourceClasses: string[];
+    confidence: number;
+    confidenceLabel: "High" | "Medium" | "Emerging";
+  };
+  scores: {
+    brandFit: number;
+    audienceNeed: number;
+    evidenceStrength: number;
+    trendMomentum: number;
+    originality: number;
+    actionability: number;
+    expectedBrandPerformance: number;
+    freshness: number;
+    authority: number;
+    learningValue: number;
+    duplicationPenalty: number;
+    saturationPenalty: number;
+    weakProvenancePenalty: number;
+    manipulationRiskPenalty: number;
+    brandBoundaryRiskPenalty: number;
+    overexposurePenalty: number;
+    lowConfidencePenalty: number;
+    recentRejectionSimilarityPenalty: number;
+    overall: number;
+    rankingVersion: string;
+  };
+  explanation: {
+    whyRecommended: string;
+    evidenceSummary: string;
+    brandFitReason: string;
+    uncertainty?: string;
+    userControl: string;
+  };
+  provenance: {
+    snapshotVersion: string;
+    planVersion: string;
+    hunterRunId: string;
+    rankingVersion: string;
+    eeiVersion: string;
+  };
+  createdAt: string;
+}
+
 export interface BrandOpportunityDto {
   id: string;
   workspaceId: string;
@@ -209,6 +272,7 @@ export interface BrandOpportunityDto {
   scores: OpportunityScoresDto;
   brandContextVersion: string;
   details?: OpportunityDetailsDto;
+  intelligence?: OpportunityIntelligenceDto;
   createdAt: string;
   updatedAt: string;
 }

@@ -2,7 +2,7 @@
 
 import { Bookmark, Check, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { CreationFormat } from "../../../lib/home";
 import { CreateButton } from "../../home-controls";
 
@@ -25,6 +25,15 @@ export function DiscoverPreviewActions({
   const [saved, setSaved] = useState(initiallySaved);
   const [pending, setPending] = useState("");
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!brandId) return;
+    void fetch("/api/discover/feedback", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ brandId, opportunityId, action: "opened", surface: "discover-preview" }),
+    }).catch(() => undefined);
+  }, [brandId, opportunityId]);
 
   async function act(action: "save" | "ignore") {
     if (pending) return;
