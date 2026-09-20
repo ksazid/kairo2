@@ -52,7 +52,8 @@
     "./marketing-benchmark": "./src/marketing-benchmark.ts",
     "./marketing-lab": "./src/marketing-lab.ts",
     "./hunter-semantic": "./src/hunter-semantic.ts",
-    "./hunter-retrieval": "./src/hunter-retrieval.ts"
+    "./hunter-retrieval": "./src/hunter-retrieval.ts",
+    "./hunter-multistage": "./src/hunter-multistage.ts"
   },
   "types": "./src/index.ts",
   "scripts": {

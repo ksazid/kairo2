@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "version": 2,
-  "revision": 17,
+  "revision": 19,
   "nodes": [
     {
       "id": "OBJ-001",
@@ -853,6 +853,128 @@
         "sourceIds": [],
         "recordedAt": "2026-09-20T08:06:00.000Z"
       }
+    },
+    {
+      "id": "OBJ-HI2-05R",
+      "type": "Objective",
+      "status": "active",
+      "title": "Establish shadow-only multi-stage pre-rank and deep intelligence for Hunter",
+      "successCriteria": [
+        "Trend clusters are reduced through a deterministic bounded pre-rank.",
+        "Unknown optional features are excluded from weighted normalization and reported explicitly.",
+        "Only a bounded top set can enter provider-neutral deep analysis.",
+        "Deep output validates mechanism, Brand/audience interpretation, gap, angle, originality, actionability and confidence."
+      ],
+      "memoryProvenance": {
+        "eventId": "GM-000018",
+        "revision": 18,
+        "actorId": "pes-v2-hunter-multistage",
+        "runId": "HI2-05R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T08:33:00.000Z"
+      }
+    },
+    {
+      "id": "TASK-HI2-05R",
+      "type": "Task",
+      "status": "active",
+      "objectiveId": "OBJ-HI2-05R",
+      "title": "Implement deterministic pre-rank, bounded deep-analysis funnel and diagnostics",
+      "memoryProvenance": {
+        "eventId": "GM-000018",
+        "revision": 18,
+        "actorId": "pes-v2-hunter-multistage",
+        "runId": "HI2-05R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T08:33:00.000Z"
+      }
+    },
+    {
+      "id": "RUN-HI2-05R-01",
+      "type": "AgentRun",
+      "status": "verified",
+      "title": "HI2-05R preflight passed on first implementation head",
+      "memoryProvenance": {
+        "eventId": "GM-000018",
+        "revision": 18,
+        "actorId": "pes-v2-hunter-multistage",
+        "runId": "HI2-05R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T08:33:00.000Z"
+      }
+    },
+    {
+      "id": "ART-HI2-05R",
+      "type": "Artifact",
+      "status": "verified",
+      "title": "Hunter multi-stage shadow intelligence funnel",
+      "runId": "HI2-05R",
+      "version": "4321ba2149f68498daca51a36e4b7fb69488a487",
+      "memoryProvenance": {
+        "eventId": "GM-000018",
+        "revision": 18,
+        "actorId": "pes-v2-hunter-multistage",
+        "runId": "HI2-05R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T08:33:00.000Z"
+      }
+    },
+    {
+      "id": "EVAL-HI2-05R",
+      "type": "Evaluation",
+      "status": "verified",
+      "title": "PESv2 preflight validated deterministic pre-rank, deep-call bounds and unknown-feature handling",
+      "rubricId": "hunter-multistage-shadow-preflight",
+      "memoryProvenance": {
+        "eventId": "GM-000018",
+        "revision": 18,
+        "actorId": "pes-v2-hunter-multistage",
+        "runId": "HI2-05R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T08:33:00.000Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-05R-01",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "GitHub PES v2 CI run 35499785802 passed for PR #12 head 4321ba2149f68498daca51a36e4b7fb69488a487",
+      "memoryProvenance": {
+        "eventId": "GM-000018",
+        "revision": 18,
+        "actorId": "pes-v2-hunter-multistage",
+        "runId": "HI2-05R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T08:33:00.000Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-05R-02",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "GitHub Security baseline run 35499785801 passed for PR #12 head 4321ba2149f68498daca51a36e4b7fb69488a487",
+      "memoryProvenance": {
+        "eventId": "GM-000018",
+        "revision": 18,
+        "actorId": "pes-v2-hunter-multistage",
+        "runId": "HI2-05R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T08:33:00.000Z"
+      }
+    },
+    {
+      "id": "RUN-HI2-05R-02",
+      "type": "AgentRun",
+      "status": "failed",
+      "title": "Intermediate Security run 35499867962 failed before secret scanning because Gitleaks received an invalid Git revision range; current candidate-head Security passed",
+      "memoryProvenance": {
+        "eventId": "GM-000019",
+        "revision": 19,
+        "actorId": "pes-v2-hunter-multistage",
+        "runId": "HI2-05R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T08:35:00.000Z"
+      }
     }
   ],
   "edges": [
@@ -1539,6 +1661,112 @@
         "sourceIds": [],
         "recordedAt": "2026-09-20T08:06:00.000Z"
       }
+    },
+    {
+      "id": "EDGE-OBJ-HI2-05R-TASK",
+      "type": "IMPLEMENTED_BY",
+      "from": "OBJ-HI2-05R",
+      "to": "TASK-HI2-05R",
+      "memoryProvenance": {
+        "eventId": "GM-000018",
+        "revision": 18,
+        "actorId": "pes-v2-hunter-multistage",
+        "runId": "HI2-05R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T08:33:00.000Z"
+      }
+    },
+    {
+      "id": "EDGE-TASK-HI2-05R-PRODUCED-ART",
+      "type": "PRODUCED",
+      "from": "TASK-HI2-05R",
+      "to": "ART-HI2-05R",
+      "memoryProvenance": {
+        "eventId": "GM-000018",
+        "revision": 18,
+        "actorId": "pes-v2-hunter-multistage",
+        "runId": "HI2-05R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T08:33:00.000Z"
+      }
+    },
+    {
+      "id": "EDGE-RUN-HI2-05R-01-PRODUCED-ART",
+      "type": "PRODUCED",
+      "from": "RUN-HI2-05R-01",
+      "to": "ART-HI2-05R",
+      "memoryProvenance": {
+        "eventId": "GM-000018",
+        "revision": 18,
+        "actorId": "pes-v2-hunter-multistage",
+        "runId": "HI2-05R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T08:33:00.000Z"
+      }
+    },
+    {
+      "id": "EDGE-EVAL-HI2-05R-EVALUATES-ART",
+      "type": "EVALUATES",
+      "from": "EVAL-HI2-05R",
+      "to": "ART-HI2-05R",
+      "memoryProvenance": {
+        "eventId": "GM-000018",
+        "revision": 18,
+        "actorId": "pes-v2-hunter-multistage",
+        "runId": "HI2-05R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T08:33:00.000Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-05R-01-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-05R-01",
+      "to": "ART-HI2-05R",
+      "provenance": {
+        "kind": "github-actions",
+        "runId": "35499785802"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000018",
+        "revision": 18,
+        "actorId": "pes-v2-hunter-multistage",
+        "runId": "HI2-05R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T08:33:00.000Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-05R-02-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-05R-02",
+      "to": "ART-HI2-05R",
+      "provenance": {
+        "kind": "github-actions",
+        "runId": "35499785801"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000018",
+        "revision": 18,
+        "actorId": "pes-v2-hunter-multistage",
+        "runId": "HI2-05R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T08:33:00.000Z"
+      }
+    },
+    {
+      "id": "EDGE-RUN-HI2-05R-02-ABOUT-TASK",
+      "type": "ABOUT",
+      "from": "RUN-HI2-05R-02",
+      "to": "TASK-HI2-05R",
+      "memoryProvenance": {
+        "eventId": "GM-000019",
+        "revision": 19,
+        "actorId": "pes-v2-hunter-multistage",
+        "runId": "HI2-05R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T08:35:00.000Z"
+      }
     }
   ],
   "events": [
@@ -1879,6 +2107,49 @@
         "EDGE-EVID-HI2-04R-02-SUPPORTS-ART"
       ],
       "recordedAt": "2026-09-20T08:06:00.000Z"
+    },
+    {
+      "id": "GM-000018",
+      "revision": 18,
+      "operation": "append",
+      "actorId": "pes-v2-hunter-multistage",
+      "runId": "HI2-05R",
+      "reason": "Record HI2-05R multi-stage intelligence artifact and successful CI/security evidence",
+      "sourceIds": [],
+      "addedNodeIds": [
+        "OBJ-HI2-05R",
+        "TASK-HI2-05R",
+        "RUN-HI2-05R-01",
+        "ART-HI2-05R",
+        "EVAL-HI2-05R",
+        "EVID-HI2-05R-01",
+        "EVID-HI2-05R-02"
+      ],
+      "addedEdgeIds": [
+        "EDGE-OBJ-HI2-05R-TASK",
+        "EDGE-TASK-HI2-05R-PRODUCED-ART",
+        "EDGE-RUN-HI2-05R-01-PRODUCED-ART",
+        "EDGE-EVAL-HI2-05R-EVALUATES-ART",
+        "EDGE-EVID-HI2-05R-01-SUPPORTS-ART",
+        "EDGE-EVID-HI2-05R-02-SUPPORTS-ART"
+      ],
+      "recordedAt": "2026-09-20T08:33:00.000Z"
+    },
+    {
+      "id": "GM-000019",
+      "revision": 19,
+      "operation": "append",
+      "actorId": "pes-v2-hunter-multistage",
+      "runId": "HI2-05R",
+      "reason": "Record transient governance Security failure caused by invalid Gitleaks Git revision range; no secret finding was reported",
+      "sourceIds": [],
+      "addedNodeIds": [
+        "RUN-HI2-05R-02"
+      ],
+      "addedEdgeIds": [
+        "EDGE-RUN-HI2-05R-02-ABOUT-TASK"
+      ],
+      "recordedAt": "2026-09-20T08:35:00.000Z"
     }
   ]
 }
