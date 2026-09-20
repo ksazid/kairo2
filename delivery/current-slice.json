@@ -2,7 +2,7 @@
   "activeSlice": {
     "id": "HI2-10W",
     "objectiveId": "OBJ-HI2-10W",
-    "state": "implementing",
+    "state": "certified",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
     "scope": "Repair Hunter V2 shadow retrieval/ranking wiring exposed by the completed 30-pair operational evidence: prevent empty RSS success from starving Agent Reach, add a bounded lexical adjacent-exploration retrieval intent, reserve one exploration slot in the six-intent operational plan, and preserve exploration provenance into EEI bucketing. Do not change rollout thresholds, production Hunter authority, persistence, canary, scheduler, or production enablement.",
@@ -43,6 +43,13 @@
       "Hunter V1 remains production authority and V2 performs no opportunity persistence.",
       "Canary and production activation remain disabled unless the completed rerun passes the existing rollout evaluator.",
       "PES v2 CI and Security baseline pass before merge/deployment."
-    ]
+    ],
+    "certification": {
+      "bundleId": "CERT-HI2-10W-B841D36B",
+      "commitSha": "b841d36b52811ffefdf2eab0f94a2bb82d0c7f6a",
+      "candidateHash": "46e84def15a58cb17c33e3af0abd3305b8fb69bdec3ca2441a0cdd52fef716fc",
+      "certifiedHash": "5cc58e31a2accde6acd2407904c07c497a627bf1be0096abb7faf113c53d7cc9",
+      "certifiedAt": "2026-09-20T19:29:37.854Z"
+    }
   }
 }
