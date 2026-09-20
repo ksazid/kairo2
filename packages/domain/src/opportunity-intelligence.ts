@@ -214,7 +214,7 @@ export function prepareOpportunityFeedbackEventV2(input: OpportunityFeedbackEven
 export function projectOpportunityFromIntelligence<T extends BrandOpportunityDto>(
   base: T,
   intelligence: OpportunityIntelligence,
-): T {
+): T & { intelligence: OpportunityIntelligence } {
   const details = base.details ? {
     ...base.details,
     proposedAngle: intelligence.proposedAngle,
