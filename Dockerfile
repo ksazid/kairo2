@@ -13,6 +13,7 @@ COPY --from=build /app/apps/api/dist ./apps/api/dist
 COPY --from=build /app/apps/api/package.json ./apps/api/package.json
 COPY --from=build /app/apps/api/migrations ./apps/api/migrations
 COPY --from=build /app/scripts/migrate.mjs ./scripts/migrate.mjs
+COPY --from=build /app/scripts/migrate-range.mjs ./scripts/migrate-range.mjs
 COPY --from=build /app/scripts/start-api.mjs ./scripts/start-api.mjs
 WORKDIR /app/apps/api
 USER node
