@@ -9818,6 +9818,551 @@
       },
       "certifiedAt": "2026-09-20T21:36:41.729Z",
       "certifiedHash": "65d2574558c94d157754d78b24024c17a9ee93ea4dc583986e18c5cb4cb3ff29"
+    },
+    {
+      "schemaVersion": 1,
+      "bundleId": "CERT-HI2-11R1-36336194",
+      "status": "certified",
+      "sliceId": "HI2-11R1",
+      "objectiveId": "OBJ-HI2-11R1",
+      "riskLevel": "high",
+      "commitSha": "36336194e80975968b44954a561a2550c1b7eca8",
+      "graphRevision": 33,
+      "contextHash": "b13033dfcdcaf7ca2175a7047fd5f16810ec5bf4d185184d1c21dda1540a4d59",
+      "contextSnapshot": {
+        "schemaVersion": 1,
+        "graphRevision": 33,
+        "requestedSeeds": [
+          "OBJ-HI2-11R1",
+          "TASK-HI2-11R1",
+          "ART-HI2-11R1",
+          "EVAL-HI2-11R1",
+          "EVID-HI2-11R1-01",
+          "EVID-HI2-11R1-02",
+          "EVID-HI2-11R1-03"
+        ],
+        "resolvedSeeds": [
+          "OBJ-HI2-11R1",
+          "TASK-HI2-11R1",
+          "ART-HI2-11R1",
+          "EVAL-HI2-11R1",
+          "EVID-HI2-11R1-01",
+          "EVID-HI2-11R1-02",
+          "EVID-HI2-11R1-03"
+        ],
+        "resolution": [
+          {
+            "requestedId": "OBJ-HI2-11R1",
+            "currentId": "OBJ-HI2-11R1",
+            "chain": [
+              "OBJ-HI2-11R1"
+            ]
+          },
+          {
+            "requestedId": "TASK-HI2-11R1",
+            "currentId": "TASK-HI2-11R1",
+            "chain": [
+              "TASK-HI2-11R1"
+            ]
+          },
+          {
+            "requestedId": "ART-HI2-11R1",
+            "currentId": "ART-HI2-11R1",
+            "chain": [
+              "ART-HI2-11R1"
+            ]
+          },
+          {
+            "requestedId": "EVAL-HI2-11R1",
+            "currentId": "EVAL-HI2-11R1",
+            "chain": [
+              "EVAL-HI2-11R1"
+            ]
+          },
+          {
+            "requestedId": "EVID-HI2-11R1-01",
+            "currentId": "EVID-HI2-11R1-01",
+            "chain": [
+              "EVID-HI2-11R1-01"
+            ]
+          },
+          {
+            "requestedId": "EVID-HI2-11R1-02",
+            "currentId": "EVID-HI2-11R1-02",
+            "chain": [
+              "EVID-HI2-11R1-02"
+            ]
+          },
+          {
+            "requestedId": "EVID-HI2-11R1-03",
+            "currentId": "EVID-HI2-11R1-03",
+            "chain": [
+              "EVID-HI2-11R1-03"
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "id": "EVID-HI2-11R1-01",
+            "type": "Evidence",
+            "status": "verified",
+            "title": "GitHub PES v2 CI run 35539619255 passed for PR #26 head 36336194e80975968b44954a561a2550c1b7eca8",
+            "memoryProvenance": {
+              "eventId": "GM-000033",
+              "revision": 33,
+              "actorId": "pes-v2-hunter-signal-reference-bounds",
+              "runId": "HI2-11R1",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T21:46:54.081Z"
+            }
+          },
+          {
+            "id": "EVID-HI2-11R1-02",
+            "type": "Evidence",
+            "status": "verified",
+            "title": "GitHub Security baseline run 35539619258 passed for PR #26 head 36336194e80975968b44954a561a2550c1b7eca8",
+            "memoryProvenance": {
+              "eventId": "GM-000033",
+              "revision": 33,
+              "actorId": "pes-v2-hunter-signal-reference-bounds",
+              "runId": "HI2-11R1",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T21:46:54.081Z"
+            }
+          },
+          {
+            "id": "EVID-HI2-11R1-03",
+            "type": "Evidence",
+            "status": "verified",
+            "title": "HI2-11R1 regressions cover >200-character raw signal keys and 101-signal merged clusters while retaining provenance checks",
+            "memoryProvenance": {
+              "eventId": "GM-000033",
+              "revision": 33,
+              "actorId": "pes-v2-hunter-signal-reference-bounds",
+              "runId": "HI2-11R1",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T21:46:54.081Z"
+            }
+          },
+          {
+            "id": "ART-HI2-11R1",
+            "type": "Artifact",
+            "status": "verified",
+            "title": "Bounded deterministic Trend supporting-signal references",
+            "runId": "HI2-11R1",
+            "version": "36336194e80975968b44954a561a2550c1b7eca8",
+            "memoryProvenance": {
+              "eventId": "GM-000033",
+              "revision": 33,
+              "actorId": "pes-v2-hunter-signal-reference-bounds",
+              "runId": "HI2-11R1",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T21:46:54.081Z"
+            }
+          },
+          {
+            "id": "EVAL-HI2-11R1",
+            "type": "Evaluation",
+            "status": "verified",
+            "title": "PESv2 validated long raw-key mapping, >100-signal cluster bounding, and aligned provenance verification",
+            "rubricId": "hunter-trend-signal-reference-high-risk",
+            "memoryProvenance": {
+              "eventId": "GM-000033",
+              "revision": 33,
+              "actorId": "pes-v2-hunter-signal-reference-bounds",
+              "runId": "HI2-11R1",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T21:46:54.081Z"
+            }
+          },
+          {
+            "id": "OBJ-HI2-11R1",
+            "type": "Objective",
+            "status": "active",
+            "title": "Bound Hunter Trend supporting-signal references without weakening provenance",
+            "successCriteria": [
+              "Raw retrieval candidate keys remain unchanged for internal clustering and corroboration.",
+              "Every TrendIntelligence supportingSignalId is deterministic, non-empty, <=200 characters, deduplicated, and the list contains at most 100 items.",
+              "Long raw candidate keys are represented by collision-resistant compact references rather than lossy string truncation.",
+              "Candidate provenance verification maps retrieval candidates through the exact same bounded signal-reference function.",
+              "A regression test covers a raw signal key longer than 200 characters.",
+              "A regression test covers a cluster with more than 100 signals without violating the Trend Intelligence contract.",
+              "Existing trend clustering, EEI, learned exploration, cost, latency and rollout thresholds remain unchanged.",
+              "Corrected 3x3 pre-gate reruns before any 30-pair full gate.",
+              "Hunter V1 remains production authority; no V2 persistence or canary enablement.",
+              "PES v2 CI and Security baseline pass before merge/deployment."
+            ],
+            "memoryProvenance": {
+              "eventId": "GM-000033",
+              "revision": 33,
+              "actorId": "pes-v2-hunter-signal-reference-bounds",
+              "runId": "HI2-11R1",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T21:46:54.081Z"
+            }
+          },
+          {
+            "id": "TASK-HI2-11R1",
+            "type": "Task",
+            "status": "active",
+            "objectiveId": "OBJ-HI2-11R1",
+            "title": "Emit compact SHA-256 Trend signal references and align provenance verification",
+            "memoryProvenance": {
+              "eventId": "GM-000033",
+              "revision": 33,
+              "actorId": "pes-v2-hunter-signal-reference-bounds",
+              "runId": "HI2-11R1",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T21:46:54.081Z"
+            }
+          },
+          {
+            "id": "RUN-HI2-11R1-01",
+            "type": "AgentRun",
+            "status": "verified",
+            "objectiveId": "OBJ-HI2-11R1",
+            "title": "Exact HI2-11R1 implementation passed PESv2 CI and Security",
+            "memoryProvenance": {
+              "eventId": "GM-000033",
+              "revision": 33,
+              "actorId": "pes-v2-hunter-signal-reference-bounds",
+              "runId": "HI2-11R1",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T21:46:54.081Z"
+            }
+          }
+        ],
+        "edges": [
+          {
+            "id": "EDGE-OBJ-HI2-11R1-TASK",
+            "type": "IMPLEMENTED_BY",
+            "from": "OBJ-HI2-11R1",
+            "to": "TASK-HI2-11R1",
+            "memoryProvenance": {
+              "eventId": "GM-000033",
+              "revision": 33,
+              "actorId": "pes-v2-hunter-signal-reference-bounds",
+              "runId": "HI2-11R1",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T21:46:54.081Z"
+            }
+          },
+          {
+            "id": "EDGE-TASK-HI2-11R1-PRODUCED-ART",
+            "type": "PRODUCED",
+            "from": "TASK-HI2-11R1",
+            "to": "ART-HI2-11R1",
+            "memoryProvenance": {
+              "eventId": "GM-000033",
+              "revision": 33,
+              "actorId": "pes-v2-hunter-signal-reference-bounds",
+              "runId": "HI2-11R1",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T21:46:54.081Z"
+            }
+          },
+          {
+            "id": "EDGE-RUN-HI2-11R1-01-PRODUCED-ART",
+            "type": "PRODUCED",
+            "from": "RUN-HI2-11R1-01",
+            "to": "ART-HI2-11R1",
+            "memoryProvenance": {
+              "eventId": "GM-000033",
+              "revision": 33,
+              "actorId": "pes-v2-hunter-signal-reference-bounds",
+              "runId": "HI2-11R1",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T21:46:54.081Z"
+            }
+          },
+          {
+            "id": "EDGE-EVAL-HI2-11R1-EVALUATES-ART",
+            "type": "EVALUATES",
+            "from": "EVAL-HI2-11R1",
+            "to": "ART-HI2-11R1",
+            "memoryProvenance": {
+              "eventId": "GM-000033",
+              "revision": 33,
+              "actorId": "pes-v2-hunter-signal-reference-bounds",
+              "runId": "HI2-11R1",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T21:46:54.081Z"
+            }
+          },
+          {
+            "id": "EDGE-EVID-HI2-11R1-01-SUPPORTS-ART",
+            "type": "SUPPORTS",
+            "from": "EVID-HI2-11R1-01",
+            "to": "ART-HI2-11R1",
+            "provenance": {
+              "kind": "github-actions",
+              "runId": "35539619255"
+            },
+            "memoryProvenance": {
+              "eventId": "GM-000033",
+              "revision": 33,
+              "actorId": "pes-v2-hunter-signal-reference-bounds",
+              "runId": "HI2-11R1",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T21:46:54.081Z"
+            }
+          },
+          {
+            "id": "EDGE-EVID-HI2-11R1-02-SUPPORTS-ART",
+            "type": "SUPPORTS",
+            "from": "EVID-HI2-11R1-02",
+            "to": "ART-HI2-11R1",
+            "provenance": {
+              "kind": "github-actions",
+              "runId": "35539619258"
+            },
+            "memoryProvenance": {
+              "eventId": "GM-000033",
+              "revision": 33,
+              "actorId": "pes-v2-hunter-signal-reference-bounds",
+              "runId": "HI2-11R1",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T21:46:54.081Z"
+            }
+          },
+          {
+            "id": "EDGE-EVID-HI2-11R1-03-SUPPORTS-ART",
+            "type": "SUPPORTS",
+            "from": "EVID-HI2-11R1-03",
+            "to": "ART-HI2-11R1",
+            "provenance": {
+              "kind": "delivery-graph",
+              "path": "delivery/hi2-11r1-delivery-graph.json"
+            },
+            "memoryProvenance": {
+              "eventId": "GM-000033",
+              "revision": 33,
+              "actorId": "pes-v2-hunter-signal-reference-bounds",
+              "runId": "HI2-11R1",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T21:46:54.081Z"
+            }
+          }
+        ],
+        "ranking": [
+          {
+            "id": "EVID-HI2-11R1-01",
+            "score": 1119,
+            "hop": 0,
+            "status": "verified"
+          },
+          {
+            "id": "EVID-HI2-11R1-02",
+            "score": 1119,
+            "hop": 0,
+            "status": "verified"
+          },
+          {
+            "id": "EVID-HI2-11R1-03",
+            "score": 1119,
+            "hop": 0,
+            "status": "verified"
+          },
+          {
+            "id": "ART-HI2-11R1",
+            "score": 1118,
+            "hop": 0,
+            "status": "verified"
+          },
+          {
+            "id": "EVAL-HI2-11R1",
+            "score": 1118,
+            "hop": 0,
+            "status": "verified"
+          },
+          {
+            "id": "OBJ-HI2-11R1",
+            "score": 1117,
+            "hop": 0,
+            "status": "active"
+          },
+          {
+            "id": "TASK-HI2-11R1",
+            "score": 1113,
+            "hop": 0,
+            "status": "active"
+          },
+          {
+            "id": "RUN-HI2-11R1-01",
+            "score": 101,
+            "hop": 1,
+            "status": "verified"
+          }
+        ],
+        "contradictions": [],
+        "omittedNodeIds": [],
+        "policy": {
+          "maxHops": 2,
+          "maxNodes": 40,
+          "maxTokens": 12000,
+          "includeStatuses": [
+            "approved",
+            "verified",
+            "active",
+            "superseded",
+            "failed"
+          ],
+          "preferVerified": true,
+          "includeContradictions": true,
+          "resolveSuperseded": true
+        },
+        "contextHash": "b13033dfcdcaf7ca2175a7047fd5f16810ec5bf4d185184d1c21dda1540a4d59",
+        "estimatedTokens": 1966,
+        "truncated": false
+      },
+      "gateDecisionHash": "70eb8aee75f9e162670b8b1b868e3ec78bbd203e7efef28d2b591248bc50efd6",
+      "gateSnapshot": {
+        "allowed": true,
+        "sliceId": "HI2-11R1",
+        "fromState": "testing",
+        "requestedState": "certification",
+        "blockers": [],
+        "warnings": [
+          {
+            "code": "high-risk-certification-review",
+            "message": "High-risk release path should retain explicit certification approval through release."
+          }
+        ],
+        "requiredApprovals": [
+          "scope",
+          "policy",
+          "implementation"
+        ],
+        "validApprovals": [
+          "scope",
+          "policy",
+          "implementation"
+        ],
+        "protectedPaths": [],
+        "evidence": {
+          "accepted": [
+            {
+              "id": "EVID-HI2-11R1-01",
+              "type": "Evidence",
+              "status": "verified",
+              "distance": 3
+            },
+            {
+              "id": "EVID-HI2-11R1-02",
+              "type": "Evidence",
+              "status": "verified",
+              "distance": 3
+            },
+            {
+              "id": "EVID-HI2-11R1-03",
+              "type": "Evidence",
+              "status": "verified",
+              "distance": 3
+            }
+          ],
+          "rejected": []
+        },
+        "deliveryGraph": {
+          "required": true,
+          "blocking": false,
+          "status": "ready",
+          "reasons": [
+            "risk:high"
+          ]
+        },
+        "context": {
+          "hash": "b13033dfcdcaf7ca2175a7047fd5f16810ec5bf4d185184d1c21dda1540a4d59",
+          "graphRevision": 33,
+          "contradictions": 0
+        }
+      },
+      "approvals": [
+        {
+          "type": "scope",
+          "status": "approved",
+          "actorType": "human",
+          "scopeId": "HI2-11R1"
+        },
+        {
+          "type": "policy",
+          "status": "approved",
+          "actorType": "human",
+          "scopeId": "HI2-11R1"
+        },
+        {
+          "type": "implementation",
+          "status": "approved",
+          "actorType": "human",
+          "scopeId": "HI2-11R1"
+        }
+      ],
+      "artifactIds": [
+        "ART-HI2-11R1"
+      ],
+      "evidenceIds": [
+        "EVID-HI2-11R1-01",
+        "EVID-HI2-11R1-02",
+        "EVID-HI2-11R1-03"
+      ],
+      "evaluationIds": [
+        "EVAL-HI2-11R1"
+      ],
+      "unresolvedRisks": [],
+      "trace": [
+        {
+          "id": "ART-HI2-11R1",
+          "type": "Artifact",
+          "status": "verified",
+          "nodeHash": "f36b6121dde6ef517079048b86d89490f9e8ed192b70feaf50e11ddcf16c2d06",
+          "memoryEventId": "GM-000033",
+          "distanceFromObjective": 2
+        },
+        {
+          "id": "EVAL-HI2-11R1",
+          "type": "Evaluation",
+          "status": "verified",
+          "nodeHash": "2f557233e0ca7e03929ee76657e2f76c706512d3c85659ae24f579416d102c77",
+          "memoryEventId": "GM-000033",
+          "distanceFromObjective": 3
+        },
+        {
+          "id": "EVID-HI2-11R1-01",
+          "type": "Evidence",
+          "status": "verified",
+          "nodeHash": "11e97849003111fa0e090aac6f444c55817db418a01b3aa0c313ca961c447104",
+          "memoryEventId": "GM-000033",
+          "distanceFromObjective": 3
+        },
+        {
+          "id": "EVID-HI2-11R1-02",
+          "type": "Evidence",
+          "status": "verified",
+          "nodeHash": "0d52cc946cd3157a7d2e8c3049ca868874ee07d925694b5cda90a1ac76d9735c",
+          "memoryEventId": "GM-000033",
+          "distanceFromObjective": 3
+        },
+        {
+          "id": "EVID-HI2-11R1-03",
+          "type": "Evidence",
+          "status": "verified",
+          "nodeHash": "af03b7caf6097fd8951dfe05ba475b26e08a275121b8e7d6488f682c0a87fd5b",
+          "memoryEventId": "GM-000033",
+          "distanceFromObjective": 3
+        }
+      ],
+      "createdAt": "2026-09-20T21:46:54.081Z",
+      "candidateHash": "2b4381b2717ce4bb494cc063d107b80e5bca2d8587915d5082c54d7a907dcfac",
+      "certificationApproval": {
+        "type": "certification",
+        "status": "approved",
+        "actorType": "human",
+        "scopeId": "HI2-11R1",
+        "commitSha": "36336194e80975968b44954a561a2550c1b7eca8",
+        "candidateHash": "2b4381b2717ce4bb494cc063d107b80e5bca2d8587915d5082c54d7a907dcfac",
+        "approvedAt": "2026-09-20T21:46:54.081Z"
+      },
+      "certifiedAt": "2026-09-20T21:46:54.081Z",
+      "certifiedHash": "9318a92b2aac467df38930898b584195d7727a55f1b8c459b32b8910a4e66b71"
     }
   ]
 }

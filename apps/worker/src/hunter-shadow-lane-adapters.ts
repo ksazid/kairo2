@@ -50,7 +50,10 @@ import {
   type ShadowHardNegativeSemanticPort,
 } from "./hunter-shadow-retrieval";
 import { GatewayShadowSearchPort } from "./hunter-shadow-search-gateway";
-import { runShadowTrendIntelligence } from "./hunter-shadow-trend-intelligence";
+import {
+  hunterTrendSignalReference,
+  runShadowTrendIntelligence,
+} from "./hunter-shadow-trend-intelligence";
 
 export const HUNTER_SHADOW_QUALITY_VERSION = "hunter-shadow-quality-v1" as const;
 
@@ -239,7 +242,9 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
     const coveredTopics = plannedTopics.filter(
       (topicId) => (retrieval.diagnostics.topicCoverage[topicId] ?? 0) > 0,
     );
-    const retrievalKeys = new Set(retrieval.candidates.map((candidate) => candidate.key));
+    const retrievalKeys = new Set(
+      retrieval.candidates.map((candidate) => hunterTrendSignalReference(candidate.key)),
+    );
     const provenanceComplete = eei.selected.every((item) =>
       item.preRanked.cluster.intelligence.supportingSignalIds.length > 0 &&
       item.preRanked.cluster.intelligence.supportingSignalIds.every((signalId) =>
