@@ -280,7 +280,11 @@ function calculatePreferenceAffinity(
   state: BrandPreferenceState | undefined,
 ): number | undefined {
   if (!state) return undefined;
-  const topicKeys = [item.cluster.intelligence.topic];
+  const topicKeys = [
+    item.cluster.intelligence.topic,
+    item.matchedTopicName ?? "",
+    ...(item.matchedTopicEntities ?? []),
+  ].filter(Boolean);
   const audienceKeys = item.audience ? [item.audience] : [];
   const mechanismKeys = mechanismTerms(deep);
 
@@ -311,7 +315,11 @@ function calculateNegativePreferencePenalty(
   state: BrandPreferenceState | undefined,
 ): number {
   if (!state) return 0;
-  const topicKeys = [item.cluster.intelligence.topic];
+  const topicKeys = [
+    item.cluster.intelligence.topic,
+    item.matchedTopicName ?? "",
+    ...(item.matchedTopicEntities ?? []),
+  ].filter(Boolean);
   const audienceKeys = item.audience ? [item.audience] : [];
   const mechanismKeys = mechanismTerms(deep);
   const sourceKeys = [
