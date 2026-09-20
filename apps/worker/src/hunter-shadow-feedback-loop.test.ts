@@ -24,6 +24,7 @@ function candidate(id: string, topic: string, topicFit: number): ShadowPreRanked
   return {
     candidateId: id,
     cluster: {
+      subject: topic,
       intelligence: {
         schemaVersion: "1",
         trendId: id,
