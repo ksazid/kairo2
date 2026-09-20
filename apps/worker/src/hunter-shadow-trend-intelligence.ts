@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { prepareTrendIntelligence, type TrendIntelligence, type TrendStage } from "@kairo/domain/trend-intelligence";
 import type { ShadowRetrievalCandidate } from "./hunter-shadow-retrieval";
 
@@ -223,7 +224,9 @@ function buildCluster(
   topicLabels: Readonly<Record<string, string>> | undefined,
 ): ShadowTrendCluster {
   const sorted = [...signals].sort((a, b) => a.signalId.localeCompare(b.signalId));
-  const supportingSignalIds = sorted.map((signal) => signal.signalId);
+  const supportingSignalIds = unique(
+    sorted.map((signal) => hunterTrendSignalReference(signal.signalId)),
+  ).slice(0, 100);
   const sourceKeys = unique(sorted.map(sourceIdentity));
   const platformKeys = unique(sorted.map((signal) => normalizeKey(signal.platform || signal.provider)));
   const publisherKeys = unique(sorted.map(publisherIdentity));
@@ -430,6 +433,12 @@ function publisherIdentity(signal: TrendSignalObservation): string {
   } catch {
     return sourceIdentity(signal);
   }
+}
+
+export function hunterTrendSignalReference(rawSignalId: string): string {
+  const normalized = rawSignalId.trim();
+  if (!normalized) throw new Error("Hunter trend raw signal id must be non-empty");
+  return "signal:" + createHash("sha256").update(normalized).digest("hex");
 }
 
 function stableTrendId(topic: string, signalIds: readonly string[]): string {
