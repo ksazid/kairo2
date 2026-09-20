@@ -4,6 +4,7 @@ import type {
   AgentInvocationRequest,
   AgentRuntimePort,
   ToolGatewayPort,
+  ToolRequest,
   ToolResult,
 } from "@kairo/agent-contracts";
 import type { BrandDiscoveryPlan } from "@kairo/domain/brand-discovery-plan";
@@ -75,7 +76,7 @@ const context: HunterShadowExecutionContext = {
 };
 
 const tools: ToolGatewayPort = {
-  async invoke<TOutput>(request): Promise<ToolResult<TOutput>> {
+  async invoke<TOutput>(request: ToolRequest): Promise<ToolResult<TOutput>> {
     if (request.capability === "public-content-search") {
       return {
         output: [{
