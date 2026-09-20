@@ -18,3 +18,39 @@ jobs:
           node-version: '24'
       - run: npm ci --no-audit --no-fund
       - run: npm run preflight
+      - name: Charlie social skills live shadow benchmark
+        if: github.event_name == 'pull_request' && github.head_ref == 'eval/charlie-social-skills-shadow'
+        env:
+          KAIRO_CHARLIE_SHADOW_LIVE: "1"
+          KAIRO_LLM_PROVIDER: ${{ secrets.KAIRO_LLM_PROVIDER }}
+          KAIRO_LLM_BASE_URL: ${{ secrets.KAIRO_LLM_BASE_URL }}
+          KAIRO_LLM_MODEL: ${{ secrets.KAIRO_LLM_MODEL }}
+          KAIRO_LLM_API_KEY: ${{ secrets.KAIRO_LLM_API_KEY }}
+          KAIRO_LLM_INPUT_USD_PER_1M_TOKENS: ${{ secrets.KAIRO_LLM_INPUT_USD_PER_1M_TOKENS }}
+          KAIRO_LLM_OUTPUT_USD_PER_1M_TOKENS: ${{ secrets.KAIRO_LLM_OUTPUT_USD_PER_1M_TOKENS }}
+          KAIRO_LLM_PRICING_VERSION: ${{ secrets.KAIRO_LLM_PRICING_VERSION }}
+        run: |
+          node - <<'NODE'
+          const required = [
+            "KAIRO_LLM_PROVIDER",
+            "KAIRO_LLM_BASE_URL",
+            "KAIRO_LLM_MODEL",
+            "KAIRO_LLM_API_KEY",
+            "KAIRO_LLM_INPUT_USD_PER_1M_TOKENS",
+            "KAIRO_LLM_OUTPUT_USD_PER_1M_TOKENS",
+            "KAIRO_LLM_PRICING_VERSION",
+          ];
+          const missing = required.filter((name) => !process.env[name]?.trim());
+          if (missing.length) {
+            console.error("Missing benchmark secrets: " + missing.join(", "));
+            process.exit(1);
+          }
+          console.log("Model benchmark configuration present; secret values not printed.");
+          NODE
+          npm test --workspace @kairo/worker -- src/charlie-social-skills-shadow.live.test.ts
+      - uses: actions/upload-artifact@v4
+        if: always() && github.event_name == 'pull_request' && github.head_ref == 'eval/charlie-social-skills-shadow'
+        with:
+          name: charlie-social-shadow-${{ github.sha }}
+          path: artifacts/charlie-social-shadow-live.json
+          if-no-files-found: ignore
