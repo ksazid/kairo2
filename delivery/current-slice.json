@@ -2,7 +2,7 @@
   "activeSlice": {
     "id": "HI2-03R",
     "objectiveId": "OBJ-HI2-03R",
-    "state": "implementing",
+    "state": "certified",
     "riskLevel": "medium",
     "implementationPermission": "runtime-disabled",
     "scope": "Add shadow-only Hunter Retrieval Intelligence: deterministic multi-generator retrieval plans, semantic expansion hooks over the certified vector foundation, hard-negative filtering, candidate provenance/deduplication and recall-proxy diagnostics. Existing Hunter remains authoritative.",
@@ -42,6 +42,13 @@
       "Semantic expansion uses provider-neutral injected ports over public-signal embeddings and remains optional/shadow-only.",
       "No provider credentials, scheduled execution, UI changes, ranking authority or production enablement are introduced.",
       "PES v2 CI and Security baseline pass before certification."
-    ]
+    ],
+    "certification": {
+      "bundleId": "CERT-HI2-03R-0B820201",
+      "commitSha": "0b82020168bd710c83471c204bef16e77380776f",
+      "candidateHash": "713203a289291811b39c1cd35f7e7da80f09951e76b9c18baf5b961a5057ec93",
+      "certifiedHash": "0798de8357bf60415da232db845a4668aac67607f30f78eba85f02a9be7abb88",
+      "certifiedAt": "2026-09-20T07:48:00Z"
+    }
   }
 }
