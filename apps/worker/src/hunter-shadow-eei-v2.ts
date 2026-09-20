@@ -184,26 +184,26 @@ export function runShadowPreferenceAwareEEI(input: {
   const selectedIds = new Set<string>();
   const topicLimit = Math.max(
     1,
-    Math.ceil(maxCandidates * HUNTER_EEI_V2_SHADOW_POLICY.maximumTopicShare),
+    Math.floor(maxCandidates * HUNTER_EEI_V2_SHADOW_POLICY.maximumTopicShare),
   );
 
   const selectFrom = (pool: readonly ShadowEEIRankedItem[], target: number) => {
     let added = 0;
-    const ordered = [...pool].sort((left, right) => {
-      const leftSource = primarySourceKey(left);
-      const rightSource = primarySourceKey(right);
-      const leftCount = sourceCounts.get(leftSource) ?? 0;
-      const rightCount = sourceCounts.get(rightSource) ?? 0;
-      return leftCount - rightCount || compareRankedItems(left, right);
-    });
+    while (added < target && selected.length < maxCandidates) {
+      const eligiblePool = pool
+        .filter((item) => !selectedIds.has(item.candidateId))
+        .filter((item) => (topicCounts.get(normalize(item.topic)) ?? 0) < topicLimit)
+        .sort((left, right) => {
+          const leftCount = sourceCounts.get(primarySourceKey(left)) ?? 0;
+          const rightCount = sourceCounts.get(primarySourceKey(right)) ?? 0;
+          return leftCount - rightCount || compareRankedItems(left, right);
+        });
+      const item = eligiblePool[0];
+      if (!item) break;
 
-    for (const item of ordered) {
-      if (added >= target || selected.length >= maxCandidates) break;
-      if (selectedIds.has(item.candidateId)) continue;
-      const topic = normalize(item.topic);
-      if ((topicCounts.get(topic) ?? 0) >= topicLimit) continue;
       selected.push(item);
       selectedIds.add(item.candidateId);
+      const topic = normalize(item.topic);
       topicCounts.set(topic, (topicCounts.get(topic) ?? 0) + 1);
       const source = primarySourceKey(item);
       sourceCounts.set(source, (sourceCounts.get(source) ?? 0) + 1);
@@ -257,8 +257,7 @@ function calculatePreferenceAffinity(
   state: BrandPreferenceState | undefined,
 ): number | undefined {
   if (!state) return undefined;
-  const topicKeys = [item.cluster.intelligence.topic, item.preRanked?.cluster?.intelligence?.topic]
-    .filter((value): value is string => Boolean(value));
+  const topicKeys = [item.cluster.intelligence.topic];
   const audienceKeys = item.audience ? [item.audience] : [];
   const mechanismKeys = mechanismTerms(deep);
 
