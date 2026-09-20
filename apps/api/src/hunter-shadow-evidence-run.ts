@@ -443,6 +443,11 @@ async function createDisposablePersistedAnchor(input: {
     await bootstrap.build(input.accountId, brand.id, {
       publicReferenceUrl: "https://vercel.com/legal/acceptable-use-policy",
     });
+    await ensureDisposableVercelCanonicalFields(
+      input.store,
+      input.accountId,
+      brand.id,
+    );
     const core = new KairoService(input.store);
     const context = await loadReadOnlyBrandContext({
       pool: input.pool,
@@ -470,6 +475,114 @@ async function createDisposablePersistedAnchor(input: {
   }
 }
 
+
+
+export function disposableVercelCanonicalFields(
+  aboutSourceId: string,
+  policySourceId: string,
+): ReadonlyArray<{
+  section: "identity" | "audience" | "positioning" | "content-strategy" | "boundaries";
+  fieldKey: string;
+  value: string;
+  sourceIds: string[];
+}> {
+  return [
+    {
+      section: "identity",
+      fieldKey: "identity.description",
+      value: "Vercel provides infrastructure where humans and agents build and ship software together.",
+      sourceIds: [aboutSourceId],
+    },
+    {
+      section: "identity",
+      fieldKey: "identity.products-services",
+      value: "Infrastructure and platform services for building and shipping applications and agents.",
+      sourceIds: [aboutSourceId],
+    },
+    {
+      section: "audience",
+      fieldKey: "audience.primary",
+      value: "Developers and software teams building applications and agents.",
+      sourceIds: [aboutSourceId],
+    },
+    {
+      section: "positioning",
+      fieldKey: "positioning.value-proposition",
+      value: "Infrastructure designed to help humans and agents build and ship software.",
+      sourceIds: [aboutSourceId],
+    },
+    {
+      section: "content-strategy",
+      fieldKey: "content.core-topics",
+      value: "Application development, agents, developer infrastructure, deployment, and software delivery.",
+      sourceIds: [aboutSourceId],
+    },
+    {
+      section: "boundaries",
+      fieldKey: "boundaries.excluded-topics",
+      value: "Unlawful, fraudulent, deceptive, abusive, violent, exploitative, spam, and security-circumvention uses prohibited by Vercel's Acceptable Use Policy.",
+      sourceIds: [policySourceId],
+    },
+  ];
+}
+
+async function ensureDisposableVercelCanonicalFields(
+  store: KairoRepository,
+  accountId: string,
+  brandId: string,
+): Promise<void> {
+  const sources = await store.listKnowledgeSources(accountId, brandId);
+  const about = sources.find(
+    (source) =>
+      source.status === "active" &&
+      source.sourceUrl?.includes("vercel.com/about"),
+  );
+  const policy = sources.find(
+    (source) =>
+      source.status === "active" &&
+      source.sourceUrl?.includes("vercel.com/legal/acceptable-use-policy"),
+  );
+  if (!about || !policy) {
+    throw new Error(
+      "Disposable persisted Vercel Brand is missing required verified public sources",
+    );
+  }
+
+  const existingByKey = new Map(
+    (await store.listBrandBrainFields(accountId, brandId)).map((field) => [
+      field.fieldKey,
+      field,
+    ]),
+  );
+  for (const field of disposableVercelCanonicalFields(about.id, policy.id)) {
+    const existing = existingByKey.get(field.fieldKey);
+    const written = await store.recordInferredBrandBrainField(
+      accountId,
+      brandId,
+      {
+        section: field.section,
+        fieldKey: field.fieldKey,
+        value: field.value,
+        sourceIds: field.sourceIds,
+        ...(existing ? { expectedVersion: existing.version } : {}),
+      },
+    );
+    existingByKey.set(field.fieldKey, written);
+  }
+
+  const activation = createBrandBrainActivationSnapshot(
+    await store.listBrandBrainFields(accountId, brandId),
+    await store.listKnowledgeSources(accountId, brandId),
+  );
+  if (!activation.hunterReady) {
+    throw new Error(
+      "Disposable persisted Vercel Brand did not satisfy canonical Hunter readiness after source-backed fixture repair: gaps=" +
+        activation.readiness.gaps.join(",") +
+        "; weak=" +
+        activation.weakFields.join(","),
+    );
+  }
+}
 
 async function deleteDisposableBrand(
   store: KairoRepository,
