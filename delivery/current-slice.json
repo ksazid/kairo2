@@ -2,7 +2,7 @@
   "activeSlice": {
     "id": "HI2-07R",
     "objectiveId": "OBJ-HI2-07R",
-    "state": "implementing",
+    "state": "certified",
     "riskLevel": "medium",
     "implementationPermission": "runtime-disabled",
     "scope": "Add shadow-only Feedback V2 Preference State projection: ordered idempotent event reduction, passive-event neutrality, gradual positive/negative learning, mechanism/source-class specificity, bounded exploration-budget adaptation and diagnostics. Existing production feedback mutation remains authoritative.",
@@ -43,6 +43,13 @@
       "Repeated feedback decays over time and diagnostics expose applied, duplicate, passive and dimension-update counts.",
       "No production feedback store wiring, provider credentials, scheduling, UI changes or deployment are introduced.",
       "PES v2 CI and Security baseline pass before certification."
-    ]
+    ],
+    "certification": {
+      "bundleId": "CERT-HI2-07R-6E596168",
+      "commitSha": "6e5961689a0fb35478f26626c1144fb2bc36f04c",
+      "candidateHash": "e7c700826a4c897058eb36bb6c06a3ebdf049faa5fa07825892dd012ae904fc0",
+      "certifiedHash": "73a288dfcd618f1276072fa44610d72d8792ca31f55e6879a703901e2649cef2",
+      "certifiedAt": "2026-09-20T13:50:00+02:00"
+    }
   }
 }
