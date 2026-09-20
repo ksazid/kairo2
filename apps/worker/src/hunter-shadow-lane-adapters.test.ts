@@ -10,6 +10,7 @@ import type {
 import type { BrandDiscoveryPlan } from "@kairo/domain/brand-discovery-plan";
 import {
   ReadOnlyHunterShadowLaneExecutor,
+  balancedShadowRetrievalPlan,
   isHunterDeepAnalysisOutput,
   selectPaidShadowIntentIds,
   type HunterShadowExecutionContext,
@@ -197,10 +198,10 @@ describe("read-only Hunter shadow lane adapters", () => {
       runtime,
       searchCostUsdBySource: { "agent-reach": 0.007 },
       candidate: {
-        maxIntents: 6,
+        maxIntents: 3,
         maxSourcesPerIntent: 2,
         maxPaidIntents: 3,
-        maxExternalCalls: 6,
+        maxExternalCalls: 3,
         maxSemanticCalls: 0,
         deepLimit: 2,
         maxCandidates: 5,
@@ -242,6 +243,35 @@ describe("read-only Hunter shadow lane adapters", () => {
     });
 
     await expect(executor.runControl(run)).rejects.toThrow(/workspace and Brand/);
+  });
+
+  it("builds a rotating three-topic plan with a distinct exploration topic", () => {
+    const topics = ["a", "b", "c", "d"];
+    const plan = {
+      schemaVersion: "1" as const,
+      workspaceId: "workspace-1",
+      brandId: "brand-1",
+      snapshotVersion: "snapshot-1",
+      planVersion: "plan-rotation",
+      explorationBudget: 0.1,
+      intents: topics.flatMap((topicId) => [
+        { id:"core-"+topicId,generator:"brand-core",mode:"lexical-search",topicId,topicName:topicId.toUpperCase(),query:topicId,semanticQuery:topicId,audience:"audience",sourceClasses:["Official sources"],priority:"high",maxResults:5,reason:"core" },
+        { id:"explore-"+topicId,generator:"adjacent-exploration",mode:"lexical-search",topicId,topicName:topicId.toUpperCase(),query:topicId+" adjacent",semanticQuery:topicId+" adjacent",audience:"audience",sourceClasses:["Industry news"],priority:"exploration",maxResults:5,reason:"explore" },
+      ]),
+      hardNegatives: [],
+    } satisfies import("@kairo/domain/hunter-retrieval").HunterRetrievalPlan;
+
+    const first = balancedShadowRetrievalPlan(plan, 3, "comparison-1");
+    const second = balancedShadowRetrievalPlan(plan, 3, "comparison-2");
+
+    expect(first.intents).toHaveLength(3);
+    expect(new Set(first.intents.map((intent) => intent.topicId)).size).toBe(3);
+    expect(first.intents.filter((intent) => intent.generator === "adjacent-exploration")).toHaveLength(1);
+    expect(second.intents).toHaveLength(3);
+    expect(new Set(second.intents.map((intent) => intent.topicId)).size).toBe(3);
+    expect(first.intents.map((intent) => intent.topicId)).not.toEqual(
+      second.intents.map((intent) => intent.topicId),
+    );
   });
 
   it("selects at most three deterministic paid intents and always reserves lexical exploration", () => {
