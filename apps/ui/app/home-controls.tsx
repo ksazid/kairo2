@@ -50,7 +50,7 @@ export function HeroControls({ brandId, selectedFormat }: { brandId?: string; se
       if (!response.ok || !body.concept) throw new Error(body.error ?? "Kairo could not analyse that link.");
       setConcept(body.concept);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Kairo could not analyse that link.");
+      setError(friendlyError(caught, "Kairo could not analyse that link."));
     } finally {
       setAnalysing(false);
     }
@@ -67,7 +67,7 @@ export function HeroControls({ brandId, selectedFormat }: { brandId?: string; se
     try {
       await generateAndOpen({ brandId, format: concept.format, source: url.trim(), title: concept.title }, () => undefined);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Kairo could not create this content.");
+      setError(friendlyError(caught, "Kairo could not create this content."));
       setGenerating(false);
     }
   }
@@ -102,7 +102,7 @@ export function CreateButton({ brandId, opportunityId, title, direction, format 
     try {
       await generateAndOpen({ brandId, opportunityId, title, direction, format }, setMessage);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Kairo could not create this content.");
+      setError(friendlyError(caught, "Kairo could not create this content."));
       setBusy(false);
       setMessage("");
     }
@@ -144,7 +144,15 @@ async function generateAndOpen(input: GenerationInput & { brandId: string }, onP
     }
     if (progress.status === "needs-attention") throw new Error(progress.message ?? "Kairo could not finish this creation.");
   }
-  throw new Error("Generation is still running. Open Content to continue.");
+  throw new Error("Generation is taking longer than expected. Your draft may still appear in Content.");
+}
+
+function friendlyError(error: unknown, fallback: string) {
+  const message = error instanceof Error ? error.message : fallback;
+  if (/\b429\b|rate.?limit|too many requests|provider returned/i.test(message)) {
+    return "Kairo’s AI provider is temporarily busy. Please try again in a moment.";
+  }
+  return message.length > 180 ? fallback : message;
 }
 
 function delay(ms: number) {
