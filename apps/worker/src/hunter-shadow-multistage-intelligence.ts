@@ -77,7 +77,9 @@ export async function runShadowMultiStageIntelligence(input: {
 
   const boundedClusters = input.clusters.slice(0, maxInputClusters);
   const allPreRanked = boundedClusters.map((cluster) => {
-    const topicMatch = bestTopicMatch(cluster.intelligence.topic, input.plan.topics);
+    const topicMatch =
+      parentTopicMatch(cluster.parentTopicId, input.plan.topics) ??
+      bestTopicMatch(cluster.intelligence.topic, input.plan.topics);
     const candidateId = cluster.intelligence.trendId;
     const explorationEligible =
       cluster.generatorKeys.includes("adjacent-exploration") &&
@@ -207,6 +209,19 @@ export async function runShadowMultiStageIntelligence(input: {
         hardNegativeSimilarity: rate(unknownCounts.hardNegativeSimilarity, preRanked.length),
       },
     },
+  };
+}
+
+function parentTopicMatch(
+  parentTopicId: string | undefined,
+  topics: readonly BrandDiscoveryTopic[],
+): { topic: BrandDiscoveryTopic; fit: number } | undefined {
+  if (!parentTopicId) return undefined;
+  const topic = topics.find((candidate) => candidate.id === parentTopicId);
+  if (!topic) return undefined;
+  return {
+    topic,
+    fit: topic.priority === "High" ? 1 : 0.78,
   };
 }
 
