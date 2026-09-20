@@ -1,0 +1,7 @@
+FROM node:24-bookworm-slim
+WORKDIR /app
+COPY . .
+RUN npm ci --no-audit --no-fund
+ENV NODE_ENV=development
+EXPOSE 4000
+CMD ["sh","-lc","export KAIRO_CHARLIE_SHADOW_LIVE=1; npm test --workspace @kairo/worker -- src/charlie-social-skills-shadow.live.test.ts; rc=$?; echo KAIRO_CHARLIE_SHADOW_TEST_EXIT=$rc; node -e \"const http=require('http');const fs=require('fs');const port=Number(process.env.PORT||4000);http.createServer((req,res)=>{res.setHeader('content-type','application/json');let artifact=null;try{artifact=JSON.parse(fs.readFileSync('/app/artifacts/charlie-social-shadow-live.json','utf8'))}catch{};res.end(JSON.stringify({ok:true,benchmarkArtifactPresent:!!artifact,summary:artifact?.summary??null}));}).listen(port,'0.0.0.0');\""]
