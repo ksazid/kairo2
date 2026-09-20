@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "version": 2,
-  "revision": 11,
+  "revision": 12,
   "nodes": [
     {
       "id": "OBJ-001",
@@ -458,6 +458,128 @@
         "sourceIds": [],
         "recordedAt": "2026-09-20T01:08:00.000Z"
       }
+    },
+    {
+      "id": "OBJ-HI2-02R",
+      "type": "Objective",
+      "status": "active",
+      "title": "Establish shadow-only semantic intelligence foundation for Hunter",
+      "successCriteria": [
+        "Provider-neutral embeddings can be validated and persisted with tenant isolation.",
+        "pgvector storage remains shadow-only and has no ANN index or ranking authority.",
+        "Backfill is hard-bounded and requires injected provider/sink dependencies.",
+        "Existing Hunter and EEI behavior remains unchanged."
+      ],
+      "memoryProvenance": {
+        "eventId": "GM-000012",
+        "revision": 12,
+        "actorId": "pes-v2-hunter-semantic",
+        "runId": "HI2-02R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T01:28:00.000Z"
+      }
+    },
+    {
+      "id": "TASK-HI2-02R",
+      "type": "Task",
+      "status": "active",
+      "objectiveId": "OBJ-HI2-02R",
+      "title": "Implement pgvector storage, embedding contracts, diagnostics and bounded backfill",
+      "memoryProvenance": {
+        "eventId": "GM-000012",
+        "revision": 12,
+        "actorId": "pes-v2-hunter-semantic",
+        "runId": "HI2-02R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T01:28:00.000Z"
+      }
+    },
+    {
+      "id": "RUN-HI2-02R-01",
+      "type": "AgentRun",
+      "status": "failed",
+      "title": "Initial HI2-02R preflight failed on case-sensitive migration-comment assertion only",
+      "memoryProvenance": {
+        "eventId": "GM-000012",
+        "revision": 12,
+        "actorId": "pes-v2-hunter-semantic",
+        "runId": "HI2-02R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T01:28:00.000Z"
+      }
+    },
+    {
+      "id": "RUN-HI2-02R-02",
+      "type": "AgentRun",
+      "status": "verified",
+      "title": "Corrected HI2-02R deterministic validation",
+      "memoryProvenance": {
+        "eventId": "GM-000012",
+        "revision": 12,
+        "actorId": "pes-v2-hunter-semantic",
+        "runId": "HI2-02R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T01:28:00.000Z"
+      }
+    },
+    {
+      "id": "ART-HI2-02R",
+      "type": "Artifact",
+      "status": "verified",
+      "title": "Hunter semantic intelligence foundation",
+      "runId": "HI2-02R",
+      "version": "d64a227a44a75e8d20da8a1f4104f9ba59a5bf04",
+      "memoryProvenance": {
+        "eventId": "GM-000012",
+        "revision": 12,
+        "actorId": "pes-v2-hunter-semantic",
+        "runId": "HI2-02R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T01:28:00.000Z"
+      }
+    },
+    {
+      "id": "EVAL-HI2-02R",
+      "type": "Evaluation",
+      "status": "verified",
+      "title": "PESv2 preflight passed after deterministic test correction",
+      "rubricId": "hunter-semantic-foundation-preflight",
+      "memoryProvenance": {
+        "eventId": "GM-000012",
+        "revision": 12,
+        "actorId": "pes-v2-hunter-semantic",
+        "runId": "HI2-02R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T01:28:00.000Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-02R-01",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "GitHub PES v2 CI run 35481377114 passed for PR #9 head d64a227a44a75e8d20da8a1f4104f9ba59a5bf04",
+      "memoryProvenance": {
+        "eventId": "GM-000012",
+        "revision": 12,
+        "actorId": "pes-v2-hunter-semantic",
+        "runId": "HI2-02R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T01:28:00.000Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-02R-02",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "GitHub Security baseline run 35481377130 passed for PR #9 head d64a227a44a75e8d20da8a1f4104f9ba59a5bf04",
+      "memoryProvenance": {
+        "eventId": "GM-000012",
+        "revision": 12,
+        "actorId": "pes-v2-hunter-semantic",
+        "runId": "HI2-02R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T01:28:00.000Z"
+      }
     }
   ],
   "edges": [
@@ -798,6 +920,112 @@
         "sourceIds": [],
         "recordedAt": "2026-09-20T01:08:00.000Z"
       }
+    },
+    {
+      "id": "EDGE-OBJ-HI2-02R-TASK-HI2-02R",
+      "type": "IMPLEMENTED_BY",
+      "from": "OBJ-HI2-02R",
+      "to": "TASK-HI2-02R",
+      "memoryProvenance": {
+        "eventId": "GM-000012",
+        "revision": 12,
+        "actorId": "pes-v2-hunter-semantic",
+        "runId": "HI2-02R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T01:28:00.000Z"
+      }
+    },
+    {
+      "id": "EDGE-RUN-HI2-02R-01-ABOUT-TASK",
+      "type": "ABOUT",
+      "from": "RUN-HI2-02R-01",
+      "to": "TASK-HI2-02R",
+      "memoryProvenance": {
+        "eventId": "GM-000012",
+        "revision": 12,
+        "actorId": "pes-v2-hunter-semantic",
+        "runId": "HI2-02R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T01:28:00.000Z"
+      }
+    },
+    {
+      "id": "EDGE-TASK-HI2-02R-PRODUCED-ART",
+      "type": "PRODUCED",
+      "from": "TASK-HI2-02R",
+      "to": "ART-HI2-02R",
+      "memoryProvenance": {
+        "eventId": "GM-000012",
+        "revision": 12,
+        "actorId": "pes-v2-hunter-semantic",
+        "runId": "HI2-02R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T01:28:00.000Z"
+      }
+    },
+    {
+      "id": "EDGE-RUN-HI2-02R-02-PRODUCED-ART",
+      "type": "PRODUCED",
+      "from": "RUN-HI2-02R-02",
+      "to": "ART-HI2-02R",
+      "memoryProvenance": {
+        "eventId": "GM-000012",
+        "revision": 12,
+        "actorId": "pes-v2-hunter-semantic",
+        "runId": "HI2-02R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T01:28:00.000Z"
+      }
+    },
+    {
+      "id": "EDGE-EVAL-HI2-02R-EVALUATES-ART",
+      "type": "EVALUATES",
+      "from": "EVAL-HI2-02R",
+      "to": "ART-HI2-02R",
+      "memoryProvenance": {
+        "eventId": "GM-000012",
+        "revision": 12,
+        "actorId": "pes-v2-hunter-semantic",
+        "runId": "HI2-02R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T01:28:00.000Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-02R-01-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-02R-01",
+      "to": "ART-HI2-02R",
+      "provenance": {
+        "kind": "github-actions",
+        "runId": "35481377114"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000012",
+        "revision": 12,
+        "actorId": "pes-v2-hunter-semantic",
+        "runId": "HI2-02R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T01:28:00.000Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-02R-02-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-02R-02",
+      "to": "ART-HI2-02R",
+      "provenance": {
+        "kind": "github-actions",
+        "runId": "35481377130"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000012",
+        "revision": 12,
+        "actorId": "pes-v2-hunter-semantic",
+        "runId": "HI2-02R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T01:28:00.000Z"
+      }
     }
   ],
   "events": [
@@ -1005,6 +1233,35 @@
         "EDGE-EVID-HI2-02-SUPPORTS-ART-HI2-01"
       ],
       "recordedAt": "2026-09-20T01:08:00.000Z"
+    },
+    {
+      "id": "GM-000012",
+      "revision": 12,
+      "operation": "append",
+      "actorId": "pes-v2-hunter-semantic",
+      "runId": "HI2-02R",
+      "reason": "Record HI2-02R failed attempt, corrected semantic foundation artifact, CI and security evidence",
+      "sourceIds": [],
+      "addedNodeIds": [
+        "OBJ-HI2-02R",
+        "TASK-HI2-02R",
+        "RUN-HI2-02R-01",
+        "RUN-HI2-02R-02",
+        "ART-HI2-02R",
+        "EVAL-HI2-02R",
+        "EVID-HI2-02R-01",
+        "EVID-HI2-02R-02"
+      ],
+      "addedEdgeIds": [
+        "EDGE-OBJ-HI2-02R-TASK-HI2-02R",
+        "EDGE-RUN-HI2-02R-01-ABOUT-TASK",
+        "EDGE-TASK-HI2-02R-PRODUCED-ART",
+        "EDGE-RUN-HI2-02R-02-PRODUCED-ART",
+        "EDGE-EVAL-HI2-02R-EVALUATES-ART",
+        "EDGE-EVID-HI2-02R-01-SUPPORTS-ART",
+        "EDGE-EVID-HI2-02R-02-SUPPORTS-ART"
+      ],
+      "recordedAt": "2026-09-20T01:28:00.000Z"
     }
   ]
 }
