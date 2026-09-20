@@ -2,7 +2,7 @@
   "activeSlice": {
     "id": "HI2-11",
     "objectiveId": "OBJ-HI2-11",
-    "state": "implementing",
+    "state": "certified",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
     "scope": "Reduce Hunter V2 shadow cost and latency under unchanged rollout thresholds, stabilize genuine exploration across brands, and emit explicit human-readable test evidence (brand name, discovery topics, sanitized queries, paid-search selection, selected recommendation topics/buckets) only when an explicit evidence-detail flag is enabled.",
@@ -44,6 +44,13 @@
       "Hunter V1 remains production authority and Hunter V2 performs no opportunity persistence.",
       "Canary remains disabled unless the completed full shadow gate passes.",
       "PES v2 CI and Security baseline pass before merge/deployment."
-    ]
+    ],
+    "certification": {
+      "bundleId": "CERT-HI2-11-0C0900E5",
+      "commitSha": "0c0900e5d8472b56785288e9effc13363365d486",
+      "candidateHash": "33b9174ecf554e9ff929639e056e2c88449d6f1be8020bfaf92b86f05eecaecd",
+      "certifiedHash": "dabed868c1b317f68cbb255ed6f639c40230172af478faf6af048d2b1e7b22c0",
+      "certifiedAt": "2026-09-20T21:13:33.106Z"
+    }
   }
 }
