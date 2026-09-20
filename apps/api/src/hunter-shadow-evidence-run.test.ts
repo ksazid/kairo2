@@ -74,6 +74,11 @@ describe("Hunter shadow operational evidence", () => {
     })).toThrow(/at least 30/);
   });
 
+  it("keeps the operational candidate capacity at six so the certified exploration ceiling is one item", () => {
+    expect(HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE.maxCandidates).toBe(6);
+    expect(Math.floor(HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE.maxCandidates * 0.2)).toBe(1);
+  });
+
   it("allows an explicit 3-by-3 pre-gate while retaining the 30-pair full gate", () => {
     const request = hunterShadowEvidenceRequestFromEnv({
       KAIRO_HUNTER_SHADOW_EVIDENCE_RUN_ID: "hi2-11-pre-001",
@@ -195,7 +200,7 @@ describe("Hunter shadow operational evidence", () => {
       maxExternalCalls: 3,
       maxSemanticCalls: 0,
       deepLimit: 2,
-      maxCandidates: 10,
+      maxCandidates: 6,
     });
   });
 
