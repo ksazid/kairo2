@@ -2,7 +2,7 @@
   "activeSlice": {
     "id": "HI2-05R",
     "objectiveId": "OBJ-HI2-05R",
-    "state": "implementing",
+    "state": "certified",
     "riskLevel": "medium",
     "implementationPermission": "runtime-disabled",
     "scope": "Add shadow-only Hunter multi-stage intelligence: deterministic pre-rank, bounded candidate funnel, provider-neutral deep-analysis port, validated deep intelligence outputs and funnel diagnostics. Existing production Hunter ranking/persistence remains authoritative.",
@@ -43,6 +43,13 @@
       "Diagnostics expose funnel sizes, unknown-feature rates, deep-analysis success/failure and score distribution.",
       "No provider credentials, scheduled execution, production Hunter wiring, UI changes, opportunity persistence or production enablement are introduced.",
       "PES v2 CI and Security baseline pass before certification."
-    ]
+    ],
+    "certification": {
+      "bundleId": "CERT-HI2-05R-4321BA21",
+      "commitSha": "4321ba2149f68498daca51a36e4b7fb69488a487",
+      "candidateHash": "74474352dec0a55301fc30062b1c842dcfc8bb01d572b4a5d0ad3095e9d2f0ef",
+      "certifiedHash": "556af3fbb296f9889ad663552ef13799213d8b5748b2c79d98b24d2a4a7911f4",
+      "certifiedAt": "2026-09-20T10:38:49+02:00"
+    }
   }
 }
