@@ -2,7 +2,7 @@
   "activeSlice": {
     "id": "HI2-08R",
     "objectiveId": "OBJ-HI2-08R",
-    "state": "implementing",
+    "state": "certified",
     "riskLevel": "medium",
     "implementationPermission": "runtime-disabled",
     "scope": "Add shadow-only Hunter Outcome Attribution: direct opportunity-content-publish lineage, Brand-relative metric lift, baseline/freshness/coverage confidence, non-causal association labels, positive performance-memory proposals and diagnostics. Existing production learning remains authoritative.",
@@ -43,6 +43,13 @@
       "Positive performance-memory proposals are emitted only when confidence and lift thresholds pass; negative outcomes are not miscast as negative user preference.",
       "No production learning-store mutation, scheduler, UI change, deployment or production enablement is introduced.",
       "PES v2 CI and Security baseline pass before certification."
-    ]
+    ],
+    "certification": {
+      "bundleId": "CERT-HI2-08R-164D3112",
+      "commitSha": "164d3112c130ef80ec55cee65f4c000b788c3d2d",
+      "candidateHash": "df616447040eac0139bf0b899f607adce18a5f934658c22776737dee9b210eb3",
+      "certifiedHash": "58941beeeeb9e281f5c6db44ff5108c838bf00598b0dea80a4370fade5c5b3eb",
+      "certifiedAt": "2026-09-20T13:50:00+02:00"
+    }
   }
 }
