@@ -10905,6 +10905,551 @@
       },
       "certifiedAt": "2026-09-20T22:58:53.965Z",
       "certifiedHash": "343792afec09bc2028c6f3881e4cabf8d934884922598c0f5a4f8cd897db4d78"
+    },
+    {
+      "schemaVersion": 1,
+      "bundleId": "CERT-HI2-11R3-B2AEBA1D",
+      "status": "certified",
+      "sliceId": "HI2-11R3",
+      "objectiveId": "OBJ-HI2-11R3",
+      "riskLevel": "high",
+      "commitSha": "b2aeba1d994fa49c71eaa1a258b22cc60fd2a0d7",
+      "graphRevision": 35,
+      "contextHash": "ff26449b39ab9768e9fcd9bb5c84c9e970cecfa78f8a09b795fe2a418962649c",
+      "contextSnapshot": {
+        "schemaVersion": 1,
+        "graphRevision": 35,
+        "requestedSeeds": [
+          "OBJ-HI2-11R3",
+          "TASK-HI2-11R3",
+          "ART-HI2-11R3",
+          "EVAL-HI2-11R3",
+          "EVID-HI2-11R3-01",
+          "EVID-HI2-11R3-02",
+          "EVID-HI2-11R3-03"
+        ],
+        "resolvedSeeds": [
+          "OBJ-HI2-11R3",
+          "TASK-HI2-11R3",
+          "ART-HI2-11R3",
+          "EVAL-HI2-11R3",
+          "EVID-HI2-11R3-01",
+          "EVID-HI2-11R3-02",
+          "EVID-HI2-11R3-03"
+        ],
+        "resolution": [
+          {
+            "requestedId": "OBJ-HI2-11R3",
+            "currentId": "OBJ-HI2-11R3",
+            "chain": [
+              "OBJ-HI2-11R3"
+            ]
+          },
+          {
+            "requestedId": "TASK-HI2-11R3",
+            "currentId": "TASK-HI2-11R3",
+            "chain": [
+              "TASK-HI2-11R3"
+            ]
+          },
+          {
+            "requestedId": "ART-HI2-11R3",
+            "currentId": "ART-HI2-11R3",
+            "chain": [
+              "ART-HI2-11R3"
+            ]
+          },
+          {
+            "requestedId": "EVAL-HI2-11R3",
+            "currentId": "EVAL-HI2-11R3",
+            "chain": [
+              "EVAL-HI2-11R3"
+            ]
+          },
+          {
+            "requestedId": "EVID-HI2-11R3-01",
+            "currentId": "EVID-HI2-11R3-01",
+            "chain": [
+              "EVID-HI2-11R3-01"
+            ]
+          },
+          {
+            "requestedId": "EVID-HI2-11R3-02",
+            "currentId": "EVID-HI2-11R3-02",
+            "chain": [
+              "EVID-HI2-11R3-02"
+            ]
+          },
+          {
+            "requestedId": "EVID-HI2-11R3-03",
+            "currentId": "EVID-HI2-11R3-03",
+            "chain": [
+              "EVID-HI2-11R3-03"
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "id": "EVID-HI2-11R3-01",
+            "type": "Evidence",
+            "status": "verified",
+            "title": "GitHub PES v2 CI run 35545719968 passed for PR #32 head b2aeba1d994fa49c71eaa1a258b22cc60fd2a0d7",
+            "memoryProvenance": {
+              "eventId": "GM-000035",
+              "revision": 35,
+              "actorId": "pes-v2-hunter-evidence-subject-diversity",
+              "runId": "HI2-11R3",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T23:51:17.180Z"
+            }
+          },
+          {
+            "id": "EVID-HI2-11R3-02",
+            "type": "Evidence",
+            "status": "verified",
+            "title": "GitHub Security baseline run 35545719982 passed for PR #32 head b2aeba1d994fa49c71eaa1a258b22cc60fd2a0d7",
+            "memoryProvenance": {
+              "eventId": "GM-000035",
+              "revision": 35,
+              "actorId": "pes-v2-hunter-evidence-subject-diversity",
+              "runId": "HI2-11R3",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T23:51:17.180Z"
+            }
+          },
+          {
+            "id": "EVID-HI2-11R3-03",
+            "type": "Evidence",
+            "status": "verified",
+            "title": "HI2-11R3 regression proves six distinct evidence subjects can coexist under coarse parent topics with one exploration item at 16.7% and topic share <=34%",
+            "memoryProvenance": {
+              "eventId": "GM-000035",
+              "revision": 35,
+              "actorId": "pes-v2-hunter-evidence-subject-diversity",
+              "runId": "HI2-11R3",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T23:51:17.180Z"
+            }
+          },
+          {
+            "id": "ART-HI2-11R3",
+            "type": "Artifact",
+            "status": "verified",
+            "title": "Evidence-subject diversity accounting with parent-topic relevance preservation",
+            "runId": "HI2-11R3",
+            "version": "b2aeba1d994fa49c71eaa1a258b22cc60fd2a0d7",
+            "memoryProvenance": {
+              "eventId": "GM-000035",
+              "revision": 35,
+              "actorId": "pes-v2-hunter-evidence-subject-diversity",
+              "runId": "HI2-11R3",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T23:51:17.180Z"
+            }
+          },
+          {
+            "id": "EVAL-HI2-11R3",
+            "type": "Evaluation",
+            "status": "verified",
+            "title": "PESv2 validated parent-topic relevance preservation, evidence-subject diversity and six-candidate one-exploration capacity under unchanged policy",
+            "rubricId": "hunter-evidence-subject-diversity-high-risk",
+            "memoryProvenance": {
+              "eventId": "GM-000035",
+              "revision": 35,
+              "actorId": "pes-v2-hunter-evidence-subject-diversity",
+              "runId": "HI2-11R3",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T23:51:17.180Z"
+            }
+          },
+          {
+            "id": "OBJ-HI2-11R3",
+            "type": "Objective",
+            "status": "active",
+            "title": "Separate Hunter recommendation subjects from parent Brand Brain topics for diversity accounting",
+            "successCriteria": [
+              "Trend clusters retain the existing parent topic in TrendIntelligence for relevance and preference matching.",
+              "Every Trend cluster also exposes a deterministic evidence-derived subject based on representative public evidence.",
+              "EEI recommendation topic/diversity accounting uses the evidence-derived subject rather than the coarse parent topic.",
+              "The existing maximumTopicShare=0.34 remains unchanged and is enforced over actual recommendation subjects.",
+              "The existing explorationMin=0.08 and explorationMax=0.20 remain unchanged.",
+              "With maxCandidates=6 and sufficient eligible evidence, one exploration recommendation can produce 1/6=16.7% exploration without violating topic concentration.",
+              "Regression tests prove distinct evidence subjects under the same parent Brand Brain topic are not falsely collapsed by the final topic-share guard.",
+              "Corrected 3x3 pre-gate reruns before any full 30-pair gate.",
+              "Hunter V1 remains production authority; no V2 persistence or canary enablement.",
+              "PES v2 CI and Security baseline pass before merge/deployment."
+            ],
+            "memoryProvenance": {
+              "eventId": "GM-000035",
+              "revision": 35,
+              "actorId": "pes-v2-hunter-evidence-subject-diversity",
+              "runId": "HI2-11R3",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T23:51:17.180Z"
+            }
+          },
+          {
+            "id": "TASK-HI2-11R3",
+            "type": "Task",
+            "status": "active",
+            "objectiveId": "OBJ-HI2-11R3",
+            "title": "Carry evidence-derived subjects through Trend clusters and use them for EEI topic concentration",
+            "memoryProvenance": {
+              "eventId": "GM-000035",
+              "revision": 35,
+              "actorId": "pes-v2-hunter-evidence-subject-diversity",
+              "runId": "HI2-11R3",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T23:51:17.180Z"
+            }
+          },
+          {
+            "id": "RUN-HI2-11R3-01",
+            "type": "AgentRun",
+            "status": "verified",
+            "objectiveId": "OBJ-HI2-11R3",
+            "title": "Exact HI2-11R3 implementation passed PESv2 CI and Security",
+            "memoryProvenance": {
+              "eventId": "GM-000035",
+              "revision": 35,
+              "actorId": "pes-v2-hunter-evidence-subject-diversity",
+              "runId": "HI2-11R3",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T23:51:17.180Z"
+            }
+          }
+        ],
+        "edges": [
+          {
+            "id": "EDGE-OBJ-HI2-11R3-TASK",
+            "type": "IMPLEMENTED_BY",
+            "from": "OBJ-HI2-11R3",
+            "to": "TASK-HI2-11R3",
+            "memoryProvenance": {
+              "eventId": "GM-000035",
+              "revision": 35,
+              "actorId": "pes-v2-hunter-evidence-subject-diversity",
+              "runId": "HI2-11R3",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T23:51:17.180Z"
+            }
+          },
+          {
+            "id": "EDGE-TASK-HI2-11R3-PRODUCED-ART",
+            "type": "PRODUCED",
+            "from": "TASK-HI2-11R3",
+            "to": "ART-HI2-11R3",
+            "memoryProvenance": {
+              "eventId": "GM-000035",
+              "revision": 35,
+              "actorId": "pes-v2-hunter-evidence-subject-diversity",
+              "runId": "HI2-11R3",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T23:51:17.180Z"
+            }
+          },
+          {
+            "id": "EDGE-RUN-HI2-11R3-01-PRODUCED-ART",
+            "type": "PRODUCED",
+            "from": "RUN-HI2-11R3-01",
+            "to": "ART-HI2-11R3",
+            "memoryProvenance": {
+              "eventId": "GM-000035",
+              "revision": 35,
+              "actorId": "pes-v2-hunter-evidence-subject-diversity",
+              "runId": "HI2-11R3",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T23:51:17.180Z"
+            }
+          },
+          {
+            "id": "EDGE-EVAL-HI2-11R3-EVALUATES-ART",
+            "type": "EVALUATES",
+            "from": "EVAL-HI2-11R3",
+            "to": "ART-HI2-11R3",
+            "memoryProvenance": {
+              "eventId": "GM-000035",
+              "revision": 35,
+              "actorId": "pes-v2-hunter-evidence-subject-diversity",
+              "runId": "HI2-11R3",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T23:51:17.180Z"
+            }
+          },
+          {
+            "id": "EDGE-EVID-HI2-11R3-01-SUPPORTS-ART",
+            "type": "SUPPORTS",
+            "from": "EVID-HI2-11R3-01",
+            "to": "ART-HI2-11R3",
+            "provenance": {
+              "kind": "github-actions",
+              "runId": "35545719968"
+            },
+            "memoryProvenance": {
+              "eventId": "GM-000035",
+              "revision": 35,
+              "actorId": "pes-v2-hunter-evidence-subject-diversity",
+              "runId": "HI2-11R3",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T23:51:17.180Z"
+            }
+          },
+          {
+            "id": "EDGE-EVID-HI2-11R3-02-SUPPORTS-ART",
+            "type": "SUPPORTS",
+            "from": "EVID-HI2-11R3-02",
+            "to": "ART-HI2-11R3",
+            "provenance": {
+              "kind": "github-actions",
+              "runId": "35545719982"
+            },
+            "memoryProvenance": {
+              "eventId": "GM-000035",
+              "revision": 35,
+              "actorId": "pes-v2-hunter-evidence-subject-diversity",
+              "runId": "HI2-11R3",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T23:51:17.180Z"
+            }
+          },
+          {
+            "id": "EDGE-EVID-HI2-11R3-03-SUPPORTS-ART",
+            "type": "SUPPORTS",
+            "from": "EVID-HI2-11R3-03",
+            "to": "ART-HI2-11R3",
+            "provenance": {
+              "kind": "delivery-graph",
+              "path": "delivery/hi2-11r3-delivery-graph.json"
+            },
+            "memoryProvenance": {
+              "eventId": "GM-000035",
+              "revision": 35,
+              "actorId": "pes-v2-hunter-evidence-subject-diversity",
+              "runId": "HI2-11R3",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T23:51:17.180Z"
+            }
+          }
+        ],
+        "ranking": [
+          {
+            "id": "EVID-HI2-11R3-01",
+            "score": 1119,
+            "hop": 0,
+            "status": "verified"
+          },
+          {
+            "id": "EVID-HI2-11R3-02",
+            "score": 1119,
+            "hop": 0,
+            "status": "verified"
+          },
+          {
+            "id": "EVID-HI2-11R3-03",
+            "score": 1119,
+            "hop": 0,
+            "status": "verified"
+          },
+          {
+            "id": "ART-HI2-11R3",
+            "score": 1118,
+            "hop": 0,
+            "status": "verified"
+          },
+          {
+            "id": "EVAL-HI2-11R3",
+            "score": 1118,
+            "hop": 0,
+            "status": "verified"
+          },
+          {
+            "id": "OBJ-HI2-11R3",
+            "score": 1117,
+            "hop": 0,
+            "status": "active"
+          },
+          {
+            "id": "TASK-HI2-11R3",
+            "score": 1113,
+            "hop": 0,
+            "status": "active"
+          },
+          {
+            "id": "RUN-HI2-11R3-01",
+            "score": 101,
+            "hop": 1,
+            "status": "verified"
+          }
+        ],
+        "contradictions": [],
+        "omittedNodeIds": [],
+        "policy": {
+          "maxHops": 2,
+          "maxNodes": 40,
+          "maxTokens": 12000,
+          "includeStatuses": [
+            "approved",
+            "verified",
+            "active",
+            "superseded",
+            "failed"
+          ],
+          "preferVerified": true,
+          "includeContradictions": true,
+          "resolveSuperseded": true
+        },
+        "contextHash": "ff26449b39ab9768e9fcd9bb5c84c9e970cecfa78f8a09b795fe2a418962649c",
+        "estimatedTokens": 2027,
+        "truncated": false
+      },
+      "gateDecisionHash": "c41c036f939defa85010edce8f19cd88ddf92da4126ea22e49fb3b59b696e4ee",
+      "gateSnapshot": {
+        "allowed": true,
+        "sliceId": "HI2-11R3",
+        "fromState": "testing",
+        "requestedState": "certification",
+        "blockers": [],
+        "warnings": [
+          {
+            "code": "high-risk-certification-review",
+            "message": "High-risk release path should retain explicit certification approval through release."
+          }
+        ],
+        "requiredApprovals": [
+          "scope",
+          "policy",
+          "implementation"
+        ],
+        "validApprovals": [
+          "scope",
+          "policy",
+          "implementation"
+        ],
+        "protectedPaths": [],
+        "evidence": {
+          "accepted": [
+            {
+              "id": "EVID-HI2-11R3-01",
+              "type": "Evidence",
+              "status": "verified",
+              "distance": 3
+            },
+            {
+              "id": "EVID-HI2-11R3-02",
+              "type": "Evidence",
+              "status": "verified",
+              "distance": 3
+            },
+            {
+              "id": "EVID-HI2-11R3-03",
+              "type": "Evidence",
+              "status": "verified",
+              "distance": 3
+            }
+          ],
+          "rejected": []
+        },
+        "deliveryGraph": {
+          "required": true,
+          "blocking": false,
+          "status": "ready",
+          "reasons": [
+            "risk:high"
+          ]
+        },
+        "context": {
+          "hash": "ff26449b39ab9768e9fcd9bb5c84c9e970cecfa78f8a09b795fe2a418962649c",
+          "graphRevision": 35,
+          "contradictions": 0
+        }
+      },
+      "approvals": [
+        {
+          "type": "scope",
+          "status": "approved",
+          "actorType": "human",
+          "scopeId": "HI2-11R3"
+        },
+        {
+          "type": "policy",
+          "status": "approved",
+          "actorType": "human",
+          "scopeId": "HI2-11R3"
+        },
+        {
+          "type": "implementation",
+          "status": "approved",
+          "actorType": "human",
+          "scopeId": "HI2-11R3"
+        }
+      ],
+      "artifactIds": [
+        "ART-HI2-11R3"
+      ],
+      "evidenceIds": [
+        "EVID-HI2-11R3-01",
+        "EVID-HI2-11R3-02",
+        "EVID-HI2-11R3-03"
+      ],
+      "evaluationIds": [
+        "EVAL-HI2-11R3"
+      ],
+      "unresolvedRisks": [],
+      "trace": [
+        {
+          "id": "ART-HI2-11R3",
+          "type": "Artifact",
+          "status": "verified",
+          "nodeHash": "4f0799eae3789bdfedb124509daad845d4701f15a8c5d126131ecfeb8e56723e",
+          "memoryEventId": "GM-000035",
+          "distanceFromObjective": 2
+        },
+        {
+          "id": "EVAL-HI2-11R3",
+          "type": "Evaluation",
+          "status": "verified",
+          "nodeHash": "cc2f5b97e119c6d78bf5947ae7b835f60ecdb6a332382df3d0fe7cc213cec08b",
+          "memoryEventId": "GM-000035",
+          "distanceFromObjective": 3
+        },
+        {
+          "id": "EVID-HI2-11R3-01",
+          "type": "Evidence",
+          "status": "verified",
+          "nodeHash": "ad20251d1eff7432b2c140ce0ff04b740ca7af14e4791fd197f18375af770a1e",
+          "memoryEventId": "GM-000035",
+          "distanceFromObjective": 3
+        },
+        {
+          "id": "EVID-HI2-11R3-02",
+          "type": "Evidence",
+          "status": "verified",
+          "nodeHash": "e8f044b61f202080f565696ab46c506a3a01087173a6206c2e68ae3cd332a159",
+          "memoryEventId": "GM-000035",
+          "distanceFromObjective": 3
+        },
+        {
+          "id": "EVID-HI2-11R3-03",
+          "type": "Evidence",
+          "status": "verified",
+          "nodeHash": "f27cebe495461c8f3e6b8ec064b924bab24a4fce178c0314c43a6c0fa54d0342",
+          "memoryEventId": "GM-000035",
+          "distanceFromObjective": 3
+        }
+      ],
+      "createdAt": "2026-09-20T23:51:17.180Z",
+      "candidateHash": "0f9d735de295d005eb2cd3c26ff99e9c8a2dd4505cbe9b8931ec5d75d6e6569b",
+      "certificationApproval": {
+        "type": "certification",
+        "status": "approved",
+        "actorType": "human",
+        "scopeId": "HI2-11R3",
+        "commitSha": "b2aeba1d994fa49c71eaa1a258b22cc60fd2a0d7",
+        "candidateHash": "0f9d735de295d005eb2cd3c26ff99e9c8a2dd4505cbe9b8931ec5d75d6e6569b",
+        "approvedAt": "2026-09-20T23:51:17.180Z"
+      },
+      "certifiedAt": "2026-09-20T23:51:17.180Z",
+      "certifiedHash": "fa865194b01693f0afbb91b1c75cf8772ebc47fd3f3e35228ac260b14b5d50d8"
     }
   ]
 }
