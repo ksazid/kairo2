@@ -1,7 +1,7 @@
 import { DomainValidationError } from "./index";
-import type { RecommendationExplanation } from "./eei";
-import type { OpportunityValueScores } from "./hunter-ranking";
-import type { TrendIntelligenceSummary } from "./trend-intelligence";
+import { prepareRecommendationExplanation, type RecommendationExplanation } from "./eei";
+import { prepareOpportunityValueScores, type OpportunityValueScores } from "./hunter-ranking";
+import { TREND_STAGES, type TrendIntelligenceSummary } from "./trend-intelligence";
 
 export const OPPORTUNITY_INTELLIGENCE_SCHEMA_VERSION = "2" as const;
 
@@ -99,7 +99,7 @@ export function prepareOpportunityIntelligence(input: OpportunityIntelligenceInp
     whyNow: requiredText(input.whyNow, "whyNow", 1_200),
     brandReason: requiredText(input.brandReason, "brandReason", 1_200),
     audienceReason: requiredText(input.audienceReason, "audienceReason", 1_200),
-    ...(input.trend ? { trend: structuredClone(input.trend) } : {}),
+    ...(input.trend ? { trend: prepareTrendSummary(input.trend) } : {}),
     ...(input.mechanism ? { mechanism: prepareContentMechanism(input.mechanism) } : {}),
     proposedAngle: requiredText(input.proposedAngle, "proposedAngle", 1_200),
     ...(input.hook ? { hook: requiredText(input.hook, "hook", 500) } : {}),
@@ -115,8 +115,8 @@ export function prepareOpportunityIntelligence(input: OpportunityIntelligenceInp
       confidence,
       confidenceLabel,
     },
-    scores: structuredClone(input.scores),
-    explanation: structuredClone(input.explanation),
+    scores: prepareOpportunityValueScores(input.scores),
+    explanation: prepareRecommendationExplanation(input.explanation),
     provenance: {
       snapshotVersion: requiredText(input.provenance.snapshotVersion, "provenance.snapshotVersion", 300),
       planVersion: requiredText(input.provenance.planVersion, "provenance.planVersion", 300),
@@ -215,6 +215,19 @@ export function confidenceLabelFor(confidence: number): OpportunityIntelligence[
   if (confidence >= 0.8) return "High";
   if (confidence >= 0.55) return "Medium";
   return "Emerging";
+}
+
+function prepareTrendSummary(input: TrendIntelligenceSummary): TrendIntelligenceSummary {
+  if (!TREND_STAGES.includes(input.stage)) throw new DomainValidationError("trend.stage is not supported");
+  return {
+    trendId: requiredText(input.trendId, "trend.trendId", 200),
+    topic: requiredText(input.topic, "trend.topic", 300),
+    stage: input.stage,
+    velocity: score(input.velocity, "trend.velocity"),
+    acceleration: score(input.acceleration, "trend.acceleration"),
+    saturation: score(input.saturation, "trend.saturation"),
+    evidenceConfidence: score(input.evidenceConfidence, "trend.evidenceConfidence"),
+  };
 }
 
 function score(value: unknown, field: string): number {
