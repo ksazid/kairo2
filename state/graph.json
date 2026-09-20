@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "version": 2,
-  "revision": 12,
+  "revision": 13,
   "nodes": [
     {
       "id": "OBJ-001",
@@ -580,6 +580,20 @@
         "sourceIds": [],
         "recordedAt": "2026-09-20T01:28:00.000Z"
       }
+    },
+    {
+      "id": "RUN-HI2-02R-03",
+      "type": "AgentRun",
+      "status": "failed",
+      "title": "Governance revalidation exposed stale historical gate re-evaluation in HI2-01 certification test",
+      "memoryProvenance": {
+        "eventId": "GM-000013",
+        "revision": 13,
+        "actorId": "pes-v2-hunter-semantic",
+        "runId": "HI2-02R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T01:30:00.000Z"
+      }
     }
   ],
   "edges": [
@@ -1026,6 +1040,20 @@
         "sourceIds": [],
         "recordedAt": "2026-09-20T01:28:00.000Z"
       }
+    },
+    {
+      "id": "EDGE-RUN-HI2-02R-03-ABOUT-TASK",
+      "type": "ABOUT",
+      "from": "RUN-HI2-02R-03",
+      "to": "TASK-HI2-02R",
+      "memoryProvenance": {
+        "eventId": "GM-000013",
+        "revision": 13,
+        "actorId": "pes-v2-hunter-semantic",
+        "runId": "HI2-02R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T01:30:00.000Z"
+      }
     }
   ],
   "events": [
@@ -1262,6 +1290,22 @@
         "EDGE-EVID-HI2-02R-02-SUPPORTS-ART"
       ],
       "recordedAt": "2026-09-20T01:28:00.000Z"
+    },
+    {
+      "id": "GM-000013",
+      "revision": 13,
+      "operation": "append",
+      "actorId": "pes-v2-hunter-semantic",
+      "runId": "HI2-02R",
+      "reason": "Record governance regression discovered after append-only semantic lineage update",
+      "sourceIds": [],
+      "addedNodeIds": [
+        "RUN-HI2-02R-03"
+      ],
+      "addedEdgeIds": [
+        "EDGE-RUN-HI2-02R-03-ABOUT-TASK"
+      ],
+      "recordedAt": "2026-09-20T01:30:00.000Z"
     }
   ]
 }
