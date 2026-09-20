@@ -157,7 +157,8 @@ function intentsForTopic(topic: BrandDiscoveryTopic, preferenceState: BrandPrefe
     make("outlier", "lexical-search", topic.name + " unusual performance breakout case study", topic.name + " creator-relative outlier category-relative outlier", "Find public examples that may be performing unusually well relative to their context."),
     make("authority", "lexical-search", topic.name + " official research report data", topic.name + " primary source research evidence", "Increase authoritative and primary-source recall."),
     make("evergreen", "lexical-search", topic.name + " guide checklist common mistakes questions", topic.name + " durable educational questions checklist", "Retrieve durable, recurring educational opportunities.", priority, Math.min(maxResults, 6)),
-    make("adjacent-exploration", "semantic-expansion", topic.name + " adjacent topics " + audience, topic.name + " " + audience + " adjacent related interests", "Expand semantically around the core topic within a bounded exploration budget.", "exploration", Math.min(maxResults, 6)),
+    make("adjacent-exploration", "lexical-search", topic.name + " adjacent emerging topics " + audience, topic.name + " " + audience + " adjacent related interests", "Retrieve bounded Brand-adjacent public signals so exploration has real evidence rather than synthetic quota.", "exploration", Math.min(maxResults, 6)),
+    make("adjacent-exploration", "semantic-expansion", topic.name + " semantic adjacent topics " + audience, topic.name + " " + audience + " adjacent related interests", "Expand semantically around the core topic within a bounded exploration budget.", "exploration", Math.min(maxResults, 6)),
     make("cross-source-confirmation", "corroboration", topic.name + " corroboration", topic.name + " independent cross-source confirmation", "Measure whether independently retrieved signals converge on the same subject.", priority, Math.min(maxResults, 8)),
   ];
 }

@@ -78,18 +78,27 @@ const context: HunterShadowExecutionContext = {
 const tools: ToolGatewayPort = {
   async invoke<TOutput>(request: ToolRequest): Promise<ToolResult<TOutput>> {
     if (request.capability === "public-content-search") {
+      const query = String(request.input.query ?? "");
+      const source = String(request.input.source ?? "agent-reach");
+      const exploration = query.includes("adjacent emerging topics");
       return {
         output: [{
-          title: "AI agents move into production workflows",
-          summary: "Teams are adopting agent workflows with stronger evaluation and observability.",
-          sourceUrl: "https://example.com/agents",
-          platform: "web",
-          publisher: "Example Research",
+          title: exploration
+            ? "Developer workflow governance shifts around autonomous tools"
+            : "AI agents move into production workflows",
+          summary: exploration
+            ? "Teams are examining adjacent governance and workflow patterns around autonomous developer tooling."
+            : "Teams are adopting agent workflows with stronger evaluation and observability.",
+          sourceUrl: exploration
+            ? "https://example.com/autonomous-workflow-governance"
+            : "https://example.com/agents",
+          platform: source === "rss" ? "rss" : "web",
+          publisher: exploration ? "Adjacent Research" : "Example Research",
           publishedAt: "2026-09-20T08:00:00Z",
           retrievedAt: "2026-09-20T10:00:00Z",
-          provider: "agent-reach",
+          provider: source,
           providerVersion: "test",
-          contentHash: "a".repeat(64),
+          contentHash: (exploration ? "c" : "a").repeat(64),
         }] as TOutput,
         provenance: [],
       };
@@ -185,9 +194,11 @@ describe("read-only Hunter shadow lane adapters", () => {
       loadContext: async () => context,
       tools,
       runtime,
-      searchCostUsdBySource: { "agent-reach": 0 },
+      searchCostUsdBySource: { "agent-reach": 0.007 },
       candidate: {
-        maxExternalCalls: 8,
+        maxIntents: 6,
+        maxSourcesPerIntent: 2,
+        maxExternalCalls: 6,
         maxSemanticCalls: 0,
         deepLimit: 2,
         maxCandidates: 5,
@@ -198,6 +209,9 @@ describe("read-only Hunter shadow lane adapters", () => {
 
     expect(pair.pair.control.qualityScore).toBeGreaterThan(0.6);
     expect(pair.pair.candidate.qualityScore).toBeGreaterThan(0.5);
+    expect(pair.observation.retrievalCoverage).toBeGreaterThan(0);
+    expect(pair.observation.v2CostUsd).toBeGreaterThan(0);
+    expect(pair.observation.explorationShare).toBeGreaterThan(0);
     expect(pair.pair.candidate.persistenceAttempted).toBe(false);
     expect(pair.pair.candidate.productionGuardIntact).toBe(true);
     expect(pair.pair.candidate.provenanceComplete).toBe(true);

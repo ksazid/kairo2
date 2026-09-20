@@ -60,6 +60,9 @@ describe("Hunter retrieval plan", () => {
     for (const generator of HUNTER_RETRIEVAL_GENERATORS) expect(generators.has(generator)).toBe(true);
     expect(plan.intents.every((intent) => intent.topicId === "ev-battery-health")).toBe(true);
     expect(plan.intents.every((intent) => intent.maxResults >= 1 && intent.maxResults <= 20)).toBe(true);
+    const exploration = plan.intents.filter((intent) => intent.generator === "adjacent-exploration");
+    expect(exploration.some((intent) => intent.mode === "lexical-search")).toBe(true);
+    expect(exploration.some((intent) => intent.mode === "semantic-expansion")).toBe(true);
   });
 
   it("promotes explicit exclusions and strong negative preferences into hard negatives", () => {

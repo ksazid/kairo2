@@ -96,6 +96,7 @@ function cluster(id: string, topic: string, overrides: Partial<ShadowTrendCluste
     sourceKeys: ["rss:web", "youtube:youtube"],
     platformKeys: ["web", "youtube"],
     publisherKeys: ["a", "b"],
+    generatorKeys: ["brand-core"],
   };
 }
 
@@ -116,6 +117,22 @@ describe("runShadowMultiStageIntelligence", () => {
     expect(run.preRanked[0]!.matchedTopicId).toBe("ev-battery-health");
     expect(run.preRanked[0]!.preRank.unknownFeatures).toContain("brandSemanticSimilarity");
     expect(run.diagnostics.deepRequestedCount).toBe(0);
+  });
+
+  it("marks exploration-only retrieval clusters as bounded exploration candidates", async () => {
+    const explorationCluster = cluster("trend-explore", "EV battery health");
+    explorationCluster.generatorKeys = ["adjacent-exploration"];
+
+    const run = await runShadowMultiStageIntelligence({
+      clusters: [explorationCluster],
+      plan,
+      preferenceState: preference,
+      options: { preRankLimit: 1, deepLimit: 0 },
+    });
+
+    expect(run.preRanked).toHaveLength(1);
+    expect(run.preRanked[0]!.explorationEligible).toBe(true);
+    expect(run.preRanked[0]!.topicFit).toBeLessThanOrEqual(0.25);
   });
 
   it("bounds deep analysis to the configured top set and validates outputs", async () => {

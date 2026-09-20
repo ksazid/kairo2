@@ -27,6 +27,7 @@ export interface TrendSignalObservation {
   publisher?: string;
   publishedAt?: string;
   topicIds: string[];
+  generatorKeys: string[];
   corroboratingSignalIds: string[];
   metrics?: TrendSignalMetrics;
 }
@@ -59,6 +60,7 @@ export interface ShadowTrendCluster {
   sourceKeys: string[];
   platformKeys: string[];
   publisherKeys: string[];
+  generatorKeys: string[];
 }
 
 export interface ShadowTrendDiagnostics {
@@ -222,6 +224,7 @@ function buildCluster(
   const sourceKeys = unique(sorted.map(sourceIdentity));
   const platformKeys = unique(sorted.map((signal) => normalizeKey(signal.platform || signal.provider)));
   const publisherKeys = unique(sorted.map(publisherIdentity));
+  const generatorKeys = unique(sorted.flatMap((signal) => signal.generatorKeys));
   const corroboratedSignalCount = sorted.filter((signal) => signal.corroboratingSignalIds.length > 0).length;
 
   const observedTimes = sorted
@@ -285,7 +288,9 @@ function buildCluster(
   );
 
   const topicId = dominantTopicId(sorted);
-  const topic = topicLabels?.[topicId] ?? topicId ?? sorted[0]?.title ?? "Untitled trend";
+  const topic = isExplorationOnly(generatorKeys)
+    ? representativeExplorationTopic(sorted)
+    : topicLabels?.[topicId] ?? topicId ?? sorted[0]?.title ?? "Untitled trend";
   const stage = classifyStage({
     signalCount: sorted.length,
     freshness,
@@ -334,7 +339,32 @@ function buildCluster(
     sourceKeys,
     platformKeys,
     publisherKeys,
+    generatorKeys,
   };
+}
+
+
+function isExplorationOnly(generatorKeys: readonly string[]): boolean {
+  return (
+    generatorKeys.includes("adjacent-exploration") &&
+    generatorKeys.every(
+      (generator) =>
+        generator === "adjacent-exploration" ||
+        generator === "cross-source-confirmation",
+    )
+  );
+}
+
+function representativeExplorationTopic(
+  signals: readonly TrendSignalObservation[],
+): string {
+  const representative = [...signals]
+    .sort((left, right) =>
+      (right.corroboratingSignalIds.length - left.corroboratingSignalIds.length) ||
+      left.signalId.localeCompare(right.signalId)
+    )[0];
+  const title = representative?.title.trim() ?? "";
+  return title.slice(0, 180) || "Adjacent exploration";
 }
 
 function classifyStage(input: {
@@ -372,6 +402,7 @@ function toObservation(candidate: ShadowRetrievalCandidate, metrics?: TrendSigna
     ...(candidate.publisher ? { publisher: candidate.publisher } : {}),
     ...(candidate.publishedAt ? { publishedAt: candidate.publishedAt } : {}),
     topicIds: [...candidate.topicIds],
+    generatorKeys: [...candidate.generatorKeys],
     corroboratingSignalIds: [...candidate.corroboratingKeys],
     ...(metrics ? { metrics: { ...metrics } } : {}),
   };

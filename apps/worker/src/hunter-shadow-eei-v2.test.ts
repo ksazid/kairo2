@@ -38,6 +38,7 @@ function item(
   source: string,
   saturation = 0.2,
   duplicationPenalty = 0,
+  explorationEligible = topicFit < 0.32,
 ): ShadowPreRankedTrend {
   return {
     candidateId: id,
@@ -73,9 +74,11 @@ function item(
       sourceKeys: [source],
       platformKeys: ["web"],
       publisherKeys: [source + "-publisher"],
+      generatorKeys: explorationEligible ? ["adjacent-exploration"] : ["brand-core"],
     },
     topicFit,
     sourceClasses: ["Industry news"],
+    explorationEligible,
     preRank: {
       schemaVersion: "1",
       candidateId: id,
@@ -119,6 +122,29 @@ describe("shadow Preference-aware EEI V2", () => {
     expect(run.selected.filter((value) => value.bucket === "exploration").every((value) =>
       value.explanation.uncertainty?.includes("lower known preference affinity")
     )).toBe(true);
+  });
+
+
+  it("keeps explicit evidence-backed exploration in the exploration bucket even when preferences favor the parent topic", () => {
+    const explicitExploration = item(
+      "exp-parent",
+      "core topic",
+      0.9,
+      "exp-source",
+      0.2,
+      0,
+      true,
+    );
+
+    const run = runShadowPreferenceAwareEEI({
+      preRanked: [explicitExploration],
+      preferenceState,
+      options: { maxCandidates: 1 },
+    });
+
+    expect(run.selected).toHaveLength(1);
+    expect(run.selected[0]!.bucket).toBe("exploration");
+    expect(run.diagnostics.explorationSelectedCount).toBe(1);
   });
 
   it("blocks manipulation, strong negative preferences and exhausted saturated duplicates", () => {

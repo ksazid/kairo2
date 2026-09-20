@@ -17,6 +17,7 @@ export interface ShadowPreRankedTrend {
   matchedTopicId?: string;
   audience?: string;
   sourceClasses: string[];
+  explorationEligible: boolean;
   preRank: HunterPreRankScore;
 }
 
@@ -78,6 +79,16 @@ export async function runShadowMultiStageIntelligence(input: {
   const allPreRanked = boundedClusters.map((cluster) => {
     const topicMatch = bestTopicMatch(cluster.intelligence.topic, input.plan.topics);
     const candidateId = cluster.intelligence.trendId;
+    const explorationEligible =
+      cluster.generatorKeys.includes("adjacent-exploration") &&
+      cluster.generatorKeys.every(
+        (generator) =>
+          generator === "adjacent-exploration" ||
+          generator === "cross-source-confirmation",
+      );
+    const topicFit = explorationEligible
+      ? Math.min(topicMatch?.fit ?? 0, 0.25)
+      : topicMatch?.fit ?? 0;
     const preferenceAffinity = preferenceAffinityFor(
       cluster.intelligence.topic,
       topicMatch?.topic,
@@ -93,7 +104,7 @@ export async function runShadowMultiStageIntelligence(input: {
       ...(lookupOptionalScore(options.brandSemanticSimilarityByCandidateId, candidateId) !== undefined
         ? { brandSemanticSimilarity: lookupOptionalScore(options.brandSemanticSimilarityByCandidateId, candidateId)! }
         : {}),
-      topicFit: topicMatch?.fit ?? 0,
+      topicFit,
       evidenceStrength: cluster.intelligence.evidenceConfidence,
       freshness: cluster.intelligence.freshness,
       trendMomentum,
@@ -111,9 +122,10 @@ export async function runShadowMultiStageIntelligence(input: {
     return {
       candidateId,
       cluster,
-      topicFit: topicMatch?.fit ?? 0,
+      topicFit,
       ...(topicMatch ? { matchedTopicId: topicMatch.topic.id, audience: topicMatch.topic.audience } : {}),
       sourceClasses: topicMatch ? [...topicMatch.topic.sourceClasses] : [],
+      explorationEligible,
       preRank,
     } satisfies ShadowPreRankedTrend;
   });

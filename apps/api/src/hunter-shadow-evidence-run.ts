@@ -91,6 +91,15 @@ export interface HunterShadowOperationalEvidence {
   }>;
 }
 
+export const HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE = {
+  maxIntents: 6,
+  maxSourcesPerIntent: 2,
+  maxExternalCalls: 6,
+  maxSemanticCalls: 0,
+  deepLimit: 2,
+  maxCandidates: 10,
+} as const;
+
 export interface ExecuteHunterShadowEvidenceOptions {
   pool: Pool;
   store: KairoRepository;
@@ -340,14 +349,7 @@ export async function executeHunterShadowEvidenceRun(
     runtime: options.runtime,
     sourceRegistry: options.sourceRegistry,
     searchCostUsdBySource: options.searchCostUsdBySource ?? {},
-    candidate: {
-      maxIntents: 6,
-      maxSourcesPerIntent: 1,
-      maxExternalCalls: 6,
-      maxSemanticCalls: 0,
-      deepLimit: 2,
-      maxCandidates: 10,
-    },
+    candidate: HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE,
   });
   const batch = await runHunterShadowEvidenceBatch(runs, executor);
   return redactOperationalEvidence(
