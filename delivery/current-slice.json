@@ -1,55 +1,48 @@
 {
   "activeSlice": {
-    "id": "HI2-09R",
-    "objectiveId": "OBJ-HI2-09R",
-    "state": "certified",
+    "id": "HI2-10R",
+    "objectiveId": "OBJ-HI2-10R",
+    "state": "implementing",
     "riskLevel": "high",
-    "implementationPermission": "runtime-disabled",
-    "scope": "Add fail-closed Hunter V2 controlled-rollout readiness evaluation: shadow quality/safety evidence, canary eligibility, canary outcome guardrails, kill-switch conditions and explicit production-enable approval requirement. No rollout, deployment or production wiring is performed.",
+    "implementationPermission": "runtime-enabled",
+    "scope": "Build read-only Hunter V2 shadow-evidence collection and deterministic rollout observations for the HI2-09R shadow-to-canary gate. Hunter V1 retains production authority. No opportunity persistence, scheduler change, canary exposure, feature activation or production-enable action is permitted.",
     "budget": {
-      "maxModelCalls": 0,
+      "maxModelCalls": 8,
       "maxSubAgents": 0,
       "maxConcurrentWorkers": 1,
       "maxToolCalls": 40,
       "maxWallClockMinutes": 45,
       "maxRetries": 2,
-      "maxGraphWrites": 12
+      "maxGraphWrites": 20
     },
     "approvals": [
       {
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-09R"
+        "scopeId": "HI2-10R"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-09R"
+        "scopeId": "HI2-10R"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-09R"
+        "scopeId": "HI2-10R"
       }
     ],
     "successCriteria": [
-      "Shadow-to-canary readiness requires minimum run/Brand coverage, quality non-regression, retrieval coverage, bounded cost/latency and zero critical safety/tenant violations.",
-      "Canary-to-production readiness additionally requires minimum canary exposure, user-outcome non-regression and no kill-switch condition.",
-      "Exploration share and topic concentration must remain inside certified EEI policy bounds.",
-      "Any critical tenant, manipulation, persistence-authority or evidence-provenance violation forces hold/kill-switch.",
-      "Production readiness remains false unless a separate explicit human production-enable approval is supplied.",
-      "No production Hunter wiring, feature activation, Vercel deployment, scheduler change or persistence mutation is introduced.",
+      "Every shadow observation is paired to one comparison run and one expected workspace/Brand scope.",
+      "Cross-tenant evidence, missing provenance, manipulation-safety failure, persistence attempts and production-guard bypasses become critical rollout violations.",
+      "Retrieval coverage, quality delta inputs, latency, cost, failure rate, EEI exploration share and topic concentration are derived deterministically.",
+      "Shadow collection remains read-only and cannot persist Hunter V2 opportunities or mutate production learning state.",
+      "Hunter V1 remains the only production-authoritative recommendation path.",
+      "No canary exposure, scheduler activation, Vercel deployment or production-enable action occurs in this slice.",
       "PES v2 CI and Security baseline pass before certification."
-    ],
-    "certification": {
-      "bundleId": "CERT-HI2-09R-A3148E02",
-      "commitSha": "a3148e02e006f7c9a491648144dcaea14d5370b7",
-      "candidateHash": "25eabb761e15463a902ac24f5e62c39107d64478bf01e2012f33664d1e03466a",
-      "certifiedHash": "ef1a2526a3672fe50c451f1882a414d4ad400667dc2db157dcd402c14cac9ad8",
-      "certifiedAt": "2026-09-20T13:50:00+02:00"
-    }
+    ]
   }
 }
