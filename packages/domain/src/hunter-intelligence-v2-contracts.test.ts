@@ -31,35 +31,6 @@ const ranking = prepareOpportunityValueScores({
   recentRejectionSimilarityPenalty: 0,
   overall: 0.84,
   rankingVersion: "hunter-v2-deterministic-1",
-  it("projects canonical V2 recommendation meaning over legacy opportunity display fields", () => {
-    const base = {
-      id: "opportunity-1",
-      workspaceId: "workspace-1",
-      brandId: "brand-1",
-      title: "Legacy title",
-      rationale: "Legacy rationale",
-      whyNow: "Legacy timing",
-      developmentDirection: "Legacy direction",
-      status: "new" as const,
-      signalIds: ["signal-1"],
-      scores: { relevance: .8, evidence: .8, novelty: .8, timeliness: .8, brandAuthority: .8, audienceFit: .8, overall: .8, scoringVersion: "v1" },
-      brandContextVersion: "snapshot-7",
-      details: {
-        topic: "EVs", proposedAngle: "legacy", hook: "legacy", targetAudience: "buyers", objective: "educate",
-        recommendedFormat: "carousel", recommendedChannel: "instagram", supportingSourceIds: ["signal-1"],
-        confidence: .7, estimatedEffort: "medium" as const,
-      },
-      createdAt: "2026-09-20T10:00:00Z",
-      updatedAt: "2026-09-20T10:00:00Z",
-    };
-    const projected = projectOpportunityFromIntelligence(base, opportunity);
-    expect(projected.title).toBe(opportunity.title);
-    expect(projected.rationale).toBe(opportunity.sanitizedSummary);
-    expect(projected.developmentDirection).toBe(opportunity.proposedAngle);
-    expect(projected.details?.confidence).toBe(opportunity.evidence.confidence);
-    expect(projected.intelligence?.provenance.eeiVersion).toBe("eei-v1");
-  });
-
 });
 
 const trend = prepareTrendIntelligence({
@@ -279,4 +250,70 @@ describe("Hunter Intelligence V2 contracts", () => {
       idempotencyKey: "feedback-2:keep_scrolling",
     })).toThrow("feedback action is not supported");
   });
+  it("projects canonical V2 recommendation meaning over legacy opportunity display fields", () => {
+    const opportunity = prepareOpportunityIntelligence({
+      id: "opportunity-project",
+      workspaceId: "workspace-1",
+      brandId: "brand-1",
+      title: "Canonical battery-health recommendation",
+      sanitizedSummary: "Battery-health checks are increasingly relevant to used EV buyers.",
+      whyNow: "Recent public evidence makes the topic timely.",
+      brandReason: "The Brand teaches practical EV ownership decisions.",
+      audienceReason: "The priority audience includes first-time EV buyers.",
+      proposedAngle: "Explain five checks before purchasing a used EV.",
+      targetAudience: "First-time EV buyers",
+      recommendedFormat: "carousel",
+      recommendedChannel: "instagram",
+      evidence: {
+        signalIds: ["signal-1"],
+        sourceCount: 1,
+        independentPublisherCount: 1,
+        sourceClasses: ["industry-news"],
+        confidence: 0.86,
+        confidenceLabel: "High",
+      },
+      scores: ranking,
+      explanation: {
+        whyRecommended: "The topic aligns with Brand authority and current audience need.",
+        evidenceSummary: "A current public signal supports the opportunity.",
+        brandFitReason: "The Brand covers practical EV ownership.",
+        userControl: "Dismiss or mark the recommendation irrelevant.",
+      },
+      provenance: {
+        snapshotVersion: "snapshot-7",
+        planVersion: "plan-7",
+        hunterRunId: "run-7",
+        rankingVersion: "hunter-v2-deterministic-1",
+        eeiVersion: "eei-v1",
+      },
+      createdAt: "2026-09-20T10:00:00Z",
+    });
+    const base = {
+      id: "opportunity-project",
+      workspaceId: "workspace-1",
+      brandId: "brand-1",
+      title: "Legacy title",
+      rationale: "Legacy rationale",
+      whyNow: "Legacy timing",
+      developmentDirection: "Legacy direction",
+      status: "new" as const,
+      signalIds: ["signal-1"],
+      scores: { relevance: .8, evidence: .8, novelty: .8, timeliness: .8, brandAuthority: .8, audienceFit: .8, overall: .8, scoringVersion: "v1" },
+      brandContextVersion: "snapshot-7",
+      details: {
+        topic: "EVs", proposedAngle: "legacy", hook: "legacy", targetAudience: "buyers", objective: "educate",
+        recommendedFormat: "carousel", recommendedChannel: "instagram", supportingSourceIds: ["signal-1"],
+        confidence: .7, estimatedEffort: "medium" as const,
+      },
+      createdAt: "2026-09-20T10:00:00Z",
+      updatedAt: "2026-09-20T10:00:00Z",
+    };
+    const projected = projectOpportunityFromIntelligence(base, opportunity);
+    expect(projected.title).toBe(opportunity.title);
+    expect(projected.rationale).toBe(opportunity.sanitizedSummary);
+    expect(projected.developmentDirection).toBe(opportunity.proposedAngle);
+    expect(projected.details?.confidence).toBe(opportunity.evidence.confidence);
+    expect(projected.intelligence?.provenance.eeiVersion).toBe("eei-v1");
+  });
+
 });
