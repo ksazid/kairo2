@@ -210,6 +210,11 @@ export function runShadowPreferenceAwareEEI(input: {
         )
         .filter((item) => (topicCounts.get(normalize(item.topic)) ?? 0) < topicLimit)
         .sort((left, right) => {
+          if (left.bucket === "exploration" && right.bucket === "exploration") {
+            const affinityDelta =
+              (right.preferenceAffinity ?? 0) - (left.preferenceAffinity ?? 0);
+            if (Math.abs(affinityDelta) > 1e-9) return affinityDelta;
+          }
           const leftCount = sourceCounts.get(primarySourceKey(left)) ?? 0;
           const rightCount = sourceCounts.get(primarySourceKey(right)) ?? 0;
           return leftCount - rightCount || compareRankedItems(left, right);
