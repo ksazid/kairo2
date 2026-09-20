@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { BrandIntelligenceSnapshot } from "@kairo/domain/brand-intelligence-snapshot";
 import type { BrandDiscoveryPlan } from "@kairo/domain/brand-discovery-plan";
 import {
+  HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE,
   hunterShadowEvidenceRequestFromEnv,
   hunterShadowSearchCostUsdBySourceFromEnv,
   resolveReadOnlyDiscoveryPlan,
@@ -158,6 +159,17 @@ describe("Hunter shadow operational evidence", () => {
     expect(fields.slice(0, 5).every((field) => field.sourceIds[0] === "about-source")).toBe(true);
     expect(fields[5]!.sourceIds).toEqual(["policy-source"]);
     expect(fields.every((field) => field.value.trim().length > 20)).toBe(true);
+  });
+
+  it("keeps the operational V2 profile on bounded multi-source retrieval with a reserved exploration-capable plan", () => {
+    expect(HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE).toEqual({
+      maxIntents: 6,
+      maxSourcesPerIntent: 2,
+      maxExternalCalls: 6,
+      maxSemanticCalls: 0,
+      deepLimit: 2,
+      maxCandidates: 10,
+    });
   });
 
   it("requires explicit Agent Reach cost metering when Exa is enabled", () => {
