@@ -185,6 +185,7 @@ describe("read-only Hunter shadow lane adapters", () => {
       loadContext: async () => context,
       tools,
       runtime,
+      searchCostUsdBySource: { "agent-reach": 0 },
       candidate: {
         maxExternalCalls: 8,
         maxSemanticCalls: 0,
@@ -214,6 +215,7 @@ describe("read-only Hunter shadow lane adapters", () => {
       }),
       tools,
       runtime,
+      searchCostUsdBySource: { "agent-reach": 0 },
     });
 
     await expect(executor.runControl(run)).rejects.toThrow(/workspace and Brand/);
