@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "version": 2,
-  "revision": 21,
+  "revision": 22,
   "nodes": [
     {
       "id": "OBJ-001",
@@ -1235,6 +1235,129 @@
         "sourceIds": [],
         "recordedAt": "2026-09-20T09:27:18.000Z"
       }
+    },
+    {
+      "id": "OBJ-HI2-08R",
+      "type": "Objective",
+      "status": "active",
+      "title": "Establish shadow-only outcome attribution for Hunter",
+      "successCriteria": [
+        "Outcome attribution requires explicit opportunity-content-publish lineage.",
+        "Only compatible Brand-relative baselines and observed metrics contribute.",
+        "Attribution reports association rather than causation.",
+        "Confidence reflects lineage, baseline strength, freshness and metric coverage.",
+        "Positive performance memory is proposed only behind confidence/lift gates."
+      ],
+      "memoryProvenance": {
+        "eventId": "GM-000022",
+        "revision": 22,
+        "actorId": "pes-v2-hunter-outcome",
+        "runId": "HI2-08R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T10:27:00.000Z"
+      }
+    },
+    {
+      "id": "TASK-HI2-08R",
+      "type": "Task",
+      "status": "active",
+      "objectiveId": "OBJ-HI2-08R",
+      "title": "Implement Brand-relative outcome attribution and gated performance-memory proposals",
+      "memoryProvenance": {
+        "eventId": "GM-000022",
+        "revision": 22,
+        "actorId": "pes-v2-hunter-outcome",
+        "runId": "HI2-08R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T10:27:00.000Z"
+      }
+    },
+    {
+      "id": "RUN-HI2-08R-01",
+      "type": "AgentRun",
+      "status": "failed",
+      "title": "Initial stacked HI2-08R validation was blocked by inherited malformed Feedback V2 test fixture",
+      "memoryProvenance": {
+        "eventId": "GM-000022",
+        "revision": 22,
+        "actorId": "pes-v2-hunter-outcome",
+        "runId": "HI2-08R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T10:27:00.000Z"
+      }
+    },
+    {
+      "id": "RUN-HI2-08R-02",
+      "type": "AgentRun",
+      "status": "verified",
+      "title": "Rebased HI2-08R exact implementation passed PESv2 CI and Security",
+      "memoryProvenance": {
+        "eventId": "GM-000022",
+        "revision": 22,
+        "actorId": "pes-v2-hunter-outcome",
+        "runId": "HI2-08R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T10:27:00.000Z"
+      }
+    },
+    {
+      "id": "ART-HI2-08R",
+      "type": "Artifact",
+      "status": "verified",
+      "title": "Hunter Outcome Attribution shadow engine",
+      "runId": "HI2-08R",
+      "version": "164d3112c130ef80ec55cee65f4c000b788c3d2d",
+      "memoryProvenance": {
+        "eventId": "GM-000022",
+        "revision": 22,
+        "actorId": "pes-v2-hunter-outcome",
+        "runId": "HI2-08R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T10:27:00.000Z"
+      }
+    },
+    {
+      "id": "EVAL-HI2-08R",
+      "type": "Evaluation",
+      "status": "verified",
+      "title": "PESv2 validated lineage isolation, baseline specificity, signed lift, uncertainty and non-causal performance memory",
+      "rubricId": "hunter-outcome-attribution-shadow-preflight",
+      "memoryProvenance": {
+        "eventId": "GM-000022",
+        "revision": 22,
+        "actorId": "pes-v2-hunter-outcome",
+        "runId": "HI2-08R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T10:27:00.000Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-08R-01",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "GitHub PES v2 CI run 35502635077 passed for PR #15 head 164d3112c130ef80ec55cee65f4c000b788c3d2d",
+      "memoryProvenance": {
+        "eventId": "GM-000022",
+        "revision": 22,
+        "actorId": "pes-v2-hunter-outcome",
+        "runId": "HI2-08R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T10:27:00.000Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-08R-02",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "GitHub Security baseline run 35502635211 passed for PR #15 head 164d3112c130ef80ec55cee65f4c000b788c3d2d",
+      "memoryProvenance": {
+        "eventId": "GM-000022",
+        "revision": 22,
+        "actorId": "pes-v2-hunter-outcome",
+        "runId": "HI2-08R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T10:27:00.000Z"
+      }
     }
   ],
   "edges": [
@@ -2253,6 +2376,112 @@
         "sourceIds": [],
         "recordedAt": "2026-09-20T09:27:18.000Z"
       }
+    },
+    {
+      "id": "EDGE-OBJ-HI2-08R-TASK",
+      "type": "IMPLEMENTED_BY",
+      "from": "OBJ-HI2-08R",
+      "to": "TASK-HI2-08R",
+      "memoryProvenance": {
+        "eventId": "GM-000022",
+        "revision": 22,
+        "actorId": "pes-v2-hunter-outcome",
+        "runId": "HI2-08R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T10:27:00.000Z"
+      }
+    },
+    {
+      "id": "EDGE-RUN-HI2-08R-01-ABOUT-TASK",
+      "type": "ABOUT",
+      "from": "RUN-HI2-08R-01",
+      "to": "TASK-HI2-08R",
+      "memoryProvenance": {
+        "eventId": "GM-000022",
+        "revision": 22,
+        "actorId": "pes-v2-hunter-outcome",
+        "runId": "HI2-08R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T10:27:00.000Z"
+      }
+    },
+    {
+      "id": "EDGE-TASK-HI2-08R-PRODUCED-ART",
+      "type": "PRODUCED",
+      "from": "TASK-HI2-08R",
+      "to": "ART-HI2-08R",
+      "memoryProvenance": {
+        "eventId": "GM-000022",
+        "revision": 22,
+        "actorId": "pes-v2-hunter-outcome",
+        "runId": "HI2-08R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T10:27:00.000Z"
+      }
+    },
+    {
+      "id": "EDGE-RUN-HI2-08R-02-PRODUCED-ART",
+      "type": "PRODUCED",
+      "from": "RUN-HI2-08R-02",
+      "to": "ART-HI2-08R",
+      "memoryProvenance": {
+        "eventId": "GM-000022",
+        "revision": 22,
+        "actorId": "pes-v2-hunter-outcome",
+        "runId": "HI2-08R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T10:27:00.000Z"
+      }
+    },
+    {
+      "id": "EDGE-EVAL-HI2-08R-EVALUATES-ART",
+      "type": "EVALUATES",
+      "from": "EVAL-HI2-08R",
+      "to": "ART-HI2-08R",
+      "memoryProvenance": {
+        "eventId": "GM-000022",
+        "revision": 22,
+        "actorId": "pes-v2-hunter-outcome",
+        "runId": "HI2-08R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T10:27:00.000Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-08R-01-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-08R-01",
+      "to": "ART-HI2-08R",
+      "provenance": {
+        "kind": "github-actions",
+        "runId": "35502635077"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000022",
+        "revision": 22,
+        "actorId": "pes-v2-hunter-outcome",
+        "runId": "HI2-08R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T10:27:00.000Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-08R-02-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-08R-02",
+      "to": "ART-HI2-08R",
+      "provenance": {
+        "kind": "github-actions",
+        "runId": "35502635211"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000022",
+        "revision": 22,
+        "actorId": "pes-v2-hunter-outcome",
+        "runId": "HI2-08R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T10:27:00.000Z"
+      }
     }
   ],
   "events": [
@@ -2696,6 +2925,35 @@
         "EDGE-EVID-HI2-07R-02-SUPPORTS-ART"
       ],
       "recordedAt": "2026-09-20T09:27:18.000Z"
+    },
+    {
+      "id": "GM-000022",
+      "revision": 22,
+      "operation": "append",
+      "actorId": "pes-v2-hunter-outcome",
+      "runId": "HI2-08R",
+      "reason": "Record rebased exact-SHA HI2-08R attribution artifact and successful CI/Security evidence",
+      "sourceIds": [],
+      "addedNodeIds": [
+        "OBJ-HI2-08R",
+        "TASK-HI2-08R",
+        "RUN-HI2-08R-01",
+        "RUN-HI2-08R-02",
+        "ART-HI2-08R",
+        "EVAL-HI2-08R",
+        "EVID-HI2-08R-01",
+        "EVID-HI2-08R-02"
+      ],
+      "addedEdgeIds": [
+        "EDGE-OBJ-HI2-08R-TASK",
+        "EDGE-RUN-HI2-08R-01-ABOUT-TASK",
+        "EDGE-TASK-HI2-08R-PRODUCED-ART",
+        "EDGE-RUN-HI2-08R-02-PRODUCED-ART",
+        "EDGE-EVAL-HI2-08R-EVALUATES-ART",
+        "EDGE-EVID-HI2-08R-01-SUPPORTS-ART",
+        "EDGE-EVID-HI2-08R-02-SUPPORTS-ART"
+      ],
+      "recordedAt": "2026-09-20T10:27:00.000Z"
     }
   ]
 }

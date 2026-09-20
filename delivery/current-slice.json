@@ -1,11 +1,11 @@
 {
   "activeSlice": {
-    "id": "HI2-07R",
-    "objectiveId": "OBJ-HI2-07R",
+    "id": "HI2-08R",
+    "objectiveId": "OBJ-HI2-08R",
     "state": "certified",
     "riskLevel": "medium",
     "implementationPermission": "runtime-disabled",
-    "scope": "Add shadow-only Feedback V2 Preference State projection: ordered idempotent event reduction, passive-event neutrality, gradual positive/negative learning, mechanism/source-class specificity, bounded exploration-budget adaptation and diagnostics. Existing production feedback mutation remains authoritative.",
+    "scope": "Add shadow-only Hunter Outcome Attribution: direct opportunity-content-publish lineage, Brand-relative metric lift, baseline/freshness/coverage confidence, non-causal association labels, positive performance-memory proposals and diagnostics. Existing production learning remains authoritative.",
     "budget": {
       "maxModelCalls": 0,
       "maxSubAgents": 0,
@@ -20,35 +20,35 @@
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-07R"
+        "scopeId": "HI2-08R"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-07R"
+        "scopeId": "HI2-08R"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-07R"
+        "scopeId": "HI2-08R"
       }
     ],
     "successCriteria": [
-      "Feedback V2 events are deterministically ordered and deduplicated by idempotency key before learning.",
-      "Impression, opened and performance_observed remain preference-neutral.",
-      "Explicit positive/negative feedback updates only relevant topic/audience/format/channel/mechanism/source dimensions with bounded weights.",
-      "Exploration feedback adjusts exploration budget only within the EEI policy band and cannot collapse to zero.",
-      "Repeated feedback decays over time and diagnostics expose applied, duplicate, passive and dimension-update counts.",
-      "No production feedback store wiring, provider credentials, scheduling, UI changes or deployment are introduced.",
+      "Attribution requires explicit opportunity-to-content-to-published-post lineage and rejects cross-Brand evidence.",
+      "Latest available normalized metrics are compared only with compatible Brand baselines and unavailable metrics remain unknown.",
+      "Brand-relative lift is signed and bounded; attribution confidence combines lineage, baseline sample strength, freshness and metric coverage.",
+      "Results explicitly state association rather than causation.",
+      "Positive performance-memory proposals are emitted only when confidence and lift thresholds pass; negative outcomes are not miscast as negative user preference.",
+      "No production learning-store mutation, scheduler, UI change, deployment or production enablement is introduced.",
       "PES v2 CI and Security baseline pass before certification."
     ],
     "certification": {
-      "bundleId": "CERT-HI2-07R-6E596168",
-      "commitSha": "6e5961689a0fb35478f26626c1144fb2bc36f04c",
-      "candidateHash": "e7c700826a4c897058eb36bb6c06a3ebdf049faa5fa07825892dd012ae904fc0",
-      "certifiedHash": "73a288dfcd618f1276072fa44610d72d8792ca31f55e6879a703901e2649cef2",
+      "bundleId": "CERT-HI2-08R-164D3112",
+      "commitSha": "164d3112c130ef80ec55cee65f4c000b788c3d2d",
+      "candidateHash": "df616447040eac0139bf0b899f607adce18a5f934658c22776737dee9b210eb3",
+      "certifiedHash": "58941beeeeb9e281f5c6db44ff5108c838bf00598b0dea80a4370fade5c5b3eb",
       "certifiedAt": "2026-09-20T13:50:00+02:00"
     }
   }
