@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "version": 2,
-  "revision": 33,
+  "revision": 34,
   "nodes": [
     {
       "id": "OBJ-001",
@@ -2835,6 +2835,132 @@
         "sourceIds": [],
         "recordedAt": "2026-09-20T21:46:54.081Z"
       }
+    },
+    {
+      "id": "OBJ-HI2-11R2",
+      "type": "Objective",
+      "status": "active",
+      "title": "Align Hunter V2 shadow output capacity with certified EEI exploration limits",
+      "successCriteria": [
+        "Operational shadow maxCandidates is exactly 6.",
+        "Existing EEI explorationMax remains 0.20 and explorationMin remains 0.08.",
+        "With six selected recommendations, the maximum exploration count is one, producing 16.67 percent exploration.",
+        "Three-topic retrieval, three paid Agent Reach intents, topic rotation, signal-reference bounds, cost and latency optimizations remain unchanged.",
+        "Corrected 3x3 pre-gate must meet all metric thresholds before the 30-pair full gate is attempted.",
+        "Hunter V1 remains production authority; no V2 persistence or canary enablement.",
+        "PES v2 CI and Security baseline pass before merge/deployment."
+      ],
+      "memoryProvenance": {
+        "eventId": "GM-000034",
+        "revision": 34,
+        "actorId": "pes-v2-hunter-exploration-capacity",
+        "runId": "HI2-11R2",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T22:58:53.965Z"
+      }
+    },
+    {
+      "id": "TASK-HI2-11R2",
+      "type": "Task",
+      "status": "active",
+      "objectiveId": "OBJ-HI2-11R2",
+      "title": "Set shadow operational maxCandidates to six without changing EEI thresholds",
+      "memoryProvenance": {
+        "eventId": "GM-000034",
+        "revision": 34,
+        "actorId": "pes-v2-hunter-exploration-capacity",
+        "runId": "HI2-11R2",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T22:58:53.965Z"
+      }
+    },
+    {
+      "id": "RUN-HI2-11R2-01",
+      "type": "AgentRun",
+      "status": "verified",
+      "objectiveId": "OBJ-HI2-11R2",
+      "title": "Exact HI2-11R2 implementation passed PESv2 CI and Security",
+      "memoryProvenance": {
+        "eventId": "GM-000034",
+        "revision": 34,
+        "actorId": "pes-v2-hunter-exploration-capacity",
+        "runId": "HI2-11R2",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T22:58:53.965Z"
+      }
+    },
+    {
+      "id": "ART-HI2-11R2",
+      "type": "Artifact",
+      "status": "verified",
+      "title": "Six-item Hunter V2 shadow recommendation capacity",
+      "runId": "HI2-11R2",
+      "version": "2411813be7dadfe013be79267833d40fe4247dc5",
+      "memoryProvenance": {
+        "eventId": "GM-000034",
+        "revision": 34,
+        "actorId": "pes-v2-hunter-exploration-capacity",
+        "runId": "HI2-11R2",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T22:58:53.965Z"
+      }
+    },
+    {
+      "id": "EVAL-HI2-11R2",
+      "type": "Evaluation",
+      "status": "verified",
+      "title": "PESv2 validated six-item candidate capacity and one-item certified exploration ceiling",
+      "rubricId": "hunter-shadow-exploration-capacity-high-risk",
+      "memoryProvenance": {
+        "eventId": "GM-000034",
+        "revision": 34,
+        "actorId": "pes-v2-hunter-exploration-capacity",
+        "runId": "HI2-11R2",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T22:58:53.965Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-11R2-01",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "GitHub PES v2 CI run 35543146371 passed for PR #28 head 2411813be7dadfe013be79267833d40fe4247dc5",
+      "memoryProvenance": {
+        "eventId": "GM-000034",
+        "revision": 34,
+        "actorId": "pes-v2-hunter-exploration-capacity",
+        "runId": "HI2-11R2",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T22:58:53.965Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-11R2-02",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "GitHub Security baseline run 35543146370 passed for PR #28 head 2411813be7dadfe013be79267833d40fe4247dc5",
+      "memoryProvenance": {
+        "eventId": "GM-000034",
+        "revision": 34,
+        "actorId": "pes-v2-hunter-exploration-capacity",
+        "runId": "HI2-11R2",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T22:58:53.965Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-11R2-03",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "HI2-11R2 regression locks operational maxCandidates=6 while preserving unchanged EEI 8%-20% exploration policy",
+      "memoryProvenance": {
+        "eventId": "GM-000034",
+        "revision": 34,
+        "actorId": "pes-v2-hunter-exploration-capacity",
+        "runId": "HI2-11R2",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T22:58:53.965Z"
+      }
     }
   ],
   "edges": [
@@ -5239,6 +5365,116 @@
         "sourceIds": [],
         "recordedAt": "2026-09-20T21:46:54.081Z"
       }
+    },
+    {
+      "id": "EDGE-OBJ-HI2-11R2-TASK",
+      "type": "IMPLEMENTED_BY",
+      "from": "OBJ-HI2-11R2",
+      "to": "TASK-HI2-11R2",
+      "memoryProvenance": {
+        "eventId": "GM-000034",
+        "revision": 34,
+        "actorId": "pes-v2-hunter-exploration-capacity",
+        "runId": "HI2-11R2",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T22:58:53.965Z"
+      }
+    },
+    {
+      "id": "EDGE-TASK-HI2-11R2-PRODUCED-ART",
+      "type": "PRODUCED",
+      "from": "TASK-HI2-11R2",
+      "to": "ART-HI2-11R2",
+      "memoryProvenance": {
+        "eventId": "GM-000034",
+        "revision": 34,
+        "actorId": "pes-v2-hunter-exploration-capacity",
+        "runId": "HI2-11R2",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T22:58:53.965Z"
+      }
+    },
+    {
+      "id": "EDGE-RUN-HI2-11R2-01-PRODUCED-ART",
+      "type": "PRODUCED",
+      "from": "RUN-HI2-11R2-01",
+      "to": "ART-HI2-11R2",
+      "memoryProvenance": {
+        "eventId": "GM-000034",
+        "revision": 34,
+        "actorId": "pes-v2-hunter-exploration-capacity",
+        "runId": "HI2-11R2",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T22:58:53.965Z"
+      }
+    },
+    {
+      "id": "EDGE-EVAL-HI2-11R2-EVALUATES-ART",
+      "type": "EVALUATES",
+      "from": "EVAL-HI2-11R2",
+      "to": "ART-HI2-11R2",
+      "memoryProvenance": {
+        "eventId": "GM-000034",
+        "revision": 34,
+        "actorId": "pes-v2-hunter-exploration-capacity",
+        "runId": "HI2-11R2",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T22:58:53.965Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-11R2-01-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-11R2-01",
+      "to": "ART-HI2-11R2",
+      "provenance": {
+        "kind": "github-actions",
+        "runId": "35543146371"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000034",
+        "revision": 34,
+        "actorId": "pes-v2-hunter-exploration-capacity",
+        "runId": "HI2-11R2",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T22:58:53.965Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-11R2-02-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-11R2-02",
+      "to": "ART-HI2-11R2",
+      "provenance": {
+        "kind": "github-actions",
+        "runId": "35543146370"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000034",
+        "revision": 34,
+        "actorId": "pes-v2-hunter-exploration-capacity",
+        "runId": "HI2-11R2",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T22:58:53.965Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-11R2-03-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-11R2-03",
+      "to": "ART-HI2-11R2",
+      "provenance": {
+        "kind": "delivery-graph",
+        "path": "delivery/hi2-11r2-delivery-graph.json"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000034",
+        "revision": 34,
+        "actorId": "pes-v2-hunter-exploration-capacity",
+        "runId": "HI2-11R2",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T22:58:53.965Z"
+      }
     }
   ],
   "events": [
@@ -6040,6 +6276,35 @@
         "EDGE-EVID-HI2-11R1-03-SUPPORTS-ART"
       ],
       "recordedAt": "2026-09-20T21:46:54.081Z"
+    },
+    {
+      "id": "GM-000034",
+      "revision": 34,
+      "operation": "append",
+      "actorId": "pes-v2-hunter-exploration-capacity",
+      "runId": "HI2-11R2",
+      "reason": "Record exact HI2-11R2 implementation and high-risk validation evidence",
+      "sourceIds": [],
+      "addedNodeIds": [
+        "OBJ-HI2-11R2",
+        "TASK-HI2-11R2",
+        "RUN-HI2-11R2-01",
+        "ART-HI2-11R2",
+        "EVAL-HI2-11R2",
+        "EVID-HI2-11R2-01",
+        "EVID-HI2-11R2-02",
+        "EVID-HI2-11R2-03"
+      ],
+      "addedEdgeIds": [
+        "EDGE-OBJ-HI2-11R2-TASK",
+        "EDGE-TASK-HI2-11R2-PRODUCED-ART",
+        "EDGE-RUN-HI2-11R2-01-PRODUCED-ART",
+        "EDGE-EVAL-HI2-11R2-EVALUATES-ART",
+        "EDGE-EVID-HI2-11R2-01-SUPPORTS-ART",
+        "EDGE-EVID-HI2-11R2-02-SUPPORTS-ART",
+        "EDGE-EVID-HI2-11R2-03-SUPPORTS-ART"
+      ],
+      "recordedAt": "2026-09-20T22:58:53.965Z"
     }
   ]
 }
