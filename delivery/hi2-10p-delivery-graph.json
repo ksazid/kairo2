@@ -1,0 +1,68 @@
+{
+  "status": "ready",
+  "sliceId": "HI2-10P",
+  "riskLevel": "high",
+  "purpose": "Create one temporary persisted Vercel Brand through normal audited Kairo services when no existing persisted Brand is Hunter-ready, use it as the shadow-evidence persisted anchor, and delete it after the run.",
+  "stages": [
+    {
+      "id": "tenant-resolution",
+      "dependsOn": [],
+      "output": "single unambiguous existing workspace/account",
+      "authority": "read-only",
+      "rollback": "Abort before any write when no existing Brand or multiple workspaces are present."
+    },
+    {
+      "id": "disposable-anchor-bootstrap",
+      "dependsOn": [
+        "tenant-resolution"
+      ],
+      "output": "temporary persisted Vercel Brand with source-backed inferred Brand Brain",
+      "authority": "temporary-audited-write",
+      "rollback": "Delete disposable Brand and cascade its temporary state."
+    },
+    {
+      "id": "canonical-readiness",
+      "dependsOn": [
+        "disposable-anchor-bootstrap"
+      ],
+      "output": "unchanged canonical Hunter-ready context",
+      "authority": "read-only",
+      "rollback": "Delete disposable Brand and abort evidence run."
+    },
+    {
+      "id": "paired-shadow-evidence",
+      "dependsOn": [
+        "canonical-readiness"
+      ],
+      "output": "30 paired V1/V2 observations across at least 3 distinct real Brands",
+      "authority": "read-only",
+      "rollback": "Delete disposable Brand; disable one-shot evidence flags; Hunter V1 remains authoritative."
+    }
+  ],
+  "killSwitchOn": [
+    "tenant-ambiguity",
+    "canonical-readiness-failure",
+    "disposable-anchor-cleanup-failure",
+    "tenant-isolation",
+    "manipulation-safety",
+    "persistence-authority",
+    "evidence-provenance",
+    "production-guard-bypass"
+  ],
+  "constraints": {
+    "existingUserBrandsModified": false,
+    "disposableBrandName": "Vercel",
+    "publicSourceUrl": "https://vercel.com/about",
+    "publicPolicyUrl": "https://vercel.com/legal/acceptable-use-policy",
+    "ownerConfirmedFieldsWritten": false,
+    "disposableAnchorDeletedInFinally": true,
+    "minimumDistinctBrands": 3,
+    "minimumPairedRuns": 30,
+    "hunterV2Persistence": false,
+    "productionHunterAuthority": "v1-only",
+    "canaryExposure": false,
+    "featureActivation": false,
+    "schedulerChange": false,
+    "productionEnable": false
+  }
+}
