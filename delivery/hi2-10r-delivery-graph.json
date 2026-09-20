@@ -1,0 +1,45 @@
+{
+  "status": "ready",
+  "sliceId": "HI2-10R",
+  "riskLevel": "high",
+  "purpose": "Collect deterministic Hunter V2 shadow evidence without changing production Hunter authority.",
+  "stages": [
+    {
+      "id": "shadow-contract",
+      "dependsOn": [],
+      "output": "validated paired shadow observation",
+      "authority": "none",
+      "rollback": "Discard shadow observation and retain Hunter V1."
+    },
+    {
+      "id": "shadow-runtime",
+      "dependsOn": ["shadow-contract"],
+      "output": "read-only shadow evidence batch",
+      "authority": "read-only",
+      "rollback": "Disable shadow runner; Hunter V1 remains authoritative."
+    },
+    {
+      "id": "shadow-readiness",
+      "dependsOn": ["shadow-runtime"],
+      "output": "HI2-09R shadow readiness metrics",
+      "authority": "readiness-only",
+      "rollback": "Remain at shadow stage and keep canary disabled."
+    }
+  ],
+  "killSwitchOn": [
+    "tenant-isolation",
+    "manipulation-safety",
+    "persistence-authority",
+    "evidence-provenance",
+    "production-guard-bypass"
+  ],
+  "constraints": {
+    "productionHunterAuthority": "v1-only",
+    "hunterV2Persistence": false,
+    "learningMutation": false,
+    "canaryExposure": false,
+    "featureActivation": false,
+    "schedulerChange": false,
+    "productionEnable": false
+  }
+}

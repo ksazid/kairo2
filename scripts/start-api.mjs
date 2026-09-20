@@ -29,6 +29,7 @@ const requestedMarketingAuthorization = process.env.KAIRO_STARTUP_MARKETING_SHAD
 const requestedMarketingEvidenceExport = process.env.KAIRO_STARTUP_MARKETING_SHADOW_EVIDENCE_EXPORT?.trim();
 const requestedMarketingQualityAuthorization = process.env.KAIRO_STARTUP_MARKETING_SHADOW_QUALITY_AUTHORIZATION?.trim();
 const requestedClosedLoopSmoke = process.env.KAIRO_STARTUP_CLOSED_LOOP_SMOKE?.trim();
+const requestedHunterShadowEvidence = process.env.KAIRO_HUNTER_SHADOW_EVIDENCE_RUN_ID?.trim();
 const instagramPublisherEnabled = process.env.KAIRO_INSTAGRAM_PUBLISHER_ENABLED?.trim() === "true";
 
 const startupActionCount = [
@@ -38,9 +39,10 @@ const startupActionCount = [
   requestedMarketingEvidenceExport,
   requestedMarketingQualityAuthorization,
   requestedClosedLoopSmoke,
+  requestedHunterShadowEvidence,
 ].filter(Boolean).length;
 if (startupActionCount > 1) {
-  throw new Error("Configure only one startup action: exact migration, migration range, Marketing Lab authorization, Marketing Lab evidence export, Marketing Lab quality authorization, or closed-loop production smoke");
+  throw new Error("Configure only one startup action: exact migration, migration range, Marketing Lab authorization, Marketing Lab evidence export, Marketing Lab quality authorization, closed-loop production smoke, or Hunter shadow evidence");
 }
 
 const startupActionRequested = startupActionCount === 1;

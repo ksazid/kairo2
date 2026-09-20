@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "version": 2,
-  "revision": 23,
+  "revision": 24,
   "nodes": [
     {
       "id": "OBJ-001",
@@ -1495,6 +1495,160 @@
         "sourceIds": [],
         "recordedAt": "2026-09-20T10:31:00.000Z"
       }
+    },
+    {
+      "id": "OBJ-HI2-10R",
+      "type": "Objective",
+      "status": "active",
+      "title": "Collect read-only Hunter V2 shadow evidence for rollout gating",
+      "successCriteria": [
+        "Every shadow observation is paired to one comparison run and one expected workspace/Brand scope.",
+        "Critical tenant, safety, provenance, persistence-authority or production-guard violations fail closed.",
+        "Quality, retrieval coverage, latency, cost, reliability and EEI metrics are measured deterministically.",
+        "Shadow execution remains read-only and Hunter V1 retains production authority.",
+        "No canary, scheduler or production-enable action occurs in this slice."
+      ],
+      "memoryProvenance": {
+        "eventId": "GM-000024",
+        "revision": 24,
+        "actorId": "pes-v2-hunter-shadow-evidence",
+        "runId": "HI2-10R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T14:45:48.139Z"
+      }
+    },
+    {
+      "id": "TASK-HI2-10R",
+      "type": "Task",
+      "status": "active",
+      "objectiveId": "OBJ-HI2-10R",
+      "title": "Implement paired real-path Hunter V1/V2 read-only shadow evidence execution",
+      "memoryProvenance": {
+        "eventId": "GM-000024",
+        "revision": 24,
+        "actorId": "pes-v2-hunter-shadow-evidence",
+        "runId": "HI2-10R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T14:45:48.139Z"
+      }
+    },
+    {
+      "id": "RUN-HI2-10R-01",
+      "type": "AgentRun",
+      "status": "failed",
+      "objectiveId": "OBJ-HI2-10R",
+      "title": "Initial real-adapter increment failed PESv2 typecheck on an untyped test gateway request",
+      "memoryProvenance": {
+        "eventId": "GM-000024",
+        "revision": 24,
+        "actorId": "pes-v2-hunter-shadow-evidence",
+        "runId": "HI2-10R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T14:45:48.139Z"
+      }
+    },
+    {
+      "id": "RUN-HI2-10R-02",
+      "type": "AgentRun",
+      "status": "failed",
+      "objectiveId": "OBJ-HI2-10R",
+      "title": "Second adapter validation exposed an incomplete source-registry test fixture",
+      "memoryProvenance": {
+        "eventId": "GM-000024",
+        "revision": 24,
+        "actorId": "pes-v2-hunter-shadow-evidence",
+        "runId": "HI2-10R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T14:45:48.139Z"
+      }
+    },
+    {
+      "id": "RUN-HI2-10R-03",
+      "type": "AgentRun",
+      "status": "verified",
+      "objectiveId": "OBJ-HI2-10R",
+      "title": "Final HI2-10R exact implementation passed PESv2 CI and Security",
+      "memoryProvenance": {
+        "eventId": "GM-000024",
+        "revision": 24,
+        "actorId": "pes-v2-hunter-shadow-evidence",
+        "runId": "HI2-10R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T14:45:48.139Z"
+      }
+    },
+    {
+      "id": "ART-HI2-10R",
+      "type": "Artifact",
+      "status": "verified",
+      "title": "Read-only paired Hunter V1/V2 shadow evidence runner with release-pinned execution hook",
+      "runId": "HI2-10R",
+      "version": "7e4af04ce5e762b517c368a7f5d4dc8288b0fe7a",
+      "memoryProvenance": {
+        "eventId": "GM-000024",
+        "revision": 24,
+        "actorId": "pes-v2-hunter-shadow-evidence",
+        "runId": "HI2-10R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T14:45:48.139Z"
+      }
+    },
+    {
+      "id": "EVAL-HI2-10R",
+      "type": "Evaluation",
+      "status": "verified",
+      "title": "PESv2 validated read-only authority, paired-scope evidence, fail-closed cost/provenance and rollout metric guards",
+      "rubricId": "hunter-shadow-evidence-high-risk",
+      "memoryProvenance": {
+        "eventId": "GM-000024",
+        "revision": 24,
+        "actorId": "pes-v2-hunter-shadow-evidence",
+        "runId": "HI2-10R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T14:45:48.139Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-10R-01",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "GitHub PES v2 CI run 35517130356 passed for PR #17 head 7e4af04ce5e762b517c368a7f5d4dc8288b0fe7a",
+      "memoryProvenance": {
+        "eventId": "GM-000024",
+        "revision": 24,
+        "actorId": "pes-v2-hunter-shadow-evidence",
+        "runId": "HI2-10R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T14:45:48.139Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-10R-02",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "GitHub Security baseline run 35517130365 passed for PR #17 head 7e4af04ce5e762b517c368a7f5d4dc8288b0fe7a",
+      "memoryProvenance": {
+        "eventId": "GM-000024",
+        "revision": 24,
+        "actorId": "pes-v2-hunter-shadow-evidence",
+        "runId": "HI2-10R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T14:45:48.139Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-10R-03",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "HI2-10R delivery graph is ready; V2 has no persistence authority, Hunter V1 remains authoritative, and paid Agent Reach search cost is fail-closed",
+      "memoryProvenance": {
+        "eventId": "GM-000024",
+        "revision": 24,
+        "actorId": "pes-v2-hunter-shadow-evidence",
+        "runId": "HI2-10R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T14:45:48.139Z"
+      }
     }
   ],
   "edges": [
@@ -2743,6 +2897,144 @@
         "sourceIds": [],
         "recordedAt": "2026-09-20T10:31:00.000Z"
       }
+    },
+    {
+      "id": "EDGE-OBJ-HI2-10R-TASK",
+      "type": "IMPLEMENTED_BY",
+      "from": "OBJ-HI2-10R",
+      "to": "TASK-HI2-10R",
+      "memoryProvenance": {
+        "eventId": "GM-000024",
+        "revision": 24,
+        "actorId": "pes-v2-hunter-shadow-evidence",
+        "runId": "HI2-10R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T14:45:48.139Z"
+      }
+    },
+    {
+      "id": "EDGE-RUN-HI2-10R-01-ABOUT-TASK",
+      "type": "ABOUT",
+      "from": "RUN-HI2-10R-01",
+      "to": "TASK-HI2-10R",
+      "memoryProvenance": {
+        "eventId": "GM-000024",
+        "revision": 24,
+        "actorId": "pes-v2-hunter-shadow-evidence",
+        "runId": "HI2-10R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T14:45:48.139Z"
+      }
+    },
+    {
+      "id": "EDGE-RUN-HI2-10R-02-ABOUT-TASK",
+      "type": "ABOUT",
+      "from": "RUN-HI2-10R-02",
+      "to": "TASK-HI2-10R",
+      "memoryProvenance": {
+        "eventId": "GM-000024",
+        "revision": 24,
+        "actorId": "pes-v2-hunter-shadow-evidence",
+        "runId": "HI2-10R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T14:45:48.139Z"
+      }
+    },
+    {
+      "id": "EDGE-TASK-HI2-10R-PRODUCED-ART",
+      "type": "PRODUCED",
+      "from": "TASK-HI2-10R",
+      "to": "ART-HI2-10R",
+      "memoryProvenance": {
+        "eventId": "GM-000024",
+        "revision": 24,
+        "actorId": "pes-v2-hunter-shadow-evidence",
+        "runId": "HI2-10R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T14:45:48.139Z"
+      }
+    },
+    {
+      "id": "EDGE-RUN-HI2-10R-03-PRODUCED-ART",
+      "type": "PRODUCED",
+      "from": "RUN-HI2-10R-03",
+      "to": "ART-HI2-10R",
+      "memoryProvenance": {
+        "eventId": "GM-000024",
+        "revision": 24,
+        "actorId": "pes-v2-hunter-shadow-evidence",
+        "runId": "HI2-10R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T14:45:48.139Z"
+      }
+    },
+    {
+      "id": "EDGE-EVAL-HI2-10R-EVALUATES-ART",
+      "type": "EVALUATES",
+      "from": "EVAL-HI2-10R",
+      "to": "ART-HI2-10R",
+      "memoryProvenance": {
+        "eventId": "GM-000024",
+        "revision": 24,
+        "actorId": "pes-v2-hunter-shadow-evidence",
+        "runId": "HI2-10R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T14:45:48.139Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-10R-01-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-10R-01",
+      "to": "ART-HI2-10R",
+      "provenance": {
+        "kind": "github-actions",
+        "runId": "35517130356"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000024",
+        "revision": 24,
+        "actorId": "pes-v2-hunter-shadow-evidence",
+        "runId": "HI2-10R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T14:45:48.139Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-10R-02-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-10R-02",
+      "to": "ART-HI2-10R",
+      "provenance": {
+        "kind": "github-actions",
+        "runId": "35517130365"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000024",
+        "revision": 24,
+        "actorId": "pes-v2-hunter-shadow-evidence",
+        "runId": "HI2-10R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T14:45:48.139Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-10R-03-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-10R-03",
+      "to": "ART-HI2-10R",
+      "provenance": {
+        "kind": "delivery-graph",
+        "path": "delivery/hi2-10r-delivery-graph.json"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000024",
+        "revision": 24,
+        "actorId": "pes-v2-hunter-shadow-evidence",
+        "runId": "HI2-10R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T14:45:48.139Z"
+      }
     }
   ],
   "events": [
@@ -3246,6 +3538,39 @@
         "EDGE-EVID-HI2-09R-03-SUPPORTS-ART"
       ],
       "recordedAt": "2026-09-20T10:31:00.000Z"
+    },
+    {
+      "id": "GM-000024",
+      "revision": 24,
+      "operation": "append",
+      "actorId": "pes-v2-hunter-shadow-evidence",
+      "runId": "HI2-10R",
+      "reason": "Record HI2-10R failed adapter attempts, final exact-SHA implementation, PESv2 CI/Security evidence and ready read-only delivery graph",
+      "sourceIds": [],
+      "addedNodeIds": [
+        "OBJ-HI2-10R",
+        "TASK-HI2-10R",
+        "RUN-HI2-10R-01",
+        "RUN-HI2-10R-02",
+        "RUN-HI2-10R-03",
+        "ART-HI2-10R",
+        "EVAL-HI2-10R",
+        "EVID-HI2-10R-01",
+        "EVID-HI2-10R-02",
+        "EVID-HI2-10R-03"
+      ],
+      "addedEdgeIds": [
+        "EDGE-OBJ-HI2-10R-TASK",
+        "EDGE-RUN-HI2-10R-01-ABOUT-TASK",
+        "EDGE-RUN-HI2-10R-02-ABOUT-TASK",
+        "EDGE-TASK-HI2-10R-PRODUCED-ART",
+        "EDGE-RUN-HI2-10R-03-PRODUCED-ART",
+        "EDGE-EVAL-HI2-10R-EVALUATES-ART",
+        "EDGE-EVID-HI2-10R-01-SUPPORTS-ART",
+        "EDGE-EVID-HI2-10R-02-SUPPORTS-ART",
+        "EDGE-EVID-HI2-10R-03-SUPPORTS-ART"
+      ],
+      "recordedAt": "2026-09-20T14:45:48.139Z"
     }
   ]
 }
