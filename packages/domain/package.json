@@ -55,7 +55,8 @@
     "./hunter-retrieval": "./src/hunter-retrieval.ts",
     "./hunter-multistage": "./src/hunter-multistage.ts",
     "./feedback-learning-v2": "./src/feedback-learning-v2.ts",
-    "./hunter-outcome-attribution": "./src/hunter-outcome-attribution.ts"
+    "./hunter-outcome-attribution": "./src/hunter-outcome-attribution.ts",
+    "./hunter-rollout": "./src/hunter-rollout.ts"
   },
   "types": "./src/index.ts",
   "scripts": {
