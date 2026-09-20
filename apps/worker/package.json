@@ -41,7 +41,8 @@
     "./hunter-shadow-trend-intelligence": "./src/hunter-shadow-trend-intelligence.ts",
     "./hunter-shadow-multistage-intelligence": "./src/hunter-shadow-multistage-intelligence.ts",
     "./hunter-shadow-eei-v2": "./src/hunter-shadow-eei-v2.ts",
-    "./hunter-shadow-evidence-runner": "./src/hunter-shadow-evidence-runner.ts"
+    "./hunter-shadow-evidence-runner": "./src/hunter-shadow-evidence-runner.ts",
+    "./hunter-shadow-lane-adapters": "./src/hunter-shadow-lane-adapters.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
