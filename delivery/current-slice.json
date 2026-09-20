@@ -1,55 +1,52 @@
 {
   "activeSlice": {
-    "id": "HI2-10R",
-    "objectiveId": "OBJ-HI2-10R",
+    "id": "HI2-10E",
+    "objectiveId": "OBJ-HI2-10E",
     "state": "certified",
     "riskLevel": "high",
-    "implementationPermission": "runtime-enabled",
-    "scope": "Build read-only Hunter V2 shadow-evidence collection and deterministic rollout observations for the HI2-09R shadow-to-canary gate. Hunter V1 retains production authority. No opportunity persistence, scheduler change, canary exposure, feature activation or production-enable action is permitted.",
+    "implementationPermission": "runtime-disabled",
+    "scope": "Add read-only ephemeral real-public-Brand contexts to the certified Hunter V2 shadow evidence runner so rollout evidence can satisfy the existing >=3 distinct Brand requirement without persisting test Brands, weakening Brand readiness, or changing Hunter production authority.",
     "budget": {
-      "maxModelCalls": 8,
+      "maxModelCalls": 80,
       "maxSubAgents": 0,
-      "maxConcurrentWorkers": 1,
-      "maxToolCalls": 40,
-      "maxWallClockMinutes": 45,
-      "maxRetries": 2,
-      "maxGraphWrites": 20
+      "maxWallClockMinutes": 30,
+      "maxExternalWrites": 0
     },
     "approvals": [
       {
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-10R"
+        "scopeId": "HI2-10E"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-10R"
+        "scopeId": "HI2-10E"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-10R"
+        "scopeId": "HI2-10E"
       }
     ],
     "successCriteria": [
-      "Every shadow observation is paired to one comparison run and one expected workspace/Brand scope.",
-      "Cross-tenant evidence, missing provenance, manipulation-safety failure, persistence attempts and production-guard bypasses become critical rollout violations.",
-      "Retrieval coverage, quality delta inputs, latency, cost, failure rate, EEI exploration share and topic concentration are derived deterministically.",
-      "Shadow collection remains read-only and cannot persist Hunter V2 opportunities or mutate production learning state.",
-      "Hunter V1 remains the only production-authoritative recommendation path.",
-      "No canary exposure, scheduler activation, Vercel deployment or production-enable action occurs in this slice.",
-      "PES v2 CI and Security baseline pass before certification."
+      "At least one persisted Hunter-ready production Brand remains part of the evidence cohort.",
+      "Ephemeral Brands represent distinct real public Brands and are derived from fetched public evidence plus the existing Brand Brain proposal validator.",
+      "Ephemeral Brand Brain must pass the unchanged canonical createBrandBrainActivationSnapshot hunterReady gate; no readiness override or synthetic ready flag is allowed.",
+      "Ephemeral Brand contexts are never inserted into Brands, Brand Brain, source, opportunity, feedback, or learning tables.",
+      "V1 and V2 receive the exact same ephemeral Brand context and paired input fingerprint.",
+      "The operational cohort reaches at least 3 distinct Brands and 30 paired runs without canary or production enablement.",
+      "PES v2 CI and Security baseline pass before merge/deployment."
     ],
     "certification": {
-      "bundleId": "CERT-HI2-10R-7E4AF04C",
-      "commitSha": "7e4af04ce5e762b517c368a7f5d4dc8288b0fe7a",
-      "candidateHash": "1cf68a551199de92a250cafc2c57d4e19c7d026d12a2118403ffa00125e9bee7",
-      "certifiedHash": "77a2cd689423891e8d14184ded512289f7f4088e560e9ec007fcf6935a731c60",
-      "certifiedAt": "2026-09-20T14:45:48.139Z"
+      "bundleId": "CERT-HI2-10E-D1937891",
+      "commitSha": "d19378917b03551bd3f932096d269924d7850e02",
+      "candidateHash": "582f7dff6dadc1520ca5603f134a27f24c60b39554fc5ecae1215e09d1e45809",
+      "certifiedHash": "b1f939ca64df06e51c7ffa3b29490dd822cd1643c514245d92e5597b82cb3993",
+      "certifiedAt": "2026-09-20T15:55:41.473Z"
     }
   }
 }

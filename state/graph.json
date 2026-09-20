@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "version": 2,
-  "revision": 24,
+  "revision": 25,
   "nodes": [
     {
       "id": "OBJ-001",
@@ -1649,6 +1649,147 @@
         "sourceIds": [],
         "recordedAt": "2026-09-20T14:45:48.139Z"
       }
+    },
+    {
+      "id": "OBJ-HI2-10E",
+      "type": "Objective",
+      "status": "active",
+      "title": "Satisfy Hunter shadow Brand coverage without persisted test data or readiness bypass",
+      "successCriteria": [
+        "At least one persisted Hunter-ready production Brand remains part of the evidence cohort.",
+        "Ephemeral Brands represent distinct real public Brands and are derived from fetched public evidence plus the existing Brand Brain proposal validator.",
+        "Ephemeral Brand Brain must pass the unchanged canonical createBrandBrainActivationSnapshot hunterReady gate; no readiness override or synthetic ready flag is allowed.",
+        "Ephemeral Brand contexts are never inserted into Brands, Brand Brain, source, opportunity, feedback, or learning tables.",
+        "V1 and V2 receive the exact same ephemeral Brand context and paired input fingerprint.",
+        "The operational cohort reaches at least 3 distinct Brands and 30 paired runs without canary or production enablement.",
+        "PES v2 CI and Security baseline pass before merge/deployment."
+      ],
+      "memoryProvenance": {
+        "eventId": "GM-000025",
+        "revision": 25,
+        "actorId": "pes-v2-hunter-shadow-ephemeral-coverage",
+        "runId": "HI2-10E",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T15:38:42.553Z"
+      }
+    },
+    {
+      "id": "TASK-HI2-10E",
+      "type": "Task",
+      "status": "active",
+      "objectiveId": "OBJ-HI2-10E",
+      "title": "Add explicit read-only ephemeral public Brand fallback for shadow evidence cohort",
+      "memoryProvenance": {
+        "eventId": "GM-000025",
+        "revision": 25,
+        "actorId": "pes-v2-hunter-shadow-ephemeral-coverage",
+        "runId": "HI2-10E",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T15:38:42.553Z"
+      }
+    },
+    {
+      "id": "RUN-HI2-10E-01",
+      "type": "AgentRun",
+      "status": "failed",
+      "objectiveId": "OBJ-HI2-10E",
+      "title": "Initial HI2-10E cut failed PESv2 typecheck in test code (CI 35519949255)",
+      "memoryProvenance": {
+        "eventId": "GM-000025",
+        "revision": 25,
+        "actorId": "pes-v2-hunter-shadow-ephemeral-coverage",
+        "runId": "HI2-10E",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T15:38:42.553Z"
+      }
+    },
+    {
+      "id": "RUN-HI2-10E-02",
+      "type": "AgentRun",
+      "status": "verified",
+      "objectiveId": "OBJ-HI2-10E",
+      "title": "Final exact implementation passed PESv2 CI and Security",
+      "memoryProvenance": {
+        "eventId": "GM-000025",
+        "revision": 25,
+        "actorId": "pes-v2-hunter-shadow-ephemeral-coverage",
+        "runId": "HI2-10E",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T15:38:42.553Z"
+      }
+    },
+    {
+      "id": "ART-HI2-10E",
+      "type": "Artifact",
+      "status": "verified",
+      "title": "Explicit ephemeral public Brand coverage for read-only Hunter V2 shadow evidence",
+      "runId": "HI2-10E",
+      "version": "d19378917b03551bd3f932096d269924d7850e02",
+      "memoryProvenance": {
+        "eventId": "GM-000025",
+        "revision": 25,
+        "actorId": "pes-v2-hunter-shadow-ephemeral-coverage",
+        "runId": "HI2-10E",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T15:38:42.553Z"
+      }
+    },
+    {
+      "id": "EVAL-HI2-10E",
+      "type": "Evaluation",
+      "status": "verified",
+      "title": "PESv2 validated persisted-anchor requirement, canonical readiness, public evidence sanitization, zero ephemeral persistence and explicit runtime gating",
+      "rubricId": "hunter-shadow-ephemeral-coverage-high-risk",
+      "memoryProvenance": {
+        "eventId": "GM-000025",
+        "revision": 25,
+        "actorId": "pes-v2-hunter-shadow-ephemeral-coverage",
+        "runId": "HI2-10E",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T15:38:42.553Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-10E-01",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "GitHub PES v2 CI run 35520089232 passed for PR #18 head d19378917b03551bd3f932096d269924d7850e02",
+      "memoryProvenance": {
+        "eventId": "GM-000025",
+        "revision": 25,
+        "actorId": "pes-v2-hunter-shadow-ephemeral-coverage",
+        "runId": "HI2-10E",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T15:38:42.553Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-10E-02",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "GitHub Security baseline run 35520089242 passed for PR #18 head d19378917b03551bd3f932096d269924d7850e02",
+      "memoryProvenance": {
+        "eventId": "GM-000025",
+        "revision": 25,
+        "actorId": "pes-v2-hunter-shadow-ephemeral-coverage",
+        "runId": "HI2-10E",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T15:38:42.553Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-10E-03",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "HI2-10E delivery graph is ready; at least one persisted Brand is mandatory, ephemeral Brands must pass canonical hunterReady, and no ephemeral state is persisted",
+      "memoryProvenance": {
+        "eventId": "GM-000025",
+        "revision": 25,
+        "actorId": "pes-v2-hunter-shadow-ephemeral-coverage",
+        "runId": "HI2-10E",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T15:38:42.553Z"
+      }
     }
   ],
   "edges": [
@@ -3035,6 +3176,130 @@
         "sourceIds": [],
         "recordedAt": "2026-09-20T14:45:48.139Z"
       }
+    },
+    {
+      "id": "EDGE-OBJ-HI2-10E-TASK",
+      "type": "IMPLEMENTED_BY",
+      "from": "OBJ-HI2-10E",
+      "to": "TASK-HI2-10E",
+      "memoryProvenance": {
+        "eventId": "GM-000025",
+        "revision": 25,
+        "actorId": "pes-v2-hunter-shadow-ephemeral-coverage",
+        "runId": "HI2-10E",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T15:38:42.553Z"
+      }
+    },
+    {
+      "id": "EDGE-RUN-HI2-10E-01-ABOUT-TASK",
+      "type": "ABOUT",
+      "from": "RUN-HI2-10E-01",
+      "to": "TASK-HI2-10E",
+      "memoryProvenance": {
+        "eventId": "GM-000025",
+        "revision": 25,
+        "actorId": "pes-v2-hunter-shadow-ephemeral-coverage",
+        "runId": "HI2-10E",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T15:38:42.553Z"
+      }
+    },
+    {
+      "id": "EDGE-TASK-HI2-10E-PRODUCED-ART",
+      "type": "PRODUCED",
+      "from": "TASK-HI2-10E",
+      "to": "ART-HI2-10E",
+      "memoryProvenance": {
+        "eventId": "GM-000025",
+        "revision": 25,
+        "actorId": "pes-v2-hunter-shadow-ephemeral-coverage",
+        "runId": "HI2-10E",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T15:38:42.553Z"
+      }
+    },
+    {
+      "id": "EDGE-RUN-HI2-10E-02-PRODUCED-ART",
+      "type": "PRODUCED",
+      "from": "RUN-HI2-10E-02",
+      "to": "ART-HI2-10E",
+      "memoryProvenance": {
+        "eventId": "GM-000025",
+        "revision": 25,
+        "actorId": "pes-v2-hunter-shadow-ephemeral-coverage",
+        "runId": "HI2-10E",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T15:38:42.553Z"
+      }
+    },
+    {
+      "id": "EDGE-EVAL-HI2-10E-EVALUATES-ART",
+      "type": "EVALUATES",
+      "from": "EVAL-HI2-10E",
+      "to": "ART-HI2-10E",
+      "memoryProvenance": {
+        "eventId": "GM-000025",
+        "revision": 25,
+        "actorId": "pes-v2-hunter-shadow-ephemeral-coverage",
+        "runId": "HI2-10E",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T15:38:42.553Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-10E-01-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-10E-01",
+      "to": "ART-HI2-10E",
+      "provenance": {
+        "kind": "github-actions",
+        "runId": "35520089232"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000025",
+        "revision": 25,
+        "actorId": "pes-v2-hunter-shadow-ephemeral-coverage",
+        "runId": "HI2-10E",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T15:38:42.553Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-10E-02-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-10E-02",
+      "to": "ART-HI2-10E",
+      "provenance": {
+        "kind": "github-actions",
+        "runId": "35520089242"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000025",
+        "revision": 25,
+        "actorId": "pes-v2-hunter-shadow-ephemeral-coverage",
+        "runId": "HI2-10E",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T15:38:42.553Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-10E-03-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-10E-03",
+      "to": "ART-HI2-10E",
+      "provenance": {
+        "kind": "delivery-graph",
+        "path": "delivery/hi2-10e-delivery-graph.json"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000025",
+        "revision": 25,
+        "actorId": "pes-v2-hunter-shadow-ephemeral-coverage",
+        "runId": "HI2-10E",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T15:38:42.553Z"
+      }
     }
   ],
   "events": [
@@ -3571,6 +3836,37 @@
         "EDGE-EVID-HI2-10R-03-SUPPORTS-ART"
       ],
       "recordedAt": "2026-09-20T14:45:48.139Z"
+    },
+    {
+      "id": "GM-000025",
+      "revision": 25,
+      "operation": "append",
+      "actorId": "pes-v2-hunter-shadow-ephemeral-coverage",
+      "runId": "HI2-10E",
+      "reason": "Record HI2-10E failed test attempt, final exact implementation, PESv2 CI/Security evidence and ready high-risk delivery graph",
+      "sourceIds": [],
+      "addedNodeIds": [
+        "OBJ-HI2-10E",
+        "TASK-HI2-10E",
+        "RUN-HI2-10E-01",
+        "RUN-HI2-10E-02",
+        "ART-HI2-10E",
+        "EVAL-HI2-10E",
+        "EVID-HI2-10E-01",
+        "EVID-HI2-10E-02",
+        "EVID-HI2-10E-03"
+      ],
+      "addedEdgeIds": [
+        "EDGE-OBJ-HI2-10E-TASK",
+        "EDGE-RUN-HI2-10E-01-ABOUT-TASK",
+        "EDGE-TASK-HI2-10E-PRODUCED-ART",
+        "EDGE-RUN-HI2-10E-02-PRODUCED-ART",
+        "EDGE-EVAL-HI2-10E-EVALUATES-ART",
+        "EDGE-EVID-HI2-10E-01-SUPPORTS-ART",
+        "EDGE-EVID-HI2-10E-02-SUPPORTS-ART",
+        "EDGE-EVID-HI2-10E-03-SUPPORTS-ART"
+      ],
+      "recordedAt": "2026-09-20T15:38:42.553Z"
     }
   ]
 }

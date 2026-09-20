@@ -41,6 +41,7 @@ import {
 import type { HunterRunInput } from "@kairo/worker/hunter";
 import { PgHunterClosedLoopStore } from "./batch7-closed-loop-store";
 import { PgBrandDiscoveryPlanRepository } from "./brand-discovery-plan-postgres";
+import { buildEphemeralPublicBrandContexts } from "./hunter-shadow-ephemeral-brands";
 
 const SHA40 = /^[0-9a-f]{40}$/;
 const RUN_ID = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,119}$/;
@@ -50,6 +51,7 @@ export interface HunterShadowOperationalRequest {
   releaseSha: string;
   brandCount: number;
   runsPerBrand: number;
+  allowEphemeralPublicBrands: boolean;
 }
 
 export interface HunterShadowOperationalEvidence {
@@ -61,6 +63,7 @@ export interface HunterShadowOperationalEvidence {
   completedAt: string;
   brandCount: number;
   pairCount: number;
+  cohort: { persistedBrands: number; ephemeralPublicBrands: number };
   costScope: "model-plus-configured-search";
   readiness: HunterShadowEvidenceBatch["readiness"];
   observations: Array<{
@@ -140,7 +143,14 @@ export function hunterShadowEvidenceRequestFromEnv(
     );
   }
 
-  return { runId, releaseSha, brandCount, runsPerBrand };
+  return {
+    runId,
+    releaseSha,
+    brandCount,
+    runsPerBrand,
+    allowEphemeralPublicBrands:
+      env.KAIRO_HUNTER_SHADOW_EVIDENCE_EPHEMERAL_PUBLIC_BRANDS?.trim().toLowerCase() === "true",
+  };
 }
 
 export function hunterShadowSearchCostUsdBySourceFromEnv(
@@ -169,6 +179,7 @@ export async function executeHunterShadowEvidenceRun(
     accountId: string;
     workspaceId: string;
     brandId: string;
+    origin: "persisted" | "ephemeral-public";
     context: Omit<HunterShadowExecutionContext, "referenceTime">;
   }> = [];
 
@@ -188,8 +199,36 @@ export async function executeHunterShadowEvidenceRun(
       accountId: candidate.accountId,
       workspaceId: candidate.workspaceId,
       brandId: candidate.brandId,
+      origin: "persisted",
       context,
     });
+  }
+
+  const persistedBrandCount = baseContexts.length;
+  if (persistedBrandCount < 1) {
+    throw new Error(
+      "Hunter shadow evidence requires at least one persisted Hunter-ready Brand",
+    );
+  }
+
+  if (
+    baseContexts.length < options.request.brandCount &&
+    options.request.allowEphemeralPublicBrands
+  ) {
+    const ephemeral = await buildEphemeralPublicBrandContexts({
+      runtime: options.runtime,
+      limit: options.request.brandCount - baseContexts.length,
+    });
+    for (const item of ephemeral) {
+      if (baseContexts.length >= options.request.brandCount) break;
+      baseContexts.push({
+        accountId: item.context.accountId,
+        workspaceId: item.workspaceId,
+        brandId: item.brandId,
+        origin: "ephemeral-public",
+        context: item.context,
+      });
+    }
   }
 
   if (baseContexts.length < options.request.brandCount) {
@@ -260,6 +299,10 @@ export async function executeHunterShadowEvidenceRun(
     startedAt,
     new Date().toISOString(),
     batch,
+    {
+      persistedBrands: baseContexts.filter((item) => item.origin === "persisted").length,
+      ephemeralPublicBrands: baseContexts.filter((item) => item.origin === "ephemeral-public").length,
+    },
   );
 }
 
@@ -395,6 +438,7 @@ function redactOperationalEvidence(
   startedAt: string,
   completedAt: string,
   batch: HunterShadowEvidenceBatch,
+  cohort: { persistedBrands: number; ephemeralPublicBrands: number },
 ): HunterShadowOperationalEvidence {
   return {
     schemaVersion: 1,
@@ -405,6 +449,7 @@ function redactOperationalEvidence(
     completedAt,
     brandCount: batch.readiness.metrics.shadowBrands,
     pairCount: batch.pairs.length,
+    cohort,
     costScope: "model-plus-configured-search",
     readiness: batch.readiness,
     observations: batch.pairs.map((pair) => ({

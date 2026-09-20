@@ -56,6 +56,7 @@ describe("Hunter shadow operational evidence", () => {
       releaseSha: "a".repeat(40),
       brandCount: 3,
       runsPerBrand: 10,
+      allowEphemeralPublicBrands: false,
     });
 
     expect(() => hunterShadowEvidenceRequestFromEnv({
@@ -65,6 +66,22 @@ describe("Hunter shadow operational evidence", () => {
       KAIRO_HUNTER_SHADOW_EVIDENCE_BRANDS: "3",
       KAIRO_HUNTER_SHADOW_EVIDENCE_RUNS_PER_BRAND: "5",
     })).toThrow(/at least 30/);
+  });
+
+  it("enables ephemeral public Brand coverage only by an explicit exact true flag", () => {
+    expect(hunterShadowEvidenceRequestFromEnv({
+      KAIRO_HUNTER_SHADOW_EVIDENCE_RUN_ID: "hi2-10e-shadow-001",
+      KAIRO_HUNTER_SHADOW_EVIDENCE_RELEASE_SHA: "a".repeat(40),
+      KAIRO_RELEASE_SHA: "a".repeat(40),
+      KAIRO_HUNTER_SHADOW_EVIDENCE_EPHEMERAL_PUBLIC_BRANDS: "true",
+    })?.allowEphemeralPublicBrands).toBe(true);
+
+    expect(hunterShadowEvidenceRequestFromEnv({
+      KAIRO_HUNTER_SHADOW_EVIDENCE_RUN_ID: "hi2-10e-shadow-001",
+      KAIRO_HUNTER_SHADOW_EVIDENCE_RELEASE_SHA: "a".repeat(40),
+      KAIRO_RELEASE_SHA: "a".repeat(40),
+      KAIRO_HUNTER_SHADOW_EVIDENCE_EPHEMERAL_PUBLIC_BRANDS: "1",
+    })?.allowEphemeralPublicBrands).toBe(false);
   });
 
   it("requires explicit Agent Reach cost metering when Exa is enabled", () => {

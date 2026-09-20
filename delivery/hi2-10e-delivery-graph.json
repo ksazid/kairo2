@@ -1,0 +1,55 @@
+{
+  "status": "ready",
+  "sliceId": "HI2-10E",
+  "riskLevel": "high",
+  "purpose": "Fill Hunter V2 shadow-evidence Brand coverage with read-only ephemeral real public Brands without persisting test data or weakening canonical Brand readiness.",
+  "stages": [
+    {
+      "id": "persisted-anchor",
+      "dependsOn": [],
+      "output": "at least one persisted Hunter-ready production Brand context",
+      "authority": "read-only",
+      "rollback": "Abort evidence run if no persisted Hunter-ready Brand exists."
+    },
+    {
+      "id": "ephemeral-public-context",
+      "dependsOn": [
+        "persisted-anchor"
+      ],
+      "output": "sanitized source-backed public Brand contexts that pass canonical hunterReady",
+      "authority": "none",
+      "rollback": "Discard ephemeral contexts; no database state exists to revert."
+    },
+    {
+      "id": "paired-shadow-evidence",
+      "dependsOn": [
+        "ephemeral-public-context"
+      ],
+      "output": "30 paired V1/V2 observations across at least 3 distinct Brands",
+      "authority": "read-only",
+      "rollback": "Disable one-shot evidence env flags; Hunter V1 remains authoritative."
+    }
+  ],
+  "killSwitchOn": [
+    "persisted-anchor-missing",
+    "canonical-readiness-failure",
+    "tenant-isolation",
+    "manipulation-safety",
+    "persistence-authority",
+    "evidence-provenance",
+    "production-guard-bypass"
+  ],
+  "constraints": {
+    "minimumPersistedBrands": 1,
+    "minimumDistinctBrands": 3,
+    "minimumPairedRuns": 30,
+    "ephemeralBrandsPersisted": false,
+    "canonicalReadinessOverride": false,
+    "productionHunterAuthority": "v1-only",
+    "hunterV2Persistence": false,
+    "canaryExposure": false,
+    "featureActivation": false,
+    "schedulerChange": false,
+    "productionEnable": false
+  }
+}
