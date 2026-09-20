@@ -5,17 +5,17 @@ import { verifyCertifiedBundle } from "../src/certification-engine.mjs";
 
 const read = path => JSON.parse(fs.readFileSync(path, "utf8"));
 
-test("HI2-02R certified bundle remains valid after unrelated append-only graph revisions", () => {
+test("HI2-03R certified bundle remains valid after unrelated append-only graph revisions", () => {
   const config = read(".engineering/pes-v2.json");
   const governance = read("delivery/governance.json");
-  const certificationPolicy = read(config.certification.policyFile);
+  const policy = read(config.certification.policyFile);
   const graph = read("state/graph.json");
-  const bundle = read("delivery/hi2-02r-certified.json");
+  const bundle = read("delivery/hi2-03r-certified.json");
 
   const verification = verifyCertifiedBundle(bundle, {
     graph,
     governance,
-    policy: certificationPolicy,
+    policy,
     authority: config.authority,
     currentCommitSha: bundle.commitSha,
   });
