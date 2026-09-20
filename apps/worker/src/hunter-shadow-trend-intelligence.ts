@@ -27,6 +27,7 @@ export interface TrendSignalObservation {
   publisher?: string;
   publishedAt?: string;
   topicIds: string[];
+  generatorKeys: string[];
   corroboratingSignalIds: string[];
   metrics?: TrendSignalMetrics;
 }
@@ -59,6 +60,7 @@ export interface ShadowTrendCluster {
   sourceKeys: string[];
   platformKeys: string[];
   publisherKeys: string[];
+  generatorKeys: string[];
 }
 
 export interface ShadowTrendDiagnostics {
@@ -222,6 +224,7 @@ function buildCluster(
   const sourceKeys = unique(sorted.map(sourceIdentity));
   const platformKeys = unique(sorted.map((signal) => normalizeKey(signal.platform || signal.provider)));
   const publisherKeys = unique(sorted.map(publisherIdentity));
+  const generatorKeys = unique(sorted.flatMap((signal) => signal.generatorKeys));
   const corroboratedSignalCount = sorted.filter((signal) => signal.corroboratingSignalIds.length > 0).length;
 
   const observedTimes = sorted
@@ -334,6 +337,7 @@ function buildCluster(
     sourceKeys,
     platformKeys,
     publisherKeys,
+    generatorKeys,
   };
 }
 
@@ -372,6 +376,7 @@ function toObservation(candidate: ShadowRetrievalCandidate, metrics?: TrendSigna
     ...(candidate.publisher ? { publisher: candidate.publisher } : {}),
     ...(candidate.publishedAt ? { publishedAt: candidate.publishedAt } : {}),
     topicIds: [...candidate.topicIds],
+    generatorKeys: [...candidate.generatorKeys],
     corroboratingSignalIds: [...candidate.corroboratingKeys],
     ...(metrics ? { metrics: { ...metrics } } : {}),
   };
