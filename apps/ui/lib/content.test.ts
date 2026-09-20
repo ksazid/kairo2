@@ -57,7 +57,7 @@ describe("Kairo UI v2 Content behavior", () => {
         versions: [{ id: "version", assetId: "asset", content: "Try our seasonal menu.", createdAt: "2026-09-19T00:00:00Z" }],
       }],
     }] as CampaignDetailView[];
-    expect(toContentItems(details, {}, [])[0]?.image).toBe("/kairo-logo.svg");
+    expect(toContentItems(details, {}, [])[0]?.image).toBe("/kairo-media-placeholder.svg");
   });
 
   it("projects real Campaign assets and lifecycle evidence into Content items", () => {
