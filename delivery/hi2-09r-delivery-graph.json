@@ -1,0 +1,52 @@
+{
+  "status": "ready",
+  "sliceId": "HI2-09R",
+  "riskLevel": "high",
+  "purpose": "Evaluate Hunter V2 rollout readiness without activating or deploying Hunter V2.",
+  "stages": [
+    {
+      "id": "shadow-evidence",
+      "dependsOn": [],
+      "output": "shadow readiness metrics",
+      "authority": "none",
+      "rollback": "Remain on Hunter V1 production authority."
+    },
+    {
+      "id": "canary-eligibility",
+      "dependsOn": [
+        "shadow-evidence"
+      ],
+      "output": "canary eligibility only",
+      "authority": "readiness-only",
+      "rollback": "Keep canary disabled."
+    },
+    {
+      "id": "production-gate",
+      "dependsOn": [
+        "canary-eligibility"
+      ],
+      "output": "production readiness assessment",
+      "authority": "none",
+      "requiresHumanApprovals": [
+        "release",
+        "production-enable"
+      ],
+      "rollback": "Force rollout stage off and retain Hunter V1."
+    }
+  ],
+  "killSwitchOn": [
+    "tenant-isolation",
+    "manipulation-safety",
+    "persistence-authority",
+    "evidence-provenance",
+    "production-guard-bypass"
+  ],
+  "constraints": {
+    "productionHunterWiring": false,
+    "featureActivation": false,
+    "deployment": false,
+    "schedulerChange": false,
+    "persistenceMutation": false,
+    "vercelHoldUntil": "2026-09-21T11:01:31+02:00"
+  }
+}
