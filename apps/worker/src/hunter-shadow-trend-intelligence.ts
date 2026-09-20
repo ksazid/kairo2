@@ -288,7 +288,9 @@ function buildCluster(
   );
 
   const topicId = dominantTopicId(sorted);
-  const topic = topicLabels?.[topicId] ?? topicId ?? sorted[0]?.title ?? "Untitled trend";
+  const topic = isExplorationOnly(generatorKeys)
+    ? representativeExplorationTopic(sorted)
+    : topicLabels?.[topicId] ?? topicId ?? sorted[0]?.title ?? "Untitled trend";
   const stage = classifyStage({
     signalCount: sorted.length,
     freshness,
@@ -339,6 +341,30 @@ function buildCluster(
     publisherKeys,
     generatorKeys,
   };
+}
+
+
+function isExplorationOnly(generatorKeys: readonly string[]): boolean {
+  return (
+    generatorKeys.includes("adjacent-exploration") &&
+    generatorKeys.every(
+      (generator) =>
+        generator === "adjacent-exploration" ||
+        generator === "cross-source-confirmation",
+    )
+  );
+}
+
+function representativeExplorationTopic(
+  signals: readonly TrendSignalObservation[],
+): string {
+  const representative = [...signals]
+    .sort((left, right) =>
+      (right.corroboratingSignalIds.length - left.corroboratingSignalIds.length) ||
+      left.signalId.localeCompare(right.signalId)
+    )[0];
+  const title = representative?.title.trim() ?? "";
+  return title.slice(0, 180) || "Adjacent exploration";
 }
 
 function classifyStage(input: {
