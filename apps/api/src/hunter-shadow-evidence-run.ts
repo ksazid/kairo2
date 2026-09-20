@@ -113,7 +113,7 @@ export const HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE = {
   maxExternalCalls: 3,
   maxSemanticCalls: 0,
   deepLimit: 2,
-  maxCandidates: 10,
+  maxCandidates: 6,
 } as const;
 
 export interface ExecuteHunterShadowEvidenceOptions {
