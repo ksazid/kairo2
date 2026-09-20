@@ -346,7 +346,8 @@ export async function executeHunterShadowEvidenceRun(
   );
   } finally {
     if (disposableAnchor) {
-      await options.store.deleteBrand(
+      await deleteDisposableBrand(
+        options.store,
         disposableAnchor.accountId,
         disposableAnchor.brandId,
       );
@@ -356,7 +357,7 @@ export async function executeHunterShadowEvidenceRun(
 
 
 export function selectDisposableAnchorTenant(
-  candidates: readonly Array<{ accountId: string; workspaceId: string; brandId: string }>,
+  candidates: ReadonlyArray<{ accountId: string; workspaceId: string; brandId: string }>,
 ): { accountId: string; workspaceId: string } {
   if (!candidates.length) {
     throw new Error(
@@ -439,9 +440,23 @@ async function createDisposablePersistedAnchor(input: {
       context,
     };
   } catch (error) {
-    await input.store.deleteBrand(input.accountId, brand.id).catch(() => undefined);
+    await deleteDisposableBrand(input.store, input.accountId, brand.id);
     throw error;
   }
+}
+
+
+async function deleteDisposableBrand(
+  store: KairoRepository,
+  accountId: string,
+  brandId: string,
+): Promise<void> {
+  if (!store.deleteBrand) {
+    throw new Error(
+      "Disposable persisted Hunter shadow anchor cleanup is unsupported by the repository",
+    );
+  }
+  await store.deleteBrand(accountId, brandId);
 }
 
 export function resolveReadOnlyDiscoveryPlan(
