@@ -1,0 +1,70 @@
+{
+  "status": "ready",
+  "sliceId": "HI2-10V",
+  "riskLevel": "high",
+  "purpose": "Complete the disposable persisted Vercel Hunter shadow anchor with six explicit source-backed inferred fields required by the unchanged canonical Hunter readiness contract.",
+  "stages": [
+    {
+      "id": "public-source-bootstrap",
+      "dependsOn": [],
+      "output": "active Vercel About and Acceptable Use Policy sources",
+      "authority": "temporary-source-write",
+      "rollback": "Delete disposable Brand and all temporary source state."
+    },
+    {
+      "id": "canonical-field-repair",
+      "dependsOn": [
+        "public-source-bootstrap"
+      ],
+      "output": "six source-backed inferred fields covering business, offerings, audience, positioning, topics and boundaries",
+      "authority": "temporary-inferred-write",
+      "rollback": "Delete disposable Brand; never write owner-confirmed fields."
+    },
+    {
+      "id": "canonical-readiness",
+      "dependsOn": [
+        "canonical-field-repair"
+      ],
+      "output": "hunterReady=true from unchanged evaluator",
+      "authority": "read-only",
+      "rollback": "Abort paired evidence and delete disposable Brand."
+    },
+    {
+      "id": "paired-shadow-evidence",
+      "dependsOn": [
+        "canonical-readiness"
+      ],
+      "output": "30 paired V1/V2 observations across at least 3 distinct real Brands",
+      "authority": "read-only",
+      "rollback": "Delete disposable Brand, clear one-shot flags, retain Hunter V1 authority."
+    }
+  ],
+  "killSwitchOn": [
+    "missing-public-source",
+    "canonical-readiness-failure",
+    "cleanup-failure",
+    "tenant-isolation",
+    "manipulation-safety",
+    "persistence-authority",
+    "evidence-provenance",
+    "production-guard-bypass"
+  ],
+  "constraints": {
+    "targetUserBrandMutated": false,
+    "ownerConfirmedFieldsWritten": false,
+    "publicSources": [
+      "https://vercel.com/about",
+      "https://vercel.com/legal/acceptable-use-policy"
+    ],
+    "canonicalReadinessOverride": false,
+    "disposableAnchorDeletedInFinally": true,
+    "minimumDistinctBrands": 3,
+    "minimumPairedRuns": 30,
+    "hunterV2Persistence": false,
+    "productionHunterAuthority": "v1-only",
+    "canaryExposure": false,
+    "featureActivation": false,
+    "schedulerChange": false,
+    "productionEnable": false
+  }
+}
