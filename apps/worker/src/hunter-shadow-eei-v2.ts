@@ -137,7 +137,11 @@ export function runShadowPreferenceAwareEEI(input: {
       preRanked.cluster.intelligence.crossSourceSpread * 0.6 +
       preRanked.cluster.intelligence.crossPlatformSpread * 0.4,
     );
-    const bucket = classifyBucket(preRanked.topicFit, preferenceAffinity);
+    const bucket = classifyBucket(
+      preRanked.topicFit,
+      preferenceAffinity,
+      preRanked.explorationEligible,
+    );
     const eeiScore = weightedKnown([
       [preRanked.preRank.overall, 0.5],
       [preRanked.cluster.intelligence.evidenceConfidence, 0.14],
@@ -343,7 +347,12 @@ function mechanismTerms(deep: ShadowDeepIntelligenceItem | undefined): string[] 
   ].filter((value): value is string => Boolean(value));
 }
 
-function classifyBucket(topicFit: number, affinity: number | undefined): ShadowEEIBucket {
+function classifyBucket(
+  topicFit: number,
+  affinity: number | undefined,
+  explorationEligible: boolean,
+): ShadowEEIBucket {
+  if (explorationEligible) return "exploration";
   const preference = affinity ?? 0;
   if (topicFit >= 0.72 || preference >= 0.68) return "core";
   if (topicFit >= 0.32 || preference >= 0.35) return "adjacent";
