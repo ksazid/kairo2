@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "version": 2,
-  "revision": 13,
+  "revision": 14,
   "nodes": [
     {
       "id": "OBJ-001",
@@ -594,6 +594,20 @@
         "sourceIds": [],
         "recordedAt": "2026-09-20T01:30:00.000Z"
       }
+    },
+    {
+      "id": "RUN-HI2-02R-04",
+      "type": "AgentRun",
+      "status": "failed",
+      "title": "Governance revalidation showed candidate verification cannot span later graph revisions; certified-bundle verifier required",
+      "memoryProvenance": {
+        "eventId": "GM-000014",
+        "revision": 14,
+        "actorId": "pes-v2-hunter-semantic",
+        "runId": "HI2-02R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T01:32:00.000Z"
+      }
     }
   ],
   "edges": [
@@ -1054,6 +1068,20 @@
         "sourceIds": [],
         "recordedAt": "2026-09-20T01:30:00.000Z"
       }
+    },
+    {
+      "id": "EDGE-RUN-HI2-02R-04-ABOUT-TASK",
+      "type": "ABOUT",
+      "from": "RUN-HI2-02R-04",
+      "to": "TASK-HI2-02R",
+      "memoryProvenance": {
+        "eventId": "GM-000014",
+        "revision": 14,
+        "actorId": "pes-v2-hunter-semantic",
+        "runId": "HI2-02R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T01:32:00.000Z"
+      }
     }
   ],
   "events": [
@@ -1306,6 +1334,22 @@
         "EDGE-RUN-HI2-02R-03-ABOUT-TASK"
       ],
       "recordedAt": "2026-09-20T01:30:00.000Z"
+    },
+    {
+      "id": "GM-000014",
+      "revision": 14,
+      "operation": "append",
+      "actorId": "pes-v2-hunter-semantic",
+      "runId": "HI2-02R",
+      "reason": "Record second legacy certification regression exposed by append-only HI2-02R graph updates",
+      "sourceIds": [],
+      "addedNodeIds": [
+        "RUN-HI2-02R-04"
+      ],
+      "addedEdgeIds": [
+        "EDGE-RUN-HI2-02R-04-ABOUT-TASK"
+      ],
+      "recordedAt": "2026-09-20T01:32:00.000Z"
     }
   ]
 }
