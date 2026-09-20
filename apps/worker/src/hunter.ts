@@ -17,7 +17,9 @@ import {
 import { SECTOR_INTELLIGENCE_PACKS, selectSectorIntelligencePack } from "@kairo/domain/sector-packs";
 import { DEFAULT_SOURCE_REGISTRY } from "@kairo/domain/source-registry";
 import type { BrandIntelligenceTopicGraph } from "@kairo/domain/brand-intelligence";
+import type { ManipulationRiskInput } from "@kairo/domain/eei";
 import { rankAndFilterHunterCandidates } from "./hunter-quality";
+import { applyHunterEEIRerank, HUNTER_EEI_VERSION } from "./hunter-eei";
 
 export interface BrandContextProjection {
   workspaceId: string;
@@ -47,6 +49,7 @@ export interface HunterJudgmentCandidate {
   confidence?: number;
   freshnessDays?: number;
   estimatedEffort?: "low" | "medium" | "high";
+  engagementRisks?: ManipulationRiskInput;
   scores: {
     relevance: number;
     evidence: number;
@@ -82,6 +85,7 @@ export interface HunterRunResult {
   opportunityCount: number;
   sourcesScanned: string[];
   degradedSources?: string[];
+  eeiVersion?: string;
 }
 
 export interface HunterFailureDiagnostic {
@@ -172,7 +176,7 @@ export class HunterOrchestrator {
       approvedContextVersion: input.brand.contextVersion,
       capabilities: ["public-content-search", "public-content-fetch"],
       task: {
-        instruction: "Evaluate the supplied public evidence for this Brand. Review the strongest evidence first and assess at least the top five items (or every item when fewer than five exist) against Brand/topic/audience relevance, concrete source support, timeliness and novelty. Return 1-6 evidence-linked candidates when any item clears those minimums. Zero candidates is valid only when none of the supplied evidence supports a credible Brand-relevant content move. Do not require exceptional or viral certainty: Kairo applies deterministic quality gates after your judgment. Never invent evidence, and every candidate must use an exact sourceUrl supplied in the evidence.",
+        instruction: "Evaluate the supplied public evidence for this Brand. Review the strongest evidence first and assess at least the top five items (or every item when fewer than five exist) against Brand/topic/audience relevance, concrete source support, timeliness and novelty. Return 1-6 evidence-linked candidates when any item clears those minimums. Zero candidates is valid only when none of the supplied evidence supports a credible Brand-relevant content move. Do not require exceptional or viral certainty: Kairo applies deterministic quality gates after your judgment. Never invent evidence, and every candidate must use an exact sourceUrl supplied in the evidence. Optimize for useful Brand action, not clicks or screen time. If the proposed angle itself relies on artificial urgency, fear/anxiety exploitation, deceptive re-engagement, hidden opt-outs, sensitive-trait targeting, outrage amplification, or a compulsive reward loop, flag the applicable boolean fields in optional engagementRisks; otherwise omit engagementRisks.",
         context: compactHunterContext(input, evidence, enrichedDocuments),
       },
       outputSchema: { name: "hunter-opportunities", version: "2" },
@@ -213,7 +217,7 @@ export class HunterOrchestrator {
           approvedContextVersion: input.brand.contextVersion,
           capabilities: ["public-content-search", "public-content-fetch"],
           task: {
-            instruction: "Recheck the strongest supplied evidence before returning zero candidates. Evaluate the top five evidence items (or all items when fewer than five exist) individually. Propose a candidate whenever the source gives concrete support for a timely Brand/topic/audience-relevant angle with reasonable novelty. A candidate does not need to be exceptional or provably viral; it must be useful, grounded and specific. Return zero only if every reviewed item fails those minimums. Use only exact supplied sourceUrl values and do not invent facts.",
+            instruction: "Recheck the strongest supplied evidence before returning zero candidates. Evaluate the top five evidence items (or all items when fewer than five exist) individually. Propose a candidate whenever the source gives concrete support for a timely Brand/topic/audience-relevant angle with reasonable novelty. A candidate does not need to be exceptional or provably viral; it must be useful, grounded and specific. Return zero only if every reviewed item fails those minimums. Use only exact supplied sourceUrl values and do not invent facts. Optimize for usefulness rather than attention capture, and flag any prohibited engagement tactic in optional engagementRisks.",
             context: compactHunterContext(input, evidence, enrichedDocuments),
           },
           outputSchema: { name: "hunter-opportunities", version: "2" },
@@ -231,7 +235,7 @@ export class HunterOrchestrator {
     }
 
     const byUrl = new Map(evidence.map((item) => [item.sourceUrl, item]));
-    const qualified = rankAndFilterHunterCandidates(judgmentOutput.candidates, {
+    const qualityQualified = rankAndFilterHunterCandidates(judgmentOutput.candidates, {
       evidenceByUrl: byUrl,
       documentsByUrl: enrichedDocuments,
       ...(input.intelligenceProfile ? { intelligenceProfile: input.intelligenceProfile } : {}),
@@ -240,6 +244,7 @@ export class HunterOrchestrator {
       ...(input.refreshSeed ? { referenceTime: input.refreshSeed } : {}),
       maxCandidates: 12,
     });
+    const qualified = applyHunterEEIRerank(qualityQualified, { maxCandidates: 12 });
 
     console.info(JSON.stringify({
       event: "hunter_candidate_pipeline",
@@ -247,8 +252,11 @@ export class HunterOrchestrator {
       initialCandidateCount,
       ...(retryCandidateCount !== undefined ? { retryCandidateCount } : {}),
       modelCandidateCount: judgmentOutput.candidates.length,
-      qualityAcceptedCount: qualified.length,
-      qualityRejectedCount: Math.max(0, judgmentOutput.candidates.length - qualified.length),
+      qualityAcceptedCount: qualityQualified.length,
+      qualityRejectedCount: Math.max(0, judgmentOutput.candidates.length - qualityQualified.length),
+      eeiAcceptedCount: qualified.length,
+      eeiRejectedCount: Math.max(0, qualityQualified.length - qualified.length),
+      eeiVersion: HUNTER_EEI_VERSION,
     }));
 
     let opportunityCount = 0;
@@ -282,7 +290,9 @@ export class HunterOrchestrator {
     console.info(JSON.stringify({
       event: "hunter_candidate_persistence",
       modelCandidateCount: judgmentOutput.candidates.length,
-      qualityAcceptedCount: qualified.length,
+      qualityAcceptedCount: qualityQualified.length,
+      eeiAcceptedCount: qualified.length,
+      eeiVersion: HUNTER_EEI_VERSION,
       persistedOpportunityCount: opportunityCount,
       domainRejectedCount: Math.max(0, qualified.length - opportunityCount),
     }));
@@ -300,7 +310,8 @@ export function isHunterJudgmentOutput(value: unknown): value is HunterJudgmentO
   return (value as HunterJudgmentOutput).candidates.every((candidate) =>
     candidate && typeof candidate === "object" &&
     nonEmpty(candidate.sourceUrl) && nonEmpty(candidate.title) && nonEmpty(candidate.rationale) &&
-    nonEmpty(candidate.whyNow) && nonEmpty(candidate.developmentDirection) && validScores(candidate.scores),
+    nonEmpty(candidate.whyNow) && nonEmpty(candidate.developmentDirection) && validScores(candidate.scores) &&
+    validEngagementRisks(candidate.engagementRisks),
   );
 }
 
@@ -336,6 +347,21 @@ function validScores(scores: HunterJudgmentCandidate["scores"] | undefined): boo
   if (!scores || typeof scores !== "object") return false;
   return [scores.relevance, scores.evidence, scores.novelty, scores.timeliness, scores.brandAuthority, scores.audienceFit]
     .every((value) => typeof value === "number" && Number.isFinite(value) && value >= 0 && value <= 1);
+}
+
+function validEngagementRisks(value: ManipulationRiskInput | undefined): boolean {
+  if (value === undefined) return true;
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const allowed = new Set([
+    "artificialUrgency",
+    "fearOrAnxietyExploitation",
+    "deceptiveReengagement",
+    "hiddenOptOut",
+    "sensitiveTraitTargeting",
+    "outrageAmplificationObjective",
+    "compulsiveRewardLoop",
+  ]);
+  return Object.entries(value).every(([key, item]) => allowed.has(key) && typeof item === "boolean");
 }
 
 function uniqueEvidence(items: DiscoveryEvidence[]): DiscoveryEvidence[] {
@@ -378,8 +404,8 @@ function withDegraded(
   const sourcesScanned = [...scanned].sort();
   const degradedSources = [...degraded].sort();
   return degradedSources.length
-    ? { ...result, sourcesScanned, degradedSources }
-    : { ...result, sourcesScanned };
+    ? { ...result, sourcesScanned, degradedSources, eeiVersion: HUNTER_EEI_VERSION }
+    : { ...result, sourcesScanned, eeiVersion: HUNTER_EEI_VERSION };
 }
 
 function compactBrand(brand: BrandContextProjection) {

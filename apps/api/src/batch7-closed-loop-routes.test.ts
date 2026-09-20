@@ -97,6 +97,25 @@ describe("VS-104 closed-loop routes", () => {
     await context.app.close();
   });
 
+
+  it("accepts explicit EEI feedback signals without inferring passive non-clicks", async () => {
+    const context = await setup();
+    for (const action of ["not_relevant", "wrong_audience", "not_credible", "saved"] as const) {
+      const response = await context.app.inject({
+        method: "POST",
+        url: `/api/v1/brands/${context.brand.id}/opportunities/opportunity-1/feedback/${action}`,
+        headers: auth,
+        payload: { surface: "discover", reason: "explicit user choice", rankingVersion: "hunter-eei-v1" },
+      });
+      expect(response.statusCode).toBe(200);
+      expect(response.json()).toMatchObject({ opportunityId: "opportunity-1", action });
+    }
+    expect(context.closedLoop.feedback.map((item) => item.action)).toEqual([
+      "not_relevant", "wrong_audience", "not_credible", "saved",
+    ]);
+    await context.app.close();
+  });
+
   it("creates the opportunity-linked development entry through the same tenant boundary", async () => {
     const context = await setup();
     const response = await context.app.inject({

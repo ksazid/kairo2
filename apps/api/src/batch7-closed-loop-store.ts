@@ -2,8 +2,18 @@ import { randomUUID } from "node:crypto";
 import { Pool, type PoolClient } from "pg";
 import type { ConceptMockupDto } from "@kairo/contracts/concept-mockup";
 import { ResourceNotFoundError } from "@kairo/domain";
+import type { OpportunityFeedbackAction } from "@kairo/domain/opportunity-intelligence";
 
-export type RecommendationFeedbackAction = "seen" | "dismissed";
+export type RecommendationFeedbackAction = "seen" | OpportunityFeedbackAction;
+
+export interface RecommendationFeedbackMetadata {
+  surface?: string;
+  rankingVersion?: string;
+  position?: number;
+  reason?: string;
+  contentId?: string;
+  idempotencyKey?: string;
+}
 
 export interface OpportunityDevelopmentResult {
   ideaId: string;
@@ -20,7 +30,7 @@ export interface RecommendationFeedbackResult {
 
 export interface HunterClosedLoopStore {
   learningContext(accountId: string, brandId: string): Promise<string | undefined>;
-  recordFeedback(accountId: string, brandId: string, opportunityId: string, action: RecommendationFeedbackAction): Promise<RecommendationFeedbackResult>;
+  recordFeedback(accountId: string, brandId: string, opportunityId: string, action: RecommendationFeedbackAction, metadata?: RecommendationFeedbackMetadata): Promise<RecommendationFeedbackResult>;
   developOpportunity(accountId: string, brandId: string, opportunityId: string): Promise<OpportunityDevelopmentResult>;
 }
 
@@ -93,6 +103,7 @@ export class PgHunterClosedLoopStore implements HunterClosedLoopStore {
     brandId: string,
     opportunityId: string,
     action: RecommendationFeedbackAction,
+    metadata: RecommendationFeedbackMetadata = {},
   ): Promise<RecommendationFeedbackResult> {
     const client = await this.pool.connect();
     try {
@@ -105,12 +116,21 @@ export class PgHunterClosedLoopStore implements HunterClosedLoopStore {
       const row = current.rows[0];
       if (!row) throw new ResourceNotFoundError("Opportunity not found");
       const inserted = await client.query(
-        `insert into opportunity_feedback_events(id,workspace_id,brand_id,opportunity_id,account_id,action)
-         values($1,$2,$3,$4,$5,$6)
+        `insert into opportunity_feedback_events
+          (id,workspace_id,brand_id,opportunity_id,account_id,action,surface,ranking_version,position,reason,content_id,idempotency_key)
+         values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
          on conflict(workspace_id,brand_id,opportunity_id,account_id,action) do nothing`,
-        [randomUUID(), workspaceId, brandId, opportunityId, accountId, action],
+        [
+          randomUUID(), workspaceId, brandId, opportunityId, accountId, action,
+          metadata.surface?.trim() || "discover",
+          metadata.rankingVersion?.trim() || "hunter-eei-v1",
+          metadata.position ?? null,
+          metadata.reason?.trim().slice(0, 500) || null,
+          metadata.contentId?.trim().slice(0, 200) || null,
+          metadata.idempotencyKey?.trim().slice(0, 300) || null,
+        ],
       );
-      const status = action === "dismissed" ? "ignored" : row.status;
+      const status = feedbackStatus(action, row.status);
       if (status !== row.status) {
         await client.query(`update brand_opportunities set status=$1,updated_at=now() where workspace_id=$2 and brand_id=$3 and id=$4`, [status, workspaceId, brandId, opportunityId]);
       }
@@ -173,6 +193,16 @@ export class PgHunterClosedLoopStore implements HunterClosedLoopStore {
       client.release();
     }
   }
+}
+
+function feedbackStatus(
+  action: RecommendationFeedbackAction,
+  current: RecommendationFeedbackResult["status"],
+): RecommendationFeedbackResult["status"] {
+  if (action === "saved") return "saved";
+  if (action === "developed") return "developing";
+  if (["dismissed", "not_relevant", "seen_before", "wrong_audience", "wrong_brand", "wrong_timing", "not_credible"].includes(action)) return "ignored";
+  return current;
 }
 
 function conceptMockupBrief(mockup: ConceptMockupDto | null | undefined): string | undefined {
