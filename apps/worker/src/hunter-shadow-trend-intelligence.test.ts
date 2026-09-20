@@ -82,6 +82,25 @@ describe("runShadowTrendIntelligence", () => {
     expect(run.diagnostics.stageDistribution.accelerating).toBe(1);
   });
 
+  it("uses an evidence-derived topic label for exploration-only clusters instead of collapsing them into the parent plan topic", async () => {
+    const run = await runShadowTrendIntelligence([
+      candidate({
+        key: "explore-a",
+        title: "Local-first developer environments gain interest",
+        summary: "Software teams are discussing reproducible local sandboxes and offline-first tooling.",
+        generatorKeys: ["adjacent-exploration"],
+      }),
+    ], {
+      now: new Date("2026-09-20T08:00:00Z"),
+      topicLabels: { "ev-battery-health": "EV battery health" },
+    });
+
+    expect(run.clusters).toHaveLength(1);
+    expect(run.clusters[0]!.generatorKeys).toEqual(["adjacent-exploration"]);
+    expect(run.clusters[0]!.intelligence.topic).toBe("Local-first developer environments gain interest");
+    expect(run.clusters[0]!.intelligence.topic).not.toBe("EV battery health");
+  });
+
   it("marks missing engagement/outlier features unknown instead of fabricating evidence", async () => {
     const run = await runShadowTrendIntelligence([
       candidate({ key: "signal-only", corroboratingKeys: [] }),
