@@ -173,6 +173,10 @@ export function runShadowPreferenceAwareEEI(input: {
   eligible.sort(compareRankedItems);
 
   const explorationTargetCount = targetCount(maxCandidates, explorationBudget, true);
+  const explorationMaxCount = Math.max(
+    explorationTargetCount,
+    Math.floor(maxCandidates * HUNTER_EEI_V2_SHADOW_POLICY.explorationMax),
+  );
   const adjacentTargetCount = targetCount(maxCandidates, adjacentShare, false);
   const coreTargetCount = Math.max(0, maxCandidates - explorationTargetCount - adjacentTargetCount);
 
@@ -194,8 +198,16 @@ export function runShadowPreferenceAwareEEI(input: {
   const selectFrom = (pool: readonly ShadowEEIRankedItem[], target: number) => {
     let added = 0;
     while (added < target && selected.length < maxCandidates) {
+      const selectedExplorationCount = selected.filter(
+        (item) => item.bucket === "exploration",
+      ).length;
       const eligiblePool = pool
         .filter((item) => !selectedIds.has(item.candidateId))
+        .filter(
+          (item) =>
+            item.bucket !== "exploration" ||
+            selectedExplorationCount < explorationMaxCount,
+        )
         .filter((item) => (topicCounts.get(normalize(item.topic)) ?? 0) < topicLimit)
         .sort((left, right) => {
           const leftCount = sourceCounts.get(primarySourceKey(left)) ?? 0;
