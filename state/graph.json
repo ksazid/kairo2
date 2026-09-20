@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "version": 2,
-  "revision": 28,
+  "revision": 29,
   "nodes": [
     {
       "id": "OBJ-001",
@@ -2189,6 +2189,134 @@
         "sourceIds": [],
         "recordedAt": "2026-09-20T17:13:49.893Z"
       }
+    },
+    {
+      "id": "OBJ-HI2-10M",
+      "type": "Objective",
+      "status": "active",
+      "title": "Restore the approved release-pinned Hunter schema migration range runtime",
+      "successCriteria": [
+        "migrate-range.mjs requires an explicit inclusive start..end migration range and validates both endpoints exist.",
+        "Only migration files inside the requested inclusive range can execute.",
+        "Existing kairo_schema_migrations checksum records are verified and already-applied migrations are skipped.",
+        "Each unapplied migration executes transactionally and records its checksum only after success.",
+        "The runtime Docker image contains migrate-range.mjs at the path referenced by start-api.mjs.",
+        "The approved 0039_hunter_feedback_v2.sql..0043_hunter_eei_metrics.sql startup action can run on an exact release-pinned Render deploy.",
+        "No Hunter shadow evidence startup action may run in the same process as the migration range.",
+        "No production Hunter V2 activation, canary exposure, scheduler change, or user Brand mutation is introduced.",
+        "PES v2 CI and Security baseline pass before merge/deployment."
+      ],
+      "memoryProvenance": {
+        "eventId": "GM-000029",
+        "revision": 29,
+        "actorId": "pes-v2-hunter-schema-migration-runtime",
+        "runId": "HI2-10M",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T17:24:39.609Z"
+      }
+    },
+    {
+      "id": "TASK-HI2-10M",
+      "type": "Task",
+      "status": "active",
+      "objectiveId": "OBJ-HI2-10M",
+      "title": "Package and validate the checksum-safe inclusive migration range runner",
+      "memoryProvenance": {
+        "eventId": "GM-000029",
+        "revision": 29,
+        "actorId": "pes-v2-hunter-schema-migration-runtime",
+        "runId": "HI2-10M",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T17:24:39.609Z"
+      }
+    },
+    {
+      "id": "RUN-HI2-10M-01",
+      "type": "AgentRun",
+      "status": "verified",
+      "objectiveId": "OBJ-HI2-10M",
+      "title": "Exact HI2-10M implementation passed PESv2 CI and Security",
+      "memoryProvenance": {
+        "eventId": "GM-000029",
+        "revision": 29,
+        "actorId": "pes-v2-hunter-schema-migration-runtime",
+        "runId": "HI2-10M",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T17:24:39.609Z"
+      }
+    },
+    {
+      "id": "ART-HI2-10M",
+      "type": "Artifact",
+      "status": "verified",
+      "title": "Production migration range runner and Docker runtime wiring",
+      "runId": "HI2-10M",
+      "version": "02751b562cdf311b9124b1faa67720010e480082",
+      "memoryProvenance": {
+        "eventId": "GM-000029",
+        "revision": 29,
+        "actorId": "pes-v2-hunter-schema-migration-runtime",
+        "runId": "HI2-10M",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T17:24:39.609Z"
+      }
+    },
+    {
+      "id": "EVAL-HI2-10M",
+      "type": "Evaluation",
+      "status": "verified",
+      "title": "PESv2 validated range bounds, checksum protection, transactional application, runtime packaging and startup-action exclusivity",
+      "rubricId": "hunter-schema-migration-runtime-high-risk",
+      "memoryProvenance": {
+        "eventId": "GM-000029",
+        "revision": 29,
+        "actorId": "pes-v2-hunter-schema-migration-runtime",
+        "runId": "HI2-10M",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T17:24:39.609Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-10M-01",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "GitHub PES v2 CI run 35525645391 passed for PR #22 head 02751b562cdf311b9124b1faa67720010e480082",
+      "memoryProvenance": {
+        "eventId": "GM-000029",
+        "revision": 29,
+        "actorId": "pes-v2-hunter-schema-migration-runtime",
+        "runId": "HI2-10M",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T17:24:39.609Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-10M-02",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "GitHub Security baseline run 35525645414 passed for PR #22 head 02751b562cdf311b9124b1faa67720010e480082",
+      "memoryProvenance": {
+        "eventId": "GM-000029",
+        "revision": 29,
+        "actorId": "pes-v2-hunter-schema-migration-runtime",
+        "runId": "HI2-10M",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T17:24:39.609Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-10M-03",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "HI2-10M delivery graph is ready; only approved 0039..0043 range may execute and Hunter shadow execution is mutually exclusive",
+      "memoryProvenance": {
+        "eventId": "GM-000029",
+        "revision": 29,
+        "actorId": "pes-v2-hunter-schema-migration-runtime",
+        "runId": "HI2-10M",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T17:24:39.609Z"
+      }
     }
   ],
   "edges": [
@@ -4043,6 +4171,116 @@
         "sourceIds": [],
         "recordedAt": "2026-09-20T17:13:49.893Z"
       }
+    },
+    {
+      "id": "EDGE-OBJ-HI2-10M-TASK",
+      "type": "IMPLEMENTED_BY",
+      "from": "OBJ-HI2-10M",
+      "to": "TASK-HI2-10M",
+      "memoryProvenance": {
+        "eventId": "GM-000029",
+        "revision": 29,
+        "actorId": "pes-v2-hunter-schema-migration-runtime",
+        "runId": "HI2-10M",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T17:24:39.609Z"
+      }
+    },
+    {
+      "id": "EDGE-TASK-HI2-10M-PRODUCED-ART",
+      "type": "PRODUCED",
+      "from": "TASK-HI2-10M",
+      "to": "ART-HI2-10M",
+      "memoryProvenance": {
+        "eventId": "GM-000029",
+        "revision": 29,
+        "actorId": "pes-v2-hunter-schema-migration-runtime",
+        "runId": "HI2-10M",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T17:24:39.609Z"
+      }
+    },
+    {
+      "id": "EDGE-RUN-HI2-10M-01-PRODUCED-ART",
+      "type": "PRODUCED",
+      "from": "RUN-HI2-10M-01",
+      "to": "ART-HI2-10M",
+      "memoryProvenance": {
+        "eventId": "GM-000029",
+        "revision": 29,
+        "actorId": "pes-v2-hunter-schema-migration-runtime",
+        "runId": "HI2-10M",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T17:24:39.609Z"
+      }
+    },
+    {
+      "id": "EDGE-EVAL-HI2-10M-EVALUATES-ART",
+      "type": "EVALUATES",
+      "from": "EVAL-HI2-10M",
+      "to": "ART-HI2-10M",
+      "memoryProvenance": {
+        "eventId": "GM-000029",
+        "revision": 29,
+        "actorId": "pes-v2-hunter-schema-migration-runtime",
+        "runId": "HI2-10M",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T17:24:39.609Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-10M-01-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-10M-01",
+      "to": "ART-HI2-10M",
+      "provenance": {
+        "kind": "github-actions",
+        "runId": "35525645391"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000029",
+        "revision": 29,
+        "actorId": "pes-v2-hunter-schema-migration-runtime",
+        "runId": "HI2-10M",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T17:24:39.609Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-10M-02-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-10M-02",
+      "to": "ART-HI2-10M",
+      "provenance": {
+        "kind": "github-actions",
+        "runId": "35525645414"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000029",
+        "revision": 29,
+        "actorId": "pes-v2-hunter-schema-migration-runtime",
+        "runId": "HI2-10M",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T17:24:39.609Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-10M-03-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-10M-03",
+      "to": "ART-HI2-10M",
+      "provenance": {
+        "kind": "delivery-graph",
+        "path": "delivery/hi2-10m-delivery-graph.json"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000029",
+        "revision": 29,
+        "actorId": "pes-v2-hunter-schema-migration-runtime",
+        "runId": "HI2-10M",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T17:24:39.609Z"
+      }
     }
   ],
   "events": [
@@ -4699,6 +4937,35 @@
         "EDGE-EVID-HI2-10V-03-SUPPORTS-ART"
       ],
       "recordedAt": "2026-09-20T17:13:49.893Z"
+    },
+    {
+      "id": "GM-000029",
+      "revision": 29,
+      "operation": "append",
+      "actorId": "pes-v2-hunter-schema-migration-runtime",
+      "runId": "HI2-10M",
+      "reason": "Record exact HI2-10M implementation, CI/Security evidence and migration runtime delivery graph",
+      "sourceIds": [],
+      "addedNodeIds": [
+        "OBJ-HI2-10M",
+        "TASK-HI2-10M",
+        "RUN-HI2-10M-01",
+        "ART-HI2-10M",
+        "EVAL-HI2-10M",
+        "EVID-HI2-10M-01",
+        "EVID-HI2-10M-02",
+        "EVID-HI2-10M-03"
+      ],
+      "addedEdgeIds": [
+        "EDGE-OBJ-HI2-10M-TASK",
+        "EDGE-TASK-HI2-10M-PRODUCED-ART",
+        "EDGE-RUN-HI2-10M-01-PRODUCED-ART",
+        "EDGE-EVAL-HI2-10M-EVALUATES-ART",
+        "EDGE-EVID-HI2-10M-01-SUPPORTS-ART",
+        "EDGE-EVID-HI2-10M-02-SUPPORTS-ART",
+        "EDGE-EVID-HI2-10M-03-SUPPORTS-ART"
+      ],
+      "recordedAt": "2026-09-20T17:24:39.609Z"
     }
   ]
 }
