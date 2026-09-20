@@ -1,0 +1,70 @@
+{
+  "status": "ready",
+  "sliceId": "HI2-10T",
+  "riskLevel": "high",
+  "purpose": "Resolve the disposable persisted Hunter shadow anchor tenant from one explicit existing Brand ID instead of guessing across multiple production workspaces.",
+  "stages": [
+    {
+      "id": "target-parse",
+      "dependsOn": [],
+      "output": "validated explicit anchor Brand UUID",
+      "authority": "none",
+      "rollback": "Abort before runtime execution when the selector is absent or invalid."
+    },
+    {
+      "id": "target-resolution",
+      "dependsOn": [
+        "target-parse"
+      ],
+      "output": "active workspace/account derived from the exact existing Brand",
+      "authority": "read-only",
+      "rollback": "Abort when the Brand is missing, inactive, or workspace resolution is ambiguous."
+    },
+    {
+      "id": "disposable-anchor",
+      "dependsOn": [
+        "target-resolution"
+      ],
+      "output": "temporary Vercel Brand in the target workspace",
+      "authority": "temporary-audited-write",
+      "rollback": "Delete temporary Brand in finally; never mutate the target Brand."
+    },
+    {
+      "id": "shadow-evidence",
+      "dependsOn": [
+        "disposable-anchor"
+      ],
+      "output": "30 paired V1/V2 observations across at least 3 distinct real Brands",
+      "authority": "read-only",
+      "rollback": "Delete temporary Brand, clear one-shot flags, retain Hunter V1 authority."
+    }
+  ],
+  "killSwitchOn": [
+    "invalid-target-brand-id",
+    "target-brand-missing",
+    "target-workspace-ambiguity",
+    "canonical-readiness-failure",
+    "cleanup-failure",
+    "tenant-isolation",
+    "manipulation-safety",
+    "persistence-authority",
+    "evidence-provenance",
+    "production-guard-bypass"
+  ],
+  "constraints": {
+    "targetBrandMutated": false,
+    "targetBrandPurpose": "tenant-resolution-only",
+    "disposableBrandName": "Vercel",
+    "ownerConfirmedFieldsWritten": false,
+    "canonicalReadinessOverride": false,
+    "disposableAnchorDeletedInFinally": true,
+    "minimumDistinctBrands": 3,
+    "minimumPairedRuns": 30,
+    "hunterV2Persistence": false,
+    "productionHunterAuthority": "v1-only",
+    "canaryExposure": false,
+    "featureActivation": false,
+    "schedulerChange": false,
+    "productionEnable": false
+  }
+}

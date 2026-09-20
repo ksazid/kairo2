@@ -1,11 +1,11 @@
 {
   "activeSlice": {
-    "id": "HI2-10P",
-    "objectiveId": "OBJ-HI2-10P",
+    "id": "HI2-10T",
+    "objectiveId": "OBJ-HI2-10T",
     "state": "certified",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Add an explicitly gated disposable persisted real-public Brand anchor for HI2 shadow evidence when no existing persisted Brand is Hunter-ready. The fixture is created in the single unambiguous existing workspace, populated only with source-backed inferred Brand Brain fields through normal audited services, used read-only for paired evidence, and deleted in finally. Existing user Brands are not modified.",
+    "scope": "Add an explicit existing Brand ID selector for the disposable persisted Hunter shadow anchor. The selected Brand is used only to derive its authorized workspace/account; it is never modified. The temporary Vercel anchor remains source-backed, inferred-only, canonical-readiness-gated and deleted in finally.",
     "budget": {
       "maxModelCalls": 90,
       "maxSubAgents": 0,
@@ -17,38 +17,38 @@
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-10P"
+        "scopeId": "HI2-10T"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-10P"
+        "scopeId": "HI2-10T"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-10P"
+        "scopeId": "HI2-10T"
       }
     ],
     "successCriteria": [
-      "Disposable persisted anchor is allowed only when zero existing persisted Hunter-ready Brands are available and an explicit runtime flag is true.",
-      "At least one existing persisted Brand must identify the target tenant, and all candidate persisted Brands must belong to one unambiguous workspace before any fixture write occurs.",
-      "The disposable anchor represents the real public Vercel Brand and uses official public About and Acceptable Use Policy evidence.",
-      "Brand Brain bootstrap writes only normal audited source-backed inferred fields; it never writes owner-confirmed fields or modifies existing user Brands.",
-      "The disposable anchor must pass the unchanged canonical Hunter-ready gate before entering the evidence cohort.",
-      "The disposable Brand is deleted in a finally path after evidence completion or failure.",
+      "Target Brand ID is accepted only through an explicit runtime variable and must be a valid UUID.",
+      "The target must resolve to an existing persisted Brand with an active workspace membership; missing targets fail closed.",
+      "Workspace/account are derived only from the target Brand rather than guessed across multiple workspaces.",
+      "The target Brand is read-only and is never mutated by the shadow setup.",
+      "The disposable Vercel anchor is created only in the target Brand workspace, writes only audited source-backed inferred fields, and is deleted in finally.",
+      "The unchanged canonical Hunter readiness gate remains mandatory for the disposable anchor.",
       "The evidence cohort remains at least 3 distinct real Brands and 30 paired V1/V2 runs.",
       "Hunter V1 remains production authority; no canary or production enablement is introduced.",
       "PES v2 CI and Security baseline pass before merge/deployment."
     ],
     "certification": {
-      "bundleId": "CERT-HI2-10P-13F29370",
-      "commitSha": "13f29370cd089259f8c31bded09980a676fafcaa",
-      "candidateHash": "b71e6a4472aa07dd78949d2f3a0d370e8648eddb5db06c1c8b3fb25abb8cf961",
-      "certifiedHash": "8f806706334fa24e465a052fbab8f19118138790cc0a5453506d2190be755159",
-      "certifiedAt": "2026-09-20T16:08:17.424Z"
+      "bundleId": "CERT-HI2-10T-015CD48D",
+      "commitSha": "015cd48ddedee01cc3fa8fb4a1350cbd6da50ffa",
+      "candidateHash": "a943f4b1f65a123de903e37f8b444e1b7d480c47d7dbcfeb84ac4199b13ac27c",
+      "certifiedHash": "974149a5dafb96034cc74360eb13d7c79ed27906670b79920cc95e925306527c",
+      "certifiedAt": "2026-09-20T16:17:44.367Z"
     }
   }
 }
