@@ -50,7 +50,8 @@
     "./format-intelligence": "./src/format-intelligence.ts",
     "./video-project": "./src/video-project.ts",
     "./marketing-benchmark": "./src/marketing-benchmark.ts",
-    "./marketing-lab": "./src/marketing-lab.ts"
+    "./marketing-lab": "./src/marketing-lab.ts",
+    "./hunter-semantic": "./src/hunter-semantic.ts"
   },
   "types": "./src/index.ts",
   "scripts": {
