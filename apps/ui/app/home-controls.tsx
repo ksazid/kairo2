@@ -127,6 +127,18 @@ async function generateAndOpen(input: GenerationInput & { brandId: string }, onP
     if (!progressResponse.ok) throw new Error(progress.error ?? "Kairo could not read this creation.");
     onProgress(progress.message ?? "Creating your content…");
     if (progress.status === "ready" && progress.destination) {
+      if (input.opportunityId) {
+        await fetch("/api/discover/feedback", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            brandId: input.brandId,
+            opportunityId: input.opportunityId,
+            action: "generated",
+            surface: "content-generation",
+          }),
+        }).catch(() => undefined);
+      }
       window.location.assign(progress.destination);
       return;
     }

@@ -17,7 +17,7 @@ const approvedRanges = new Set([
   "0023_meta_multichannel_connections.sql..0028_performance_pattern_memory.sql",
   "0029_brand_presenters.sql..0030_home_media_inputs.sql",
   "0034_brand_delete_cascade.sql..0036_hunter_run_records.sql",
-  "0039_hunter_feedback_v2.sql..0042_hunter_trend_clusters.sql",
+  "0039_hunter_feedback_v2.sql..0043_hunter_eei_metrics.sql",
 ]);
 const approvedMarketingAuthorization = "vs23-qualification-20260820-d";
 const approvedMarketingEvidenceExport = "vs23-qualification-20260820-d";

@@ -390,6 +390,31 @@ export async function ensureConceptAssets(brandId: string, opportunityId: string
   if (!response.ok && response.status !== 503) await bodyOrError(response, "Kairo could not prepare the concept visual.");
 }
 
+export type OpportunityFeedbackAction = "opened" | "saved" | "dismissed" | "not_relevant" | "seen_before" | "wrong_audience" | "wrong_brand" | "wrong_timing" | "not_credible" | "developed" | "generated" | "approved" | "published";
+
+export async function recordOpportunityFeedback(
+  brandId: string,
+  opportunityId: string,
+  action: OpportunityFeedbackAction,
+  metadata: { surface?: string; rankingVersion?: string; reason?: string } = {},
+): Promise<boolean> {
+  const token = await accessToken();
+  if (!token) return false;
+  const response = await api(
+    token,
+    `/api/v1/brands/${encodeURIComponent(brandId)}/opportunities/${encodeURIComponent(opportunityId)}/feedback/${action}`,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        surface: metadata.surface ?? "discover",
+        rankingVersion: metadata.rankingVersion ?? "hunter-v2-deterministic-1",
+        ...(metadata.reason?.trim() ? { reason: metadata.reason.trim().slice(0, 500) } : {}),
+      }),
+    },
+  );
+  return response.ok;
+}
+
 export async function actOnHomeOpportunity(brandId: string, opportunityId: string, action: "save" | "ignore"): Promise<HomeOpportunity> {
   const token = await accessToken();
   if (!token) throw new Error("Sign in to update this opportunity.");
