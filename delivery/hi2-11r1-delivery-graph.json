@@ -1,0 +1,74 @@
+{
+  "status": "ready",
+  "sliceId": "HI2-11R1",
+  "riskLevel": "high",
+  "purpose": "Repair the failed corrected pre-gate by satisfying the existing Trend Intelligence supporting-signal contract without changing retrieval, ranking, EEI, or rollout policy.",
+  "failureEvidence": {
+    "runId": "hi2-11r-pre-20260920-02",
+    "releaseSha": "6121582ba64558558e7017d193c4eaa4b602ff96",
+    "error": "DomainValidationError: supportingSignalIds is too long",
+    "boundary": "prepareTrendIntelligence",
+    "cause": "Live retrieval candidate keys can exceed the Trend Intelligence per-signal identifier limit of 200 characters."
+  },
+  "contract": {
+    "maximumSignalIdLength": 200,
+    "maximumSupportingSignalIds": 100,
+    "mapping": "signal:<sha256(raw retrieval key)>",
+    "rawKeysPreservedInternally": true
+  },
+  "stages": [
+    {
+      "id": "bounded-reference",
+      "dependsOn": [],
+      "output": "deterministic SHA-256 signal reference at Trend domain boundary",
+      "authority": "shadow-only",
+      "rollback": "Revert HI2-11R1."
+    },
+    {
+      "id": "bounded-list",
+      "dependsOn": [
+        "bounded-reference"
+      ],
+      "output": "deduplicated supporting references capped at 100",
+      "authority": "shadow-only",
+      "rollback": "Revert supporting list cap."
+    },
+    {
+      "id": "provenance-alignment",
+      "dependsOn": [
+        "bounded-reference"
+      ],
+      "output": "candidate provenance verification uses the exact same reference function",
+      "authority": "shadow-only",
+      "rollback": "Revert provenance mapping."
+    },
+    {
+      "id": "corrected-pre-gate",
+      "dependsOn": [
+        "bounded-list",
+        "provenance-alignment"
+      ],
+      "output": "rerun 3 brands x 3 runs under unchanged thresholds",
+      "authority": "read-only",
+      "rollback": "Do not run full gate."
+    },
+    {
+      "id": "full-shadow-gate",
+      "dependsOn": [
+        "corrected-pre-gate"
+      ],
+      "output": "3 brands x 10 runs only after pre-gate pass",
+      "authority": "read-only",
+      "rollback": "Canary remains disabled."
+    }
+  ],
+  "constraints": {
+    "rolloutThresholdChanges": false,
+    "retrievalPolicyChanges": false,
+    "eeiPolicyChanges": false,
+    "productionHunterAuthority": "v1-only",
+    "hunterV2Persistence": false,
+    "canaryExposure": false,
+    "productionEnable": false
+  }
+}
