@@ -15,6 +15,7 @@ import type {
 } from "@kairo/domain/discovery-service";
 import {
   buildHunterRetrievalPlan,
+  type HunterRetrievalPlan,
   type HunterSemanticExpansionPort,
 } from "@kairo/domain/hunter-retrieval";
 import {
@@ -67,6 +68,8 @@ export interface HunterShadowLaneAdapterOptions {
   semanticExpansion?: HunterSemanticExpansionPort;
   semanticHardNegative?: ShadowHardNegativeSemanticPort;
   candidate?: {
+    maxIntents?: number;
+    maxSourcesPerIntent?: number;
     maxExternalCalls?: number;
     maxSemanticCalls?: number;
     deepLimit?: number;
@@ -129,13 +132,13 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
   async runCandidate(run: HunterShadowRunCase): Promise<HunterShadowCandidateLaneResult> {
     const context = await this.context(run);
     const runtime = new MeteredRuntime(this.options.runtime);
-    const retrievalPlan = buildHunterRetrievalPlan({
+    const retrievalPlan = balancedShadowRetrievalPlan(buildHunterRetrievalPlan({
       plan: context.discoveryPlan,
       ...(context.preferenceState ? { preferenceState: context.preferenceState } : {}),
-    });
+    }), this.options.candidate?.maxIntents ?? 12);
     const search = new GatewayShadowSearchPort(this.options.tools, {
       timeoutMs: 20_000,
-      maxSourcesPerIntent: 2,
+      maxSourcesPerIntent: this.options.candidate?.maxSourcesPerIntent ?? 1,
     });
 
     const started = performance.now();
@@ -145,8 +148,8 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
       this.options.semanticExpansion,
       this.options.semanticHardNegative,
       {
-        maxExternalCalls: this.options.candidate?.maxExternalCalls ?? 24,
-        maxSemanticCalls: this.options.candidate?.maxSemanticCalls ?? 12,
+        maxExternalCalls: this.options.candidate?.maxExternalCalls ?? Math.min(24, retrievalPlan.intents.length),
+        maxSemanticCalls: this.options.candidate?.maxSemanticCalls ?? Math.min(12, retrievalPlan.intents.length),
       },
     );
 
@@ -315,6 +318,51 @@ class MeteredRuntime implements AgentRuntimePort {
     }
     return this.costUsd;
   }
+}
+
+
+function balancedShadowRetrievalPlan(
+  plan: HunterRetrievalPlan,
+  maxIntentsInput: number,
+): HunterRetrievalPlan {
+  const maxIntents = Math.max(1, Math.min(24, Math.trunc(maxIntentsInput)));
+  const topicIds = [...new Set(plan.intents.map((intent) => intent.topicId))];
+  const generatorOrder = new Map<string, number>([
+    ["brand-core", 0],
+    ["rising-breaking", 1],
+    ["authority", 2],
+    ["audience-problem", 3],
+    ["outlier", 4],
+    ["evergreen", 5],
+    ["category-competitor", 6],
+    ["adjacent-exploration", 7],
+  ]);
+  const byTopic = new Map(topicIds.map((topicId) => [
+    topicId,
+    plan.intents
+      .filter((intent) => intent.topicId === topicId && intent.mode !== "corroboration")
+      .sort((left, right) =>
+        (generatorOrder.get(left.generator) ?? 99) -
+        (generatorOrder.get(right.generator) ?? 99) ||
+        left.id.localeCompare(right.id)
+      ),
+  ] as const));
+
+  const selected: HunterRetrievalPlan["intents"] = [];
+  let round = 0;
+  while (selected.length < maxIntents) {
+    let added = false;
+    for (const topicId of topicIds) {
+      const candidate = byTopic.get(topicId)?.[round];
+      if (!candidate) continue;
+      selected.push(candidate);
+      added = true;
+      if (selected.length >= maxIntents) break;
+    }
+    if (!added) break;
+    round += 1;
+  }
+  return { ...plan, intents: selected };
 }
 
 function validateExecutionContext(
