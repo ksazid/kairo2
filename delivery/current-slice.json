@@ -1,55 +1,49 @@
 {
   "activeSlice": {
-    "id": "HI2-11R1",
-    "objectiveId": "OBJ-HI2-11R1",
-    "state": "certified",
+    "id": "HI2-11R2",
+    "objectiveId": "OBJ-HI2-11R2",
+    "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Remediate the failed HI2-11R pre-gate by preserving raw retrieval keys internally while emitting deterministic bounded Trend supporting-signal references that satisfy the existing domain contract. Deduplicate and cap domain supportingSignalIds at 100 and use the same bounded reference mapping for provenance verification. Do not change rollout thresholds, retrieval policy, EEI policy, persistence authority, or production authority.",
+    "scope": "Resolve the remaining HI2-11R1 pre-gate exploration-share failure without changing rollout or EEI thresholds. Represent recommendation topics using concrete evidence-derived trend titles while retaining the discovery-plan parent topic separately for relevance scoring, keep fallback exploration at the intended target quota rather than filling to the hard ceiling, and enforce the existing final exploration maximum against the actual selected recommendation set.",
     "budget": {
-      "maxModelCalls": 40,
+      "maxModelCalls": 60,
       "maxSubAgents": 0,
-      "maxWallClockMinutes": 20,
-      "maxExternalWrites": 12
+      "maxWallClockMinutes": 25,
+      "maxExternalWrites": 14
     },
     "approvals": [
       {
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R1"
+        "scopeId": "HI2-11R2"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R1"
+        "scopeId": "HI2-11R2"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R1"
+        "scopeId": "HI2-11R2"
       }
     ],
     "successCriteria": [
-      "Raw retrieval candidate keys remain unchanged for internal clustering and corroboration.",
-      "Every TrendIntelligence supportingSignalId is deterministic, non-empty, <=200 characters, deduplicated, and the list contains at most 100 items.",
-      "Long raw candidate keys are represented by collision-resistant compact references rather than lossy string truncation.",
-      "Candidate provenance verification maps retrieval candidates through the exact same bounded signal-reference function.",
-      "A regression test covers a raw signal key longer than 200 characters.",
-      "A regression test covers a cluster with more than 100 signals without violating the Trend Intelligence contract.",
-      "Existing trend clustering, EEI, learned exploration, cost, latency and rollout thresholds remain unchanged.",
-      "Corrected 3x3 pre-gate reruns before any 30-pair full gate.",
-      "Hunter V1 remains production authority; no V2 persistence or canary enablement.",
+      "Core and exploration TrendIntelligence topics are concrete evidence-derived recommendation topics rather than broad discovery-plan labels.",
+      "Each shadow trend cluster retains its parent discovery topic ID separately so relevance, audience and source-class scoring remain anchored to approved Brand Brain topics.",
+      "Non-exploration topic-fit behavior remains equivalent to the previous parent-topic label behavior.",
+      "Exploration candidates remain explicitly bounded exploration with topicFit capped at 0.25.",
+      "Fallback selection does not add exploration candidates beyond the intended exploration target count.",
+      "Final selected recommendations enforce the existing explorationMax=0.20 against the actual selected set while retaining at least one exploration item when eligible and policy-compatible.",
+      "Maximum topic share remains <=0.34 using concrete recommendation topics.",
+      "3x3 pre-gate retains retrieval coverage >=0.85, failure rate <=0.05, quality delta >=-0.02, p95 latency ratio <=1.5 and average cost ratio <=1.5.",
+      "Only after a corrected 3x3 pre-gate passes all unchanged thresholds may the 30-pair full gate run.",
+      "Hunter V1 remains production authority; no V2 persistence, canary, scheduler, or production enablement.",
       "PES v2 CI and Security baseline pass before merge/deployment."
-    ],
-    "certification": {
-      "bundleId": "CERT-HI2-11R1-36336194",
-      "commitSha": "36336194e80975968b44954a561a2550c1b7eca8",
-      "candidateHash": "2b4381b2717ce4bb494cc063d107b80e5bca2d8587915d5082c54d7a907dcfac",
-      "certifiedHash": "9318a92b2aac467df38930898b584195d7727a55f1b8c459b32b8910a4e66b71",
-      "certifiedAt": "2026-09-20T21:46:54.081Z"
-    }
+    ]
   }
 }
