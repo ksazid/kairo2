@@ -342,7 +342,7 @@ export async function executeHunterShadowEvidenceRun(
     searchCostUsdBySource: options.searchCostUsdBySource ?? {},
     candidate: {
       maxIntents: 6,
-      maxSourcesPerIntent: 1,
+      maxSourcesPerIntent: 2,
       maxExternalCalls: 6,
       maxSemanticCalls: 0,
       deepLimit: 2,
