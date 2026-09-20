@@ -1,0 +1,67 @@
+{
+  "slice": {
+    "id": "HI2-01",
+    "objectiveId": "OBJ-HI2-01",
+    "state": "testing",
+    "riskLevel": "low",
+    "implementationPermission": "runtime-enabled"
+  },
+  "context": {
+    "contextHash": "4ea4b7efb57aee1871f0a805e5febb0ff484301044859b274ac71867ac38eb17",
+    "graphRevision": 11,
+    "requestedSeeds": [
+      "OBJ-HI2-01",
+      "TASK-HI2-01",
+      "ART-HI2-01",
+      "EVID-HI2-01",
+      "EVID-HI2-02",
+      "EVAL-HI2-01"
+    ],
+    "resolvedSeeds": [
+      "OBJ-HI2-01",
+      "TASK-HI2-01",
+      "ART-HI2-01",
+      "EVID-HI2-01",
+      "EVID-HI2-02",
+      "EVAL-HI2-01"
+    ],
+    "contradictions": []
+  },
+  "approvals": [
+    {
+      "type": "scope",
+      "status": "approved",
+      "actorType": "human",
+      "scopeId": "HI2-01"
+    },
+    {
+      "type": "policy",
+      "status": "approved",
+      "actorType": "human",
+      "scopeId": "HI2-01"
+    },
+    {
+      "type": "implementation",
+      "status": "approved",
+      "actorType": "human",
+      "scopeId": "HI2-01"
+    }
+  ],
+  "evidenceIds": [
+    "EVID-HI2-01",
+    "EVID-HI2-02"
+  ],
+  "changedPaths": [
+    "docs/HUNTER-INTELLIGENCE-V2-EEI.md",
+    "packages/domain/package.json",
+    "packages/domain/src/brand-preference-state.ts",
+    "packages/domain/src/eei.ts",
+    "packages/domain/src/hunter-intelligence-v2-contracts.test.ts",
+    "packages/domain/src/hunter-ranking.ts",
+    "packages/domain/src/opportunity-intelligence.ts",
+    "packages/domain/src/trend-intelligence.ts"
+  ],
+  "deliveryGraph": {
+    "status": "not-required"
+  }
+}
