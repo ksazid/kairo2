@@ -9,9 +9,15 @@ export default async function NewBrandPage({ searchParams }: { searchParams: Sea
 
   async function submit(formData: FormData) {
     "use server";
-    const brandName = String(formData.get("brandName") ?? "").trim();
     const publicSourceUrl = String(formData.get("publicSourceUrl") ?? "").trim();
-    if (!brandName || !publicSourceUrl) redirect("/brands/new?error=Enter+a+Brand+name+and+a+public+website.");
+    if (!publicSourceUrl) redirect("/brands/new?error=Enter+a+public+website.");
+    let brandName: string;
+    try {
+      const hostname = new URL(publicSourceUrl).hostname.replace(/^www\./i, "");
+      brandName = hostname.split(".")[0]?.replace(/[-_]+/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase()).trim() || "New Brand";
+    } catch {
+      redirect("/brands/new?error=Enter a valid public website.");
+    }
     let brandId: string;
     let runtime: string | undefined;
     try {
@@ -29,13 +35,13 @@ export default async function NewBrandPage({ searchParams }: { searchParams: Sea
     <section className="onboarding-card" aria-labelledby="new-brand-title">
       <p className="onboarding-eyebrow">New Brand</p>
       <h1 id="new-brand-title">Build a Brand Brain in Kairo v2.</h1>
-      <p>Give Kairo a public website. It will create an isolated Brand and prepare its context for your review.</p>
+      <p>Give Kairo a public website. Kairo will analyse it, infer the Brand name, and prepare an isolated Brand Brain for your review.</p>
       {params.error ? <p className="auth-error" role="alert">{params.error}</p> : null}
       {params.runtime ? <p role="status">Brand Brain runtime: {params.runtime}</p> : null}
       <form action={submit} className="onboarding-form">
-        <label>Brand name<input name="brandName" required maxLength={120} autoComplete="organization"/></label>
         <label>Public website<input name="publicSourceUrl" required type="url" placeholder="https://example.com" autoComplete="url"/></label>
-        <button type="submit">Create Brand and build context</button>
+        <p className="onboarding-help">The Brand name is inferred from the website and can be refined later in Brand Brain.</p>
+        <button type="submit">Analyse website and build Brand Brain</button>
       </form>
       <Link href="/">Cancel</Link>
     </section>
