@@ -1,55 +1,49 @@
 {
   "activeSlice": {
-    "id": "HI2-10W",
-    "objectiveId": "OBJ-HI2-10W",
-    "state": "certified",
+    "id": "HI2-11",
+    "objectiveId": "OBJ-HI2-11",
+    "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Repair Hunter V2 shadow retrieval/ranking wiring exposed by the completed 30-pair operational evidence: prevent empty RSS success from starving Agent Reach, add a bounded lexical adjacent-exploration retrieval intent, reserve one exploration slot in the six-intent operational plan, and preserve exploration provenance into EEI bucketing. Do not change rollout thresholds, production Hunter authority, persistence, canary, scheduler, or production enablement.",
+    "scope": "Reduce Hunter V2 shadow cost and latency under unchanged rollout thresholds, stabilize genuine exploration across brands, and emit explicit human-readable test evidence (brand name, discovery topics, sanitized queries, paid-search selection, selected recommendation topics/buckets) only when an explicit evidence-detail flag is enabled.",
     "budget": {
-      "maxModelCalls": 0,
+      "maxModelCalls": 120,
       "maxSubAgents": 0,
-      "maxWallClockMinutes": 30,
-      "maxExternalWrites": 16
+      "maxWallClockMinutes": 45,
+      "maxExternalWrites": 20
     },
     "approvals": [
       {
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-10W"
+        "scopeId": "HI2-11"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-10W"
+        "scopeId": "HI2-11"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-10W"
+        "scopeId": "HI2-11"
       }
     ],
     "successCriteria": [
-      "The operational V2 lane attempts enough bounded sources for Industry news / Official source plans that Agent Reach is not starved behind empty RSS.",
-      "Hunter retrieval planning includes a lexical adjacent-exploration intent while retaining semantic expansion as an optional additional intent.",
-      "The balanced operational plan reserves exactly one lexical adjacent-exploration slot when available and remains within maxIntents.",
-      "Exploration-only retrieval provenance survives trend clustering and multistage ranking.",
-      "EEI classifies explicitly exploration-only candidates into the exploration bucket without weakening manipulation, negative-preference, saturation, or topic-concentration controls.",
-      "A production-like adapter test demonstrates non-zero V2 retrieval coverage, non-zero V2 cost when Agent Reach is used, and at least one exploration recommendation.",
-      "The same 3-brand / 30-pair shadow gate is rerun after deployment with all HI2-09 rollout thresholds unchanged.",
-      "Hunter V1 remains production authority and V2 performs no opportunity persistence.",
-      "Canary and production activation remain disabled unless the completed rerun passes the existing rollout evaluator.",
+      "Operational V2 uses at most three paid Agent Reach intents per run while keeping all planned lexical intents active on available free sources.",
+      "Paid intent selection is deterministic and always reserves an exploration paid slot when lexical adjacent exploration exists.",
+      "Independent source calls and lexical intents execute concurrently while final evidence ordering remains deterministic.",
+      "Deep-analysis requests execute concurrently with deterministic result ordering and isolated failure handling.",
+      "Exploration-only retrieval signals are not merged into non-exploration clusters, preserving genuine adjacent evidence through EEI.",
+      "Explicit test-only evidence detail records brand name, discovery topics, sanitized intent queries, paid-search selection and selected recommendation topics/buckets without raw source content or account identifiers.",
+      "A 3-brand x 3-run pre-gate must meet cost ratio <=1.5, p95 latency ratio <=1.5, retrieval coverage >=0.85, failure rate <=0.05, exploration share >=0.08, and quality delta >=-0.02 before a full 30-pair gate is attempted.",
+      "The full 30-pair gate uses unchanged HI2-09 thresholds.",
+      "Hunter V1 remains production authority and Hunter V2 performs no opportunity persistence.",
+      "Canary remains disabled unless the completed full shadow gate passes.",
       "PES v2 CI and Security baseline pass before merge/deployment."
-    ],
-    "certification": {
-      "bundleId": "CERT-HI2-10W-B841D36B",
-      "commitSha": "b841d36b52811ffefdf2eab0f94a2bb82d0c7f6a",
-      "candidateHash": "46e84def15a58cb17c33e3af0abd3305b8fb69bdec3ca2441a0cdd52fef716fc",
-      "certifiedHash": "5cc58e31a2accde6acd2407904c07c497a627bf1be0096abb7faf113c53d7cc9",
-      "certifiedAt": "2026-09-20T19:29:37.854Z"
-    }
+    ]
   }
 }
