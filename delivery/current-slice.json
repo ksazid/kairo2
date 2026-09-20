@@ -2,7 +2,7 @@
   "activeSlice": {
     "id": "HI2-04R",
     "objectiveId": "OBJ-HI2-04R",
-    "state": "implementing",
+    "state": "certified",
     "riskLevel": "medium",
     "implementationPermission": "runtime-disabled",
     "scope": "Add shadow-only Hunter Trend Intelligence: deterministic story clustering, cross-source corroboration, freshness, velocity/acceleration, creator/category outlier features, trend stage/confidence and diagnostics. Existing Hunter ranking/persistence remains authoritative.",
@@ -43,6 +43,13 @@
       "Diagnostics report cluster counts, corroboration, stage distribution and missing-feature rates.",
       "No provider credentials, scheduled execution, production Hunter wiring, UI changes or production enablement are introduced.",
       "PES v2 CI and Security baseline pass before certification."
-    ]
+    ],
+    "certification": {
+      "bundleId": "CERT-HI2-04R-43B78206",
+      "commitSha": "43b78206d262edcbcb30e4b06938beed0149b5f4",
+      "candidateHash": "f3a248bc7b04eb1c14a779db0c2fa4c430cb1a06f2654bd68a4ee5072abf8144",
+      "certifiedHash": "0538c7463846f601695e3c67368845154e31e8543b5cf72a238436155e52b72c",
+      "certifiedAt": "2026-09-20T08:09:00Z"
+    }
   }
 }
