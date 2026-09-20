@@ -62,6 +62,39 @@ export interface HunterShadowExecutionContext {
   referenceTime: string;
 }
 
+export interface HunterShadowCandidateTrace {
+  brandName: string;
+  discoveryTopics: Array<{ id: string; name: string; audience: string }>;
+  intents: Array<{
+    id: string;
+    generator: string;
+    topicName: string;
+    query: string;
+    sourceClasses: string[];
+    paidAgentReach: boolean;
+  }>;
+  selected: Array<{
+    candidateId: string;
+    topic: string;
+    bucket: "core" | "adjacent" | "exploration";
+    qualityScore: number;
+    sourceKeys: string[];
+    generatorKeys: string[];
+    proposedAngle?: string;
+  }>;
+  diagnostics: {
+    retrievalRawCandidates: number;
+    retrievalUniqueCandidates: number;
+    retrievalHardNegativeRejected: number;
+    retrievalFailedIntents: number;
+    trendClusters: number;
+    preRankSelected: number;
+    eeiEligible: number;
+    eeiSelected: number;
+    explorationSelected: number;
+  };
+}
+
 export interface HunterShadowLaneAdapterOptions {
   loadContext(run: HunterShadowRunCase): Promise<HunterShadowExecutionContext>;
   tools: ToolGatewayPort;
@@ -73,6 +106,7 @@ export interface HunterShadowLaneAdapterOptions {
   candidate?: {
     maxIntents?: number;
     maxSourcesPerIntent?: number;
+    maxPaidIntents?: number;
     maxExternalCalls?: number;
     maxSemanticCalls?: number;
     deepLimit?: number;
@@ -82,8 +116,14 @@ export interface HunterShadowLaneAdapterOptions {
 
 export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecutor {
   private readonly contexts = new Map<string, HunterShadowExecutionContext>();
+  private readonly candidateTraces = new Map<string, HunterShadowCandidateTrace>();
 
   constructor(private readonly options: HunterShadowLaneAdapterOptions) {}
+
+  traceFor(comparisonId: string): HunterShadowCandidateTrace | undefined {
+    const trace = this.candidateTraces.get(comparisonId);
+    return trace ? structuredClone(trace) : undefined;
+  }
 
   async runControl(run: HunterShadowRunCase): Promise<HunterShadowControlLaneResult> {
     const context = await this.context(run);
@@ -141,9 +181,14 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
       plan: context.discoveryPlan,
       ...(context.preferenceState ? { preferenceState: context.preferenceState } : {}),
     }), this.options.candidate?.maxIntents ?? 12);
+    const paidIntentIds = selectPaidShadowIntentIds(
+      retrievalPlan,
+      this.options.candidate?.maxPaidIntents ?? 3,
+    );
     const search = new GatewayShadowSearchPort(tools, {
       timeoutMs: 20_000,
       maxSourcesPerIntent: this.options.candidate?.maxSourcesPerIntent ?? 1,
+      paidIntentIds,
     });
 
     const started = performance.now();
@@ -209,6 +254,47 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
       retrieval.diagnostics.executedSemanticIntentCount;
     const failed = totalExecuted > 0 &&
       retrieval.diagnostics.failedIntentCount >= totalExecuted;
+
+    this.candidateTraces.set(run.comparisonId, {
+      brandName: context.hunterInput.brand.brandName,
+      discoveryTopics: context.discoveryPlan.topics.map((topic) => ({
+        id: topic.id,
+        name: topic.name,
+        audience: topic.audience,
+      })),
+      intents: retrievalPlan.intents
+        .filter((intent) => intent.mode === "lexical-search")
+        .map((intent) => ({
+          id: intent.id,
+          generator: intent.generator,
+          topicName: intent.topicName,
+          query: intent.query,
+          sourceClasses: [...intent.sourceClasses],
+          paidAgentReach: paidIntentIds.includes(intent.id),
+        })),
+      selected: eei.selected.map((item) => ({
+        candidateId: item.candidateId,
+        topic: item.topic,
+        bucket: item.bucket,
+        qualityScore: commonCandidateQuality(item),
+        sourceKeys: [...item.preRanked.cluster.sourceKeys],
+        generatorKeys: [...item.preRanked.cluster.generatorKeys],
+        ...(item.deepIntelligence?.analysis.proposedAngle
+          ? { proposedAngle: item.deepIntelligence.analysis.proposedAngle }
+          : {}),
+      })),
+      diagnostics: {
+        retrievalRawCandidates: retrieval.diagnostics.rawCandidateCount,
+        retrievalUniqueCandidates: retrieval.diagnostics.uniqueCandidateCount,
+        retrievalHardNegativeRejected: retrieval.diagnostics.hardNegativeRejectedCount,
+        retrievalFailedIntents: retrieval.diagnostics.failedIntentCount,
+        trendClusters: trend.diagnostics.clusterCount,
+        preRankSelected: multistage.diagnostics.preRankSelectedCount,
+        eeiEligible: eei.diagnostics.eligibleCount,
+        eeiSelected: eei.diagnostics.selectedCount,
+        explorationSelected: eei.diagnostics.explorationSelectedCount,
+      },
+    });
 
     return {
       inputFingerprint: run.inputFingerprint,
@@ -372,6 +458,66 @@ class MeteredRuntime implements AgentRuntimePort {
   }
 }
 
+
+export function selectPaidShadowIntentIds(
+  plan: HunterRetrievalPlan,
+  maxPaidInput: number,
+): string[] {
+  const maxPaid = Math.max(0, Math.min(6, Math.trunc(maxPaidInput)));
+  if (maxPaid === 0) return [];
+
+  const lexical = plan.intents.filter((intent) => intent.mode === "lexical-search");
+  const generatorOrder = new Map<string, number>([
+    ["brand-core", 0],
+    ["rising-breaking", 1],
+    ["authority", 2],
+    ["audience-problem", 3],
+    ["outlier", 4],
+    ["evergreen", 5],
+    ["category-competitor", 6],
+    ["adjacent-exploration", 7],
+  ]);
+  const compare = (left: typeof lexical[number], right: typeof lexical[number]) =>
+    (generatorOrder.get(left.generator) ?? 99) -
+      (generatorOrder.get(right.generator) ?? 99) ||
+    left.topicId.localeCompare(right.topicId) ||
+    left.id.localeCompare(right.id);
+
+  const selected: string[] = [];
+  const selectedSet = new Set<string>();
+  const coveredTopics = new Set<string>();
+  const add = (intent: typeof lexical[number] | undefined) => {
+    if (!intent || selected.length >= maxPaid || selectedSet.has(intent.id)) return;
+    selected.push(intent.id);
+    selectedSet.add(intent.id);
+    coveredTopics.add(intent.topicId);
+  };
+
+  const exploration = lexical
+    .filter((intent) => intent.generator === "adjacent-exploration")
+    .sort((a, b) => a.topicId.localeCompare(b.topicId) || a.id.localeCompare(b.id));
+  add(exploration[0]);
+
+  const nonExploration = lexical
+    .filter((intent) => intent.generator !== "adjacent-exploration")
+    .sort(compare);
+  const topicIds = [...new Set(nonExploration.map((intent) => intent.topicId))].sort();
+
+  for (const topicId of topicIds) {
+    if (selected.length >= maxPaid) break;
+    if (coveredTopics.has(topicId)) continue;
+    add(nonExploration.find((intent) => intent.topicId === topicId));
+  }
+  for (const intent of nonExploration) {
+    if (selected.length >= maxPaid) break;
+    add(intent);
+  }
+  for (const intent of exploration.slice(1)) {
+    if (selected.length >= maxPaid) break;
+    add(intent);
+  }
+  return selected;
+}
 
 export function balancedShadowRetrievalPlan(
   plan: HunterRetrievalPlan,
