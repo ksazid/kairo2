@@ -50,6 +50,7 @@ import { SourceIntelligenceBrandReferenceReader } from "./source-intelligence";
 
 const SHA40 = /^[0-9a-f]{40}$/;
 const RUN_ID = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,119}$/;
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
 export interface HunterShadowOperationalRequest {
   runId: string;
@@ -58,6 +59,7 @@ export interface HunterShadowOperationalRequest {
   runsPerBrand: number;
   allowEphemeralPublicBrands: boolean;
   allowDisposablePersistedAnchor: boolean;
+  anchorBrandId?: string;
 }
 
 export interface HunterShadowOperationalEvidence {
@@ -149,6 +151,14 @@ export function hunterShadowEvidenceRequestFromEnv(
     );
   }
 
+  const anchorBrandIdRaw =
+    env.KAIRO_HUNTER_SHADOW_EVIDENCE_ANCHOR_BRAND_ID?.trim().toLowerCase();
+  if (anchorBrandIdRaw && !UUID.test(anchorBrandIdRaw)) {
+    throw new Error(
+      "KAIRO_HUNTER_SHADOW_EVIDENCE_ANCHOR_BRAND_ID must be a valid lowercase UUID",
+    );
+  }
+
   return {
     runId,
     releaseSha,
@@ -158,6 +168,7 @@ export function hunterShadowEvidenceRequestFromEnv(
       env.KAIRO_HUNTER_SHADOW_EVIDENCE_EPHEMERAL_PUBLIC_BRANDS?.trim().toLowerCase() === "true",
     allowDisposablePersistedAnchor:
       env.KAIRO_HUNTER_SHADOW_EVIDENCE_DISPOSABLE_PERSISTED_ANCHOR?.trim().toLowerCase() === "true",
+    ...(anchorBrandIdRaw ? { anchorBrandId: anchorBrandIdRaw } : {}),
   };
 }
 
@@ -217,7 +228,13 @@ export async function executeHunterShadowEvidenceRun(
     baseContexts.length < 1 &&
     options.request.allowDisposablePersistedAnchor
   ) {
-    const tenant = selectDisposableAnchorTenant(candidates);
+    const anchorCandidates = options.request.anchorBrandId
+      ? await listTargetBrandCandidates(options.pool, options.request.anchorBrandId)
+      : candidates;
+    const tenant = selectDisposableAnchorTenant(
+      anchorCandidates,
+      options.request.anchorBrandId,
+    );
     const disposable = await createDisposablePersistedAnchor({
       ...tenant,
       pool: options.pool,
@@ -358,21 +375,29 @@ export async function executeHunterShadowEvidenceRun(
 
 export function selectDisposableAnchorTenant(
   candidates: ReadonlyArray<{ accountId: string; workspaceId: string; brandId: string }>,
+  anchorBrandId?: string,
 ): { accountId: string; workspaceId: string } {
-  if (!candidates.length) {
+  const matching = anchorBrandId
+    ? candidates.filter((item) => item.brandId === anchorBrandId)
+    : [...candidates];
+  if (!matching.length) {
     throw new Error(
-      "Disposable persisted Hunter shadow anchor requires an existing persisted Brand",
+      anchorBrandId
+        ? "Target Hunter shadow anchor Brand is unavailable or has no active workspace membership"
+        : "Disposable persisted Hunter shadow anchor requires an existing persisted Brand",
     );
   }
-  const workspaceIds = [...new Set(candidates.map((item) => item.workspaceId))];
+  const workspaceIds = [...new Set(matching.map((item) => item.workspaceId))];
   if (workspaceIds.length !== 1) {
     throw new Error(
-      "Disposable persisted Hunter shadow anchor requires one unambiguous workspace",
+      anchorBrandId
+        ? "Target Hunter shadow anchor Brand resolved to an ambiguous workspace"
+        : "Disposable persisted Hunter shadow anchor requires one unambiguous workspace",
     );
   }
   const workspaceId = workspaceIds[0]!;
   const accountId = [...new Set(
-    candidates
+    matching
       .filter((item) => item.workspaceId === workspaceId)
       .map((item) => item.accountId),
   )].sort()[0];
@@ -539,6 +564,30 @@ async function loadReadOnlyBrandContext(input: {
     discoveryPlan,
     ...(preferenceState ? { preferenceState } : {}),
   };
+}
+
+
+async function listTargetBrandCandidates(
+  pool: Pool,
+  brandId: string,
+): Promise<Array<{ accountId: string; workspaceId: string; brandId: string }>> {
+  const result = await pool.query<{
+    account_id: string;
+    workspace_id: string;
+    brand_id: string;
+  }>(
+    `select m.account_id,b.workspace_id,b.id as brand_id
+       from brands b
+       join workspace_memberships m on m.workspace_id=b.workspace_id
+      where b.id=$1 and m.active=true
+      order by m.account_id`,
+    [brandId],
+  );
+  return result.rows.map((row) => ({
+    accountId: row.account_id,
+    workspaceId: row.workspace_id,
+    brandId: row.brand_id,
+  }));
 }
 
 async function listCandidateBrands(
