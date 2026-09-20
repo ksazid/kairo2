@@ -1,11 +1,11 @@
 {
   "activeSlice": {
-    "id": "HI2-02R",
-    "objectiveId": "OBJ-HI2-02R",
-    "state": "certified",
+    "id": "HI2-03R",
+    "objectiveId": "OBJ-HI2-03R",
+    "state": "implementing",
     "riskLevel": "medium",
     "implementationPermission": "runtime-disabled",
-    "scope": "Add shadow-only semantic intelligence foundation: pgvector extension, provider-neutral embedding contracts, tenant-safe vector persistence, bounded backfill utilities and similarity diagnostics. No ranking authority or user-visible behavior.",
+    "scope": "Add shadow-only Hunter Retrieval Intelligence: deterministic multi-generator retrieval plans, semantic expansion hooks over the certified vector foundation, hard-negative filtering, candidate provenance/deduplication and recall-proxy diagnostics. Existing Hunter remains authoritative.",
     "budget": {
       "maxModelCalls": 0,
       "maxSubAgents": 0,
@@ -20,35 +20,28 @@
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-02R"
+        "scopeId": "HI2-03R"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-02R"
+        "scopeId": "HI2-03R"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-02R"
+        "scopeId": "HI2-03R"
       }
     ],
     "successCriteria": [
-      "Migration 0044 enables pgvector and adds additive tenant-scoped embedding storage without an ANN index.",
-      "Embedding provider/model/dimension are versioned metadata and the domain remains provider-neutral.",
-      "Similarity diagnostics cannot influence Hunter ranking or user-visible recommendations.",
-      "Backfill utilities are explicitly bounded and perform no provider calls unless an EmbeddingPort is injected.",
-      "Existing Hunter and EEI runtime behavior remains unchanged.",
+      "Retrieval planning creates bounded, provenance-rich intents across Brand Core, Audience Problem, Category/Competitor, Rising, Outlier, Authority, Evergreen, Adjacent Exploration and Cross-source Confirmation.",
+      "Shadow execution deduplicates candidates and records generator/topic/source coverage without affecting production Hunter ranking or persistence.",
+      "Explicit Brand exclusions and strong negative preferences are applied as hard-negative guards before diagnostics.",
+      "Semantic expansion uses provider-neutral injected ports over public-signal embeddings and remains optional/shadow-only.",
+      "No provider credentials, scheduled execution, UI changes, ranking authority or production enablement are introduced.",
       "PES v2 CI and Security baseline pass before certification."
-    ],
-    "certification": {
-      "bundleId": "CERT-HI2-02R-D64A227A",
-      "commitSha": "d64a227a44a75e8d20da8a1f4104f9ba59a5bf04",
-      "candidateHash": "051fee90599e7f366091ce4336f4682da00e4581c2ea06dba2eaa61003d21548",
-      "certifiedHash": "4761aed2d6be6f087c31390f11d3afff54a76f0621f96acd0f88b3120e2a9a11",
-      "certifiedAt": "2026-09-20T01:44:13Z"
-    }
+    ]
   }
 }
