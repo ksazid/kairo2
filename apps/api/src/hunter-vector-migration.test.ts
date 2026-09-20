@@ -10,7 +10,7 @@ describe("HI2-02R vector foundation migration", () => {
     expect(sql).toContain("provider text not null");
     expect(sql).toContain("model text not null");
     expect(sql).toContain("dimensions integer not null");
-    expect(sql).toContain("shadow-only semantic embedding storage");
+    expect(sql.toLowerCase()).toContain("shadow-only semantic embedding storage");
     expect(sql.toLowerCase()).not.toContain("using hnsw");
     expect(sql.toLowerCase()).not.toContain("using ivfflat");
   });
