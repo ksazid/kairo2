@@ -1,0 +1,387 @@
+{
+  "schemaVersion": 1,
+  "graphRevision": 32,
+  "requestedSeeds": [
+    "OBJ-HI2-11R",
+    "TASK-HI2-11R",
+    "ART-HI2-11R",
+    "EVAL-HI2-11R",
+    "EVID-HI2-11R-01",
+    "EVID-HI2-11R-02",
+    "EVID-HI2-11R-03"
+  ],
+  "resolvedSeeds": [
+    "OBJ-HI2-11R",
+    "TASK-HI2-11R",
+    "ART-HI2-11R",
+    "EVAL-HI2-11R",
+    "EVID-HI2-11R-01",
+    "EVID-HI2-11R-02",
+    "EVID-HI2-11R-03"
+  ],
+  "resolution": [
+    {
+      "requestedId": "OBJ-HI2-11R",
+      "currentId": "OBJ-HI2-11R",
+      "chain": [
+        "OBJ-HI2-11R"
+      ]
+    },
+    {
+      "requestedId": "TASK-HI2-11R",
+      "currentId": "TASK-HI2-11R",
+      "chain": [
+        "TASK-HI2-11R"
+      ]
+    },
+    {
+      "requestedId": "ART-HI2-11R",
+      "currentId": "ART-HI2-11R",
+      "chain": [
+        "ART-HI2-11R"
+      ]
+    },
+    {
+      "requestedId": "EVAL-HI2-11R",
+      "currentId": "EVAL-HI2-11R",
+      "chain": [
+        "EVAL-HI2-11R"
+      ]
+    },
+    {
+      "requestedId": "EVID-HI2-11R-01",
+      "currentId": "EVID-HI2-11R-01",
+      "chain": [
+        "EVID-HI2-11R-01"
+      ]
+    },
+    {
+      "requestedId": "EVID-HI2-11R-02",
+      "currentId": "EVID-HI2-11R-02",
+      "chain": [
+        "EVID-HI2-11R-02"
+      ]
+    },
+    {
+      "requestedId": "EVID-HI2-11R-03",
+      "currentId": "EVID-HI2-11R-03",
+      "chain": [
+        "EVID-HI2-11R-03"
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "EVID-HI2-11R-01",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "GitHub PES v2 CI run 35538825921 passed for PR #25 head 8ed6e933dc1a06c18c9d292ab19df8dec3e9734d",
+      "memoryProvenance": {
+        "eventId": "GM-000032",
+        "revision": 32,
+        "actorId": "pes-v2-hunter-coverage-exploration-bounds",
+        "runId": "HI2-11R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T21:36:41.729Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-11R-02",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "GitHub Security baseline run 35538825891 passed for PR #25 head 8ed6e933dc1a06c18c9d292ab19df8dec3e9734d",
+      "memoryProvenance": {
+        "eventId": "GM-000032",
+        "revision": 32,
+        "actorId": "pes-v2-hunter-coverage-exploration-bounds",
+        "runId": "HI2-11R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T21:36:41.729Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-11R-03",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "HI2-11R regression suite proves rotating distinct three-topic retrieval and preserves successful exploration preference while capping exploration at certified maximum",
+      "memoryProvenance": {
+        "eventId": "GM-000032",
+        "revision": 32,
+        "actorId": "pes-v2-hunter-coverage-exploration-bounds",
+        "runId": "HI2-11R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T21:36:41.729Z"
+      }
+    },
+    {
+      "id": "ART-HI2-11R",
+      "type": "Artifact",
+      "status": "verified",
+      "title": "Hunter V2 rotating three-topic retrieval plan and bounded exploration fallback",
+      "runId": "HI2-11R",
+      "version": "8ed6e933dc1a06c18c9d292ab19df8dec3e9734d",
+      "memoryProvenance": {
+        "eventId": "GM-000032",
+        "revision": 32,
+        "actorId": "pes-v2-hunter-coverage-exploration-bounds",
+        "runId": "HI2-11R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T21:36:41.729Z"
+      }
+    },
+    {
+      "id": "EVAL-HI2-11R",
+      "type": "Evaluation",
+      "status": "verified",
+      "title": "PESv2 validated three-topic rotation, distinct exploration topic, learned exploration priority, and 20 percent exploration ceiling",
+      "rubricId": "hunter-shadow-coverage-exploration-high-risk",
+      "memoryProvenance": {
+        "eventId": "GM-000032",
+        "revision": 32,
+        "actorId": "pes-v2-hunter-coverage-exploration-bounds",
+        "runId": "HI2-11R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T21:36:41.729Z"
+      }
+    },
+    {
+      "id": "OBJ-HI2-11R",
+      "type": "Objective",
+      "status": "active",
+      "title": "Stabilize Hunter V2 shadow retrieval coverage and exploration bounds under unchanged rollout thresholds",
+      "successCriteria": [
+        "Operational V2 retrieves exactly three bounded lexical intents per run when at least three topics exist.",
+        "Two core topic intents and one exploration intent use three distinct topic IDs when the discovery plan has at least three topics.",
+        "Topic selection rotates deterministically by comparison ID across repeated runs so a six-topic Brand is not permanently narrowed to the same three topics.",
+        "All three operational intents are eligible for the existing three-paid-intent budget; no additional paid searches are introduced.",
+        "Per-run retrieval coverage remains >=0.85 under the unchanged readiness metric.",
+        "EEI fallback selection never raises exploration above the certified explorationMax=0.20 while preserving the exploration minimum target when eligible evidence exists.",
+        "3x3 pre-gate cost ratio remains <=1.5 and p95 latency ratio <=1.5.",
+        "3x3 pre-gate quality delta remains >=-0.02, failure rate <=0.05, and topic share <=0.34.",
+        "Only after the corrected 3x3 pre-gate passes may the full 30-pair shadow gate run.",
+        "Hunter V1 remains production authority; no V2 persistence, canary, scheduler, or production enablement.",
+        "PES v2 CI and Security baseline pass before merge/deployment."
+      ],
+      "memoryProvenance": {
+        "eventId": "GM-000032",
+        "revision": 32,
+        "actorId": "pes-v2-hunter-coverage-exploration-bounds",
+        "runId": "HI2-11R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T21:36:41.729Z"
+      }
+    },
+    {
+      "id": "TASK-HI2-11R",
+      "type": "Task",
+      "status": "active",
+      "objectiveId": "OBJ-HI2-11R",
+      "title": "Rotate a three-topic shadow plan and enforce the certified EEI exploration maximum",
+      "memoryProvenance": {
+        "eventId": "GM-000032",
+        "revision": 32,
+        "actorId": "pes-v2-hunter-coverage-exploration-bounds",
+        "runId": "HI2-11R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T21:36:41.729Z"
+      }
+    },
+    {
+      "id": "RUN-HI2-11R-01",
+      "type": "AgentRun",
+      "status": "verified",
+      "objectiveId": "OBJ-HI2-11R",
+      "title": "Exact HI2-11R implementation passed PESv2 CI and Security after learned-exploration compatibility correction",
+      "memoryProvenance": {
+        "eventId": "GM-000032",
+        "revision": 32,
+        "actorId": "pes-v2-hunter-coverage-exploration-bounds",
+        "runId": "HI2-11R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T21:36:41.729Z"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "EDGE-OBJ-HI2-11R-TASK",
+      "type": "IMPLEMENTED_BY",
+      "from": "OBJ-HI2-11R",
+      "to": "TASK-HI2-11R",
+      "memoryProvenance": {
+        "eventId": "GM-000032",
+        "revision": 32,
+        "actorId": "pes-v2-hunter-coverage-exploration-bounds",
+        "runId": "HI2-11R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T21:36:41.729Z"
+      }
+    },
+    {
+      "id": "EDGE-TASK-HI2-11R-PRODUCED-ART",
+      "type": "PRODUCED",
+      "from": "TASK-HI2-11R",
+      "to": "ART-HI2-11R",
+      "memoryProvenance": {
+        "eventId": "GM-000032",
+        "revision": 32,
+        "actorId": "pes-v2-hunter-coverage-exploration-bounds",
+        "runId": "HI2-11R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T21:36:41.729Z"
+      }
+    },
+    {
+      "id": "EDGE-RUN-HI2-11R-01-PRODUCED-ART",
+      "type": "PRODUCED",
+      "from": "RUN-HI2-11R-01",
+      "to": "ART-HI2-11R",
+      "memoryProvenance": {
+        "eventId": "GM-000032",
+        "revision": 32,
+        "actorId": "pes-v2-hunter-coverage-exploration-bounds",
+        "runId": "HI2-11R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T21:36:41.729Z"
+      }
+    },
+    {
+      "id": "EDGE-EVAL-HI2-11R-EVALUATES-ART",
+      "type": "EVALUATES",
+      "from": "EVAL-HI2-11R",
+      "to": "ART-HI2-11R",
+      "memoryProvenance": {
+        "eventId": "GM-000032",
+        "revision": 32,
+        "actorId": "pes-v2-hunter-coverage-exploration-bounds",
+        "runId": "HI2-11R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T21:36:41.729Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-11R-01-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-11R-01",
+      "to": "ART-HI2-11R",
+      "provenance": {
+        "kind": "github-actions",
+        "runId": "35538825921"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000032",
+        "revision": 32,
+        "actorId": "pes-v2-hunter-coverage-exploration-bounds",
+        "runId": "HI2-11R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T21:36:41.729Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-11R-02-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-11R-02",
+      "to": "ART-HI2-11R",
+      "provenance": {
+        "kind": "github-actions",
+        "runId": "35538825891"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000032",
+        "revision": 32,
+        "actorId": "pes-v2-hunter-coverage-exploration-bounds",
+        "runId": "HI2-11R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T21:36:41.729Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-11R-03-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-11R-03",
+      "to": "ART-HI2-11R",
+      "provenance": {
+        "kind": "delivery-graph",
+        "path": "delivery/hi2-11r-delivery-graph.json"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000032",
+        "revision": 32,
+        "actorId": "pes-v2-hunter-coverage-exploration-bounds",
+        "runId": "HI2-11R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T21:36:41.729Z"
+      }
+    }
+  ],
+  "ranking": [
+    {
+      "id": "EVID-HI2-11R-01",
+      "score": 1119,
+      "hop": 0,
+      "status": "verified"
+    },
+    {
+      "id": "EVID-HI2-11R-02",
+      "score": 1119,
+      "hop": 0,
+      "status": "verified"
+    },
+    {
+      "id": "EVID-HI2-11R-03",
+      "score": 1119,
+      "hop": 0,
+      "status": "verified"
+    },
+    {
+      "id": "ART-HI2-11R",
+      "score": 1118,
+      "hop": 0,
+      "status": "verified"
+    },
+    {
+      "id": "EVAL-HI2-11R",
+      "score": 1118,
+      "hop": 0,
+      "status": "verified"
+    },
+    {
+      "id": "OBJ-HI2-11R",
+      "score": 1117,
+      "hop": 0,
+      "status": "active"
+    },
+    {
+      "id": "TASK-HI2-11R",
+      "score": 1113,
+      "hop": 0,
+      "status": "active"
+    },
+    {
+      "id": "RUN-HI2-11R-01",
+      "score": 101,
+      "hop": 1,
+      "status": "verified"
+    }
+  ],
+  "contradictions": [],
+  "omittedNodeIds": [],
+  "policy": {
+    "maxHops": 2,
+    "maxNodes": 40,
+    "maxTokens": 12000,
+    "includeStatuses": [
+      "approved",
+      "verified",
+      "active",
+      "superseded",
+      "failed"
+    ],
+    "preferVerified": true,
+    "includeContradictions": true,
+    "resolveSuperseded": true
+  },
+  "contextHash": "80bd15eb479d923c289f6cd7baa614616975539e63d192b42f0f603f21f07e51",
+  "estimatedTokens": 2055,
+  "truncated": false
+}
