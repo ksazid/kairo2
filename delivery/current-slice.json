@@ -2,7 +2,7 @@
   "activeSlice": {
     "id": "HI2-09R",
     "objectiveId": "OBJ-HI2-09R",
-    "state": "implementing",
+    "state": "certified",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
     "scope": "Add fail-closed Hunter V2 controlled-rollout readiness evaluation: shadow quality/safety evidence, canary eligibility, canary outcome guardrails, kill-switch conditions and explicit production-enable approval requirement. No rollout, deployment or production wiring is performed.",
@@ -43,6 +43,13 @@
       "Production readiness remains false unless a separate explicit human production-enable approval is supplied.",
       "No production Hunter wiring, feature activation, Vercel deployment, scheduler change or persistence mutation is introduced.",
       "PES v2 CI and Security baseline pass before certification."
-    ]
+    ],
+    "certification": {
+      "bundleId": "CERT-HI2-09R-A3148E02",
+      "commitSha": "a3148e02e006f7c9a491648144dcaea14d5370b7",
+      "candidateHash": "25eabb761e15463a902ac24f5e62c39107d64478bf01e2012f33664d1e03466a",
+      "certifiedHash": "ef1a2526a3672fe50c451f1882a414d4ad400667dc2db157dcd402c14cac9ad8",
+      "certifiedAt": "2026-09-20T13:50:00+02:00"
+    }
   }
 }
