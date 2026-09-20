@@ -1,0 +1,115 @@
+{
+  "status": "ready",
+  "sliceId": "HI2-11",
+  "riskLevel": "high",
+  "purpose": "Bring Hunter V2 shadow efficiency and exploration consistency inside the unchanged HI2-09 rollout thresholds, while producing inspectable test evidence for brands, topics, queries and selected recommendations.",
+  "baseline": {
+    "runId": "hi2-10w-shadow-20260920-01",
+    "releaseSha": "bc08a2b7d8b3503f5fa4416a2bf4a017799151ee",
+    "pairCount": 30,
+    "metrics": {
+      "averageQualityDelta": 0.5468504444444444,
+      "averageRetrievalCoverage": 1,
+      "v2FailureRate": 0,
+      "p95LatencyRatio": 1.9064564738611336,
+      "averageCostRatio": 2.93347016018754,
+      "minimumExplorationShare": 0,
+      "maximumExplorationShare": 0.1,
+      "maximumObservedTopicShare": 0.3
+    }
+  },
+  "unchangedTargets": {
+    "minimumShadowRuns": 30,
+    "minimumShadowBrands": 3,
+    "minimumQualityDelta": -0.02,
+    "minimumRetrievalCoverage": 0.85,
+    "maximumFailureRate": 0.05,
+    "maximumP95LatencyRatio": 1.5,
+    "maximumAverageCostRatio": 1.5,
+    "explorationMinimum": 0.08,
+    "explorationMaximum": 0.2,
+    "maximumTopicShare": 0.34
+  },
+  "stages": [
+    {
+      "id": "paid-budget",
+      "dependsOn": [],
+      "output": "at most three deterministic Agent Reach paid intents per run; exploration slot reserved",
+      "authority": "shadow-only",
+      "rollback": "Revert HI2-11; clear one-shot evidence flags."
+    },
+    {
+      "id": "parallel-retrieval",
+      "dependsOn": [
+        "paid-budget"
+      ],
+      "output": "independent lexical intents and provider calls execute concurrently with deterministic merge order",
+      "authority": "shadow-only",
+      "rollback": "Revert concurrency changes."
+    },
+    {
+      "id": "parallel-deep-analysis",
+      "dependsOn": [],
+      "output": "bounded deep-analysis calls execute concurrently with deterministic result order and isolated failures",
+      "authority": "shadow-only",
+      "rollback": "Revert concurrency changes."
+    },
+    {
+      "id": "exploration-isolation",
+      "dependsOn": [],
+      "output": "exploration-only public evidence cannot collapse into a non-exploration trend cluster",
+      "authority": "shadow-only",
+      "rollback": "Revert isolation rule."
+    },
+    {
+      "id": "human-readable-evidence",
+      "dependsOn": [
+        "paid-budget",
+        "exploration-isolation"
+      ],
+      "output": "explicit test-only brand/topic/query/selection trace without raw source content or account identifiers",
+      "authority": "read-only",
+      "rollback": "Disable evidence detail flag."
+    },
+    {
+      "id": "pre-gate",
+      "dependsOn": [
+        "parallel-retrieval",
+        "parallel-deep-analysis",
+        "exploration-isolation",
+        "human-readable-evidence"
+      ],
+      "output": "3 brands x 3 runs assessed against the same efficiency/quality/exploration thresholds",
+      "authority": "read-only",
+      "rollback": "Do not proceed to full gate."
+    },
+    {
+      "id": "full-shadow-gate",
+      "dependsOn": [
+        "pre-gate"
+      ],
+      "output": "3 brands x 10 runs under unchanged HI2-09 policy",
+      "authority": "read-only",
+      "rollback": "Canary remains disabled."
+    }
+  ],
+  "killSwitchOn": [
+    "tenant-isolation",
+    "manipulation-safety",
+    "persistence-authority",
+    "evidence-provenance",
+    "production-guard-bypass",
+    "critical-rollout-violation"
+  ],
+  "constraints": {
+    "rolloutThresholdChanges": false,
+    "maximumPaidAgentReachIntentsPerRun": 3,
+    "preGatePairs": 9,
+    "fullGatePairs": 30,
+    "productionHunterAuthority": "v1-only",
+    "hunterV2Persistence": false,
+    "canaryExposure": false,
+    "productionEnable": false,
+    "schedulerChange": false
+  }
+}
