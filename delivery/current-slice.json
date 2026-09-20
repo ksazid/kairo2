@@ -2,7 +2,7 @@
   "activeSlice": {
     "id": "HI2-11R",
     "objectiveId": "OBJ-HI2-11R",
-    "state": "implementing",
+    "state": "certified",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
     "scope": "Correct the HI2-11 pre-gate findings without changing rollout thresholds: use a three-topic-per-run operational retrieval plan with deterministic topic rotation and one distinct exploration topic, and enforce the certified EEI exploration maximum during fallback selection. Preserve the achieved cost/latency gains and detailed evidence output.",
@@ -44,6 +44,13 @@
       "Only after the corrected 3x3 pre-gate passes may the full 30-pair shadow gate run.",
       "Hunter V1 remains production authority; no V2 persistence, canary, scheduler, or production enablement.",
       "PES v2 CI and Security baseline pass before merge/deployment."
-    ]
+    ],
+    "certification": {
+      "bundleId": "CERT-HI2-11R-8ED6E933",
+      "commitSha": "8ed6e933dc1a06c18c9d292ab19df8dec3e9734d",
+      "candidateHash": "07de3c4a958f18cc29b5578c21bcf19c03ac966010a75b827b948b7d8e724564",
+      "certifiedHash": "65d2574558c94d157754d78b24024c17a9ee93ea4dc583986e18c5cb4cb3ff29",
+      "certifiedAt": "2026-09-20T21:36:41.729Z"
+    }
   }
 }
