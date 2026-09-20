@@ -2,7 +2,7 @@
   "activeSlice": {
     "id": "HI2-11R1",
     "objectiveId": "OBJ-HI2-11R1",
-    "state": "implementing",
+    "state": "certified",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
     "scope": "Remediate the failed HI2-11R pre-gate by preserving raw retrieval keys internally while emitting deterministic bounded Trend supporting-signal references that satisfy the existing domain contract. Deduplicate and cap domain supportingSignalIds at 100 and use the same bounded reference mapping for provenance verification. Do not change rollout thresholds, retrieval policy, EEI policy, persistence authority, or production authority.",
@@ -43,6 +43,13 @@
       "Corrected 3x3 pre-gate reruns before any 30-pair full gate.",
       "Hunter V1 remains production authority; no V2 persistence or canary enablement.",
       "PES v2 CI and Security baseline pass before merge/deployment."
-    ]
+    ],
+    "certification": {
+      "bundleId": "CERT-HI2-11R1-36336194",
+      "commitSha": "36336194e80975968b44954a561a2550c1b7eca8",
+      "candidateHash": "2b4381b2717ce4bb494cc063d107b80e5bca2d8587915d5082c54d7a907dcfac",
+      "certifiedHash": "9318a92b2aac467df38930898b584195d7727a55f1b8c459b32b8910a4e66b71",
+      "certifiedAt": "2026-09-20T21:46:54.081Z"
+    }
   }
 }
