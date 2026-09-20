@@ -2,7 +2,7 @@
   "activeSlice": {
     "id": "HI2-02R",
     "objectiveId": "OBJ-HI2-02R",
-    "state": "implementing",
+    "state": "certified",
     "riskLevel": "medium",
     "implementationPermission": "runtime-disabled",
     "scope": "Add shadow-only semantic intelligence foundation: pgvector extension, provider-neutral embedding contracts, tenant-safe vector persistence, bounded backfill utilities and similarity diagnostics. No ranking authority or user-visible behavior.",
@@ -42,6 +42,13 @@
       "Backfill utilities are explicitly bounded and perform no provider calls unless an EmbeddingPort is injected.",
       "Existing Hunter and EEI runtime behavior remains unchanged.",
       "PES v2 CI and Security baseline pass before certification."
-    ]
+    ],
+    "certification": {
+      "bundleId": "CERT-HI2-02R-D64A227A",
+      "commitSha": "d64a227a44a75e8d20da8a1f4104f9ba59a5bf04",
+      "candidateHash": "051fee90599e7f366091ce4336f4682da00e4581c2ea06dba2eaa61003d21548",
+      "certifiedHash": "4761aed2d6be6f087c31390f11d3afff54a76f0621f96acd0f88b3120e2a9a11",
+      "certifiedAt": "2026-09-20T01:44:13Z"
+    }
   }
 }
