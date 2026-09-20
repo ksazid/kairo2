@@ -35,7 +35,7 @@ import{ObservedAgentRuntime}from"./operations-runtime";
 import{PgOperationsTelemetrySink}from"./operations-telemetry-postgres";
 import{PgBrandCreator}from"./brand-creator";
 import{registerBrandRoutes}from"./brand-routes";
-import {AgentRuntimeRouter,DirectModelRuntime,hermesBridgeRuntimeFromEnv}from"@kairo/worker/agent-runtime";import{openAICompatibleGatewayFromEnv}from"@kairo/worker/model-gateway";import{BrandBrainBuilder}from"@kairo/worker/brand-brain-builder";import{DrafterGenerationAdapter}from"./drafter-adapter";
+import {AgentRuntimeRouter,DirectModelRuntime,hermesBridgeRuntimeFromEnv}from"@kairo/worker/agent-runtime";import{openAICompatibleGatewayFromEnv}from"@kairo/worker/model-gateway";import{BrandBrainBuilder}from"@kairo/worker/brand-brain-builder";import{isHunterDeepAnalysisOutput}from"@kairo/worker/hunter-shadow-lane-adapters";import{DrafterGenerationAdapter}from"./drafter-adapter";
 import{HunterOrchestrator,isHunterJudgmentOutput}from"@kairo/worker/hunter";
 import{ResearcherOrchestrator,buildFocusedResearchQuery,extractResearchUrls,isResearcherOutput}from"@kairo/worker/researcher";
 import{StrategistOrchestrator,isStrategistOutput}from"@kairo/worker/strategist";
@@ -80,7 +80,7 @@ import{SimplePublishFlowService}from"@kairo/domain/simple-publish-flow";import{P
 import{PgCommandSearchRepository}from"./command-search-postgres";import{registerCommandSearchRoutes}from"./command-search-routes";
 import{PgBrandNotificationRepository}from"./brand-notifications-postgres";import{registerBrandNotificationRoutes}from"./brand-notifications-routes";
 import{ConceptMockupAssetService}from"./concept-mockup-assets";import{registerConceptMockupAssetRoutes}from"./concept-mockup-asset-routes";
-import{PgHunterOpportunityIntelligenceWriter}from"./hunter-opportunity-intelligence-postgres";
+import{PgHunterOpportunityIntelligenceWriter}from"./hunter-opportunity-intelligence-postgres";import{executeHunterShadowEvidenceRun,hunterShadowEvidenceRequestFromEnv,hunterShadowSearchCostUsdBySourceFromEnv}from"./hunter-shadow-evidence-run";
 
 function requiredEnv(name: string): string {
   const value = process.env[name]?.trim();
@@ -113,11 +113,14 @@ const agentOutputValidators={
   "brand-brain-proposals@1":(value:unknown)=>!!value&&typeof value==="object"&&Array.isArray((value as{proposals?:unknown}).proposals),
   "hunter-opportunities@1":isHunterJudgmentOutput,
   "hunter-opportunities@2":isHunterJudgmentOutput,
+  "hunter-deep-intelligence@1":isHunterDeepAnalysisOutput,
   "research-dossier@1":isResearcherOutput,
   "strategist-angles@1":isStrategistOutput,
   "marketing-carousel-plan@1":(value:unknown)=>{try{validateCarouselPlan(value as Parameters<typeof validateCarouselPlan>[0]);return true}catch{return false}},
 };
 const evidenceRequest=marketingShadowEvidenceRequestFromEnv();
+const hunterShadowEvidenceRequest=hunterShadowEvidenceRequestFromEnv();
+const hunterShadowSearchCosts=hunterShadowSearchCostUsdBySourceFromEnv();
 const evidenceStore=evidenceRequest?new PgMarketingShadowEvidenceRunStore(pool):undefined;
 const directModelDiagnosticRequested=directModelProviderDiagnosticRequested();
 const gateway=openAICompatibleGatewayFromEnv();
@@ -290,6 +293,23 @@ try {
       void collectEvidenceTick();
       evidenceTimer=setInterval(()=>void collectEvidenceTick(),5_000);
       evidenceTimer.unref();
+    }
+  }
+  if(hunterShadowEvidenceRequest){
+    if(!baseRuntime){
+      app.log.error({runId:hunterShadowEvidenceRequest.runId,releaseSha:hunterShadowEvidenceRequest.releaseSha},"KAIRO_HUNTER_SHADOW_EVIDENCE_FAILED: base AgentRuntime is not configured");
+    }else{
+      void executeHunterShadowEvidenceRun({
+        pool,
+        store:coreStore,
+        discovery:discoveryService,
+        tools:createHunterToolGateway(),
+        runtime:baseRuntime,
+        sourceRegistry:configuredHunterSourceRegistry(),
+        request:hunterShadowEvidenceRequest,
+        searchCostUsdBySource:hunterShadowSearchCosts,
+      }).then(evidence=>app.log.info({evidence},"KAIRO_HUNTER_SHADOW_EVIDENCE_COMPLETE"))
+        .catch(error=>app.log.error({err:error,runId:hunterShadowEvidenceRequest.runId,releaseSha:hunterShadowEvidenceRequest.releaseSha},"KAIRO_HUNTER_SHADOW_EVIDENCE_FAILED"));
     }
   }
 } catch (error) {
