@@ -76,7 +76,7 @@ export function toContentItems(details: CampaignDetailView[], reviews: Record<st
     const status = statusFor(command, review, current?.id);
     const format = normalizeFormat(asset.format);
     const libraryMedia = current?.libraryAssetRefs?.filter((item) => (item.kind === "image" || item.kind === "video") && item.previewRef).map((item) => item.previewRef!) ?? [];
-    const image = libraryMedia[0] ?? "/kairo-logo.svg";
+    const image = libraryMedia[0] ?? "/kairo-media-placeholder.svg";
     const content = current?.content?.trim() || asset.topic;
     return {
       id: asset.id,
