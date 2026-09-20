@@ -90,15 +90,31 @@ export async function runShadowRetrieval(
   let duplicateCount = 0;
   let hardNegativeRejectedCount = 0;
 
-  for (const intent of lexical) {
-    let evidence: readonly DiscoveryEvidence[];
-    try {
-      evidence = await search.search(intent);
-    } catch {
+  const lexicalResults = await Promise.all(
+    lexical.map(async (intent) => {
+      try {
+        return {
+          intent,
+          failed: false as const,
+          evidence: await search.search(intent),
+        };
+      } catch {
+        return {
+          intent,
+          failed: true as const,
+          evidence: [] as readonly DiscoveryEvidence[],
+        };
+      }
+    }),
+  );
+
+  for (const result of lexicalResults) {
+    const intent = result.intent;
+    if (result.failed) {
       failedIntentCount += 1;
       continue;
     }
-    for (const item of evidence.slice(0, intent.maxResults)) {
+    for (const item of result.evidence.slice(0, intent.maxResults)) {
       rawCandidateCount += 1;
       const text = candidateText(item);
       if (matchesHardNegative(text, item, plan.hardNegatives)) {
