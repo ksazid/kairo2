@@ -111,13 +111,14 @@ describe("ephemeral public Hunter shadow Brand contexts", () => {
     expect(contexts).toHaveLength(1);
     expect(contexts[0]!.context.discoveryPlan.topics.length).toBeGreaterThan(0);
     expect(contexts[0]!.context.hunterInput.brand.brandName).toBe("Fixture AI");
-    expect(contexts[0]!.context.hunterInput.intelligenceProfile.excludedTopics)
-      .toContain("Harmful");
+    const profile = contexts[0]!.context.hunterInput.intelligenceProfile;
+    expect(profile).toBeDefined();
+    expect(profile!.excludedTopics).toContain("Harmful");
   });
 
   it("fails instead of overriding readiness when public evidence leaves a required group weak", async () => {
     const weakRuntime: AgentRuntimePort = {
-      async invoke<TOutput>(request) {
+      async invoke<TOutput>(request: AgentInvocationRequest) {
         const result = await runtime.invoke<{ proposals: Array<Record<string, unknown>> }>(request);
         return {
           ...result,
