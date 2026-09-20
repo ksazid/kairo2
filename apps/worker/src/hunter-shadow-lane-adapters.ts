@@ -5,6 +5,8 @@ import {
   type AgentRuntimeResult,
   type JsonValue,
   type ToolGatewayPort,
+  type ToolRequest,
+  type ToolResult,
 } from "@kairo/agent-contracts";
 import type { BrandDiscoveryPlan } from "@kairo/domain/brand-discovery-plan";
 import type { BrandPreferenceState } from "@kairo/domain/brand-preference-state";
@@ -67,6 +69,7 @@ export interface HunterShadowLaneAdapterOptions {
   sourceRegistry?: readonly DiscoverySourceDefinition[];
   semanticExpansion?: HunterSemanticExpansionPort;
   semanticHardNegative?: ShadowHardNegativeSemanticPort;
+  searchCostUsdBySource?: Readonly<Record<string, number>>;
   candidate?: {
     maxIntents?: number;
     maxSourcesPerIntent?: number;
@@ -86,6 +89,7 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
     const context = await this.context(run);
     const captured: OpportunityCandidateInput[] = [];
     const runtime = new MeteredRuntime(this.options.runtime);
+    const tools = new MeteredToolGateway(this.options.tools, this.options.searchCostUsdBySource);
     const sink = {
       async recordCandidate(
         _accountId: string,
@@ -101,7 +105,7 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
     };
 
     const runner = new HunterOrchestrator(
-      this.options.tools,
+      tools,
       runtime,
       sink,
       this.options.sourceRegistry ?? DEFAULT_SOURCE_REGISTRY,
@@ -124,7 +128,7 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
       ),
       metadata: {
         latencyMs,
-        costUsd: runtime.measuredCostUsd(),
+        costUsd: runtime.measuredCostUsd() + tools.measuredCostUsd(),
       },
     };
   }
@@ -132,11 +136,12 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
   async runCandidate(run: HunterShadowRunCase): Promise<HunterShadowCandidateLaneResult> {
     const context = await this.context(run);
     const runtime = new MeteredRuntime(this.options.runtime);
+    const tools = new MeteredToolGateway(this.options.tools, this.options.searchCostUsdBySource);
     const retrievalPlan = balancedShadowRetrievalPlan(buildHunterRetrievalPlan({
       plan: context.discoveryPlan,
       ...(context.preferenceState ? { preferenceState: context.preferenceState } : {}),
     }), this.options.candidate?.maxIntents ?? 12);
-    const search = new GatewayShadowSearchPort(this.options.tools, {
+    const search = new GatewayShadowSearchPort(tools, {
       timeoutMs: 20_000,
       maxSourcesPerIntent: this.options.candidate?.maxSourcesPerIntent ?? 1,
     });
@@ -212,7 +217,7 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
       qualityScore: average(eei.selected.map(commonCandidateQuality)),
       metadata: {
         latencyMs,
-        costUsd: runtime.measuredCostUsd(),
+        costUsd: runtime.measuredCostUsd() + tools.measuredCostUsd(),
       },
       retrievalExpected: plannedTopics.length,
       retrievalCovered: coveredTopics.length,
@@ -291,6 +296,53 @@ export function isHunterDeepAnalysisOutput(value: unknown): value is HunterDeepA
     return false;
   }
 }
+
+class MeteredToolGateway implements ToolGatewayPort {
+  private costUsd = 0;
+  private missingCostSource: string | undefined;
+
+  constructor(
+    private readonly inner: ToolGatewayPort,
+    private readonly searchCostUsdBySource: Readonly<Record<string, number>> = {},
+  ) {}
+
+  async invoke<TOutput>(request: ToolRequest): Promise<ToolResult<TOutput>> {
+    const result = await this.inner.invoke<TOutput>(request);
+    if (request.capability === "public-content-search") {
+      const source = typeof request.input.source === "string" && request.input.source.trim()
+        ? request.input.source.trim().toLowerCase()
+        : "agent-reach";
+      const configured = this.searchCostUsdBySource[source];
+      if (configured !== undefined) {
+        if (!Number.isFinite(configured) || configured < 0) {
+          throw new Error("Hunter shadow search cost must be a non-negative number for " + source);
+        }
+        this.costUsd += configured;
+      } else if (!FREE_SEARCH_SOURCES.has(source)) {
+        this.missingCostSource = source;
+      }
+    }
+    return result;
+  }
+
+  measuredCostUsd(): number {
+    if (this.missingCostSource) {
+      throw new Error(
+        "Measured search cost metadata is required for Hunter shadow source " +
+        this.missingCostSource,
+      );
+    }
+    return this.costUsd;
+  }
+}
+
+const FREE_SEARCH_SOURCES = new Set([
+  "rss",
+  "github",
+  "hacker-news",
+  "bluesky",
+  "youtube",
+]);
 
 class MeteredRuntime implements AgentRuntimePort {
   private costUsd = 0;
