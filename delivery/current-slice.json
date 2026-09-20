@@ -1,11 +1,11 @@
 {
   "activeSlice": {
-    "id": "HI2-04R",
-    "objectiveId": "OBJ-HI2-04R",
-    "state": "certified",
+    "id": "HI2-05R",
+    "objectiveId": "OBJ-HI2-05R",
+    "state": "implementing",
     "riskLevel": "medium",
     "implementationPermission": "runtime-disabled",
-    "scope": "Add shadow-only Hunter Trend Intelligence: deterministic story clustering, cross-source corroboration, freshness, velocity/acceleration, creator/category outlier features, trend stage/confidence and diagnostics. Existing Hunter ranking/persistence remains authoritative.",
+    "scope": "Add shadow-only Hunter multi-stage intelligence: deterministic pre-rank, bounded candidate funnel, provider-neutral deep-analysis port, validated deep intelligence outputs and funnel diagnostics. Existing production Hunter ranking/persistence remains authoritative.",
     "budget": {
       "maxModelCalls": 0,
       "maxSubAgents": 0,
@@ -20,36 +20,29 @@
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-04R"
+        "scopeId": "HI2-05R"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-04R"
+        "scopeId": "HI2-05R"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-04R"
+        "scopeId": "HI2-05R"
       }
     ],
     "successCriteria": [
-      "Shadow clustering groups semantically/lexically equivalent signals without persisting or ranking production opportunities.",
-      "Cross-source, cross-platform and independent-publisher corroboration are measured deterministically.",
-      "Velocity, acceleration and creator/category outlier features use only supplied observable metrics; unavailable metrics are explicitly marked unknown.",
-      "Trend stage, saturation, freshness and evidence confidence are deterministic and versioned.",
-      "Diagnostics report cluster counts, corroboration, stage distribution and missing-feature rates.",
-      "No provider credentials, scheduled execution, production Hunter wiring, UI changes or production enablement are introduced.",
+      "Pre-rank deterministically reduces trend candidates using Brand fit, topic fit, evidence, freshness, momentum, diversity and explicit penalties.",
+      "Unknown optional signals are excluded from the weighted denominator and reported explicitly rather than treated as zero.",
+      "Only a bounded top set may enter deep analysis; deep analysis is provided through an injected port and has no persistence authority.",
+      "Deep intelligence output validates mechanism, Brand interpretation, audience interpretation, gap analysis, actionable angle, originality, actionability and confidence.",
+      "Diagnostics expose funnel sizes, unknown-feature rates, deep-analysis success/failure and score distribution.",
+      "No provider credentials, scheduled execution, production Hunter wiring, UI changes, opportunity persistence or production enablement are introduced.",
       "PES v2 CI and Security baseline pass before certification."
-    ],
-    "certification": {
-      "bundleId": "CERT-HI2-04R-43B78206",
-      "commitSha": "43b78206d262edcbcb30e4b06938beed0149b5f4",
-      "candidateHash": "f3a248bc7b04eb1c14a779db0c2fa4c430cb1a06f2654bd68a4ee5072abf8144",
-      "certifiedHash": "0538c7463846f601695e3c67368845154e31e8543b5cf72a238436155e52b72c",
-      "certifiedAt": "2026-09-20T08:09:00Z"
-    }
+    ]
   }
 }
