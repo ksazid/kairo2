@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "version": 2,
-  "revision": 20,
+  "revision": 21,
   "nodes": [
     {
       "id": "OBJ-001",
@@ -1098,6 +1098,143 @@
         "sourceIds": [],
         "recordedAt": "2026-09-20T08:56:00.000Z"
       }
+    },
+    {
+      "id": "OBJ-HI2-07R",
+      "type": "Objective",
+      "status": "active",
+      "title": "Establish shadow-only Feedback V2 Preference State projection for Hunter",
+      "successCriteria": [
+        "Feedback V2 events are ordered and deduplicated before learning.",
+        "Passive exposure remains preference-neutral.",
+        "Explicit feedback updates only relevant preference dimensions with bounded decay.",
+        "Exploration budget remains bounded and cannot collapse.",
+        "Production feedback mutation remains authoritative."
+      ],
+      "memoryProvenance": {
+        "eventId": "GM-000021",
+        "revision": 21,
+        "actorId": "pes-v2-hunter-feedback",
+        "runId": "HI2-07R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T09:27:18.000Z"
+      }
+    },
+    {
+      "id": "TASK-HI2-07R",
+      "type": "Task",
+      "status": "active",
+      "objectiveId": "OBJ-HI2-07R",
+      "title": "Implement idempotent Feedback V2 learning projection and shadow EEI loop",
+      "memoryProvenance": {
+        "eventId": "GM-000021",
+        "revision": 21,
+        "actorId": "pes-v2-hunter-feedback",
+        "runId": "HI2-07R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T09:27:18.000Z"
+      }
+    },
+    {
+      "id": "RUN-HI2-07R-01",
+      "type": "AgentRun",
+      "status": "failed",
+      "title": "Initial Feedback V2 test assumed exact negative strength without accounting for decay across later events",
+      "memoryProvenance": {
+        "eventId": "GM-000021",
+        "revision": 21,
+        "actorId": "pes-v2-hunter-feedback",
+        "runId": "HI2-07R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T09:27:18.000Z"
+      }
+    },
+    {
+      "id": "RUN-HI2-07R-02",
+      "type": "AgentRun",
+      "status": "failed",
+      "title": "First assertion correction introduced a literal escaped newline in the TypeScript test fixture",
+      "memoryProvenance": {
+        "eventId": "GM-000021",
+        "revision": 21,
+        "actorId": "pes-v2-hunter-feedback",
+        "runId": "HI2-07R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T09:27:18.000Z"
+      }
+    },
+    {
+      "id": "RUN-HI2-07R-03",
+      "type": "AgentRun",
+      "status": "verified",
+      "title": "Corrected Feedback V2 projector and decay-aware tests passed PESv2 validation",
+      "memoryProvenance": {
+        "eventId": "GM-000021",
+        "revision": 21,
+        "actorId": "pes-v2-hunter-feedback",
+        "runId": "HI2-07R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T09:27:18.000Z"
+      }
+    },
+    {
+      "id": "ART-HI2-07R",
+      "type": "Artifact",
+      "status": "verified",
+      "title": "Hunter Feedback V2 Preference State shadow projector",
+      "runId": "HI2-07R",
+      "version": "6e5961689a0fb35478f26626c1144fb2bc36f04c",
+      "memoryProvenance": {
+        "eventId": "GM-000021",
+        "revision": 21,
+        "actorId": "pes-v2-hunter-feedback",
+        "runId": "HI2-07R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T09:27:18.000Z"
+      }
+    },
+    {
+      "id": "EVAL-HI2-07R",
+      "type": "Evaluation",
+      "status": "verified",
+      "title": "PESv2 validated idempotency, passive neutrality, dimension-specific learning, decay and Feedback-to-EEI loop",
+      "rubricId": "hunter-feedback-v2-shadow-preflight",
+      "memoryProvenance": {
+        "eventId": "GM-000021",
+        "revision": 21,
+        "actorId": "pes-v2-hunter-feedback",
+        "runId": "HI2-07R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T09:27:18.000Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-07R-01",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "GitHub PES v2 CI run 35502113248 passed for PR #14 head 6e5961689a0fb35478f26626c1144fb2bc36f04c",
+      "memoryProvenance": {
+        "eventId": "GM-000021",
+        "revision": 21,
+        "actorId": "pes-v2-hunter-feedback",
+        "runId": "HI2-07R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T09:27:18.000Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-07R-02",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "GitHub Security baseline run 35502113257 passed for PR #14 head 6e5961689a0fb35478f26626c1144fb2bc36f04c",
+      "memoryProvenance": {
+        "eventId": "GM-000021",
+        "revision": 21,
+        "actorId": "pes-v2-hunter-feedback",
+        "runId": "HI2-07R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T09:27:18.000Z"
+      }
     }
   ],
   "edges": [
@@ -1996,6 +2133,126 @@
         "sourceIds": [],
         "recordedAt": "2026-09-20T08:56:00.000Z"
       }
+    },
+    {
+      "id": "EDGE-OBJ-HI2-07R-TASK",
+      "type": "IMPLEMENTED_BY",
+      "from": "OBJ-HI2-07R",
+      "to": "TASK-HI2-07R",
+      "memoryProvenance": {
+        "eventId": "GM-000021",
+        "revision": 21,
+        "actorId": "pes-v2-hunter-feedback",
+        "runId": "HI2-07R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T09:27:18.000Z"
+      }
+    },
+    {
+      "id": "EDGE-RUN-HI2-07R-01-ABOUT-TASK",
+      "type": "ABOUT",
+      "from": "RUN-HI2-07R-01",
+      "to": "TASK-HI2-07R",
+      "memoryProvenance": {
+        "eventId": "GM-000021",
+        "revision": 21,
+        "actorId": "pes-v2-hunter-feedback",
+        "runId": "HI2-07R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T09:27:18.000Z"
+      }
+    },
+    {
+      "id": "EDGE-RUN-HI2-07R-02-ABOUT-TASK",
+      "type": "ABOUT",
+      "from": "RUN-HI2-07R-02",
+      "to": "TASK-HI2-07R",
+      "memoryProvenance": {
+        "eventId": "GM-000021",
+        "revision": 21,
+        "actorId": "pes-v2-hunter-feedback",
+        "runId": "HI2-07R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T09:27:18.000Z"
+      }
+    },
+    {
+      "id": "EDGE-TASK-HI2-07R-PRODUCED-ART",
+      "type": "PRODUCED",
+      "from": "TASK-HI2-07R",
+      "to": "ART-HI2-07R",
+      "memoryProvenance": {
+        "eventId": "GM-000021",
+        "revision": 21,
+        "actorId": "pes-v2-hunter-feedback",
+        "runId": "HI2-07R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T09:27:18.000Z"
+      }
+    },
+    {
+      "id": "EDGE-RUN-HI2-07R-03-PRODUCED-ART",
+      "type": "PRODUCED",
+      "from": "RUN-HI2-07R-03",
+      "to": "ART-HI2-07R",
+      "memoryProvenance": {
+        "eventId": "GM-000021",
+        "revision": 21,
+        "actorId": "pes-v2-hunter-feedback",
+        "runId": "HI2-07R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T09:27:18.000Z"
+      }
+    },
+    {
+      "id": "EDGE-EVAL-HI2-07R-EVALUATES-ART",
+      "type": "EVALUATES",
+      "from": "EVAL-HI2-07R",
+      "to": "ART-HI2-07R",
+      "memoryProvenance": {
+        "eventId": "GM-000021",
+        "revision": 21,
+        "actorId": "pes-v2-hunter-feedback",
+        "runId": "HI2-07R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T09:27:18.000Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-07R-01-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-07R-01",
+      "to": "ART-HI2-07R",
+      "provenance": {
+        "kind": "github-actions",
+        "runId": "35502113248"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000021",
+        "revision": 21,
+        "actorId": "pes-v2-hunter-feedback",
+        "runId": "HI2-07R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T09:27:18.000Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-07R-02-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-07R-02",
+      "to": "ART-HI2-07R",
+      "provenance": {
+        "kind": "github-actions",
+        "runId": "35502113257"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000021",
+        "revision": 21,
+        "actorId": "pes-v2-hunter-feedback",
+        "runId": "HI2-07R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T09:27:18.000Z"
+      }
     }
   ],
   "events": [
@@ -2408,6 +2665,37 @@
         "EDGE-EVID-HI2-06R-02-SUPPORTS-ART"
       ],
       "recordedAt": "2026-09-20T08:56:00.000Z"
+    },
+    {
+      "id": "GM-000021",
+      "revision": 21,
+      "operation": "append",
+      "actorId": "pes-v2-hunter-feedback",
+      "runId": "HI2-07R",
+      "reason": "Record HI2-07R failed attempts, corrected Feedback V2 artifact and successful CI/security evidence",
+      "sourceIds": [],
+      "addedNodeIds": [
+        "OBJ-HI2-07R",
+        "TASK-HI2-07R",
+        "RUN-HI2-07R-01",
+        "RUN-HI2-07R-02",
+        "RUN-HI2-07R-03",
+        "ART-HI2-07R",
+        "EVAL-HI2-07R",
+        "EVID-HI2-07R-01",
+        "EVID-HI2-07R-02"
+      ],
+      "addedEdgeIds": [
+        "EDGE-OBJ-HI2-07R-TASK",
+        "EDGE-RUN-HI2-07R-01-ABOUT-TASK",
+        "EDGE-RUN-HI2-07R-02-ABOUT-TASK",
+        "EDGE-TASK-HI2-07R-PRODUCED-ART",
+        "EDGE-RUN-HI2-07R-03-PRODUCED-ART",
+        "EDGE-EVAL-HI2-07R-EVALUATES-ART",
+        "EDGE-EVID-HI2-07R-01-SUPPORTS-ART",
+        "EDGE-EVID-HI2-07R-02-SUPPORTS-ART"
+      ],
+      "recordedAt": "2026-09-20T09:27:18.000Z"
     }
   ]
 }
