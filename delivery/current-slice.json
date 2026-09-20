@@ -2,7 +2,7 @@
   "activeSlice": {
     "id": "HI2-10E",
     "objectiveId": "OBJ-HI2-10E",
-    "state": "implementing",
+    "state": "certified",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
     "scope": "Add read-only ephemeral real-public-Brand contexts to the certified Hunter V2 shadow evidence runner so rollout evidence can satisfy the existing >=3 distinct Brand requirement without persisting test Brands, weakening Brand readiness, or changing Hunter production authority.",
@@ -40,6 +40,13 @@
       "V1 and V2 receive the exact same ephemeral Brand context and paired input fingerprint.",
       "The operational cohort reaches at least 3 distinct Brands and 30 paired runs without canary or production enablement.",
       "PES v2 CI and Security baseline pass before merge/deployment."
-    ]
+    ],
+    "certification": {
+      "bundleId": "CERT-HI2-10E-D1937891",
+      "commitSha": "d19378917b03551bd3f932096d269924d7850e02",
+      "candidateHash": "582f7dff6dadc1520ca5603f134a27f24c60b39554fc5ecae1215e09d1e45809",
+      "certifiedHash": "b1f939ca64df06e51c7ffa3b29490dd822cd1643c514245d92e5597b82cb3993",
+      "certifiedAt": "2026-09-20T15:55:41.473Z"
+    }
   }
 }
