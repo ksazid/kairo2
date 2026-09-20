@@ -1,0 +1,47 @@
+{
+  "allowed": true,
+  "sliceId": "HI2-06R",
+  "fromState": "testing",
+  "requestedState": "certification",
+  "blockers": [],
+  "warnings": [],
+  "requiredApprovals": [
+    "scope",
+    "policy",
+    "implementation"
+  ],
+  "validApprovals": [
+    "scope",
+    "policy",
+    "implementation"
+  ],
+  "protectedPaths": [],
+  "evidence": {
+    "accepted": [
+      {
+        "id": "EVID-HI2-06R-01",
+        "type": "Evidence",
+        "status": "verified",
+        "distance": 3
+      },
+      {
+        "id": "EVID-HI2-06R-02",
+        "type": "Evidence",
+        "status": "verified",
+        "distance": 3
+      }
+    ],
+    "rejected": []
+  },
+  "deliveryGraph": {
+    "required": false,
+    "blocking": false,
+    "status": null,
+    "reasons": []
+  },
+  "context": {
+    "hash": "3733df0c887300d534b7344e62ab84ac9d9678fb5b11dc5f3f111c2677c37f15",
+    "graphRevision": 20,
+    "contradictions": 0
+  }
+}
