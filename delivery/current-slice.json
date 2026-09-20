@@ -2,7 +2,7 @@
   "activeSlice": {
     "id": "HI2-01",
     "objectiveId": "OBJ-HI2-01",
-    "state": "certification",
+    "state": "certified",
     "riskLevel": "low",
     "implementationPermission": "runtime-enabled",
     "scope": "Define and validate runtime-disabled Hunter Intelligence V2 domain contracts and EEI guardrails. No migrations, provider calls, UI behavior changes, or production ranking changes.",
@@ -71,6 +71,13 @@
       "bundleId": "CERT-HI2-01-96AA9584",
       "commitSha": "96aa95843702bc7da1e5f7aee10731f08e203df4",
       "candidateHash": "22e8c497c257aee28bd70b3eb393217071fbe8fecd1c2b72fa682ef6311dda49"
+    },
+    "certification": {
+      "bundleId": "CERT-HI2-01-96AA9584",
+      "commitSha": "96aa95843702bc7da1e5f7aee10731f08e203df4",
+      "candidateHash": "22e8c497c257aee28bd70b3eb393217071fbe8fecd1c2b72fa682ef6311dda49",
+      "certifiedHash": "ef4527f3d4fab7ec7bddeb84b746a767147436841b26623002982742e766458e",
+      "certifiedAt": "2026-09-20T01:10:53Z"
     }
   }
 }
