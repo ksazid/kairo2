@@ -72,6 +72,7 @@ describe("runShadowTrendIntelligence", () => {
     expect(run.clusters).toHaveLength(1);
     const cluster = run.clusters[0]!;
     expect(cluster.intelligence.topic).toBe("EV battery health");
+    expect(cluster.subject).toMatch(/battery health/i);
     expect(cluster.intelligence.stage).toBe("accelerating");
     expect(cluster.intelligence.crossSourceSpread).toBe(1);
     expect(cluster.intelligence.crossPlatformSpread).toBe(1);
@@ -83,6 +84,22 @@ describe("runShadowTrendIntelligence", () => {
     expect(run.diagnostics.multiSourceClusterCount).toBe(1);
     expect(run.diagnostics.corroboratedClusterCount).toBe(1);
     expect(run.diagnostics.stageDistribution.accelerating).toBe(1);
+  });
+
+  it("preserves the parent topic for core relevance while exposing a distinct evidence-derived subject", async () => {
+    const run = await runShadowTrendIntelligence([
+      candidate({
+        key: "core-subject",
+        title: "Python 3.15 introduces a new debugging workflow",
+        summary: "A concrete runtime debugging change for developers.",
+      }),
+    ], {
+      now: new Date("2026-09-20T08:00:00Z"),
+      topicLabels: { "ev-battery-health": "Software development" },
+    });
+
+    expect(run.clusters[0]!.intelligence.topic).toBe("Software development");
+    expect(run.clusters[0]!.subject).toBe("Python 3.15 introduces a new debugging workflow");
   });
 
   it("uses an evidence-derived topic label for exploration-only clusters instead of collapsing them into the parent plan topic", async () => {
