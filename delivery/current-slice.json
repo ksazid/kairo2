@@ -1,52 +1,54 @@
 {
   "activeSlice": {
-    "id": "HI2-10E",
-    "objectiveId": "OBJ-HI2-10E",
+    "id": "HI2-10P",
+    "objectiveId": "OBJ-HI2-10P",
     "state": "certified",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Add read-only ephemeral real-public-Brand contexts to the certified Hunter V2 shadow evidence runner so rollout evidence can satisfy the existing >=3 distinct Brand requirement without persisting test Brands, weakening Brand readiness, or changing Hunter production authority.",
+    "scope": "Add an explicitly gated disposable persisted real-public Brand anchor for HI2 shadow evidence when no existing persisted Brand is Hunter-ready. The fixture is created in the single unambiguous existing workspace, populated only with source-backed inferred Brand Brain fields through normal audited services, used read-only for paired evidence, and deleted in finally. Existing user Brands are not modified.",
     "budget": {
-      "maxModelCalls": 80,
+      "maxModelCalls": 90,
       "maxSubAgents": 0,
       "maxWallClockMinutes": 30,
-      "maxExternalWrites": 0
+      "maxExternalWrites": 12
     },
     "approvals": [
       {
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-10E"
+        "scopeId": "HI2-10P"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-10E"
+        "scopeId": "HI2-10P"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-10E"
+        "scopeId": "HI2-10P"
       }
     ],
     "successCriteria": [
-      "At least one persisted Hunter-ready production Brand remains part of the evidence cohort.",
-      "Ephemeral Brands represent distinct real public Brands and are derived from fetched public evidence plus the existing Brand Brain proposal validator.",
-      "Ephemeral Brand Brain must pass the unchanged canonical createBrandBrainActivationSnapshot hunterReady gate; no readiness override or synthetic ready flag is allowed.",
-      "Ephemeral Brand contexts are never inserted into Brands, Brand Brain, source, opportunity, feedback, or learning tables.",
-      "V1 and V2 receive the exact same ephemeral Brand context and paired input fingerprint.",
-      "The operational cohort reaches at least 3 distinct Brands and 30 paired runs without canary or production enablement.",
+      "Disposable persisted anchor is allowed only when zero existing persisted Hunter-ready Brands are available and an explicit runtime flag is true.",
+      "At least one existing persisted Brand must identify the target tenant, and all candidate persisted Brands must belong to one unambiguous workspace before any fixture write occurs.",
+      "The disposable anchor represents the real public Vercel Brand and uses official public About and Acceptable Use Policy evidence.",
+      "Brand Brain bootstrap writes only normal audited source-backed inferred fields; it never writes owner-confirmed fields or modifies existing user Brands.",
+      "The disposable anchor must pass the unchanged canonical Hunter-ready gate before entering the evidence cohort.",
+      "The disposable Brand is deleted in a finally path after evidence completion or failure.",
+      "The evidence cohort remains at least 3 distinct real Brands and 30 paired V1/V2 runs.",
+      "Hunter V1 remains production authority; no canary or production enablement is introduced.",
       "PES v2 CI and Security baseline pass before merge/deployment."
     ],
     "certification": {
-      "bundleId": "CERT-HI2-10E-D1937891",
-      "commitSha": "d19378917b03551bd3f932096d269924d7850e02",
-      "candidateHash": "582f7dff6dadc1520ca5603f134a27f24c60b39554fc5ecae1215e09d1e45809",
-      "certifiedHash": "b1f939ca64df06e51c7ffa3b29490dd822cd1643c514245d92e5597b82cb3993",
-      "certifiedAt": "2026-09-20T15:55:41.473Z"
+      "bundleId": "CERT-HI2-10P-13F29370",
+      "commitSha": "13f29370cd089259f8c31bded09980a676fafcaa",
+      "candidateHash": "b71e6a4472aa07dd78949d2f3a0d370e8648eddb5db06c1c8b3fb25abb8cf961",
+      "certifiedHash": "8f806706334fa24e465a052fbab8f19118138790cc0a5453506d2190be755159",
+      "certifiedAt": "2026-09-20T16:08:17.424Z"
     }
   }
 }

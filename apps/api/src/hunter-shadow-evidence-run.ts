@@ -5,6 +5,8 @@ import type {
   ToolGatewayPort,
 } from "@kairo/agent-contracts";
 import { KairoService, type KairoRepository } from "@kairo/domain";
+import { BrandBrainBootstrapService } from "@kairo/domain/brand-brain-bootstrap";
+import { SanitizingPublicBrandReferenceReader } from "@kairo/domain/brand-brain-sanitizing-reader";
 import { createBrandBrainActivationSnapshot } from "@kairo/domain/brand-brain-activation";
 import {
   projectInitialBrandDiscoveryPlan,
@@ -39,9 +41,12 @@ import {
   type HunterShadowRunCase,
 } from "@kairo/worker/hunter-shadow-evidence-runner";
 import type { HunterRunInput } from "@kairo/worker/hunter";
+import { BrandBrainBuilder } from "@kairo/worker/brand-brain-builder";
 import { PgHunterClosedLoopStore } from "./batch7-closed-loop-store";
 import { PgBrandDiscoveryPlanRepository } from "./brand-discovery-plan-postgres";
 import { buildEphemeralPublicBrandContexts } from "./hunter-shadow-ephemeral-brands";
+import { PgBrandCreator } from "./brand-creator";
+import { SourceIntelligenceBrandReferenceReader } from "./source-intelligence";
 
 const SHA40 = /^[0-9a-f]{40}$/;
 const RUN_ID = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,119}$/;
@@ -52,6 +57,7 @@ export interface HunterShadowOperationalRequest {
   brandCount: number;
   runsPerBrand: number;
   allowEphemeralPublicBrands: boolean;
+  allowDisposablePersistedAnchor: boolean;
 }
 
 export interface HunterShadowOperationalEvidence {
@@ -63,7 +69,7 @@ export interface HunterShadowOperationalEvidence {
   completedAt: string;
   brandCount: number;
   pairCount: number;
-  cohort: { persistedBrands: number; ephemeralPublicBrands: number };
+  cohort: { persistedBrands: number; disposablePersistedBrands: number; ephemeralPublicBrands: number };
   costScope: "model-plus-configured-search";
   readiness: HunterShadowEvidenceBatch["readiness"];
   observations: Array<{
@@ -150,6 +156,8 @@ export function hunterShadowEvidenceRequestFromEnv(
     runsPerBrand,
     allowEphemeralPublicBrands:
       env.KAIRO_HUNTER_SHADOW_EVIDENCE_EPHEMERAL_PUBLIC_BRANDS?.trim().toLowerCase() === "true",
+    allowDisposablePersistedAnchor:
+      env.KAIRO_HUNTER_SHADOW_EVIDENCE_DISPOSABLE_PERSISTED_ANCHOR?.trim().toLowerCase() === "true",
   };
 }
 
@@ -179,7 +187,7 @@ export async function executeHunterShadowEvidenceRun(
     accountId: string;
     workspaceId: string;
     brandId: string;
-    origin: "persisted" | "ephemeral-public";
+    origin: "persisted" | "disposable-persisted" | "ephemeral-public";
     context: Omit<HunterShadowExecutionContext, "referenceTime">;
   }> = [];
 
@@ -204,13 +212,44 @@ export async function executeHunterShadowEvidenceRun(
     });
   }
 
-  const persistedBrandCount = baseContexts.length;
+  let disposableAnchor: { accountId: string; brandId: string } | undefined;
+  if (
+    baseContexts.length < 1 &&
+    options.request.allowDisposablePersistedAnchor
+  ) {
+    const tenant = selectDisposableAnchorTenant(candidates);
+    const disposable = await createDisposablePersistedAnchor({
+      ...tenant,
+      pool: options.pool,
+      store: options.store,
+      discovery: options.discovery,
+      planStore,
+      closedLoop,
+      runtime: options.runtime,
+    });
+    disposableAnchor = {
+      accountId: disposable.accountId,
+      brandId: disposable.brandId,
+    };
+    baseContexts.push({
+      accountId: disposable.accountId,
+      workspaceId: disposable.workspaceId,
+      brandId: disposable.brandId,
+      origin: "disposable-persisted",
+      context: disposable.context,
+    });
+  }
+
+  const persistedBrandCount = baseContexts.filter(
+    (item) => item.origin === "persisted" || item.origin === "disposable-persisted",
+  ).length;
   if (persistedBrandCount < 1) {
     throw new Error(
       "Hunter shadow evidence requires at least one persisted Hunter-ready Brand",
     );
   }
 
+  try {
   if (
     baseContexts.length < options.request.brandCount &&
     options.request.allowEphemeralPublicBrands
@@ -301,9 +340,123 @@ export async function executeHunterShadowEvidenceRun(
     batch,
     {
       persistedBrands: baseContexts.filter((item) => item.origin === "persisted").length,
+      disposablePersistedBrands: baseContexts.filter((item) => item.origin === "disposable-persisted").length,
       ephemeralPublicBrands: baseContexts.filter((item) => item.origin === "ephemeral-public").length,
     },
   );
+  } finally {
+    if (disposableAnchor) {
+      await deleteDisposableBrand(
+        options.store,
+        disposableAnchor.accountId,
+        disposableAnchor.brandId,
+      );
+    }
+  }
+}
+
+
+export function selectDisposableAnchorTenant(
+  candidates: ReadonlyArray<{ accountId: string; workspaceId: string; brandId: string }>,
+): { accountId: string; workspaceId: string } {
+  if (!candidates.length) {
+    throw new Error(
+      "Disposable persisted Hunter shadow anchor requires an existing persisted Brand",
+    );
+  }
+  const workspaceIds = [...new Set(candidates.map((item) => item.workspaceId))];
+  if (workspaceIds.length !== 1) {
+    throw new Error(
+      "Disposable persisted Hunter shadow anchor requires one unambiguous workspace",
+    );
+  }
+  const workspaceId = workspaceIds[0]!;
+  const accountId = [...new Set(
+    candidates
+      .filter((item) => item.workspaceId === workspaceId)
+      .map((item) => item.accountId),
+  )].sort()[0];
+  if (!accountId) {
+    throw new Error("Disposable persisted Hunter shadow anchor has no active account");
+  }
+  return { accountId, workspaceId };
+}
+
+async function createDisposablePersistedAnchor(input: {
+  accountId: string;
+  workspaceId: string;
+  pool: Pool;
+  store: KairoRepository;
+  discovery: DiscoveryService;
+  planStore: PgBrandDiscoveryPlanRepository;
+  closedLoop: PgHunterClosedLoopStore;
+  runtime: AgentRuntimePort;
+}): Promise<{
+  accountId: string;
+  workspaceId: string;
+  brandId: string;
+  context: Omit<HunterShadowExecutionContext, "referenceTime">;
+}> {
+  const creator = new PgBrandCreator(input.pool);
+  const brand = await creator.createBrand(
+    input.accountId,
+    input.workspaceId,
+    {
+      brandName: "Vercel",
+      publicSourceUrl: "https://vercel.com/about",
+    },
+  );
+
+  try {
+    const bootstrap = new BrandBrainBootstrapService(
+      input.store,
+      new BrandBrainBuilder(input.runtime),
+      new SanitizingPublicBrandReferenceReader(
+        new SourceIntelligenceBrandReferenceReader(),
+      ),
+    );
+    await bootstrap.build(input.accountId, brand.id, {
+      publicReferenceUrl: "https://vercel.com/legal/acceptable-use-policy",
+    });
+    const core = new KairoService(input.store);
+    const context = await loadReadOnlyBrandContext({
+      pool: input.pool,
+      core,
+      discovery: input.discovery,
+      planStore: input.planStore,
+      closedLoop: input.closedLoop,
+      accountId: input.accountId,
+      brandId: brand.id,
+    });
+    if (!context) {
+      throw new Error(
+        "Disposable persisted Vercel Brand did not satisfy canonical Hunter readiness",
+      );
+    }
+    return {
+      accountId: input.accountId,
+      workspaceId: input.workspaceId,
+      brandId: brand.id,
+      context,
+    };
+  } catch (error) {
+    await deleteDisposableBrand(input.store, input.accountId, brand.id);
+    throw error;
+  }
+}
+
+
+async function deleteDisposableBrand(
+  store: KairoRepository,
+  accountId: string,
+  brandId: string,
+): Promise<void> {
+  if (!store.deleteBrand) {
+    throw new Error(
+      "Disposable persisted Hunter shadow anchor cleanup is unsupported by the repository",
+    );
+  }
+  await store.deleteBrand(accountId, brandId);
 }
 
 export function resolveReadOnlyDiscoveryPlan(
@@ -438,7 +591,7 @@ function redactOperationalEvidence(
   startedAt: string,
   completedAt: string,
   batch: HunterShadowEvidenceBatch,
-  cohort: { persistedBrands: number; ephemeralPublicBrands: number },
+  cohort: { persistedBrands: number; disposablePersistedBrands: number; ephemeralPublicBrands: number },
 ): HunterShadowOperationalEvidence {
   return {
     schemaVersion: 1,
