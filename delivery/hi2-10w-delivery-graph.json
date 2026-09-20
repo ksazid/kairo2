@@ -1,0 +1,101 @@
+{
+  "status": "ready",
+  "sliceId": "HI2-10W",
+  "riskLevel": "high",
+  "purpose": "Repair the Hunter V2 shadow path so the operational gate measures a real multi-source retrieval + evidence-backed exploration pipeline instead of an RSS-starved zero-output lane.",
+  "priorOperationalEvidence": {
+    "runId": "hi2-10m-shadow-20260920-01",
+    "releaseSha": "fcc399fda98dbe9dedea625d0c963ba148250d5e",
+    "pairCount": 30,
+    "shadowReady": false,
+    "blockers": [
+      "Hunter V2 shadow quality regresses beyond policy.",
+      "Hunter V2 retrieval coverage is below policy.",
+      "Exploration share fell below certified EEI minimum."
+    ],
+    "observed": {
+      "averageQualityDelta": -0.21261555555555559,
+      "averageRetrievalCoverage": 0,
+      "v2FailureRate": 0,
+      "minimumExplorationShare": 0,
+      "maximumExplorationShare": 0
+    }
+  },
+  "stages": [
+    {
+      "id": "lexical-exploration-intent",
+      "dependsOn": [],
+      "output": "adjacent-exploration has an evidence-producing lexical intent while semantic expansion remains available",
+      "authority": "shadow-only",
+      "rollback": "Revert HI2-10W; production Hunter V1 remains unchanged."
+    },
+    {
+      "id": "balanced-shadow-plan",
+      "dependsOn": [
+        "lexical-exploration-intent"
+      ],
+      "output": "five bounded non-exploration intents plus one reserved lexical exploration intent when available",
+      "authority": "shadow-only",
+      "rollback": "Revert HI2-10W."
+    },
+    {
+      "id": "multi-source-operational-profile",
+      "dependsOn": [
+        "balanced-shadow-plan"
+      ],
+      "output": "two bounded sources per intent so RSS cannot starve Agent Reach",
+      "authority": "shadow-only",
+      "rollback": "Clear one-shot evidence flags and redeploy prior certified SHA."
+    },
+    {
+      "id": "exploration-provenance",
+      "dependsOn": [
+        "lexical-exploration-intent"
+      ],
+      "output": "retrieval generator lineage survives clustering and prerank",
+      "authority": "read-only",
+      "rollback": "Revert HI2-10W."
+    },
+    {
+      "id": "eei-bucketing",
+      "dependsOn": [
+        "exploration-provenance"
+      ],
+      "output": "evidence-backed exploration candidates remain in the certified exploration bucket",
+      "authority": "shadow-only",
+      "rollback": "Revert HI2-10W."
+    },
+    {
+      "id": "operational-rerun",
+      "dependsOn": [
+        "multi-source-operational-profile",
+        "eei-bucketing"
+      ],
+      "output": "same 3-brand / 30-pair rollout evidence under unchanged HI2-09 thresholds",
+      "authority": "read-only",
+      "rollback": "Clear one-shot flags; keep canary and production disabled."
+    }
+  ],
+  "killSwitchOn": [
+    "tenant-isolation",
+    "manipulation-safety",
+    "persistence-authority",
+    "production-guard-bypass",
+    "provenance-incomplete",
+    "release-sha-mismatch",
+    "critical-rollout-violation"
+  ],
+  "constraints": {
+    "rolloutThresholdChanges": false,
+    "productionHunterAuthority": "v1-only",
+    "v2Persistence": false,
+    "canaryExposure": false,
+    "productionEnable": false,
+    "schedulerChange": false,
+    "minimumDistinctBrands": 3,
+    "minimumPairedRuns": 30,
+    "maxIntents": 6,
+    "maxSourcesPerIntent": 2,
+    "reservedLexicalExplorationSlots": 1
+  }
+}
