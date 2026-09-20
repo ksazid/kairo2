@@ -101,6 +101,9 @@ export function projectFeedbackPreferenceStateV2(
 
   for (const signal of ordered) {
     validateSignal(signal);
+    if (state && (state.workspaceId !== signal.event.workspaceId || state.brandId !== signal.event.brandId)) {
+      throw new Error("Feedback event must belong to the same workspace and Brand");
+    }
     const key = signal.event.idempotencyKey.trim();
     if (seen.has(key)) {
       diagnostics.duplicateEventCount += 1;
