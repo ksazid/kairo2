@@ -55,9 +55,11 @@ function candidate(id: string, topic: string, topicFit: number): ShadowPreRanked
       sourceKeys: ["rss"],
       platformKeys: ["web"],
       publisherKeys: ["publisher"],
+      generatorKeys: topicFit < 0.32 ? ["adjacent-exploration"] : ["brand-core"],
     },
     topicFit,
     sourceClasses: ["Industry news"],
+    explorationEligible: topicFit < 0.32,
     preRank: {
       schemaVersion: "1",
       candidateId: id,
