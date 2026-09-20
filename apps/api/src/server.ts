@@ -80,6 +80,7 @@ import{SimplePublishFlowService}from"@kairo/domain/simple-publish-flow";import{P
 import{PgCommandSearchRepository}from"./command-search-postgres";import{registerCommandSearchRoutes}from"./command-search-routes";
 import{PgBrandNotificationRepository}from"./brand-notifications-postgres";import{registerBrandNotificationRoutes}from"./brand-notifications-routes";
 import{ConceptMockupAssetService}from"./concept-mockup-assets";import{registerConceptMockupAssetRoutes}from"./concept-mockup-asset-routes";
+import{PgHunterOpportunityIntelligenceWriter}from"./hunter-opportunity-intelligence-postgres";
 
 function requiredEnv(name: string): string {
   const value = process.env[name]?.trim();
@@ -95,6 +96,7 @@ const coreStore=new PgKairoRepository(pool);
 const discoveryStore=new PgDiscoveryRepository(pool);
 const discoveryService=new DiscoveryService(discoveryStore);
 const brandIntelligenceGraphStore=new PgBrandIntelligenceGraphStore(pool);
+const hunterOpportunityIntelligenceWriter=new PgHunterOpportunityIntelligenceWriter(pool);
 const researchStore=new PgResearchRepository(pool);
 const campaignStore=new PgCampaignRepository(pool);
 const reviewStore=new PgReviewRepository(pool);
@@ -125,7 +127,7 @@ const hermesRuntime=hermesBridgeRuntimeFromEnv(agentOutputValidators);
 const baseRuntime=hermesRuntime&&directRuntime?new AgentRuntimeRouter(hermesRuntime,directRuntime):(hermesRuntime??directRuntime??undefined);
 const runtime=baseRuntime?new ObservedAgentRuntime(baseRuntime,telemetrySink):undefined;
 const contentGenerator=runtime?new DrafterGenerationAdapter(runtime):undefined;const criticEvaluator=runtime?new CriticEvaluationAdapter(runtime):undefined;const brandBrainGenerator=runtime?new BrandBrainBuilder(runtime):undefined;
-const hunter=runtime?new HunterOrchestrator(createHunterToolGateway(),runtime,discoveryService,configuredHunterSourceRegistry(),(diagnostic):void=>{app.log.warn({event:"hunter_dependency_failure",...diagnostic},"Hunter dependency degraded");}):undefined;
+const hunter=runtime?new HunterOrchestrator(createHunterToolGateway(),runtime,discoveryService,configuredHunterSourceRegistry(),(diagnostic):void=>{app.log.warn({event:"hunter_dependency_failure",...diagnostic},"Hunter dependency degraded");},hunterOpportunityIntelligenceWriter):undefined;
 const publicReferenceReader=new PublicBrandReferenceHttpReader({timeoutMs:10_000,maxBytes:2_000_000,maxRedirects:2});
 const sharedSourceRouter=createSourceIntelligenceRouter({reader:publicReferenceReader});
 const researchTools=createResearchToolGateway();

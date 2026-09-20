@@ -25,6 +25,16 @@ export type HomeOpportunity = {
     source?: string;
     evidenceSource?: string;
   };
+  intelligence?: {
+    schemaVersion: "2";
+    title: string;
+    sanitizedSummary: string;
+    whyNow: string;
+    proposedAngle: string;
+    evidence: { confidence: number; confidenceLabel: "High" | "Medium" | "Emerging"; signalIds: string[] };
+    explanation: { whyRecommended: string; evidenceSummary: string; brandFitReason: string; uncertainty?: string; userControl: string };
+    provenance: { rankingVersion: string; eeiVersion: string; hunterRunId: string };
+  };
   conceptMockup?: ConceptMockupView;
   conceptMockupGeneratedAt?: string;
 };

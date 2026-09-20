@@ -229,7 +229,12 @@ async function executeRecordedHunterRun(options: {
     startedAt: options.startedAt,
   }) : undefined;
   try {
-    const result = await options.runner.runForAuthorizedBrand(options.input);
+    const result = await options.runner.runForAuthorizedBrand({
+      ...options.input,
+      snapshotVersion: options.snapshotVersion,
+      planVersion: options.planVersion,
+      hunterRunId: record?.runId ?? `untracked:${options.brandId}:${options.startedAt}`,
+    });
     if (record && options.runStore) {
       const completedAt = new Date().toISOString();
       await options.runStore.complete(options.accountId, record.runId, {

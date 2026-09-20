@@ -6,6 +6,7 @@ import { prepareOpportunityValueScores } from "./hunter-ranking";
 import {
   prepareOpportunityFeedbackEventV2,
   prepareOpportunityIntelligence,
+  projectOpportunityFromIntelligence,
 } from "./opportunity-intelligence";
 import { prepareTrendIntelligence, summarizeTrendIntelligence } from "./trend-intelligence";
 
@@ -30,6 +31,35 @@ const ranking = prepareOpportunityValueScores({
   recentRejectionSimilarityPenalty: 0,
   overall: 0.84,
   rankingVersion: "hunter-v2-deterministic-1",
+  it("projects canonical V2 recommendation meaning over legacy opportunity display fields", () => {
+    const base = {
+      id: "opportunity-1",
+      workspaceId: "workspace-1",
+      brandId: "brand-1",
+      title: "Legacy title",
+      rationale: "Legacy rationale",
+      whyNow: "Legacy timing",
+      developmentDirection: "Legacy direction",
+      status: "new" as const,
+      signalIds: ["signal-1"],
+      scores: { relevance: .8, evidence: .8, novelty: .8, timeliness: .8, brandAuthority: .8, audienceFit: .8, overall: .8, scoringVersion: "v1" },
+      brandContextVersion: "snapshot-7",
+      details: {
+        topic: "EVs", proposedAngle: "legacy", hook: "legacy", targetAudience: "buyers", objective: "educate",
+        recommendedFormat: "carousel", recommendedChannel: "instagram", supportingSourceIds: ["signal-1"],
+        confidence: .7, estimatedEffort: "medium" as const,
+      },
+      createdAt: "2026-09-20T10:00:00Z",
+      updatedAt: "2026-09-20T10:00:00Z",
+    };
+    const projected = projectOpportunityFromIntelligence(base, opportunity);
+    expect(projected.title).toBe(opportunity.title);
+    expect(projected.rationale).toBe(opportunity.sanitizedSummary);
+    expect(projected.developmentDirection).toBe(opportunity.proposedAngle);
+    expect(projected.details?.confidence).toBe(opportunity.evidence.confidence);
+    expect(projected.intelligence?.provenance.eeiVersion).toBe("eei-v1");
+  });
+
 });
 
 const trend = prepareTrendIntelligence({

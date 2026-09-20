@@ -1,3 +1,4 @@
+import type { BrandOpportunityDto } from "@kairo/contracts";
 import { DomainValidationError } from "./index";
 import { prepareRecommendationExplanation, type RecommendationExplanation } from "./eei";
 import { prepareOpportunityValueScores, type OpportunityValueScores } from "./hunter-ranking";
@@ -207,6 +208,33 @@ export function prepareOpportunityFeedbackEventV2(input: OpportunityFeedbackEven
     ...(input.reason ? { reason: requiredText(input.reason, "reason", 500) } : {}),
     ...(input.contentId ? { contentId: requiredText(input.contentId, "contentId", 200) } : {}),
     idempotencyKey: requiredText(input.idempotencyKey, "idempotencyKey", 300),
+  };
+}
+
+export function projectOpportunityFromIntelligence<T extends BrandOpportunityDto>(
+  base: T,
+  intelligence: OpportunityIntelligence,
+): T {
+  const details = base.details ? {
+    ...base.details,
+    proposedAngle: intelligence.proposedAngle,
+    ...(intelligence.hook ? { hook: intelligence.hook } : {}),
+    ...(intelligence.targetAudience ? { targetAudience: intelligence.targetAudience } : {}),
+    ...(intelligence.objective ? { objective: intelligence.objective } : {}),
+    ...(intelligence.recommendedFormat ? { recommendedFormat: intelligence.recommendedFormat } : {}),
+    ...(intelligence.recommendedChannel ? { recommendedChannel: intelligence.recommendedChannel } : {}),
+    supportingSourceIds: [...intelligence.evidence.signalIds],
+    confidence: intelligence.evidence.confidence,
+  } : undefined;
+
+  return {
+    ...base,
+    title: intelligence.title,
+    rationale: intelligence.sanitizedSummary,
+    whyNow: intelligence.whyNow,
+    developmentDirection: intelligence.proposedAngle,
+    ...(details ? { details } : {}),
+    intelligence,
   };
 }
 
