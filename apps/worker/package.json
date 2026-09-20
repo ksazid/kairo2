@@ -39,7 +39,8 @@
     "./hunter-shadow-retrieval": "./src/hunter-shadow-retrieval.ts",
     "./hunter-shadow-search-gateway": "./src/hunter-shadow-search-gateway.ts",
     "./hunter-shadow-trend-intelligence": "./src/hunter-shadow-trend-intelligence.ts",
-    "./hunter-shadow-multistage-intelligence": "./src/hunter-shadow-multistage-intelligence.ts"
+    "./hunter-shadow-multistage-intelligence": "./src/hunter-shadow-multistage-intelligence.ts",
+    "./hunter-shadow-eei-v2": "./src/hunter-shadow-eei-v2.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
