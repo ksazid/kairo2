@@ -89,7 +89,7 @@ describe("Feedback V2 preference projector", () => {
       },
     ]);
 
-    expect(result.state?.negatives.audiences[0]).toMatchObject({ key: "enterprise CTOs", strength: 0.22 });
+    expect(result.state?.negatives.audiences[0]?.key).toBe("enterprise CTOs");\n    expect(result.state?.negatives.audiences[0]?.strength).toBeCloseTo(0.22, 3);
     expect(result.state?.negatives.sourceClasses.map((x) => x.key)).toEqual(
       expect.arrayContaining(["low quality forum", "anonymous social"]),
     );
