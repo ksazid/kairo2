@@ -1,0 +1,333 @@
+{
+  "schemaVersion": 1,
+  "graphRevision": 17,
+  "requestedSeeds": [
+    "OBJ-HI2-04R",
+    "TASK-HI2-04R",
+    "ART-HI2-04R",
+    "EVAL-HI2-04R",
+    "EVID-HI2-04R-01",
+    "EVID-HI2-04R-02"
+  ],
+  "resolvedSeeds": [
+    "OBJ-HI2-04R",
+    "TASK-HI2-04R",
+    "ART-HI2-04R",
+    "EVAL-HI2-04R",
+    "EVID-HI2-04R-01",
+    "EVID-HI2-04R-02"
+  ],
+  "resolution": [
+    {
+      "requestedId": "OBJ-HI2-04R",
+      "currentId": "OBJ-HI2-04R",
+      "chain": [
+        "OBJ-HI2-04R"
+      ]
+    },
+    {
+      "requestedId": "TASK-HI2-04R",
+      "currentId": "TASK-HI2-04R",
+      "chain": [
+        "TASK-HI2-04R"
+      ]
+    },
+    {
+      "requestedId": "ART-HI2-04R",
+      "currentId": "ART-HI2-04R",
+      "chain": [
+        "ART-HI2-04R"
+      ]
+    },
+    {
+      "requestedId": "EVAL-HI2-04R",
+      "currentId": "EVAL-HI2-04R",
+      "chain": [
+        "EVAL-HI2-04R"
+      ]
+    },
+    {
+      "requestedId": "EVID-HI2-04R-01",
+      "currentId": "EVID-HI2-04R-01",
+      "chain": [
+        "EVID-HI2-04R-01"
+      ]
+    },
+    {
+      "requestedId": "EVID-HI2-04R-02",
+      "currentId": "EVID-HI2-04R-02",
+      "chain": [
+        "EVID-HI2-04R-02"
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "EVID-HI2-04R-01",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "GitHub PES v2 CI run 35498559485 passed for PR #11 head 43b78206d262edcbcb30e4b06938beed0149b5f4",
+      "memoryProvenance": {
+        "eventId": "GM-000017",
+        "revision": 17,
+        "actorId": "pes-v2-hunter-trend",
+        "runId": "HI2-04R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T08:06:00.000Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-04R-02",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "GitHub Security baseline run 35498559461 passed for PR #11 head 43b78206d262edcbcb30e4b06938beed0149b5f4",
+      "memoryProvenance": {
+        "eventId": "GM-000017",
+        "revision": 17,
+        "actorId": "pes-v2-hunter-trend",
+        "runId": "HI2-04R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T08:06:00.000Z"
+      }
+    },
+    {
+      "id": "ART-HI2-04R",
+      "type": "Artifact",
+      "status": "verified",
+      "title": "Hunter Trend Intelligence shadow engine",
+      "runId": "HI2-04R",
+      "version": "43b78206d262edcbcb30e4b06938beed0149b5f4",
+      "memoryProvenance": {
+        "eventId": "GM-000017",
+        "revision": 17,
+        "actorId": "pes-v2-hunter-trend",
+        "runId": "HI2-04R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T08:06:00.000Z"
+      }
+    },
+    {
+      "id": "EVAL-HI2-04R",
+      "type": "Evaluation",
+      "status": "verified",
+      "title": "PESv2 preflight validated shadow trend clustering and feature invariants",
+      "rubricId": "hunter-trend-shadow-preflight",
+      "memoryProvenance": {
+        "eventId": "GM-000017",
+        "revision": 17,
+        "actorId": "pes-v2-hunter-trend",
+        "runId": "HI2-04R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T08:06:00.000Z"
+      }
+    },
+    {
+      "id": "OBJ-HI2-04R",
+      "type": "Objective",
+      "status": "active",
+      "title": "Establish shadow-only Trend Intelligence for Hunter",
+      "successCriteria": [
+        "Equivalent public signals cluster deterministically with optional bounded semantic assistance.",
+        "Cross-source, cross-platform and independent-publisher corroboration are measured.",
+        "Velocity, acceleration and creator/category outlier features use observable metrics only.",
+        "Missing engagement/baseline metrics remain explicitly unknown.",
+        "Trend stage, freshness, saturation and evidence confidence are deterministic and versioned."
+      ],
+      "memoryProvenance": {
+        "eventId": "GM-000017",
+        "revision": 17,
+        "actorId": "pes-v2-hunter-trend",
+        "runId": "HI2-04R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T08:06:00.000Z"
+      }
+    },
+    {
+      "id": "TASK-HI2-04R",
+      "type": "Task",
+      "status": "active",
+      "objectiveId": "OBJ-HI2-04R",
+      "title": "Implement story clustering, trend features, outlier intelligence and diagnostics",
+      "memoryProvenance": {
+        "eventId": "GM-000017",
+        "revision": 17,
+        "actorId": "pes-v2-hunter-trend",
+        "runId": "HI2-04R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T08:06:00.000Z"
+      }
+    },
+    {
+      "id": "RUN-HI2-04R-01",
+      "type": "AgentRun",
+      "status": "verified",
+      "title": "HI2-04R deterministic trend-intelligence validation passed on first implementation head",
+      "memoryProvenance": {
+        "eventId": "GM-000017",
+        "revision": 17,
+        "actorId": "pes-v2-hunter-trend",
+        "runId": "HI2-04R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T08:06:00.000Z"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "EDGE-OBJ-HI2-04R-TASK",
+      "type": "IMPLEMENTED_BY",
+      "from": "OBJ-HI2-04R",
+      "to": "TASK-HI2-04R",
+      "memoryProvenance": {
+        "eventId": "GM-000017",
+        "revision": 17,
+        "actorId": "pes-v2-hunter-trend",
+        "runId": "HI2-04R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T08:06:00.000Z"
+      }
+    },
+    {
+      "id": "EDGE-TASK-HI2-04R-PRODUCED-ART",
+      "type": "PRODUCED",
+      "from": "TASK-HI2-04R",
+      "to": "ART-HI2-04R",
+      "memoryProvenance": {
+        "eventId": "GM-000017",
+        "revision": 17,
+        "actorId": "pes-v2-hunter-trend",
+        "runId": "HI2-04R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T08:06:00.000Z"
+      }
+    },
+    {
+      "id": "EDGE-RUN-HI2-04R-01-PRODUCED-ART",
+      "type": "PRODUCED",
+      "from": "RUN-HI2-04R-01",
+      "to": "ART-HI2-04R",
+      "memoryProvenance": {
+        "eventId": "GM-000017",
+        "revision": 17,
+        "actorId": "pes-v2-hunter-trend",
+        "runId": "HI2-04R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T08:06:00.000Z"
+      }
+    },
+    {
+      "id": "EDGE-EVAL-HI2-04R-EVALUATES-ART",
+      "type": "EVALUATES",
+      "from": "EVAL-HI2-04R",
+      "to": "ART-HI2-04R",
+      "memoryProvenance": {
+        "eventId": "GM-000017",
+        "revision": 17,
+        "actorId": "pes-v2-hunter-trend",
+        "runId": "HI2-04R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T08:06:00.000Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-04R-01-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-04R-01",
+      "to": "ART-HI2-04R",
+      "provenance": {
+        "kind": "github-actions",
+        "runId": "35498559485"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000017",
+        "revision": 17,
+        "actorId": "pes-v2-hunter-trend",
+        "runId": "HI2-04R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T08:06:00.000Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-04R-02-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-04R-02",
+      "to": "ART-HI2-04R",
+      "provenance": {
+        "kind": "github-actions",
+        "runId": "35498559461"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000017",
+        "revision": 17,
+        "actorId": "pes-v2-hunter-trend",
+        "runId": "HI2-04R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T08:06:00.000Z"
+      }
+    }
+  ],
+  "ranking": [
+    {
+      "id": "EVID-HI2-04R-01",
+      "score": 1119,
+      "hop": 0,
+      "status": "verified"
+    },
+    {
+      "id": "EVID-HI2-04R-02",
+      "score": 1119,
+      "hop": 0,
+      "status": "verified"
+    },
+    {
+      "id": "ART-HI2-04R",
+      "score": 1118,
+      "hop": 0,
+      "status": "verified"
+    },
+    {
+      "id": "EVAL-HI2-04R",
+      "score": 1118,
+      "hop": 0,
+      "status": "verified"
+    },
+    {
+      "id": "OBJ-HI2-04R",
+      "score": 1117,
+      "hop": 0,
+      "status": "active"
+    },
+    {
+      "id": "TASK-HI2-04R",
+      "score": 1113,
+      "hop": 0,
+      "status": "active"
+    },
+    {
+      "id": "RUN-HI2-04R-01",
+      "score": 101,
+      "hop": 1,
+      "status": "verified"
+    }
+  ],
+  "contradictions": [],
+  "omittedNodeIds": [],
+  "policy": {
+    "maxHops": 2,
+    "maxNodes": 40,
+    "maxTokens": 12000,
+    "includeStatuses": [
+      "approved",
+      "verified",
+      "active",
+      "superseded",
+      "failed"
+    ],
+    "preferVerified": true,
+    "includeContradictions": true,
+    "resolveSuperseded": true
+  },
+  "contextHash": "62a0a1a9cae539869fc245c59338ef96bfd01e8feae9adb412be7acff9e65b68",
+  "estimatedTokens": 1492,
+  "truncated": false
+}
