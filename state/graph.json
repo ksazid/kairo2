@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "version": 2,
-  "revision": 15,
+  "revision": 16,
   "nodes": [
     {
       "id": "OBJ-001",
@@ -730,6 +730,20 @@
         "sourceIds": [],
         "recordedAt": "2026-09-20T02:01:00.000Z"
       }
+    },
+    {
+      "id": "RUN-HI2-03R-03",
+      "type": "AgentRun",
+      "status": "failed",
+      "title": "Graph revision 15 exposed stale HI2-02R candidate-verification test; certified-bundle verifier required",
+      "memoryProvenance": {
+        "eventId": "GM-000016",
+        "revision": 16,
+        "actorId": "pes-v2-hunter-retrieval",
+        "runId": "HI2-03R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T02:04:00.000Z"
+      }
     }
   ],
   "edges": [
@@ -1310,6 +1324,20 @@
         "sourceIds": [],
         "recordedAt": "2026-09-20T02:01:00.000Z"
       }
+    },
+    {
+      "id": "EDGE-RUN-HI2-03R-03-ABOUT-TASK",
+      "type": "ABOUT",
+      "from": "RUN-HI2-03R-03",
+      "to": "TASK-HI2-03R",
+      "memoryProvenance": {
+        "eventId": "GM-000016",
+        "revision": 16,
+        "actorId": "pes-v2-hunter-retrieval",
+        "runId": "HI2-03R",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T02:04:00.000Z"
+      }
     }
   ],
   "events": [
@@ -1607,6 +1635,22 @@
         "EDGE-EVID-HI2-03R-02-SUPPORTS-ART"
       ],
       "recordedAt": "2026-09-20T02:01:00.000Z"
+    },
+    {
+      "id": "GM-000016",
+      "revision": 16,
+      "operation": "append",
+      "actorId": "pes-v2-hunter-retrieval",
+      "runId": "HI2-03R",
+      "reason": "Record historical HI2-02R certification test regression exposed by HI2-03R append-only graph update",
+      "sourceIds": [],
+      "addedNodeIds": [
+        "RUN-HI2-03R-03"
+      ],
+      "addedEdgeIds": [
+        "EDGE-RUN-HI2-03R-03-ABOUT-TASK"
+      ],
+      "recordedAt": "2026-09-20T02:04:00.000Z"
     }
   ]
 }
