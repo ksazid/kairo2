@@ -583,6 +583,577 @@
       },
       "certifiedAt": "2026-09-20T01:10:53Z",
       "certifiedHash": "ef4527f3d4fab7ec7bddeb84b746a767147436841b26623002982742e766458e"
+    },
+    {
+      "schemaVersion": 1,
+      "bundleId": "CERT-HI2-02R-D64A227A",
+      "status": "certified",
+      "sliceId": "HI2-02R",
+      "objectiveId": "OBJ-HI2-02R",
+      "riskLevel": "medium",
+      "commitSha": "d64a227a44a75e8d20da8a1f4104f9ba59a5bf04",
+      "graphRevision": 14,
+      "contextHash": "7b867d04a156b64e8d4716932a8d18bccbdb90e23866f8b8a10c7899deaa6e45",
+      "contextSnapshot": {
+        "schemaVersion": 1,
+        "graphRevision": 14,
+        "requestedSeeds": [
+          "OBJ-HI2-02R",
+          "TASK-HI2-02R",
+          "ART-HI2-02R",
+          "EVAL-HI2-02R",
+          "EVID-HI2-02R-01",
+          "EVID-HI2-02R-02"
+        ],
+        "resolvedSeeds": [
+          "OBJ-HI2-02R",
+          "TASK-HI2-02R",
+          "ART-HI2-02R",
+          "EVAL-HI2-02R",
+          "EVID-HI2-02R-01",
+          "EVID-HI2-02R-02"
+        ],
+        "resolution": [
+          {
+            "requestedId": "OBJ-HI2-02R",
+            "currentId": "OBJ-HI2-02R",
+            "chain": [
+              "OBJ-HI2-02R"
+            ]
+          },
+          {
+            "requestedId": "TASK-HI2-02R",
+            "currentId": "TASK-HI2-02R",
+            "chain": [
+              "TASK-HI2-02R"
+            ]
+          },
+          {
+            "requestedId": "ART-HI2-02R",
+            "currentId": "ART-HI2-02R",
+            "chain": [
+              "ART-HI2-02R"
+            ]
+          },
+          {
+            "requestedId": "EVAL-HI2-02R",
+            "currentId": "EVAL-HI2-02R",
+            "chain": [
+              "EVAL-HI2-02R"
+            ]
+          },
+          {
+            "requestedId": "EVID-HI2-02R-01",
+            "currentId": "EVID-HI2-02R-01",
+            "chain": [
+              "EVID-HI2-02R-01"
+            ]
+          },
+          {
+            "requestedId": "EVID-HI2-02R-02",
+            "currentId": "EVID-HI2-02R-02",
+            "chain": [
+              "EVID-HI2-02R-02"
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "id": "EVID-HI2-02R-01",
+            "type": "Evidence",
+            "status": "verified",
+            "title": "GitHub PES v2 CI run 35481377114 passed for PR #9 head d64a227a44a75e8d20da8a1f4104f9ba59a5bf04",
+            "memoryProvenance": {
+              "eventId": "GM-000012",
+              "revision": 12,
+              "actorId": "pes-v2-hunter-semantic",
+              "runId": "HI2-02R",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T01:28:00.000Z"
+            }
+          },
+          {
+            "id": "EVID-HI2-02R-02",
+            "type": "Evidence",
+            "status": "verified",
+            "title": "GitHub Security baseline run 35481377130 passed for PR #9 head d64a227a44a75e8d20da8a1f4104f9ba59a5bf04",
+            "memoryProvenance": {
+              "eventId": "GM-000012",
+              "revision": 12,
+              "actorId": "pes-v2-hunter-semantic",
+              "runId": "HI2-02R",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T01:28:00.000Z"
+            }
+          },
+          {
+            "id": "ART-HI2-02R",
+            "type": "Artifact",
+            "status": "verified",
+            "title": "Hunter semantic intelligence foundation",
+            "runId": "HI2-02R",
+            "version": "d64a227a44a75e8d20da8a1f4104f9ba59a5bf04",
+            "memoryProvenance": {
+              "eventId": "GM-000012",
+              "revision": 12,
+              "actorId": "pes-v2-hunter-semantic",
+              "runId": "HI2-02R",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T01:28:00.000Z"
+            }
+          },
+          {
+            "id": "EVAL-HI2-02R",
+            "type": "Evaluation",
+            "status": "verified",
+            "title": "PESv2 preflight passed after deterministic test correction",
+            "rubricId": "hunter-semantic-foundation-preflight",
+            "memoryProvenance": {
+              "eventId": "GM-000012",
+              "revision": 12,
+              "actorId": "pes-v2-hunter-semantic",
+              "runId": "HI2-02R",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T01:28:00.000Z"
+            }
+          },
+          {
+            "id": "OBJ-HI2-02R",
+            "type": "Objective",
+            "status": "active",
+            "title": "Establish shadow-only semantic intelligence foundation for Hunter",
+            "successCriteria": [
+              "Provider-neutral embeddings can be validated and persisted with tenant isolation.",
+              "pgvector storage remains shadow-only and has no ANN index or ranking authority.",
+              "Backfill is hard-bounded and requires injected provider/sink dependencies.",
+              "Existing Hunter and EEI behavior remains unchanged."
+            ],
+            "memoryProvenance": {
+              "eventId": "GM-000012",
+              "revision": 12,
+              "actorId": "pes-v2-hunter-semantic",
+              "runId": "HI2-02R",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T01:28:00.000Z"
+            }
+          },
+          {
+            "id": "TASK-HI2-02R",
+            "type": "Task",
+            "status": "active",
+            "objectiveId": "OBJ-HI2-02R",
+            "title": "Implement pgvector storage, embedding contracts, diagnostics and bounded backfill",
+            "memoryProvenance": {
+              "eventId": "GM-000012",
+              "revision": 12,
+              "actorId": "pes-v2-hunter-semantic",
+              "runId": "HI2-02R",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T01:28:00.000Z"
+            }
+          },
+          {
+            "id": "RUN-HI2-02R-02",
+            "type": "AgentRun",
+            "status": "verified",
+            "title": "Corrected HI2-02R deterministic validation",
+            "memoryProvenance": {
+              "eventId": "GM-000012",
+              "revision": 12,
+              "actorId": "pes-v2-hunter-semantic",
+              "runId": "HI2-02R",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T01:28:00.000Z"
+            }
+          },
+          {
+            "id": "RUN-HI2-02R-04",
+            "type": "AgentRun",
+            "status": "failed",
+            "title": "Governance revalidation showed candidate verification cannot span later graph revisions; certified-bundle verifier required",
+            "memoryProvenance": {
+              "eventId": "GM-000014",
+              "revision": 14,
+              "actorId": "pes-v2-hunter-semantic",
+              "runId": "HI2-02R",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T01:32:00.000Z"
+            }
+          },
+          {
+            "id": "RUN-HI2-02R-03",
+            "type": "AgentRun",
+            "status": "failed",
+            "title": "Governance revalidation exposed stale historical gate re-evaluation in HI2-01 certification test",
+            "memoryProvenance": {
+              "eventId": "GM-000013",
+              "revision": 13,
+              "actorId": "pes-v2-hunter-semantic",
+              "runId": "HI2-02R",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T01:30:00.000Z"
+            }
+          },
+          {
+            "id": "RUN-HI2-02R-01",
+            "type": "AgentRun",
+            "status": "failed",
+            "title": "Initial HI2-02R preflight failed on case-sensitive migration-comment assertion only",
+            "memoryProvenance": {
+              "eventId": "GM-000012",
+              "revision": 12,
+              "actorId": "pes-v2-hunter-semantic",
+              "runId": "HI2-02R",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T01:28:00.000Z"
+            }
+          }
+        ],
+        "edges": [
+          {
+            "id": "EDGE-OBJ-HI2-02R-TASK-HI2-02R",
+            "type": "IMPLEMENTED_BY",
+            "from": "OBJ-HI2-02R",
+            "to": "TASK-HI2-02R",
+            "memoryProvenance": {
+              "eventId": "GM-000012",
+              "revision": 12,
+              "actorId": "pes-v2-hunter-semantic",
+              "runId": "HI2-02R",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T01:28:00.000Z"
+            }
+          },
+          {
+            "id": "EDGE-RUN-HI2-02R-01-ABOUT-TASK",
+            "type": "ABOUT",
+            "from": "RUN-HI2-02R-01",
+            "to": "TASK-HI2-02R",
+            "memoryProvenance": {
+              "eventId": "GM-000012",
+              "revision": 12,
+              "actorId": "pes-v2-hunter-semantic",
+              "runId": "HI2-02R",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T01:28:00.000Z"
+            }
+          },
+          {
+            "id": "EDGE-TASK-HI2-02R-PRODUCED-ART",
+            "type": "PRODUCED",
+            "from": "TASK-HI2-02R",
+            "to": "ART-HI2-02R",
+            "memoryProvenance": {
+              "eventId": "GM-000012",
+              "revision": 12,
+              "actorId": "pes-v2-hunter-semantic",
+              "runId": "HI2-02R",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T01:28:00.000Z"
+            }
+          },
+          {
+            "id": "EDGE-RUN-HI2-02R-02-PRODUCED-ART",
+            "type": "PRODUCED",
+            "from": "RUN-HI2-02R-02",
+            "to": "ART-HI2-02R",
+            "memoryProvenance": {
+              "eventId": "GM-000012",
+              "revision": 12,
+              "actorId": "pes-v2-hunter-semantic",
+              "runId": "HI2-02R",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T01:28:00.000Z"
+            }
+          },
+          {
+            "id": "EDGE-EVAL-HI2-02R-EVALUATES-ART",
+            "type": "EVALUATES",
+            "from": "EVAL-HI2-02R",
+            "to": "ART-HI2-02R",
+            "memoryProvenance": {
+              "eventId": "GM-000012",
+              "revision": 12,
+              "actorId": "pes-v2-hunter-semantic",
+              "runId": "HI2-02R",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T01:28:00.000Z"
+            }
+          },
+          {
+            "id": "EDGE-EVID-HI2-02R-01-SUPPORTS-ART",
+            "type": "SUPPORTS",
+            "from": "EVID-HI2-02R-01",
+            "to": "ART-HI2-02R",
+            "provenance": {
+              "kind": "github-actions",
+              "runId": "35481377114"
+            },
+            "memoryProvenance": {
+              "eventId": "GM-000012",
+              "revision": 12,
+              "actorId": "pes-v2-hunter-semantic",
+              "runId": "HI2-02R",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T01:28:00.000Z"
+            }
+          },
+          {
+            "id": "EDGE-EVID-HI2-02R-02-SUPPORTS-ART",
+            "type": "SUPPORTS",
+            "from": "EVID-HI2-02R-02",
+            "to": "ART-HI2-02R",
+            "provenance": {
+              "kind": "github-actions",
+              "runId": "35481377130"
+            },
+            "memoryProvenance": {
+              "eventId": "GM-000012",
+              "revision": 12,
+              "actorId": "pes-v2-hunter-semantic",
+              "runId": "HI2-02R",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T01:28:00.000Z"
+            }
+          },
+          {
+            "id": "EDGE-RUN-HI2-02R-03-ABOUT-TASK",
+            "type": "ABOUT",
+            "from": "RUN-HI2-02R-03",
+            "to": "TASK-HI2-02R",
+            "memoryProvenance": {
+              "eventId": "GM-000013",
+              "revision": 13,
+              "actorId": "pes-v2-hunter-semantic",
+              "runId": "HI2-02R",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T01:30:00.000Z"
+            }
+          },
+          {
+            "id": "EDGE-RUN-HI2-02R-04-ABOUT-TASK",
+            "type": "ABOUT",
+            "from": "RUN-HI2-02R-04",
+            "to": "TASK-HI2-02R",
+            "memoryProvenance": {
+              "eventId": "GM-000014",
+              "revision": 14,
+              "actorId": "pes-v2-hunter-semantic",
+              "runId": "HI2-02R",
+              "sourceIds": [],
+              "recordedAt": "2026-09-20T01:32:00.000Z"
+            }
+          }
+        ],
+        "ranking": [
+          {
+            "id": "EVID-HI2-02R-01",
+            "score": 1119,
+            "hop": 0,
+            "status": "verified"
+          },
+          {
+            "id": "EVID-HI2-02R-02",
+            "score": 1119,
+            "hop": 0,
+            "status": "verified"
+          },
+          {
+            "id": "ART-HI2-02R",
+            "score": 1118,
+            "hop": 0,
+            "status": "verified"
+          },
+          {
+            "id": "EVAL-HI2-02R",
+            "score": 1118,
+            "hop": 0,
+            "status": "verified"
+          },
+          {
+            "id": "OBJ-HI2-02R",
+            "score": 1117,
+            "hop": 0,
+            "status": "active"
+          },
+          {
+            "id": "TASK-HI2-02R",
+            "score": 1113,
+            "hop": 0,
+            "status": "active"
+          },
+          {
+            "id": "RUN-HI2-02R-02",
+            "score": 101,
+            "hop": 1,
+            "status": "verified"
+          },
+          {
+            "id": "RUN-HI2-02R-04",
+            "score": 87,
+            "hop": 1,
+            "status": "failed"
+          },
+          {
+            "id": "RUN-HI2-02R-03",
+            "score": 84.5,
+            "hop": 1,
+            "status": "failed"
+          },
+          {
+            "id": "RUN-HI2-02R-01",
+            "score": 82,
+            "hop": 1,
+            "status": "failed"
+          }
+        ],
+        "contradictions": [],
+        "omittedNodeIds": [],
+        "policy": {
+          "maxHops": 2,
+          "maxNodes": 40,
+          "maxTokens": 12000,
+          "includeStatuses": [
+            "approved",
+            "verified",
+            "active",
+            "superseded",
+            "failed"
+          ],
+          "preferVerified": true,
+          "includeContradictions": true,
+          "resolveSuperseded": true
+        },
+        "contextHash": "7b867d04a156b64e8d4716932a8d18bccbdb90e23866f8b8a10c7899deaa6e45",
+        "estimatedTokens": 1956,
+        "truncated": false
+      },
+      "gateDecisionHash": "8c8eead5f10deee3e10ba4fb2ff3649af3b4ef042c7345d7bbb23ce40a16b092",
+      "gateSnapshot": {
+        "allowed": true,
+        "sliceId": "HI2-02R",
+        "fromState": "testing",
+        "requestedState": "certification",
+        "blockers": [],
+        "warnings": [],
+        "requiredApprovals": [
+          "scope",
+          "policy",
+          "implementation"
+        ],
+        "validApprovals": [
+          "scope",
+          "policy",
+          "implementation"
+        ],
+        "protectedPaths": [],
+        "evidence": {
+          "accepted": [
+            {
+              "id": "EVID-HI2-02R-01",
+              "type": "Evidence",
+              "status": "verified",
+              "distance": 3
+            },
+            {
+              "id": "EVID-HI2-02R-02",
+              "type": "Evidence",
+              "status": "verified",
+              "distance": 3
+            }
+          ],
+          "rejected": []
+        },
+        "deliveryGraph": {
+          "required": false,
+          "blocking": false,
+          "status": null,
+          "reasons": []
+        },
+        "context": {
+          "hash": "7b867d04a156b64e8d4716932a8d18bccbdb90e23866f8b8a10c7899deaa6e45",
+          "graphRevision": 14,
+          "contradictions": 0
+        }
+      },
+      "approvals": [
+        {
+          "type": "scope",
+          "status": "approved",
+          "actorType": "human",
+          "scopeId": "HI2-02R"
+        },
+        {
+          "type": "policy",
+          "status": "approved",
+          "actorType": "human",
+          "scopeId": "HI2-02R"
+        },
+        {
+          "type": "implementation",
+          "status": "approved",
+          "actorType": "human",
+          "scopeId": "HI2-02R"
+        }
+      ],
+      "artifactIds": [
+        "ART-HI2-02R"
+      ],
+      "evidenceIds": [
+        "EVID-HI2-02R-01",
+        "EVID-HI2-02R-02"
+      ],
+      "evaluationIds": [
+        "EVAL-HI2-02R"
+      ],
+      "unresolvedRisks": [],
+      "trace": [
+        {
+          "id": "ART-HI2-02R",
+          "type": "Artifact",
+          "status": "verified",
+          "nodeHash": "4d1344a88f72104ef332c073a2a2b57275f942f21c0669ab9d9a6d0b8301b80c",
+          "memoryEventId": "GM-000012",
+          "distanceFromObjective": 2
+        },
+        {
+          "id": "EVAL-HI2-02R",
+          "type": "Evaluation",
+          "status": "verified",
+          "nodeHash": "fa3d9ee4ec7f0fad1140d86348d45057b6d1ce4470b951614880d3afda2b2a54",
+          "memoryEventId": "GM-000012",
+          "distanceFromObjective": 3
+        },
+        {
+          "id": "EVID-HI2-02R-01",
+          "type": "Evidence",
+          "status": "verified",
+          "nodeHash": "24eeaec2edddd270cc263f0a016485a742157c2820941d54a42998ec05093919",
+          "memoryEventId": "GM-000012",
+          "distanceFromObjective": 3
+        },
+        {
+          "id": "EVID-HI2-02R-02",
+          "type": "Evidence",
+          "status": "verified",
+          "nodeHash": "314ad51be11846c635c143916bcc0088a169c9097196aff22c872f8fee8d070b",
+          "memoryEventId": "GM-000012",
+          "distanceFromObjective": 3
+        }
+      ],
+      "createdAt": "2026-09-20T01:34:00.000Z",
+      "candidateHash": "051fee90599e7f366091ce4336f4682da00e4581c2ea06dba2eaa61003d21548",
+      "certificationApproval": {
+        "type": "certification",
+        "status": "approved",
+        "actorType": "human",
+        "scopeId": "HI2-02R",
+        "commitSha": "d64a227a44a75e8d20da8a1f4104f9ba59a5bf04",
+        "candidateHash": "051fee90599e7f366091ce4336f4682da00e4581c2ea06dba2eaa61003d21548",
+        "approvedAt": "2026-09-20T01:44:13Z"
+      },
+      "certifiedAt": "2026-09-20T01:44:13Z",
+      "certifiedHash": "4761aed2d6be6f087c31390f11d3afff54a76f0621f96acd0f88b3120e2a9a11"
     }
   ]
 }

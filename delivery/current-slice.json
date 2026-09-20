@@ -1,11 +1,11 @@
 {
   "activeSlice": {
-    "id": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION",
-    "objectiveId": "OBJ-008",
+    "id": "HI2-02R",
+    "objectiveId": "OBJ-HI2-02R",
     "state": "certified",
     "riskLevel": "medium",
-    "implementationPermission": "runtime-enabled",
-    "scope": "Make Brand Brain retain source-grounded editorial publisher context during live onboarding; prove it with a disposable public-brand validation before Hunter runs.",
+    "implementationPermission": "runtime-disabled",
+    "scope": "Add shadow-only semantic intelligence foundation: pgvector extension, provider-neutral embedding contracts, tenant-safe vector persistence, bounded backfill utilities and similarity diagnostics. No ranking authority or user-visible behavior.",
     "budget": {
       "maxModelCalls": 0,
       "maxSubAgents": 0,
@@ -16,24 +16,39 @@
       "maxGraphWrites": 12
     },
     "approvals": [
-      { "type": "scope", "status": "approved", "actorType": "human", "scopeId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION" },
-      { "type": "policy", "status": "approved", "actorType": "human", "scopeId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION" },
-      { "type": "implementation", "status": "approved", "actorType": "human", "scopeId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION" },
-      { "type": "certification", "status": "approved", "actorType": "human", "scopeId": "VS-08-BRAND-BRAIN-LIVE-CLASSIFICATION", "commitSha": "f19d7624e5c3099bdc994e7b64981ca694de0d62", "candidateHash": "4ed0d2e35c0067d020abdbeefe0eb776c01f3a168f98a609da2ec38ec3c21aa9", "approvedAt": "2026-09-19T21:37:45Z" }
+      {
+        "type": "scope",
+        "status": "approved",
+        "actorType": "human",
+        "scopeId": "HI2-02R"
+      },
+      {
+        "type": "policy",
+        "status": "approved",
+        "actorType": "human",
+        "scopeId": "HI2-02R"
+      },
+      {
+        "type": "implementation",
+        "status": "approved",
+        "actorType": "human",
+        "scopeId": "HI2-02R"
+      }
     ],
     "successCriteria": [
-      "A news or editorial website cannot persist conflicting automotive or food core Brand DNA when its source evidence identifies it as a publisher.",
-      "A model-conflict regression test passes.",
-      "The deployed production route is identified before any production re-test.",
-      "No Hunter run starts until the real Brand DNA is truthful and required owner confirmations are complete."
+      "Migration 0044 enables pgvector and adds additive tenant-scoped embedding storage without an ANN index.",
+      "Embedding provider/model/dimension are versioned metadata and the domain remains provider-neutral.",
+      "Similarity diagnostics cannot influence Hunter ranking or user-visible recommendations.",
+      "Backfill utilities are explicitly bounded and perform no provider calls unless an EmbeddingPort is injected.",
+      "Existing Hunter and EEI runtime behavior remains unchanged.",
+      "PES v2 CI and Security baseline pass before certification."
     ],
-    "context": {
-      "contextHash": "f1e6caec14de81cd3aa04d0ac41d7dd4b99c41c57be03845cc942220008493cb",
-      "graphRevision": 10,
-      "requestedSeeds": ["OBJ-008", "TASK-008-01", "ART-008-01", "EVID-008-01", "EVID-008-02", "EVAL-008-01"],
-      "resolvedSeeds": ["OBJ-008", "TASK-008-01", "ART-008-01", "EVID-008-01", "EVID-008-02", "EVAL-008-01"],
-      "contradictions": []
-    },
-    "evidenceIds": ["EVID-008-01", "EVID-008-02"]
+    "certification": {
+      "bundleId": "CERT-HI2-02R-D64A227A",
+      "commitSha": "d64a227a44a75e8d20da8a1f4104f9ba59a5bf04",
+      "candidateHash": "051fee90599e7f366091ce4336f4682da00e4581c2ea06dba2eaa61003d21548",
+      "certifiedHash": "4761aed2d6be6f087c31390f11d3afff54a76f0621f96acd0f88b3120e2a9a11",
+      "certifiedAt": "2026-09-20T01:44:13Z"
+    }
   }
 }
