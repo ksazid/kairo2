@@ -2,7 +2,7 @@
   "activeSlice": {
     "id": "HI2-11R2",
     "objectiveId": "OBJ-HI2-11R2",
-    "state": "implementing",
+    "state": "certified",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
     "scope": "Align the operational Hunter V2 shadow candidate capacity with the six recommendations actually selected so the existing certified explorationMax=0.20 is enforced against the effective output size. Change only the shadow operational maxCandidates from 10 to 6; do not change EEI thresholds, retrieval policy, cost budget, latency policy, persistence, canary, scheduler, or production authority.",
@@ -40,6 +40,13 @@
       "Corrected 3x3 pre-gate must meet all metric thresholds before the 30-pair full gate is attempted.",
       "Hunter V1 remains production authority; no V2 persistence or canary enablement.",
       "PES v2 CI and Security baseline pass before merge/deployment."
-    ]
+    ],
+    "certification": {
+      "bundleId": "CERT-HI2-11R2-2411813B",
+      "commitSha": "2411813be7dadfe013be79267833d40fe4247dc5",
+      "candidateHash": "3993de9bb5c347121f0cc33470b8fbeb280c547572ecfcb59a17169d94f511d1",
+      "certifiedHash": "343792afec09bc2028c6f3881e4cabf8d934884922598c0f5a4f8cd897db4d78",
+      "certifiedAt": "2026-09-20T22:58:53.965Z"
+    }
   }
 }
