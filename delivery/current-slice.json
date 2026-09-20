@@ -1,11 +1,11 @@
 {
   "activeSlice": {
-    "id": "HI2-03R",
-    "objectiveId": "OBJ-HI2-03R",
-    "state": "certified",
+    "id": "HI2-04R",
+    "objectiveId": "OBJ-HI2-04R",
+    "state": "implementing",
     "riskLevel": "medium",
     "implementationPermission": "runtime-disabled",
-    "scope": "Add shadow-only Hunter Retrieval Intelligence: deterministic multi-generator retrieval plans, semantic expansion hooks over the certified vector foundation, hard-negative filtering, candidate provenance/deduplication and recall-proxy diagnostics. Existing Hunter remains authoritative.",
+    "scope": "Add shadow-only Hunter Trend Intelligence: deterministic story clustering, cross-source corroboration, freshness, velocity/acceleration, creator/category outlier features, trend stage/confidence and diagnostics. Existing Hunter ranking/persistence remains authoritative.",
     "budget": {
       "maxModelCalls": 0,
       "maxSubAgents": 0,
@@ -20,35 +20,29 @@
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-03R"
+        "scopeId": "HI2-04R"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-03R"
+        "scopeId": "HI2-04R"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-03R"
+        "scopeId": "HI2-04R"
       }
     ],
     "successCriteria": [
-      "Retrieval planning creates bounded, provenance-rich intents across Brand Core, Audience Problem, Category/Competitor, Rising, Outlier, Authority, Evergreen, Adjacent Exploration and Cross-source Confirmation.",
-      "Shadow execution deduplicates candidates and records generator/topic/source coverage without affecting production Hunter ranking or persistence.",
-      "Explicit Brand exclusions and strong negative preferences are applied as hard-negative guards before diagnostics.",
-      "Semantic expansion uses provider-neutral injected ports over public-signal embeddings and remains optional/shadow-only.",
-      "No provider credentials, scheduled execution, UI changes, ranking authority or production enablement are introduced.",
+      "Shadow clustering groups semantically/lexically equivalent signals without persisting or ranking production opportunities.",
+      "Cross-source, cross-platform and independent-publisher corroboration are measured deterministically.",
+      "Velocity, acceleration and creator/category outlier features use only supplied observable metrics; unavailable metrics are explicitly marked unknown.",
+      "Trend stage, saturation, freshness and evidence confidence are deterministic and versioned.",
+      "Diagnostics report cluster counts, corroboration, stage distribution and missing-feature rates.",
+      "No provider credentials, scheduled execution, production Hunter wiring, UI changes or production enablement are introduced.",
       "PES v2 CI and Security baseline pass before certification."
-    ],
-    "certification": {
-      "bundleId": "CERT-HI2-03R-0B820201",
-      "commitSha": "0b82020168bd710c83471c204bef16e77380776f",
-      "candidateHash": "713203a289291811b39c1cd35f7e7da80f09951e76b9c18baf5b961a5057ec93",
-      "certifiedHash": "0798de8357bf60415da232db845a4668aac67607f30f78eba85f02a9be7abb88",
-      "certifiedAt": "2026-09-20T07:48:00Z"
-    }
+    ]
   }
 }
