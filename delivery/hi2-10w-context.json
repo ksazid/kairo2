@@ -1,0 +1,386 @@
+{
+  "schemaVersion": 1,
+  "graphRevision": 30,
+  "requestedSeeds": [
+    "OBJ-HI2-10W",
+    "TASK-HI2-10W",
+    "ART-HI2-10W",
+    "EVAL-HI2-10W",
+    "EVID-HI2-10W-01",
+    "EVID-HI2-10W-02",
+    "EVID-HI2-10W-03"
+  ],
+  "resolvedSeeds": [
+    "OBJ-HI2-10W",
+    "TASK-HI2-10W",
+    "ART-HI2-10W",
+    "EVAL-HI2-10W",
+    "EVID-HI2-10W-01",
+    "EVID-HI2-10W-02",
+    "EVID-HI2-10W-03"
+  ],
+  "resolution": [
+    {
+      "requestedId": "OBJ-HI2-10W",
+      "currentId": "OBJ-HI2-10W",
+      "chain": [
+        "OBJ-HI2-10W"
+      ]
+    },
+    {
+      "requestedId": "TASK-HI2-10W",
+      "currentId": "TASK-HI2-10W",
+      "chain": [
+        "TASK-HI2-10W"
+      ]
+    },
+    {
+      "requestedId": "ART-HI2-10W",
+      "currentId": "ART-HI2-10W",
+      "chain": [
+        "ART-HI2-10W"
+      ]
+    },
+    {
+      "requestedId": "EVAL-HI2-10W",
+      "currentId": "EVAL-HI2-10W",
+      "chain": [
+        "EVAL-HI2-10W"
+      ]
+    },
+    {
+      "requestedId": "EVID-HI2-10W-01",
+      "currentId": "EVID-HI2-10W-01",
+      "chain": [
+        "EVID-HI2-10W-01"
+      ]
+    },
+    {
+      "requestedId": "EVID-HI2-10W-02",
+      "currentId": "EVID-HI2-10W-02",
+      "chain": [
+        "EVID-HI2-10W-02"
+      ]
+    },
+    {
+      "requestedId": "EVID-HI2-10W-03",
+      "currentId": "EVID-HI2-10W-03",
+      "chain": [
+        "EVID-HI2-10W-03"
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "EVID-HI2-10W-01",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "GitHub PES v2 CI run 35532289234 passed for PR #23 head b841d36b52811ffefdf2eab0f94a2bb82d0c7f6a",
+      "memoryProvenance": {
+        "eventId": "GM-000030",
+        "revision": 30,
+        "actorId": "pes-v2-hunter-shadow-retrieval-wiring",
+        "runId": "HI2-10W",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T19:29:37.854Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-10W-02",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "GitHub Security baseline run 35532289140 passed for PR #23 head b841d36b52811ffefdf2eab0f94a2bb82d0c7f6a",
+      "memoryProvenance": {
+        "eventId": "GM-000030",
+        "revision": 30,
+        "actorId": "pes-v2-hunter-shadow-retrieval-wiring",
+        "runId": "HI2-10W",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T19:29:37.854Z"
+      }
+    },
+    {
+      "id": "EVID-HI2-10W-03",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "Production-like shadow adapter regression proves non-zero retrieval coverage, metered Agent Reach cost and non-zero exploration while HI2-09 rollout thresholds remain unchanged",
+      "memoryProvenance": {
+        "eventId": "GM-000030",
+        "revision": 30,
+        "actorId": "pes-v2-hunter-shadow-retrieval-wiring",
+        "runId": "HI2-10W",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T19:29:37.854Z"
+      }
+    },
+    {
+      "id": "ART-HI2-10W",
+      "type": "Artifact",
+      "status": "verified",
+      "title": "Hunter V2 shadow multi-source retrieval, exploration provenance, evidence-derived topic identity and operational profile repair",
+      "runId": "HI2-10W",
+      "version": "b841d36b52811ffefdf2eab0f94a2bb82d0c7f6a",
+      "memoryProvenance": {
+        "eventId": "GM-000030",
+        "revision": 30,
+        "actorId": "pes-v2-hunter-shadow-retrieval-wiring",
+        "runId": "HI2-10W",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T19:29:37.854Z"
+      }
+    },
+    {
+      "id": "EVAL-HI2-10W",
+      "type": "Evaluation",
+      "status": "verified",
+      "title": "PESv2 validated non-zero V2 retrieval coverage, metered Agent Reach usage, evidence-backed exploration selection and unchanged rollout guardrails",
+      "rubricId": "hunter-shadow-retrieval-exploration-wiring-high-risk",
+      "memoryProvenance": {
+        "eventId": "GM-000030",
+        "revision": 30,
+        "actorId": "pes-v2-hunter-shadow-retrieval-wiring",
+        "runId": "HI2-10W",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T19:29:37.854Z"
+      }
+    },
+    {
+      "id": "OBJ-HI2-10W",
+      "type": "Objective",
+      "status": "active",
+      "title": "Repair Hunter V2 shadow retrieval and exploration wiring without weakening rollout policy",
+      "successCriteria": [
+        "The operational V2 lane attempts enough bounded sources for Industry news / Official source plans that Agent Reach is not starved behind empty RSS.",
+        "Hunter retrieval planning includes a lexical adjacent-exploration intent while retaining semantic expansion as an optional additional intent.",
+        "The balanced operational plan reserves exactly one lexical adjacent-exploration slot when available and remains within maxIntents.",
+        "Exploration-only retrieval provenance survives trend clustering and multistage ranking.",
+        "EEI classifies explicitly exploration-only candidates into the exploration bucket without weakening manipulation, negative-preference, saturation, or topic-concentration controls.",
+        "A production-like adapter test demonstrates non-zero V2 retrieval coverage, non-zero V2 cost when Agent Reach is used, and at least one exploration recommendation.",
+        "The same 3-brand / 30-pair shadow gate is rerun after deployment with all HI2-09 rollout thresholds unchanged.",
+        "Hunter V1 remains production authority and V2 performs no opportunity persistence.",
+        "Canary and production activation remain disabled unless the completed rerun passes the existing rollout evaluator.",
+        "PES v2 CI and Security baseline pass before merge/deployment."
+      ],
+      "memoryProvenance": {
+        "eventId": "GM-000030",
+        "revision": 30,
+        "actorId": "pes-v2-hunter-shadow-retrieval-wiring",
+        "runId": "HI2-10W",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T19:29:37.854Z"
+      }
+    },
+    {
+      "id": "TASK-HI2-10W",
+      "type": "Task",
+      "status": "active",
+      "objectiveId": "OBJ-HI2-10W",
+      "title": "Restore bounded multi-source retrieval and evidence-backed EEI exploration in the operational shadow lane",
+      "memoryProvenance": {
+        "eventId": "GM-000030",
+        "revision": 30,
+        "actorId": "pes-v2-hunter-shadow-retrieval-wiring",
+        "runId": "HI2-10W",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T19:29:37.854Z"
+      }
+    },
+    {
+      "id": "RUN-HI2-10W-01",
+      "type": "AgentRun",
+      "status": "verified",
+      "objectiveId": "OBJ-HI2-10W",
+      "title": "Exact HI2-10W implementation passed PESv2 CI and Security after regression repair",
+      "memoryProvenance": {
+        "eventId": "GM-000030",
+        "revision": 30,
+        "actorId": "pes-v2-hunter-shadow-retrieval-wiring",
+        "runId": "HI2-10W",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T19:29:37.854Z"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "EDGE-OBJ-HI2-10W-TASK",
+      "type": "IMPLEMENTED_BY",
+      "from": "OBJ-HI2-10W",
+      "to": "TASK-HI2-10W",
+      "memoryProvenance": {
+        "eventId": "GM-000030",
+        "revision": 30,
+        "actorId": "pes-v2-hunter-shadow-retrieval-wiring",
+        "runId": "HI2-10W",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T19:29:37.854Z"
+      }
+    },
+    {
+      "id": "EDGE-TASK-HI2-10W-PRODUCED-ART",
+      "type": "PRODUCED",
+      "from": "TASK-HI2-10W",
+      "to": "ART-HI2-10W",
+      "memoryProvenance": {
+        "eventId": "GM-000030",
+        "revision": 30,
+        "actorId": "pes-v2-hunter-shadow-retrieval-wiring",
+        "runId": "HI2-10W",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T19:29:37.854Z"
+      }
+    },
+    {
+      "id": "EDGE-RUN-HI2-10W-01-PRODUCED-ART",
+      "type": "PRODUCED",
+      "from": "RUN-HI2-10W-01",
+      "to": "ART-HI2-10W",
+      "memoryProvenance": {
+        "eventId": "GM-000030",
+        "revision": 30,
+        "actorId": "pes-v2-hunter-shadow-retrieval-wiring",
+        "runId": "HI2-10W",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T19:29:37.854Z"
+      }
+    },
+    {
+      "id": "EDGE-EVAL-HI2-10W-EVALUATES-ART",
+      "type": "EVALUATES",
+      "from": "EVAL-HI2-10W",
+      "to": "ART-HI2-10W",
+      "memoryProvenance": {
+        "eventId": "GM-000030",
+        "revision": 30,
+        "actorId": "pes-v2-hunter-shadow-retrieval-wiring",
+        "runId": "HI2-10W",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T19:29:37.854Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-10W-01-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-10W-01",
+      "to": "ART-HI2-10W",
+      "provenance": {
+        "kind": "github-actions",
+        "runId": "35532289234"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000030",
+        "revision": 30,
+        "actorId": "pes-v2-hunter-shadow-retrieval-wiring",
+        "runId": "HI2-10W",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T19:29:37.854Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-10W-02-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-10W-02",
+      "to": "ART-HI2-10W",
+      "provenance": {
+        "kind": "github-actions",
+        "runId": "35532289140"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000030",
+        "revision": 30,
+        "actorId": "pes-v2-hunter-shadow-retrieval-wiring",
+        "runId": "HI2-10W",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T19:29:37.854Z"
+      }
+    },
+    {
+      "id": "EDGE-EVID-HI2-10W-03-SUPPORTS-ART",
+      "type": "SUPPORTS",
+      "from": "EVID-HI2-10W-03",
+      "to": "ART-HI2-10W",
+      "provenance": {
+        "kind": "delivery-graph",
+        "path": "delivery/hi2-10w-delivery-graph.json"
+      },
+      "memoryProvenance": {
+        "eventId": "GM-000030",
+        "revision": 30,
+        "actorId": "pes-v2-hunter-shadow-retrieval-wiring",
+        "runId": "HI2-10W",
+        "sourceIds": [],
+        "recordedAt": "2026-09-20T19:29:37.854Z"
+      }
+    }
+  ],
+  "ranking": [
+    {
+      "id": "EVID-HI2-10W-01",
+      "score": 1119,
+      "hop": 0,
+      "status": "verified"
+    },
+    {
+      "id": "EVID-HI2-10W-02",
+      "score": 1119,
+      "hop": 0,
+      "status": "verified"
+    },
+    {
+      "id": "EVID-HI2-10W-03",
+      "score": 1119,
+      "hop": 0,
+      "status": "verified"
+    },
+    {
+      "id": "ART-HI2-10W",
+      "score": 1118,
+      "hop": 0,
+      "status": "verified"
+    },
+    {
+      "id": "EVAL-HI2-10W",
+      "score": 1118,
+      "hop": 0,
+      "status": "verified"
+    },
+    {
+      "id": "OBJ-HI2-10W",
+      "score": 1117,
+      "hop": 0,
+      "status": "active"
+    },
+    {
+      "id": "TASK-HI2-10W",
+      "score": 1113,
+      "hop": 0,
+      "status": "active"
+    },
+    {
+      "id": "RUN-HI2-10W-01",
+      "score": 101,
+      "hop": 1,
+      "status": "verified"
+    }
+  ],
+  "contradictions": [],
+  "omittedNodeIds": [],
+  "policy": {
+    "maxHops": 2,
+    "maxNodes": 40,
+    "maxTokens": 12000,
+    "includeStatuses": [
+      "approved",
+      "verified",
+      "active",
+      "superseded",
+      "failed"
+    ],
+    "preferVerified": true,
+    "includeContradictions": true,
+    "resolveSuperseded": true
+  },
+  "contextHash": "f97661ce2f374493bbd7ceaa9017b54f01012c80406ee25ebe44072441b933f4",
+  "estimatedTokens": 2069,
+  "truncated": false
+}
