@@ -51,7 +51,8 @@
     "./video-project": "./src/video-project.ts",
     "./marketing-benchmark": "./src/marketing-benchmark.ts",
     "./marketing-lab": "./src/marketing-lab.ts",
-    "./hunter-semantic": "./src/hunter-semantic.ts"
+    "./hunter-semantic": "./src/hunter-semantic.ts",
+    "./hunter-retrieval": "./src/hunter-retrieval.ts"
   },
   "types": "./src/index.ts",
   "scripts": {
