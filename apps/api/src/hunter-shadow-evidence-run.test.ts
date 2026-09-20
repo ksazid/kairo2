@@ -6,6 +6,7 @@ import {
   hunterShadowSearchCostUsdBySourceFromEnv,
   resolveReadOnlyDiscoveryPlan,
   selectDisposableAnchorTenant,
+  disposableVercelCanonicalFields,
 } from "./hunter-shadow-evidence-run";
 
 const snapshot = {
@@ -142,6 +143,21 @@ describe("Hunter shadow operational evidence", () => {
       { accountId: "account-a", workspaceId: "workspace-1", brandId: "brand-1" },
       { accountId: "account-b", workspaceId: "workspace-2", brandId: "brand-2" },
     ])).toThrow(/one unambiguous workspace/);
+  });
+
+  it("defines all six canonical source-backed readiness groups for the disposable Vercel fixture", () => {
+    const fields = disposableVercelCanonicalFields("about-source", "policy-source");
+    expect(fields.map((field) => field.fieldKey)).toEqual([
+      "identity.description",
+      "identity.products-services",
+      "audience.primary",
+      "positioning.value-proposition",
+      "content.core-topics",
+      "boundaries.excluded-topics",
+    ]);
+    expect(fields.slice(0, 5).every((field) => field.sourceIds[0] === "about-source")).toBe(true);
+    expect(fields[5]!.sourceIds).toEqual(["policy-source"]);
+    expect(fields.every((field) => field.value.trim().length > 20)).toBe(true);
   });
 
   it("requires explicit Agent Reach cost metering when Exa is enabled", () => {

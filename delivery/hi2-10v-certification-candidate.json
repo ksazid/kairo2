@@ -1,0 +1,533 @@
+{
+  "schemaVersion": 1,
+  "bundleId": "CERT-HI2-10V-F1A419B8",
+  "status": "candidate",
+  "sliceId": "HI2-10V",
+  "objectiveId": "OBJ-HI2-10V",
+  "riskLevel": "high",
+  "commitSha": "f1a419b802b1961caf703d720a2c665c803bd534",
+  "graphRevision": 28,
+  "contextHash": "068831f0b66348e679c1fb7b20540aff9516e1a2ae432ba82e0d7418dcea076b",
+  "contextSnapshot": {
+    "schemaVersion": 1,
+    "graphRevision": 28,
+    "requestedSeeds": [
+      "OBJ-HI2-10V",
+      "TASK-HI2-10V",
+      "ART-HI2-10V",
+      "EVAL-HI2-10V",
+      "EVID-HI2-10V-01",
+      "EVID-HI2-10V-02",
+      "EVID-HI2-10V-03"
+    ],
+    "resolvedSeeds": [
+      "OBJ-HI2-10V",
+      "TASK-HI2-10V",
+      "ART-HI2-10V",
+      "EVAL-HI2-10V",
+      "EVID-HI2-10V-01",
+      "EVID-HI2-10V-02",
+      "EVID-HI2-10V-03"
+    ],
+    "resolution": [
+      {
+        "requestedId": "OBJ-HI2-10V",
+        "currentId": "OBJ-HI2-10V",
+        "chain": [
+          "OBJ-HI2-10V"
+        ]
+      },
+      {
+        "requestedId": "TASK-HI2-10V",
+        "currentId": "TASK-HI2-10V",
+        "chain": [
+          "TASK-HI2-10V"
+        ]
+      },
+      {
+        "requestedId": "ART-HI2-10V",
+        "currentId": "ART-HI2-10V",
+        "chain": [
+          "ART-HI2-10V"
+        ]
+      },
+      {
+        "requestedId": "EVAL-HI2-10V",
+        "currentId": "EVAL-HI2-10V",
+        "chain": [
+          "EVAL-HI2-10V"
+        ]
+      },
+      {
+        "requestedId": "EVID-HI2-10V-01",
+        "currentId": "EVID-HI2-10V-01",
+        "chain": [
+          "EVID-HI2-10V-01"
+        ]
+      },
+      {
+        "requestedId": "EVID-HI2-10V-02",
+        "currentId": "EVID-HI2-10V-02",
+        "chain": [
+          "EVID-HI2-10V-02"
+        ]
+      },
+      {
+        "requestedId": "EVID-HI2-10V-03",
+        "currentId": "EVID-HI2-10V-03",
+        "chain": [
+          "EVID-HI2-10V-03"
+        ]
+      }
+    ],
+    "nodes": [
+      {
+        "id": "EVID-HI2-10V-01",
+        "type": "Evidence",
+        "status": "verified",
+        "title": "GitHub PES v2 CI run 35525086443 passed for PR #21 head f1a419b802b1961caf703d720a2c665c803bd534",
+        "memoryProvenance": {
+          "eventId": "GM-000028",
+          "revision": 28,
+          "actorId": "pes-v2-hunter-shadow-vercel-readiness",
+          "runId": "HI2-10V",
+          "sourceIds": [],
+          "recordedAt": "2026-09-20T17:13:49.893Z"
+        }
+      },
+      {
+        "id": "EVID-HI2-10V-02",
+        "type": "Evidence",
+        "status": "verified",
+        "title": "GitHub Security baseline run 35525086447 passed for PR #21 head f1a419b802b1961caf703d720a2c665c803bd534",
+        "memoryProvenance": {
+          "eventId": "GM-000028",
+          "revision": 28,
+          "actorId": "pes-v2-hunter-shadow-vercel-readiness",
+          "runId": "HI2-10V",
+          "sourceIds": [],
+          "recordedAt": "2026-09-20T17:13:49.893Z"
+        }
+      },
+      {
+        "id": "EVID-HI2-10V-03",
+        "type": "Evidence",
+        "status": "verified",
+        "title": "HI2-10V delivery graph is ready; public Vercel sources back all six canonical groups and Hunter V1 remains authoritative",
+        "memoryProvenance": {
+          "eventId": "GM-000028",
+          "revision": 28,
+          "actorId": "pes-v2-hunter-shadow-vercel-readiness",
+          "runId": "HI2-10V",
+          "sourceIds": [],
+          "recordedAt": "2026-09-20T17:13:49.893Z"
+        }
+      },
+      {
+        "id": "ART-HI2-10V",
+        "type": "Artifact",
+        "status": "verified",
+        "title": "Source-backed Vercel readiness completion for disposable Hunter shadow anchor",
+        "runId": "HI2-10V",
+        "version": "f1a419b802b1961caf703d720a2c665c803bd534",
+        "memoryProvenance": {
+          "eventId": "GM-000028",
+          "revision": 28,
+          "actorId": "pes-v2-hunter-shadow-vercel-readiness",
+          "runId": "HI2-10V",
+          "sourceIds": [],
+          "recordedAt": "2026-09-20T17:13:49.893Z"
+        }
+      },
+      {
+        "id": "EVAL-HI2-10V",
+        "type": "Evaluation",
+        "status": "verified",
+        "title": "PESv2 validated six canonical source-backed fields, unchanged readiness, source fail-closed behavior and disposable cleanup",
+        "rubricId": "hunter-shadow-vercel-readiness-high-risk",
+        "memoryProvenance": {
+          "eventId": "GM-000028",
+          "revision": 28,
+          "actorId": "pes-v2-hunter-shadow-vercel-readiness",
+          "runId": "HI2-10V",
+          "sourceIds": [],
+          "recordedAt": "2026-09-20T17:13:49.893Z"
+        }
+      },
+      {
+        "id": "OBJ-HI2-10V",
+        "type": "Objective",
+        "status": "active",
+        "title": "Complete the disposable Vercel shadow anchor without weakening Hunter readiness",
+        "successCriteria": [
+          "The Vercel fixture uses active source records derived from Vercel About and Vercel Acceptable Use Policy public references.",
+          "Exactly the six canonical Hunter readiness groups receive at least one non-placeholder source-backed inferred field: business, offerings, audience, positioning, topics and boundaries.",
+          "No owner-confirmed field is created and no existing user Brand field is modified.",
+          "The unchanged createBrandBrainActivationSnapshot readiness evaluator must return hunterReady=true before the fixture can enter the evidence cohort.",
+          "Missing About or policy source evidence fails closed before paired evidence starts.",
+          "The disposable Brand is deleted after success or failure.",
+          "The evidence cohort remains at least 3 distinct real Brands and 30 paired V1/V2 runs.",
+          "Hunter V1 remains production authority; no canary or production enablement is introduced.",
+          "PES v2 CI and Security baseline pass before merge/deployment."
+        ],
+        "memoryProvenance": {
+          "eventId": "GM-000028",
+          "revision": 28,
+          "actorId": "pes-v2-hunter-shadow-vercel-readiness",
+          "runId": "HI2-10V",
+          "sourceIds": [],
+          "recordedAt": "2026-09-20T17:13:49.893Z"
+        }
+      },
+      {
+        "id": "TASK-HI2-10V",
+        "type": "Task",
+        "status": "active",
+        "objectiveId": "OBJ-HI2-10V",
+        "title": "Persist six source-backed inferred fixture fields and require canonical readiness",
+        "memoryProvenance": {
+          "eventId": "GM-000028",
+          "revision": 28,
+          "actorId": "pes-v2-hunter-shadow-vercel-readiness",
+          "runId": "HI2-10V",
+          "sourceIds": [],
+          "recordedAt": "2026-09-20T17:13:49.893Z"
+        }
+      },
+      {
+        "id": "RUN-HI2-10V-01",
+        "type": "AgentRun",
+        "status": "verified",
+        "objectiveId": "OBJ-HI2-10V",
+        "title": "Exact HI2-10V implementation passed PESv2 CI and Security",
+        "memoryProvenance": {
+          "eventId": "GM-000028",
+          "revision": 28,
+          "actorId": "pes-v2-hunter-shadow-vercel-readiness",
+          "runId": "HI2-10V",
+          "sourceIds": [],
+          "recordedAt": "2026-09-20T17:13:49.893Z"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "EDGE-OBJ-HI2-10V-TASK",
+        "type": "IMPLEMENTED_BY",
+        "from": "OBJ-HI2-10V",
+        "to": "TASK-HI2-10V",
+        "memoryProvenance": {
+          "eventId": "GM-000028",
+          "revision": 28,
+          "actorId": "pes-v2-hunter-shadow-vercel-readiness",
+          "runId": "HI2-10V",
+          "sourceIds": [],
+          "recordedAt": "2026-09-20T17:13:49.893Z"
+        }
+      },
+      {
+        "id": "EDGE-TASK-HI2-10V-PRODUCED-ART",
+        "type": "PRODUCED",
+        "from": "TASK-HI2-10V",
+        "to": "ART-HI2-10V",
+        "memoryProvenance": {
+          "eventId": "GM-000028",
+          "revision": 28,
+          "actorId": "pes-v2-hunter-shadow-vercel-readiness",
+          "runId": "HI2-10V",
+          "sourceIds": [],
+          "recordedAt": "2026-09-20T17:13:49.893Z"
+        }
+      },
+      {
+        "id": "EDGE-RUN-HI2-10V-01-PRODUCED-ART",
+        "type": "PRODUCED",
+        "from": "RUN-HI2-10V-01",
+        "to": "ART-HI2-10V",
+        "memoryProvenance": {
+          "eventId": "GM-000028",
+          "revision": 28,
+          "actorId": "pes-v2-hunter-shadow-vercel-readiness",
+          "runId": "HI2-10V",
+          "sourceIds": [],
+          "recordedAt": "2026-09-20T17:13:49.893Z"
+        }
+      },
+      {
+        "id": "EDGE-EVAL-HI2-10V-EVALUATES-ART",
+        "type": "EVALUATES",
+        "from": "EVAL-HI2-10V",
+        "to": "ART-HI2-10V",
+        "memoryProvenance": {
+          "eventId": "GM-000028",
+          "revision": 28,
+          "actorId": "pes-v2-hunter-shadow-vercel-readiness",
+          "runId": "HI2-10V",
+          "sourceIds": [],
+          "recordedAt": "2026-09-20T17:13:49.893Z"
+        }
+      },
+      {
+        "id": "EDGE-EVID-HI2-10V-01-SUPPORTS-ART",
+        "type": "SUPPORTS",
+        "from": "EVID-HI2-10V-01",
+        "to": "ART-HI2-10V",
+        "provenance": {
+          "kind": "github-actions",
+          "runId": "35525086443"
+        },
+        "memoryProvenance": {
+          "eventId": "GM-000028",
+          "revision": 28,
+          "actorId": "pes-v2-hunter-shadow-vercel-readiness",
+          "runId": "HI2-10V",
+          "sourceIds": [],
+          "recordedAt": "2026-09-20T17:13:49.893Z"
+        }
+      },
+      {
+        "id": "EDGE-EVID-HI2-10V-02-SUPPORTS-ART",
+        "type": "SUPPORTS",
+        "from": "EVID-HI2-10V-02",
+        "to": "ART-HI2-10V",
+        "provenance": {
+          "kind": "github-actions",
+          "runId": "35525086447"
+        },
+        "memoryProvenance": {
+          "eventId": "GM-000028",
+          "revision": 28,
+          "actorId": "pes-v2-hunter-shadow-vercel-readiness",
+          "runId": "HI2-10V",
+          "sourceIds": [],
+          "recordedAt": "2026-09-20T17:13:49.893Z"
+        }
+      },
+      {
+        "id": "EDGE-EVID-HI2-10V-03-SUPPORTS-ART",
+        "type": "SUPPORTS",
+        "from": "EVID-HI2-10V-03",
+        "to": "ART-HI2-10V",
+        "provenance": {
+          "kind": "delivery-graph",
+          "path": "delivery/hi2-10v-delivery-graph.json"
+        },
+        "memoryProvenance": {
+          "eventId": "GM-000028",
+          "revision": 28,
+          "actorId": "pes-v2-hunter-shadow-vercel-readiness",
+          "runId": "HI2-10V",
+          "sourceIds": [],
+          "recordedAt": "2026-09-20T17:13:49.893Z"
+        }
+      }
+    ],
+    "ranking": [
+      {
+        "id": "EVID-HI2-10V-01",
+        "score": 1119,
+        "hop": 0,
+        "status": "verified"
+      },
+      {
+        "id": "EVID-HI2-10V-02",
+        "score": 1119,
+        "hop": 0,
+        "status": "verified"
+      },
+      {
+        "id": "EVID-HI2-10V-03",
+        "score": 1119,
+        "hop": 0,
+        "status": "verified"
+      },
+      {
+        "id": "ART-HI2-10V",
+        "score": 1118,
+        "hop": 0,
+        "status": "verified"
+      },
+      {
+        "id": "EVAL-HI2-10V",
+        "score": 1118,
+        "hop": 0,
+        "status": "verified"
+      },
+      {
+        "id": "OBJ-HI2-10V",
+        "score": 1117,
+        "hop": 0,
+        "status": "active"
+      },
+      {
+        "id": "TASK-HI2-10V",
+        "score": 1113,
+        "hop": 0,
+        "status": "active"
+      },
+      {
+        "id": "RUN-HI2-10V-01",
+        "score": 101,
+        "hop": 1,
+        "status": "verified"
+      }
+    ],
+    "contradictions": [],
+    "omittedNodeIds": [],
+    "policy": {
+      "maxHops": 2,
+      "maxNodes": 40,
+      "maxTokens": 12000,
+      "includeStatuses": [
+        "approved",
+        "verified",
+        "active",
+        "superseded",
+        "failed"
+      ],
+      "preferVerified": true,
+      "includeContradictions": true,
+      "resolveSuperseded": true
+    },
+    "contextHash": "068831f0b66348e679c1fb7b20540aff9516e1a2ae432ba82e0d7418dcea076b",
+    "estimatedTokens": 1942,
+    "truncated": false
+  },
+  "gateDecisionHash": "8d0bed5918dc2577e09a2572d464394cd2a007f429824632bfda5797cef3b681",
+  "gateSnapshot": {
+    "allowed": true,
+    "sliceId": "HI2-10V",
+    "fromState": "testing",
+    "requestedState": "certification",
+    "blockers": [],
+    "warnings": [
+      {
+        "code": "high-risk-certification-review",
+        "message": "High-risk release path should retain explicit certification approval through release."
+      }
+    ],
+    "requiredApprovals": [
+      "scope",
+      "policy",
+      "implementation"
+    ],
+    "validApprovals": [
+      "scope",
+      "policy",
+      "implementation"
+    ],
+    "protectedPaths": [],
+    "evidence": {
+      "accepted": [
+        {
+          "id": "EVID-HI2-10V-01",
+          "type": "Evidence",
+          "status": "verified",
+          "distance": 3
+        },
+        {
+          "id": "EVID-HI2-10V-02",
+          "type": "Evidence",
+          "status": "verified",
+          "distance": 3
+        },
+        {
+          "id": "EVID-HI2-10V-03",
+          "type": "Evidence",
+          "status": "verified",
+          "distance": 3
+        }
+      ],
+      "rejected": []
+    },
+    "deliveryGraph": {
+      "required": true,
+      "blocking": false,
+      "status": "ready",
+      "reasons": [
+        "risk:high"
+      ]
+    },
+    "context": {
+      "hash": "068831f0b66348e679c1fb7b20540aff9516e1a2ae432ba82e0d7418dcea076b",
+      "graphRevision": 28,
+      "contradictions": 0
+    }
+  },
+  "approvals": [
+    {
+      "type": "scope",
+      "status": "approved",
+      "actorType": "human",
+      "scopeId": "HI2-10V"
+    },
+    {
+      "type": "policy",
+      "status": "approved",
+      "actorType": "human",
+      "scopeId": "HI2-10V"
+    },
+    {
+      "type": "implementation",
+      "status": "approved",
+      "actorType": "human",
+      "scopeId": "HI2-10V"
+    }
+  ],
+  "artifactIds": [
+    "ART-HI2-10V"
+  ],
+  "evidenceIds": [
+    "EVID-HI2-10V-01",
+    "EVID-HI2-10V-02",
+    "EVID-HI2-10V-03"
+  ],
+  "evaluationIds": [
+    "EVAL-HI2-10V"
+  ],
+  "unresolvedRisks": [],
+  "trace": [
+    {
+      "id": "ART-HI2-10V",
+      "type": "Artifact",
+      "status": "verified",
+      "nodeHash": "f531fae6dba942a6b3d96de264f8985519f469ffb6b70bb5d7683a99a789b1cb",
+      "memoryEventId": "GM-000028",
+      "distanceFromObjective": 2
+    },
+    {
+      "id": "EVAL-HI2-10V",
+      "type": "Evaluation",
+      "status": "verified",
+      "nodeHash": "5e5169ea05eac8b0f0c2f7ae0aa8baf5de81a04fbbfd007d654b11b93cc61813",
+      "memoryEventId": "GM-000028",
+      "distanceFromObjective": 3
+    },
+    {
+      "id": "EVID-HI2-10V-01",
+      "type": "Evidence",
+      "status": "verified",
+      "nodeHash": "fc231b8891e1de62a669f86eb9f5b52cd84b45085a7c10ff528e84532a7cc775",
+      "memoryEventId": "GM-000028",
+      "distanceFromObjective": 3
+    },
+    {
+      "id": "EVID-HI2-10V-02",
+      "type": "Evidence",
+      "status": "verified",
+      "nodeHash": "d0dc624d7f34a2c49f277dc89dc6832ba988529f22526bdf555b9f9afebc2cb1",
+      "memoryEventId": "GM-000028",
+      "distanceFromObjective": 3
+    },
+    {
+      "id": "EVID-HI2-10V-03",
+      "type": "Evidence",
+      "status": "verified",
+      "nodeHash": "faca02cbbf5845787b356c7b30de58d10db474d8eb9e1015554e3b9fd4f4b721",
+      "memoryEventId": "GM-000028",
+      "distanceFromObjective": 3
+    }
+  ],
+  "createdAt": "2026-09-20T17:13:49.893Z",
+  "candidateHash": "ee7b1605b5e21dc9d661a977101484278d1d4ad86dbe38e3908ff020c126609e"
+}

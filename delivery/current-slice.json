@@ -1,54 +1,54 @@
 {
   "activeSlice": {
-    "id": "HI2-10T",
-    "objectiveId": "OBJ-HI2-10T",
+    "id": "HI2-10V",
+    "objectiveId": "OBJ-HI2-10V",
     "state": "certified",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Add an explicit existing Brand ID selector for the disposable persisted Hunter shadow anchor. The selected Brand is used only to derive its authorized workspace/account; it is never modified. The temporary Vercel anchor remains source-backed, inferred-only, canonical-readiness-gated and deleted in finally.",
+    "scope": "Make the disposable persisted Vercel Hunter shadow anchor satisfy the unchanged canonical Hunter readiness contract by writing six explicit source-backed inferred fixture fields after normal public-reference bootstrap. The target user Brand remains read-only, the fixture remains temporary, and all one-shot evidence gates remain explicit.",
     "budget": {
       "maxModelCalls": 90,
       "maxSubAgents": 0,
       "maxWallClockMinutes": 30,
-      "maxExternalWrites": 12
+      "maxExternalWrites": 18
     },
     "approvals": [
       {
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-10T"
+        "scopeId": "HI2-10V"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-10T"
+        "scopeId": "HI2-10V"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-10T"
+        "scopeId": "HI2-10V"
       }
     ],
     "successCriteria": [
-      "Target Brand ID is accepted only through an explicit runtime variable and must be a valid UUID.",
-      "The target must resolve to an existing persisted Brand with an active workspace membership; missing targets fail closed.",
-      "Workspace/account are derived only from the target Brand rather than guessed across multiple workspaces.",
-      "The target Brand is read-only and is never mutated by the shadow setup.",
-      "The disposable Vercel anchor is created only in the target Brand workspace, writes only audited source-backed inferred fields, and is deleted in finally.",
-      "The unchanged canonical Hunter readiness gate remains mandatory for the disposable anchor.",
+      "The Vercel fixture uses active source records derived from Vercel About and Vercel Acceptable Use Policy public references.",
+      "Exactly the six canonical Hunter readiness groups receive at least one non-placeholder source-backed inferred field: business, offerings, audience, positioning, topics and boundaries.",
+      "No owner-confirmed field is created and no existing user Brand field is modified.",
+      "The unchanged createBrandBrainActivationSnapshot readiness evaluator must return hunterReady=true before the fixture can enter the evidence cohort.",
+      "Missing About or policy source evidence fails closed before paired evidence starts.",
+      "The disposable Brand is deleted after success or failure.",
       "The evidence cohort remains at least 3 distinct real Brands and 30 paired V1/V2 runs.",
       "Hunter V1 remains production authority; no canary or production enablement is introduced.",
       "PES v2 CI and Security baseline pass before merge/deployment."
     ],
     "certification": {
-      "bundleId": "CERT-HI2-10T-015CD48D",
-      "commitSha": "015cd48ddedee01cc3fa8fb4a1350cbd6da50ffa",
-      "candidateHash": "a943f4b1f65a123de903e37f8b444e1b7d480c47d7dbcfeb84ac4199b13ac27c",
-      "certifiedHash": "974149a5dafb96034cc74360eb13d7c79ed27906670b79920cc95e925306527c",
-      "certifiedAt": "2026-09-20T16:17:44.367Z"
+      "bundleId": "CERT-HI2-10V-F1A419B8",
+      "commitSha": "f1a419b802b1961caf703d720a2c665c803bd534",
+      "candidateHash": "ee7b1605b5e21dc9d661a977101484278d1d4ad86dbe38e3908ff020c126609e",
+      "certifiedHash": "4a7fe2b4aab0781df9e168bb1ebc097ec858bcb4272f7293a2db4dbb5e5c06f5",
+      "certifiedAt": "2026-09-20T17:13:49.893Z"
     }
   }
 }
