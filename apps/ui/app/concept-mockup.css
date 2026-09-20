@@ -1,6 +1,7 @@
 .concept-mockup{display:grid;gap:.65rem;min-width:0;padding:.9rem;border:1px solid var(--line,#263242);border-radius:1rem;background:linear-gradient(145deg,var(--panel-soft,#111a26),var(--panel,#0d141e));color:var(--text,#f6f7fb)}
 .concept-mockup-compact{padding:.7rem}
 .concept-mockup-full{padding:1.1rem;gap:.9rem}
+.concept-mockup-full .concept-text-opening{font-size:1rem;line-height:1.5;color:#c8d0db}
 .concept-mockup-kicker{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--violet-2,#a481ff)}
 .concept-mockup strong{line-height:1.15}
 .concept-mockup p,.concept-mockup ul,.concept-mockup ol{margin:0}

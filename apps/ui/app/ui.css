@@ -322,7 +322,13 @@ main { min-width: 0; margin-left: 218px; }
 .discover-preview-copy { min-width: 0; padding: 9px 30px 8px 32px; }
 .discover-preview-label { display: flex; align-items: center; gap: 7px; color: var(--violet-2); font-size: 12px; }
 .discover-preview-label svg { width: 18px; }
-.discover-preview-copy > h2 { margin: 13px 0 22px; font-size: 29px; line-height: 1.08; letter-spacing: -.035em; }
+.discover-preview-copy > h2 { margin: 13px 0 12px; font-size: 29px; line-height: 1.08; letter-spacing: -.035em; }
+.discover-recommendation-direction { margin: 0; max-width: 620px; color: #a8b1bd; font-size: 14px; line-height: 1.5; }
+.discover-signal-row { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px; }
+.discover-signal-row span { min-height: 30px; border: 1px solid #334052; border-radius: 999px; background: #101824; padding: 0 10px; display: inline-flex; align-items: center; gap: 6px; color: #d8dee7; font-size: 11px; }
+.discover-signal-row span:first-child { border-color: #52652b; color: var(--lime); background: rgba(122,148,43,.09); }
+.discover-signal-row span:last-child { border-color: #554386; color: #c7b3ff; background: rgba(118,79,221,.10); }
+.discover-signal-row svg { width: 15px; }
 .discover-reason { margin-top: 14px; }
 .discover-reason h3 { margin: 0 0 4px; color: var(--lime); display: flex; align-items: center; gap: 8px; font-size: 13px; }
 .discover-reason.trend h3 { color: var(--violet-2); }

@@ -17,7 +17,7 @@ function MockupFrame({ children, mode }: { children: ReactNode; mode: "compact" 
 
 function TextPreview({ mockup, mode }: { mockup: ConceptMockupView; mode: "compact" | "card" | "full" }) {
   const text = mockup.text;
-  return <MockupFrame mode={mode}><span className="concept-mockup-kicker">Text concept</span><strong>{presentAiText(text?.hook ?? mockup.hook, "title")}</strong>{mode !== "compact" && text?.opening ? <p>{presentAiText(text.opening, "summary")}</p> : null}{mode === "full" && text?.keyPoints?.length ? <ul>{text.keyPoints.slice(0, 3).map((point) => <li key={point}>{presentAiText(point, "action")}</li>)}</ul> : null}{mode === "full" && (mockup.cta || text?.cta) ? <small>{presentAiText(mockup.cta ?? text?.cta, "cta")}</small> : null}</MockupFrame>;
+  return <MockupFrame mode={mode}><span className="concept-mockup-kicker">{mode === "full" ? "Text concept · draft opening" : "Text concept"}</span>{mode !== "full" ? <strong>{presentAiText(text?.hook ?? mockup.hook, "title")}</strong> : null}{mode !== "compact" && text?.opening ? <p className="concept-text-opening">{presentAiText(text.opening, "summary")}</p> : null}{mode === "full" && text?.keyPoints?.length ? <ul>{text.keyPoints.slice(0, 3).map((point) => <li key={point}>{presentAiText(point, "action")}</li>)}</ul> : null}{mode === "full" && (mockup.cta || text?.cta) ? <small>{presentAiText(mockup.cta ?? text?.cta, "cta")}</small> : null}</MockupFrame>;
 }
 
 function ImagePreview({ mockup, mode }: { mockup: ConceptMockupView; mode: "compact" | "card" | "full" }) {
