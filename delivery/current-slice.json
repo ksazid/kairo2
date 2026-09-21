@@ -2,7 +2,7 @@
   "activeSlice": {
     "id": "HI2-11R4",
     "objectiveId": "OBJ-HI2-11R4",
-    "state": "implementing",
+    "state": "blocked",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
     "scope": "Reduce Hunter V2 shadow evidence cost without changing rollout policy, production authority, EEI thresholds, persistence, or the certified six-item recommendation contract. Narrow only the operational evidence retrieval profile from three intents to two bounded intents: one core intent plus one reserved exploration intent.",
@@ -43,6 +43,25 @@
       "Average cost ratio is <=1.5 before any full 30-pair gate.",
       "Hunter V1 remains production authority; no V2 persistence or canary enablement.",
       "PES v2 CI and Security baseline pass before merge/deployment."
-    ]
+    ],
+    "blockers": [
+      "The 3x3 pre-gate cannot produce a valid relative cost or latency decision while the V1 control lane returns zero-cost, near-no-op observations for a Hunter-ready Brand.",
+      "Do not run the 30-pair gate until control comparability is explicitly restored without weakening rollout thresholds."
+    ],
+    "preGateEvidence": {
+      "releaseSha": "dcc673f45a9dc73861244ec31fb8f05dac383553",
+      "attempts": [
+        "HI2-11R4-PREGATE-20260921-A",
+        "HI2-11R4-PREGATE-20260921-B"
+      ],
+      "candidateCostUsdPerRun": 0.014,
+      "previousCandidateCostUsdPerRun": 0.021,
+      "retrievalCoverage": 1,
+      "v2FailureRate": 0,
+      "explorationShare": 0.16666666666666666,
+      "maximumTopicShare": 0.16666666666666666,
+      "selectedRecommendationsPerRun": 6,
+      "controlComparability": "blocked"
+    }
   }
 }
