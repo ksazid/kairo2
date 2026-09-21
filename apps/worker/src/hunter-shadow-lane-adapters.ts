@@ -175,12 +175,8 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
       recommendationCount: captured.length,
       evidenceCount: controlRun.evidenceCount,
       modelInvocationCount: runtime.invocations(),
-      modelDegraded:
-        (controlRun.degradedSources?.includes("hunter-model") ?? false) ||
-        controlFailures.some(
-          (diagnostic) =>
-            diagnostic.phase === "judgment" && diagnostic.source === "hunter-model",
-        ),
+      dependencyDegraded:
+        Boolean(controlRun.degradedSources?.length) || controlFailures.length > 0,
       metadata: {
         latencyMs,
         costUsd: runtime.measuredCostUsd() + tools.measuredCostUsd(),
@@ -321,7 +317,7 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
       recommendationCount: eei.selected.length,
       evidenceCount: retrieval.candidates.length,
       modelInvocationCount: runtime.invocations(),
-      modelDegraded: false,
+      dependencyDegraded: false,
       metadata: {
         latencyMs,
         costUsd: runtime.measuredCostUsd() + tools.measuredCostUsd(),
