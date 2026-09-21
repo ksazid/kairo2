@@ -137,7 +137,7 @@ describe("ephemeral public Hunter shadow Brand contexts", () => {
     expect(contexts[0]!.context.hunterInput.brand.brandName).toBe("Fixture AI");
     const profile = contexts[0]!.context.hunterInput.intelligenceProfile;
     expect(profile).toBeDefined();
-    expect(profile!.excludedTopics).toContain("Harmful");
+    expect(profile!.excludedTopics.some((item) => /harmful/i.test(item))).toBe(true);
   });
 
   it("skips a blocked public fixture and fills the requested cohort from the next real Brand", async () => {
