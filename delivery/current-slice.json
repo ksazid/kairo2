@@ -1,11 +1,11 @@
 {
   "activeSlice": {
-    "id": "HI2-11R5R",
-    "objectiveId": "OBJ-HI2-11R5R",
+    "id": "HI2-11R5R1",
+    "objectiveId": "OBJ-HI2-11R5R1",
     "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Correct Hunter V1 shadow comparability to measure substantive control work rather than accepted recommendation count. Require real evidence retrieval, at least one measured model invocation, a clean dependency path and a positive measured control cost before cost/latency ratio evaluation. Preserve every rollout threshold and production authority guard.",
+    "scope": "Bound Hunter shadow cohort screening when an explicit anchor Brand and disposable-anchor fallback are configured: screen only the targeted persisted Brand before fallback instead of running model preflights across unrelated persisted Brands. Preserve canonical readiness, control comparability, 3-Brand coverage, all rollout thresholds, and Hunter V1 production authority.",
     "budget": {
       "maxModelCalls": 40,
       "maxSubAgents": 0,
@@ -17,58 +17,38 @@
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R"
+        "scopeId": "HI2-11R5R1"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R"
+        "scopeId": "HI2-11R5R1"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R"
+        "scopeId": "HI2-11R5R1"
       }
     ],
     "successCriteria": [
-      "A V1 control with zero accepted recommendations remains comparable when it retrieved non-zero evidence, executed the Hunter model, had no dependency degradation and produced a positive measured control cost.",
-      "A true no-op V1 control with zero evidence or zero model invocations is rejected before rollout ratio evaluation.",
-      "A V1 control with any dependency degradation is rejected before rollout ratio evaluation.",
-      "A V1 control with zero measured cost is rejected because relative cost evidence would be undefined.",
-      "Operational cohort construction uses the same substantive comparability predicate during read-only preflight and paired execution.",
-      "The existing maxP95LatencyRatio=1.5 and maxAverageCostRatio=1.5 remain unchanged.",
-      "The existing minShadowQualityDelta=-0.02, minRetrievalCoverage=0.85, maxFailureRate=0.05, explorationMin=0.08, explorationMax=0.20, maximumTopicShare=0.34 and maxCandidates=6 remain unchanged.",
-      "Corrected 3x3 pre-gate passes before any 30-pair full gate.",
+      "When an explicit anchor Brand and disposable persisted anchor are configured, operational cohort screening performs at most one persisted Brand control preflight before disposable fallback.",
+      "The explicitly targeted Brand workspace remains fail-closed and unambiguous.",
+      "If the targeted persisted Brand is Hunter-ready and comparable it may satisfy the mandatory persisted Brand slot; otherwise the existing disposable Vercel anchor path remains available.",
+      "Unrelated persisted Brands are not model-preflighted in targeted benchmark mode.",
+      "Ephemeral public Brands still satisfy canonical Hunter readiness and substantive V1 control comparability; no synthetic readiness bypass is introduced.",
+      "At least three distinct Brands and nine paired observations remain mandatory for pre-gate.",
+      "All rollout thresholds remain unchanged, including latency 1.5x, cost 1.5x, retrieval 0.85, failure 0.05, exploration 0.08-0.20, and maximum topic share 0.34.",
       "Hunter V1 remains production authority; no V2 persistence, canary, scheduler or production enablement.",
+      "Corrected 3x3 pre-gate passes before any 30-pair full gate.",
       "PES v2 CI and Security baseline pass before merge/deployment."
     ],
-    "preGateEvidence": {
-      "releaseSha": "bddc90ccd5838ca1515f3262939a1bff19f9c120",
-      "attempts": [
-        {
-          "runId": "HI2-11R5-PREGATE-20260921-A",
-          "status": "invalid",
-          "reason": "hunter-model rate limited during cohort screening"
-        },
-        {
-          "runId": "HI2-11R5-PREGATE-20260921-B",
-          "status": "invalid",
-          "reason": "first ephemeral public source returned HTTP 403"
-        },
-        {
-          "runId": "HI2-11R5-PREGATE-20260921-C",
-          "status": "invalid",
-          "reason": "disposable anchor tenant ambiguous without explicit Brand anchor"
-        },
-        {
-          "runId": "HI2-11R5-PREGATE-20260921-D",
-          "status": "blocked",
-          "reason": "V1 performed substantive evidence/model work but returned zero accepted recommendations, exposing R5 output-count comparability defect"
-        }
-      ],
-      "conclusion": "Control comparability must reflect measured substantive V1 work, not accepted recommendation count."
+    "priorPreGateEvidence": {
+      "runId": "HI2-11R5R-PREGATE-20260922-E",
+      "releaseSha": "044cb66c89fcfe8cd6c40bd44bc77734ad2f6d2e",
+      "status": "blocked",
+      "reason": "Cohort construction exhausted model provider quota while screening persisted Brands before ephemeral public Brand bootstrap; Vercel and GitHub bootstrap returned 429."
     }
   }
 }
