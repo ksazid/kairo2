@@ -39,6 +39,7 @@ function executor(overrides: {
         workspaceId: value.workspaceId,
         brandId: value.brandId,
         qualityScore: 0.82,
+        recommendationCount: 10,
         metadata: { latencyMs: 1200, costUsd: 0.1 },
         retrievalExpected: 10,
         retrievalCovered: 9,
