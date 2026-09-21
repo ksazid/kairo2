@@ -169,6 +169,7 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
       qualityScore: average(
         captured.map((candidate) => evaluateOpportunity(candidate.scores).overall),
       ),
+      recommendationCount: captured.length,
       metadata: {
         latencyMs,
         costUsd: runtime.measuredCostUsd() + tools.measuredCostUsd(),
