@@ -116,6 +116,39 @@ describe("ephemeral public Hunter shadow Brand contexts", () => {
     expect(profile!.excludedTopics).toContain("Harmful");
   });
 
+  it("skips a blocked public fixture and fills the requested cohort from the next real Brand", async () => {
+    const fallbackFixtures: readonly EphemeralPublicBrandFixture[] = [
+      {
+        id: "blocked",
+        brandName: "Blocked Brand",
+        referenceUrls: ["https://blocked.example/about", "https://blocked.example/policy"],
+      },
+      {
+        id: "working",
+        brandName: "Working Brand",
+        referenceUrls: ["https://example.com/", "https://example.com/policy"],
+      },
+    ];
+    const fallbackReader: PublicBrandReferenceReader = {
+      async read(url) {
+        if (url.includes("blocked.example")) {
+          throw new Error("Public Brand reference returned 403");
+        }
+        return reader.read(url);
+      },
+    };
+
+    const contexts = await buildEphemeralPublicBrandContexts({
+      runtime,
+      limit: 1,
+      fixtures: fallbackFixtures,
+      reader: fallbackReader,
+    });
+
+    expect(contexts).toHaveLength(1);
+    expect(contexts[0]!.context.hunterInput.brand.brandName).toBe("Working Brand");
+  });
+
   it("fails instead of overriding readiness when public evidence leaves a required group weak", async () => {
     const weakRuntime: AgentRuntimePort = {
       async invoke<TOutput>(request: AgentInvocationRequest) {
