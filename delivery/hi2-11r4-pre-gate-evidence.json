@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "sliceId": "HI2-11R4",
+  "releaseSha": "dcc673f45a9dc73861244ec31fb8f05dac383553",
+  "status": "blocked",
+  "objective": "Reduce Hunter V2 shadow evidence cost without weakening rollout policy or the certified six-item recommendation contract.",
+  "implementation": {
+    "maxIntents": 2,
+    "maxPaidIntents": 2,
+    "maxExternalCalls": 2,
+    "maxCandidates": 6,
+    "agentReachSearchCostUsd": 0.007
+  },
+  "attempts": [
+    {
+      "runId": "HI2-11R4-PREGATE-20260921-A",
+      "pairCount": 9,
+      "brandCount": 3,
+      "averageQualityDelta": 0.6186648148148147,
+      "averageRetrievalCoverage": 1,
+      "v2FailureRate": 0,
+      "minimumExplorationShare": 0.16666666666666666,
+      "maximumExplorationShare": 0.16666666666666666,
+      "maximumObservedTopicShare": 0.16666666666666666,
+      "candidateCostUsdPerRun": 0.014,
+      "controlIssue": "One V1 control observation returned zero measured cost and an unusually short no-op-like latency, making relative cost/latency aggregation non-comparable."
+    },
+    {
+      "runId": "HI2-11R4-PREGATE-20260921-B",
+      "pairCount": 9,
+      "brandCount": 3,
+      "averageQualityDelta": 0.6467814814814814,
+      "averageRetrievalCoverage": 1,
+      "v2FailureRate": 0,
+      "minimumExplorationShare": 0.16666666666666666,
+      "maximumExplorationShare": 0.16666666666666666,
+      "maximumObservedTopicShare": 0.16666666666666666,
+      "candidateCostUsdPerRun": 0.014,
+      "controlIssue": "All three Python V1 control observations returned zero measured cost with 210-459ms latency while V2 completed full evidence work, confirming a repeatable non-comparable control baseline."
+    }
+  ],
+  "verifiedFindings": [
+    "V2 paid search cost decreased from $0.021 to $0.014 per comparison (33.3% reduction).",
+    "All 18 V2 comparisons across the two pre-gate attempts retained 100% retrieval coverage and 0% V2 failures.",
+    "Every V2 comparison retained six selected recommendations with exactly one exploration recommendation (16.7%) and maximum topic share of 16.7%.",
+    "The 30-pair gate was not run because relative cost and latency thresholds cannot be evaluated reliably against zero/no-op V1 control observations."
+  ],
+  "nextGate": "Restore explicit control comparability without changing the 1.5x cost/latency limits, then rerun 3x3 before any 30-pair gate."
+}
