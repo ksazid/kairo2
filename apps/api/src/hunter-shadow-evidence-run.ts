@@ -43,7 +43,6 @@ import {
   type HunterShadowRunCase,
 } from "@kairo/worker/hunter-shadow-evidence-runner";
 import type { HunterRunInput } from "@kairo/worker/hunter";
-import { BrandBrainBuilder } from "@kairo/worker/brand-brain-builder";
 import { PgHunterClosedLoopStore } from "./batch7-closed-loop-store";
 import { PgBrandDiscoveryPlanRepository } from "./brand-discovery-plan-postgres";
 import { buildEphemeralPublicBrandContexts } from "./hunter-shadow-ephemeral-brands";
@@ -106,6 +105,8 @@ export interface HunterShadowOperationalEvidence {
     }>;
   }>;
 }
+
+export const HUNTER_SHADOW_DISPOSABLE_BOOTSTRAP_MODE = "source-backed-deterministic" as const;
 
 export const HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE = {
   maxIntents: 2,
@@ -537,9 +538,12 @@ async function createDisposablePersistedAnchor(input: {
   );
 
   try {
+    // This disposable benchmark fixture already has deterministic, source-backed
+    // canonical fields below. Avoid spending model quota on bootstrap; the actual
+    // V1 control still performs its normal measured model execution.
     const bootstrap = new BrandBrainBootstrapService(
       input.store,
-      new BrandBrainBuilder(input.runtime),
+      undefined,
       new SanitizingPublicBrandReferenceReader(
         new SourceIntelligenceBrandReferenceReader(),
       ),
