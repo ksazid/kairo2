@@ -5,7 +5,7 @@
     "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Correct Hunter V1 shadow comparability to measure substantive control work rather than accepted recommendation count. Require real evidence retrieval, at least one measured model invocation, non-degraded Hunter model execution and a positive measured control cost before cost/latency ratio evaluation. Preserve every rollout threshold and production authority guard.",
+    "scope": "Correct Hunter V1 shadow comparability to measure substantive control work rather than accepted recommendation count. Require real evidence retrieval, at least one measured model invocation, a clean dependency path and a positive measured control cost before cost/latency ratio evaluation. Preserve every rollout threshold and production authority guard.",
     "budget": {
       "maxModelCalls": 40,
       "maxSubAgents": 0,
@@ -33,9 +33,9 @@
       }
     ],
     "successCriteria": [
-      "A V1 control with zero accepted recommendations remains comparable when it retrieved non-zero evidence, executed the Hunter model, had no hunter-model degradation and produced a positive measured control cost.",
+      "A V1 control with zero accepted recommendations remains comparable when it retrieved non-zero evidence, executed the Hunter model, had no dependency degradation and produced a positive measured control cost.",
       "A true no-op V1 control with zero evidence or zero model invocations is rejected before rollout ratio evaluation.",
-      "A V1 control with hunter-model degradation is rejected before rollout ratio evaluation.",
+      "A V1 control with any dependency degradation is rejected before rollout ratio evaluation.",
       "A V1 control with zero measured cost is rejected because relative cost evidence would be undefined.",
       "Operational cohort construction uses the same substantive comparability predicate during read-only preflight and paired execution.",
       "The existing maxP95LatencyRatio=1.5 and maxAverageCostRatio=1.5 remain unchanged.",
