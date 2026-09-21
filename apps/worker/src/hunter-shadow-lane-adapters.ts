@@ -169,6 +169,7 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
       qualityScore: average(
         captured.map((candidate) => evaluateOpportunity(candidate.scores).overall),
       ),
+      recommendationCount: captured.length,
       metadata: {
         latencyMs,
         costUsd: runtime.measuredCostUsd() + tools.measuredCostUsd(),
@@ -306,6 +307,7 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
       workspaceId: context.hunterInput.brand.workspaceId,
       brandId: context.hunterInput.brand.brandId,
       qualityScore: average(eei.selected.map(commonCandidateQuality)),
+      recommendationCount: eei.selected.length,
       metadata: {
         latencyMs,
         costUsd: runtime.measuredCostUsd() + tools.measuredCostUsd(),
