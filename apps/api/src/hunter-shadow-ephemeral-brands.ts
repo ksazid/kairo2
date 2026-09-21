@@ -33,6 +33,22 @@ export interface EphemeralPublicBrandFixture {
 
 export const HUNTER_SHADOW_PUBLIC_BRAND_FIXTURES: readonly EphemeralPublicBrandFixture[] = Object.freeze([
   {
+    id: "vercel-public",
+    brandName: "Vercel",
+    referenceUrls: [
+      "https://vercel.com/about",
+      "https://vercel.com/legal/acceptable-use-policy",
+    ],
+  },
+  {
+    id: "github-public",
+    brandName: "GitHub",
+    referenceUrls: [
+      "https://github.com/about",
+      "https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies",
+    ],
+  },
+  {
     id: "openai-public",
     brandName: "OpenAI",
     referenceUrls: [
@@ -61,11 +77,9 @@ export async function buildEphemeralPublicBrandContexts(input: {
   brandId: string;
   context: Omit<HunterShadowExecutionContext, "referenceTime">;
 }>> {
-  const fixtures = (input.fixtures ?? HUNTER_SHADOW_PUBLIC_BRAND_FIXTURES).slice(
-    0,
-    Math.max(0, input.limit),
-  );
-  if (!fixtures.length) return [];
+  const limit = Math.max(0, input.limit);
+  const fixtures = input.fixtures ?? HUNTER_SHADOW_PUBLIC_BRAND_FIXTURES;
+  if (!limit || !fixtures.length) return [];
 
   const reader =
     input.reader ??
@@ -80,13 +94,33 @@ export async function buildEphemeralPublicBrandContexts(input: {
     context: Omit<HunterShadowExecutionContext, "referenceTime">;
   }> = [];
 
+  const failures: string[] = [];
   for (const fixture of fixtures) {
-    contexts.push(
-      await buildEphemeralPublicBrandContext(
-        fixture,
-        reader,
-        proposalGenerator,
-      ),
+    if (contexts.length >= limit) break;
+    try {
+      contexts.push(
+        await buildEphemeralPublicBrandContext(
+          fixture,
+          reader,
+          proposalGenerator,
+        ),
+      );
+    } catch (error) {
+      failures.push(
+        fixture.id +
+          ": " +
+          (error instanceof Error ? error.message : "unknown public Brand fixture failure"),
+      );
+    }
+  }
+  if (contexts.length < limit) {
+    throw new Error(
+      "Ephemeral public Brand coverage produced " +
+        contexts.length +
+        " of " +
+        limit +
+        " required contexts; failures=" +
+        failures.join(" | "),
     );
   }
   return contexts;
