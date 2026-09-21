@@ -1,1 +1,13 @@
-"use client";\n\nimport { useFormStatus } from "react-dom";\n\nexport function SubmitButton() {\n  const { pending } = useFormStatus();\n\n  return (\n    <button type="submit" disabled={pending} aria-busy={pending}>\n      {pending ? "Analysing website and building Brand Brain…" : "Analyse website and build Brand Brain"}\n    </button>\n  );\n}\n
+"use client";
+
+import { useFormStatus } from "react-dom";
+
+export function SubmitButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <button type="submit" disabled={pending} aria-busy={pending}>
+      {pending ? "Analysing website and building Brand Brain…" : "Analyse website and build Brand Brain"}
+    </button>
+  );
+}
