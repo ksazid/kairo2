@@ -29,6 +29,7 @@ function executor(overrides: {
         workspaceId: value.workspaceId,
         brandId: value.brandId,
         qualityScore: 0.78,
+        recommendationCount: 1,
         metadata: { latencyMs: 1000, costUsd: 0.08 },
       };
     },
@@ -108,6 +109,20 @@ describe("Hunter shadow evidence runner", () => {
     expect(batch.readiness.canaryReady).toBe(true);
     expect(batch.readiness.allowedStage).toBe("canary");
     expect(batch.readiness.productionReady).toBe(false);
+  });
+
+  it("rejects a no-op V1 control before ratio evaluation", async () => {
+    const broken = executor();
+    broken.runControl = async (value) => ({
+      ...(await executor().runControl(value)),
+      qualityScore: 0,
+      recommendationCount: 0,
+      metadata: { latencyMs: 250, costUsd: 0 },
+    });
+
+    await expect(runHunterShadowEvidencePair(run(1), broken)).rejects.toThrow(
+      /Comparable Hunter V1 control/,
+    );
   });
 
   it("rejects missing or fabricated-looking metering instead of assuming zero cost or latency", async () => {
