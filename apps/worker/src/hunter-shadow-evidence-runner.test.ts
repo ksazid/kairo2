@@ -152,6 +152,22 @@ describe("Hunter shadow evidence runner", () => {
     );
   });
 
+  it("rejects substantive-looking V1 work when measured control cost is zero", async () => {
+    const broken = executor();
+    broken.runControl = async (value) => ({
+      ...(await executor().runControl(value)),
+      recommendationCount: 0,
+      evidenceCount: 8,
+      modelInvocationCount: 1,
+      modelDegraded: false,
+      metadata: { latencyMs: 900, costUsd: 0 },
+    });
+
+    await expect(runHunterShadowEvidencePair(run(1), broken)).rejects.toThrow(
+      /Comparable Hunter V1 control/,
+    );
+  });
+
   it("rejects a degraded V1 Hunter model even when evidence was retrieved", async () => {
     const broken = executor();
     broken.runControl = async (value) => ({
