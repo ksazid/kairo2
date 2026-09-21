@@ -230,6 +230,17 @@ export async function executeHunterShadowEvidenceRun(
   const planStore = new PgBrandDiscoveryPlanRepository(options.pool);
   const closedLoop = new PgHunterClosedLoopStore(options.pool);
   const candidates = await listCandidateBrands(options.pool, Math.max(30, options.request.brandCount * 10));
+  const targetedAnchorCandidates =
+    options.request.anchorBrandId && options.request.allowDisposablePersistedAnchor
+      ? await listTargetBrandCandidates(options.pool, options.request.anchorBrandId)
+      : undefined;
+  const screeningCandidates =
+    targetedAnchorCandidates && options.request.anchorBrandId
+      ? [selectTargetedPersistedScreeningCandidate(
+          targetedAnchorCandidates,
+          options.request.anchorBrandId,
+        )]
+      : candidates;
   const baseContexts: Array<{
     accountId: string;
     workspaceId: string;
@@ -286,7 +297,7 @@ export async function executeHunterShadowEvidenceRun(
     return true;
   };
 
-  for (const candidate of candidates) {
+  for (const candidate of screeningCandidates) {
     if (baseContexts.length >= options.request.brandCount) break;
     const context = await loadReadOnlyBrandContext({
       pool: options.pool,
@@ -312,9 +323,7 @@ export async function executeHunterShadowEvidenceRun(
     baseContexts.length < 1 &&
     options.request.allowDisposablePersistedAnchor
   ) {
-    const anchorCandidates = options.request.anchorBrandId
-      ? await listTargetBrandCandidates(options.pool, options.request.anchorBrandId)
-      : candidates;
+    const anchorCandidates = targetedAnchorCandidates ?? candidates;
     const tenant = selectDisposableAnchorTenant(
       anchorCandidates,
       options.request.anchorBrandId,
@@ -455,6 +464,18 @@ export async function executeHunterShadowEvidenceRun(
   }
 }
 
+
+export function selectTargetedPersistedScreeningCandidate(
+  candidates: ReadonlyArray<{ accountId: string; workspaceId: string; brandId: string }>,
+  anchorBrandId: string,
+): { accountId: string; workspaceId: string; brandId: string } {
+  const tenant = selectDisposableAnchorTenant(candidates, anchorBrandId);
+  return {
+    accountId: tenant.accountId,
+    workspaceId: tenant.workspaceId,
+    brandId: anchorBrandId,
+  };
+}
 
 export function selectDisposableAnchorTenant(
   candidates: ReadonlyArray<{ accountId: string; workspaceId: string; brandId: string }>,
