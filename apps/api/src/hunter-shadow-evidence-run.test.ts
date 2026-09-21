@@ -7,6 +7,7 @@ import {
   hunterShadowSearchCostUsdBySourceFromEnv,
   resolveReadOnlyDiscoveryPlan,
   selectDisposableAnchorTenant,
+  selectTargetedPersistedScreeningCandidate,
   disposableVercelCanonicalFields,
 } from "./hunter-shadow-evidence-run";
 
@@ -162,6 +163,18 @@ describe("Hunter shadow operational evidence", () => {
     expect(() => selectDisposableAnchorTenant([
       { accountId: "account-z", workspaceId: "workspace-2", brandId: "brand-other" },
     ], "brand-target")).toThrow(/Target Hunter shadow anchor Brand is unavailable/);
+  });
+
+  it("collapses targeted persisted screening to one account/Brand candidate", () => {
+    expect(selectTargetedPersistedScreeningCandidate([
+      { accountId: "account-z", workspaceId: "workspace-2", brandId: "brand-other" },
+      { accountId: "account-b", workspaceId: "workspace-1", brandId: "brand-target" },
+      { accountId: "account-a", workspaceId: "workspace-1", brandId: "brand-target" },
+    ], "brand-target")).toEqual({
+      accountId: "account-a",
+      workspaceId: "workspace-1",
+      brandId: "brand-target",
+    });
   });
 
   it("retains the untargeted single-workspace fail-closed guard", () => {
