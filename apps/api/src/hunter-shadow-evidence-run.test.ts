@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { BrandIntelligenceSnapshot } from "@kairo/domain/brand-intelligence-snapshot";
 import type { BrandDiscoveryPlan } from "@kairo/domain/brand-discovery-plan";
 import {
+  HUNTER_SHADOW_DISPOSABLE_BOOTSTRAP_MODE,
   HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE,
   hunterShadowEvidenceRequestFromEnv,
   hunterShadowSearchCostUsdBySourceFromEnv,
@@ -188,6 +189,10 @@ describe("Hunter shadow operational evidence", () => {
       { accountId: "account-a", workspaceId: "workspace-1", brandId: "brand-1" },
       { accountId: "account-b", workspaceId: "workspace-2", brandId: "brand-2" },
     ])).toThrow(/one unambiguous workspace/);
+  });
+
+  it("keeps disposable Vercel bootstrap source-backed and deterministic so model quota is reserved for the measured V1 control", () => {
+    expect(HUNTER_SHADOW_DISPOSABLE_BOOTSTRAP_MODE).toBe("source-backed-deterministic");
   });
 
   it("defines all six canonical source-backed readiness groups for the disposable Vercel fixture", () => {
