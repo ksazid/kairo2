@@ -1,11 +1,11 @@
 {
   "activeSlice": {
-    "id": "HI2-11R5R1",
-    "objectiveId": "OBJ-HI2-11R5R1",
+    "id": "HI2-11R5R2",
+    "objectiveId": "OBJ-HI2-11R5R2",
     "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Bound Hunter shadow cohort screening when an explicit anchor Brand and disposable-anchor fallback are configured: screen only the targeted persisted Brand before fallback instead of running model preflights across unrelated persisted Brands. Preserve canonical readiness, control comparability, 3-Brand coverage, all rollout thresholds, and Hunter V1 production authority.",
+    "scope": "Remove the unnecessary model invocation from the disposable Vercel Hunter shadow bootstrap while retaining verified public source ingestion, deterministic source-backed canonical readiness fields, the real measured V1 control model execution, substantive comparability, and every rollout/authority guard.",
     "budget": {
       "maxModelCalls": 40,
       "maxSubAgents": 0,
@@ -17,38 +17,38 @@
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R1"
+        "scopeId": "HI2-11R5R2"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R1"
+        "scopeId": "HI2-11R5R2"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R1"
+        "scopeId": "HI2-11R5R2"
       }
     ],
     "successCriteria": [
-      "When an explicit anchor Brand and disposable persisted anchor are configured, operational cohort screening performs at most one persisted Brand control preflight before disposable fallback.",
-      "The explicitly targeted Brand workspace remains fail-closed and unambiguous.",
-      "If the targeted persisted Brand is Hunter-ready and comparable it may satisfy the mandatory persisted Brand slot; otherwise the existing disposable Vercel anchor path remains available.",
-      "Unrelated persisted Brands are not model-preflighted in targeted benchmark mode.",
-      "Ephemeral public Brands still satisfy canonical Hunter readiness and substantive V1 control comparability; no synthetic readiness bypass is introduced.",
-      "At least three distinct Brands and nine paired observations remain mandatory for pre-gate.",
+      "Disposable Vercel bootstrap fetches and persists verified public about/policy sources without invoking a model proposal generator.",
+      "The six canonical disposable Vercel readiness fields remain explicitly bound to the active about/policy source IDs.",
+      "Canonical Brand Brain activation must report Hunter-ready before the disposable context can enter the cohort.",
+      "The subsequent Hunter V1 control remains a real measured model execution and must satisfy substantive control comparability.",
+      "No synthetic readiness bypass or fabricated public evidence is introduced.",
+      "Three distinct Brands and nine paired observations remain mandatory for the pre-gate.",
       "All rollout thresholds remain unchanged, including latency 1.5x, cost 1.5x, retrieval 0.85, failure 0.05, exploration 0.08-0.20, and maximum topic share 0.34.",
       "Hunter V1 remains production authority; no V2 persistence, canary, scheduler or production enablement.",
       "Corrected 3x3 pre-gate passes before any 30-pair full gate.",
       "PES v2 CI and Security baseline pass before merge/deployment."
     ],
     "priorPreGateEvidence": {
-      "runId": "HI2-11R5R-PREGATE-20260922-E",
-      "releaseSha": "044cb66c89fcfe8cd6c40bd44bc77734ad2f6d2e",
+      "runId": "HI2-11R5R1-PREGATE-20260922-F",
+      "releaseSha": "f997fab0b9507de0b1bb6d4f8d92d7144dd698a2",
       "status": "blocked",
-      "reason": "Cohort construction exhausted model provider quota while screening persisted Brands before ephemeral public Brand bootstrap; Vercel and GitHub bootstrap returned 429."
+      "reason": "Targeted screening removed prior 429 pressure, but the disposable Vercel bootstrap consumed a model invocation immediately before the V1 control; the control then failed substantive comparability before producing a candidate-pipeline event."
     }
   }
 }
