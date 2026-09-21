@@ -155,7 +155,7 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
     );
 
     const started = performance.now();
-    await runner.runForAuthorizedBrand({
+    const controlRun = await runner.runForAuthorizedBrand({
       ...context.hunterInput,
       accountId: context.accountId,
       refreshSeed: context.referenceTime,
@@ -170,6 +170,9 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
         captured.map((candidate) => evaluateOpportunity(candidate.scores).overall),
       ),
       recommendationCount: captured.length,
+      evidenceCount: controlRun.evidenceCount,
+      modelInvocationCount: runtime.invocations(),
+      modelDegraded: controlRun.degradedSources?.includes("hunter-model") ?? false,
       metadata: {
         latencyMs,
         costUsd: runtime.measuredCostUsd() + tools.measuredCostUsd(),
@@ -308,6 +311,9 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
       brandId: context.hunterInput.brand.brandId,
       qualityScore: average(eei.selected.map(commonCandidateQuality)),
       recommendationCount: eei.selected.length,
+      evidenceCount: retrieval.candidates.length,
+      modelInvocationCount: runtime.invocations(),
+      modelDegraded: false,
       metadata: {
         latencyMs,
         costUsd: runtime.measuredCostUsd() + tools.measuredCostUsd(),
@@ -455,6 +461,10 @@ class MeteredRuntime implements AgentRuntimePort {
       this.costUsd += result.metadata.costUsd;
     }
     return result;
+  }
+
+  invocations(): number {
+    return this.invocationCount;
   }
 
   measuredCostUsd(): number {
