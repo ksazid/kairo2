@@ -2,7 +2,7 @@
   "activeSlice": {
     "id": "HI2-11R4",
     "objectiveId": "OBJ-HI2-11R4",
-    "state": "implementation",
+    "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
     "scope": "Reduce Hunter V2 shadow evidence cost without changing rollout policy, production authority, EEI thresholds, persistence, or the certified six-item recommendation contract. Narrow only the operational evidence retrieval profile from three intents to two bounded intents: one core intent plus one reserved exploration intent.",
