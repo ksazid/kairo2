@@ -32,7 +32,7 @@ function executor(overrides: {
         recommendationCount: 1,
         evidenceCount: 8,
         modelInvocationCount: 1,
-        modelDegraded: false,
+        dependencyDegraded: false,
         metadata: { latencyMs: 1000, costUsd: 0.08 },
       };
     },
@@ -45,7 +45,7 @@ function executor(overrides: {
         recommendationCount: 10,
         evidenceCount: 9,
         modelInvocationCount: 2,
-        modelDegraded: false,
+        dependencyDegraded: false,
         metadata: { latencyMs: 1200, costUsd: 0.1 },
         retrievalExpected: 10,
         retrievalCovered: 9,
@@ -126,7 +126,7 @@ describe("Hunter shadow evidence runner", () => {
       recommendationCount: 0,
       evidenceCount: 8,
       modelInvocationCount: 2,
-      modelDegraded: false,
+      dependencyDegraded: false,
       metadata: { latencyMs: 900, costUsd: 0.06 },
     });
 
@@ -143,7 +143,7 @@ describe("Hunter shadow evidence runner", () => {
       recommendationCount: 0,
       evidenceCount: 0,
       modelInvocationCount: 0,
-      modelDegraded: false,
+      dependencyDegraded: false,
       metadata: { latencyMs: 250, costUsd: 0 },
     });
 
@@ -159,7 +159,7 @@ describe("Hunter shadow evidence runner", () => {
       recommendationCount: 0,
       evidenceCount: 8,
       modelInvocationCount: 1,
-      modelDegraded: false,
+      dependencyDegraded: false,
       metadata: { latencyMs: 900, costUsd: 0 },
     });
 
@@ -168,14 +168,14 @@ describe("Hunter shadow evidence runner", () => {
     );
   });
 
-  it("rejects a degraded V1 Hunter model even when evidence was retrieved", async () => {
+  it("rejects a degraded V1 dependency even when evidence was retrieved", async () => {
     const broken = executor();
     broken.runControl = async (value) => ({
       ...(await executor().runControl(value)),
       recommendationCount: 0,
       evidenceCount: 8,
       modelInvocationCount: 1,
-      modelDegraded: true,
+      dependencyDegraded: true,
       metadata: { latencyMs: 900, costUsd: 0.06 },
     });
 
