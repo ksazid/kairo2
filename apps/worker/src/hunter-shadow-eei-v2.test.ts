@@ -39,10 +39,12 @@ function item(
   saturation = 0.2,
   duplicationPenalty = 0,
   explorationEligible = topicFit < 0.32,
+  subject = topic,
 ): ShadowPreRankedTrend {
   return {
     candidateId: id,
     cluster: {
+      subject,
       intelligence: {
         schemaVersion: "1",
         trendId: id,
@@ -185,6 +187,29 @@ describe("shadow Preference-aware EEI V2", () => {
     expect(run.diagnostics.blockedManipulationCount).toBe(1);
     expect(run.diagnostics.blockedNegativePreferenceCount).toBe(1);
     expect(run.diagnostics.blockedSaturationCount).toBe(1);
+  });
+
+  it("keeps parent-topic relevance while measuring diversity over distinct evidence subjects", () => {
+    const input = [
+      item("core-a1", "parent topic a", 0.9, "same", 0.2, 0, false, "Evidence subject A1"),
+      item("core-a2", "parent topic a", 0.9, "same", 0.2, 0, false, "Evidence subject A2"),
+      item("core-b1", "parent topic b", 0.9, "same", 0.2, 0, false, "Evidence subject B1"),
+      item("core-b2", "parent topic b", 0.9, "same", 0.2, 0, false, "Evidence subject B2"),
+      item("core-b3", "parent topic b", 0.9, "same", 0.2, 0, false, "Evidence subject B3"),
+      item("exp-1", "parent topic c", 0.1, "same", 0.2, 0, true, "Adjacent evidence subject"),
+    ];
+
+    const run = runShadowPreferenceAwareEEI({
+      preRanked: input,
+      preferenceState: { ...preferenceState, explorationBudget: 0.1 },
+      options: { maxCandidates: 6, adjacentShare: 0.2 },
+    });
+
+    expect(run.selected).toHaveLength(6);
+    expect(run.diagnostics.explorationSelectedCount).toBe(1);
+    expect(run.diagnostics.explorationSelectedCount / run.selected.length).toBeCloseTo(1 / 6);
+    expect(run.diagnostics.maximumObservedTopicShare).toBeLessThanOrEqual(0.34);
+    expect(new Set(run.selected.map((value) => value.topic)).size).toBe(6);
   });
 
   it("enforces topic concentration and dynamically favors source diversity", () => {

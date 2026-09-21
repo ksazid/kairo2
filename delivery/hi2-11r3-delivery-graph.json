@@ -1,0 +1,79 @@
+{
+  "status": "ready",
+  "sliceId": "HI2-11R3",
+  "riskLevel": "high",
+  "purpose": "Allow the unchanged EEI diversity policy to operate on actual evidence-derived recommendation subjects while retaining coarse Brand Brain parent topics for relevance and preference scoring.",
+  "baseline": {
+    "runId": "hi2-11r2-pre-20260921-02",
+    "releaseSha": "97d6f784cf7608fce1748a28afe8c03134bf4c0a",
+    "pairCount": 9,
+    "metrics": {
+      "averageQualityDelta": 0.581637037037037,
+      "averageRetrievalCoverage": 1,
+      "v2FailureRate": 0,
+      "p95LatencyRatio": 1.141923259118901,
+      "averageCostRatio": 1.5,
+      "minimumExplorationShare": 0.3333333333333333,
+      "maximumExplorationShare": 0.3333333333333333,
+      "maximumObservedTopicShare": 0.3333333333333333
+    },
+    "finding": "EEI selected only one recommendation per coarse parent topic because final topic concentration used the parent Brand Brain label; one exploration out of three therefore equaled 33.3%."
+  },
+  "stages": [
+    {
+      "id": "evidence-subject",
+      "dependsOn": [],
+      "output": "deterministic representative evidence subject on every Trend cluster",
+      "authority": "shadow-only",
+      "rollback": "Revert HI2-11R3."
+    },
+    {
+      "id": "parent-topic-preservation",
+      "dependsOn": [
+        "evidence-subject"
+      ],
+      "output": "TrendIntelligence parent topic remains unchanged for relevance/preference matching",
+      "authority": "read-only",
+      "rollback": "Revert subject separation."
+    },
+    {
+      "id": "subject-diversity",
+      "dependsOn": [
+        "evidence-subject"
+      ],
+      "output": "EEI topic concentration and displayed recommendation topic use actual evidence subject",
+      "authority": "shadow-only",
+      "rollback": "Revert EEI subject usage."
+    },
+    {
+      "id": "corrected-pre-gate",
+      "dependsOn": [
+        "parent-topic-preservation",
+        "subject-diversity"
+      ],
+      "output": "rerun 3 brands x 3 runs under unchanged thresholds",
+      "authority": "read-only",
+      "rollback": "Do not run full gate."
+    },
+    {
+      "id": "full-shadow-gate",
+      "dependsOn": [
+        "corrected-pre-gate"
+      ],
+      "output": "3 brands x 10 runs only after pre-gate pass",
+      "authority": "read-only",
+      "rollback": "Canary remains disabled."
+    }
+  ],
+  "constraints": {
+    "rolloutThresholdChanges": false,
+    "maximumTopicShare": 0.34,
+    "explorationMinimum": 0.08,
+    "explorationMaximum": 0.2,
+    "operationalMaxCandidates": 6,
+    "productionHunterAuthority": "v1-only",
+    "hunterV2Persistence": false,
+    "canaryExposure": false,
+    "productionEnable": false
+  }
+}

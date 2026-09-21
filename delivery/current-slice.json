@@ -1,52 +1,55 @@
 {
   "activeSlice": {
-    "id": "HI2-11R2",
-    "objectiveId": "OBJ-HI2-11R2",
+    "id": "HI2-11R3",
+    "objectiveId": "OBJ-HI2-11R3",
     "state": "certified",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Align the operational Hunter V2 shadow candidate capacity with the six recommendations actually selected so the existing certified explorationMax=0.20 is enforced against the effective output size. Change only the shadow operational maxCandidates from 10 to 6; do not change EEI thresholds, retrieval policy, cost budget, latency policy, persistence, canary, scheduler, or production authority.",
+    "scope": "Correct the HI2-11R2 pre-gate exploration ratio without changing rollout policy: preserve parent Brand Brain topic labels for relevance/preference scoring while carrying an evidence-derived recommendation subject through Trend clustering and using that subject for final EEI diversity/topic-concentration accounting. This allows genuinely distinct stories under the same parent topic to coexist without weakening the 34% topic-share guard.",
     "budget": {
-      "maxModelCalls": 30,
+      "maxModelCalls": 40,
       "maxSubAgents": 0,
       "maxWallClockMinutes": 20,
-      "maxExternalWrites": 10
+      "maxExternalWrites": 12
     },
     "approvals": [
       {
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R2"
+        "scopeId": "HI2-11R3"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R2"
+        "scopeId": "HI2-11R3"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R2"
+        "scopeId": "HI2-11R3"
       }
     ],
     "successCriteria": [
-      "Operational shadow maxCandidates is exactly 6.",
-      "Existing EEI explorationMax remains 0.20 and explorationMin remains 0.08.",
-      "With six selected recommendations, the maximum exploration count is one, producing 16.67 percent exploration.",
-      "Three-topic retrieval, three paid Agent Reach intents, topic rotation, signal-reference bounds, cost and latency optimizations remain unchanged.",
-      "Corrected 3x3 pre-gate must meet all metric thresholds before the 30-pair full gate is attempted.",
+      "Trend clusters retain the existing parent topic in TrendIntelligence for relevance and preference matching.",
+      "Every Trend cluster also exposes a deterministic evidence-derived subject based on representative public evidence.",
+      "EEI recommendation topic/diversity accounting uses the evidence-derived subject rather than the coarse parent topic.",
+      "The existing maximumTopicShare=0.34 remains unchanged and is enforced over actual recommendation subjects.",
+      "The existing explorationMin=0.08 and explorationMax=0.20 remain unchanged.",
+      "With maxCandidates=6 and sufficient eligible evidence, one exploration recommendation can produce 1/6=16.7% exploration without violating topic concentration.",
+      "Regression tests prove distinct evidence subjects under the same parent Brand Brain topic are not falsely collapsed by the final topic-share guard.",
+      "Corrected 3x3 pre-gate reruns before any full 30-pair gate.",
       "Hunter V1 remains production authority; no V2 persistence or canary enablement.",
       "PES v2 CI and Security baseline pass before merge/deployment."
     ],
     "certification": {
-      "bundleId": "CERT-HI2-11R2-2411813B",
-      "commitSha": "2411813be7dadfe013be79267833d40fe4247dc5",
-      "candidateHash": "3993de9bb5c347121f0cc33470b8fbeb280c547572ecfcb59a17169d94f511d1",
-      "certifiedHash": "343792afec09bc2028c6f3881e4cabf8d934884922598c0f5a4f8cd897db4d78",
-      "certifiedAt": "2026-09-20T22:58:53.965Z"
+      "bundleId": "CERT-HI2-11R3-B2AEBA1D",
+      "commitSha": "b2aeba1d994fa49c71eaa1a258b22cc60fd2a0d7",
+      "candidateHash": "0f9d735de295d005eb2cd3c26ff99e9c8a2dd4505cbe9b8931ec5d75d6e6569b",
+      "certifiedHash": "fa865194b01693f0afbb91b1c75cf8772ebc47fd3f3e35228ac260b14b5d50d8",
+      "certifiedAt": "2026-09-20T23:51:17.180Z"
     }
   }
 }

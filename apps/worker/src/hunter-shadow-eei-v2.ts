@@ -156,7 +156,7 @@ export function runShadowPreferenceAwareEEI(input: {
 
     eligible.push({
       candidateId,
-      topic: preRanked.cluster.intelligence.topic,
+      topic: preRanked.cluster.subject,
       bucket,
       eeiScore: clamp01(eeiScore),
       ...(preferenceAffinity !== undefined ? { preferenceAffinity } : {}),

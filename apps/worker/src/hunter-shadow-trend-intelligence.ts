@@ -57,6 +57,7 @@ export interface ShadowTrendFeatureDetails {
 
 export interface ShadowTrendCluster {
   intelligence: TrendIntelligence;
+  subject: string;
   features: ShadowTrendFeatureDetails;
   sourceKeys: string[];
   platformKeys: string[];
@@ -294,9 +295,10 @@ function buildCluster(
   );
 
   const topicId = dominantTopicId(sorted);
+  const subject = representativeTrendSubject(sorted);
   const topic = isExplorationOnly(generatorKeys)
-    ? representativeExplorationTopic(sorted)
-    : topicLabels?.[topicId] ?? topicId ?? sorted[0]?.title ?? "Untitled trend";
+    ? subject
+    : topicLabels?.[topicId] ?? topicId ?? subject;
   const stage = classifyStage({
     signalCount: sorted.length,
     freshness,
@@ -328,6 +330,7 @@ function buildCluster(
 
   return {
     intelligence,
+    subject,
     features: {
       featureVersion: HUNTER_TREND_FEATURE_VERSION,
       signalCount: sorted.length,
@@ -361,7 +364,7 @@ function isExplorationOnly(generatorKeys: readonly string[]): boolean {
   );
 }
 
-function representativeExplorationTopic(
+function representativeTrendSubject(
   signals: readonly TrendSignalObservation[],
 ): string {
   const representative = [...signals]
@@ -370,7 +373,7 @@ function representativeExplorationTopic(
       left.signalId.localeCompare(right.signalId)
     )[0];
   const title = representative?.title.trim() ?? "";
-  return title.slice(0, 180) || "Adjacent exploration";
+  return title.slice(0, 180) || "Untitled trend";
 }
 
 function classifyStage(input: {

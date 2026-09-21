@@ -60,6 +60,7 @@ const preference: BrandPreferenceState = {
 
 function cluster(id: string, topic: string, overrides: Partial<ShadowTrendCluster["intelligence"]> = {}): ShadowTrendCluster {
   return {
+    subject: topic,
     intelligence: {
       schemaVersion: "1",
       trendId: id,
