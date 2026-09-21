@@ -198,10 +198,10 @@ describe("read-only Hunter shadow lane adapters", () => {
       runtime,
       searchCostUsdBySource: { "agent-reach": 0.007 },
       candidate: {
-        maxIntents: 3,
+        maxIntents: 2,
         maxSourcesPerIntent: 2,
-        maxPaidIntents: 3,
-        maxExternalCalls: 3,
+        maxPaidIntents: 2,
+        maxExternalCalls: 2,
         maxSemanticCalls: 0,
         deepLimit: 2,
         maxCandidates: 5,
@@ -214,11 +214,11 @@ describe("read-only Hunter shadow lane adapters", () => {
     expect(pair.pair.candidate.qualityScore).toBeGreaterThan(0.5);
     expect(pair.observation.retrievalCoverage).toBeGreaterThan(0);
     expect(pair.observation.v2CostUsd).toBeGreaterThan(0);
-    expect(pair.observation.v2CostUsd).toBeLessThanOrEqual(0.021 + 0.011);
+    expect(pair.observation.v2CostUsd).toBeLessThanOrEqual(0.014 + 0.011);
     const trace = executor.traceFor(run.comparisonId);
     expect(trace).toBeDefined();
     expect(trace!.brandName).toBe("Example");
-    expect(trace!.intents.filter((item) => item.paidAgentReach).length).toBeLessThanOrEqual(3);
+    expect(trace!.intents.filter((item) => item.paidAgentReach).length).toBeLessThanOrEqual(2);
     expect(trace!.selected.length).toBeGreaterThan(0);
     expect(trace!.selected.some((item) => item.bucket === "exploration")).toBe(true);
     expect(pair.observation.explorationShare).toBeGreaterThan(0);

@@ -1,13 +1,13 @@
 {
   "activeSlice": {
-    "id": "HI2-11R3",
-    "objectiveId": "OBJ-HI2-11R3",
-    "state": "certified",
+    "id": "HI2-11R4",
+    "objectiveId": "OBJ-HI2-11R4",
+    "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Correct the HI2-11R2 pre-gate exploration ratio without changing rollout policy: preserve parent Brand Brain topic labels for relevance/preference scoring while carrying an evidence-derived recommendation subject through Trend clustering and using that subject for final EEI diversity/topic-concentration accounting. This allows genuinely distinct stories under the same parent topic to coexist without weakening the 34% topic-share guard.",
+    "scope": "Reduce Hunter V2 shadow evidence cost without changing rollout policy, production authority, EEI thresholds, persistence, or the certified six-item recommendation contract. Narrow only the operational evidence retrieval profile from three intents to two bounded intents: one core intent plus one reserved exploration intent.",
     "budget": {
-      "maxModelCalls": 40,
+      "maxModelCalls": 30,
       "maxSubAgents": 0,
       "maxWallClockMinutes": 20,
       "maxExternalWrites": 12
@@ -17,39 +17,32 @@
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R3"
+        "scopeId": "HI2-11R4"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R3"
+        "scopeId": "HI2-11R4"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R3"
+        "scopeId": "HI2-11R4"
       }
     ],
     "successCriteria": [
-      "Trend clusters retain the existing parent topic in TrendIntelligence for relevance and preference matching.",
-      "Every Trend cluster also exposes a deterministic evidence-derived subject based on representative public evidence.",
-      "EEI recommendation topic/diversity accounting uses the evidence-derived subject rather than the coarse parent topic.",
-      "The existing maximumTopicShare=0.34 remains unchanged and is enforced over actual recommendation subjects.",
-      "The existing explorationMin=0.08 and explorationMax=0.20 remain unchanged.",
-      "With maxCandidates=6 and sufficient eligible evidence, one exploration recommendation can produce 1/6=16.7% exploration without violating topic concentration.",
-      "Regression tests prove distinct evidence subjects under the same parent Brand Brain topic are not falsely collapsed by the final topic-share guard.",
-      "Corrected 3x3 pre-gate reruns before any full 30-pair gate.",
+      "Operational shadow evidence uses at most two paid Agent Reach intents per comparison.",
+      "The bounded operational plan reserves exactly one exploration intent whenever exploration evidence is available.",
+      "The certified maxCandidates=6 remains unchanged.",
+      "The existing explorationMin=0.08, explorationMax=0.20 and maximumTopicShare=0.34 remain unchanged.",
+      "A corrected 3x3 pre-gate returns six recommendations per run with exactly one exploration item (16.7%) and maximum observed topic share <=34%.",
+      "Average retrieval coverage remains >=0.85 and V2 failure rate remains <=0.05.",
+      "Average quality delta remains >=-0.02 and p95 latency ratio remains <=1.5.",
+      "Average cost ratio is <=1.5 before any full 30-pair gate.",
       "Hunter V1 remains production authority; no V2 persistence or canary enablement.",
       "PES v2 CI and Security baseline pass before merge/deployment."
-    ],
-    "certification": {
-      "bundleId": "CERT-HI2-11R3-B2AEBA1D",
-      "commitSha": "b2aeba1d994fa49c71eaa1a258b22cc60fd2a0d7",
-      "candidateHash": "0f9d735de295d005eb2cd3c26ff99e9c8a2dd4505cbe9b8931ec5d75d6e6569b",
-      "certifiedHash": "fa865194b01693f0afbb91b1c75cf8772ebc47fd3f3e35228ac260b14b5d50d8",
-      "certifiedAt": "2026-09-20T23:51:17.180Z"
-    }
+    ]
   }
 }

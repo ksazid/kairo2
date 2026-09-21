@@ -107,10 +107,10 @@ export interface HunterShadowOperationalEvidence {
 }
 
 export const HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE = {
-  maxIntents: 3,
+  maxIntents: 2,
   maxSourcesPerIntent: 2,
-  maxPaidIntents: 3,
-  maxExternalCalls: 3,
+  maxPaidIntents: 2,
+  maxExternalCalls: 2,
   maxSemanticCalls: 0,
   deepLimit: 2,
   maxCandidates: 6,
