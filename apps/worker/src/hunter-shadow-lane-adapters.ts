@@ -30,6 +30,7 @@ import type { DiscoverySourceDefinition } from "@kairo/domain/source-policy";
 import { DEFAULT_SOURCE_REGISTRY } from "@kairo/domain/source-registry";
 import {
   HunterOrchestrator,
+  type HunterFailureDiagnostic,
   type HunterRunInput,
 } from "./hunter";
 import {
@@ -133,6 +134,7 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
     const captured: OpportunityCandidateInput[] = [];
     const runtime = new MeteredRuntime(this.options.runtime);
     const tools = new MeteredToolGateway(this.options.tools, this.options.searchCostUsdBySource);
+    const controlFailures: HunterFailureDiagnostic[] = [];
     const sink = {
       async recordCandidate(
         _accountId: string,
@@ -152,10 +154,11 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
       runtime,
       sink,
       this.options.sourceRegistry ?? DEFAULT_SOURCE_REGISTRY,
+      (diagnostic) => controlFailures.push(diagnostic),
     );
 
     const started = performance.now();
-    await runner.runForAuthorizedBrand({
+    const controlRun = await runner.runForAuthorizedBrand({
       ...context.hunterInput,
       accountId: context.accountId,
       refreshSeed: context.referenceTime,
@@ -170,6 +173,10 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
         captured.map((candidate) => evaluateOpportunity(candidate.scores).overall),
       ),
       recommendationCount: captured.length,
+      evidenceCount: controlRun.evidenceCount,
+      modelInvocationCount: runtime.invocations(),
+      dependencyDegraded:
+        Boolean(controlRun.degradedSources?.length) || controlFailures.length > 0,
       metadata: {
         latencyMs,
         costUsd: runtime.measuredCostUsd() + tools.measuredCostUsd(),
@@ -308,6 +315,9 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
       brandId: context.hunterInput.brand.brandId,
       qualityScore: average(eei.selected.map(commonCandidateQuality)),
       recommendationCount: eei.selected.length,
+      evidenceCount: retrieval.candidates.length,
+      modelInvocationCount: runtime.invocations(),
+      dependencyDegraded: false,
       metadata: {
         latencyMs,
         costUsd: runtime.measuredCostUsd() + tools.measuredCostUsd(),
@@ -455,6 +465,10 @@ class MeteredRuntime implements AgentRuntimePort {
       this.costUsd += result.metadata.costUsd;
     }
     return result;
+  }
+
+  invocations(): number {
+    return this.invocationCount;
   }
 
   measuredCostUsd(): number {

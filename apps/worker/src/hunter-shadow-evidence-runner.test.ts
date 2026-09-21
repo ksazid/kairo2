@@ -30,6 +30,9 @@ function executor(overrides: {
         brandId: value.brandId,
         qualityScore: 0.78,
         recommendationCount: 1,
+        evidenceCount: 8,
+        modelInvocationCount: 1,
+        dependencyDegraded: false,
         metadata: { latencyMs: 1000, costUsd: 0.08 },
       };
     },
@@ -40,6 +43,9 @@ function executor(overrides: {
         brandId: value.brandId,
         qualityScore: 0.82,
         recommendationCount: 10,
+        evidenceCount: 9,
+        modelInvocationCount: 2,
+        dependencyDegraded: false,
         metadata: { latencyMs: 1200, costUsd: 0.1 },
         retrievalExpected: 10,
         retrievalCovered: 9,
@@ -112,13 +118,65 @@ describe("Hunter shadow evidence runner", () => {
     expect(batch.readiness.productionReady).toBe(false);
   });
 
-  it("rejects a no-op V1 control before ratio evaluation", async () => {
+  it("accepts substantive V1 control work even when the production judgment yields zero recommendations", async () => {
+    const measured = executor();
+    measured.runControl = async (value) => ({
+      ...(await executor().runControl(value)),
+      qualityScore: 0,
+      recommendationCount: 0,
+      evidenceCount: 8,
+      modelInvocationCount: 2,
+      dependencyDegraded: false,
+      metadata: { latencyMs: 900, costUsd: 0.06 },
+    });
+
+    const result = await runHunterShadowEvidencePair(run(1), measured);
+    expect(result.observation.v1QualityScore).toBe(0);
+    expect(result.observation.v1CostUsd).toBe(0.06);
+  });
+
+  it("rejects a true no-op V1 control before ratio evaluation", async () => {
     const broken = executor();
     broken.runControl = async (value) => ({
       ...(await executor().runControl(value)),
       qualityScore: 0,
       recommendationCount: 0,
+      evidenceCount: 0,
+      modelInvocationCount: 0,
+      dependencyDegraded: false,
       metadata: { latencyMs: 250, costUsd: 0 },
+    });
+
+    await expect(runHunterShadowEvidencePair(run(1), broken)).rejects.toThrow(
+      /Comparable Hunter V1 control/,
+    );
+  });
+
+  it("rejects substantive-looking V1 work when measured control cost is zero", async () => {
+    const broken = executor();
+    broken.runControl = async (value) => ({
+      ...(await executor().runControl(value)),
+      recommendationCount: 0,
+      evidenceCount: 8,
+      modelInvocationCount: 1,
+      dependencyDegraded: false,
+      metadata: { latencyMs: 900, costUsd: 0 },
+    });
+
+    await expect(runHunterShadowEvidencePair(run(1), broken)).rejects.toThrow(
+      /Comparable Hunter V1 control/,
+    );
+  });
+
+  it("rejects a degraded V1 dependency even when evidence was retrieved", async () => {
+    const broken = executor();
+    broken.runControl = async (value) => ({
+      ...(await executor().runControl(value)),
+      recommendationCount: 0,
+      evidenceCount: 8,
+      modelInvocationCount: 1,
+      dependencyDegraded: true,
+      metadata: { latencyMs: 900, costUsd: 0.06 },
     });
 
     await expect(runHunterShadowEvidencePair(run(1), broken)).rejects.toThrow(

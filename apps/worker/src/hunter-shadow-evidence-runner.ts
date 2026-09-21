@@ -25,6 +25,9 @@ export interface HunterShadowControlLaneResult {
   brandId: string;
   qualityScore: number;
   recommendationCount: number;
+  evidenceCount: number;
+  modelInvocationCount: number;
+  dependencyDegraded: boolean;
   metadata: HunterShadowMeasuredMetadata;
 }
 
@@ -136,13 +139,19 @@ function prepareRunCase(input: HunterShadowRunCase): HunterShadowRunCase {
 export function isHunterShadowControlComparable(
   control: HunterShadowControlLaneResult,
 ): boolean {
-  return Number.isInteger(control.recommendationCount) && control.recommendationCount > 0;
+  return Number.isInteger(control.evidenceCount) &&
+    control.evidenceCount > 0 &&
+    Number.isInteger(control.modelInvocationCount) &&
+    control.modelInvocationCount > 0 &&
+    control.dependencyDegraded === false &&
+    Number.isFinite(control.metadata.costUsd) &&
+    control.metadata.costUsd > 0;
 }
 
 function requireComparableControl(control: HunterShadowControlLaneResult): void {
   if (!isHunterShadowControlComparable(control)) {
     throw new Error(
-      "Comparable Hunter V1 control requires at least one measured recommendation",
+      "Comparable Hunter V1 control requires non-zero evidence, measured model execution, no dependency degradation and positive measured cost",
     );
   }
 }
