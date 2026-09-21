@@ -1,11 +1,11 @@
 {
   "activeSlice": {
-    "id": "HI2-11R5",
-    "objectiveId": "OBJ-HI2-11R5",
+    "id": "HI2-11R5R",
+    "objectiveId": "OBJ-HI2-11R5R",
     "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Restore fail-closed Hunter V1/V2 shadow control comparability without changing rollout thresholds: require productive V1 control work for every paired observation and screen operational cohorts so no-op controls cannot enter cost or latency gate math.",
+    "scope": "Correct Hunter V1 shadow comparability to measure substantive control work rather than accepted recommendation count. Require real evidence retrieval, at least one measured model invocation, non-degraded Hunter model execution and a positive measured control cost before cost/latency ratio evaluation. Preserve every rollout threshold and production authority guard.",
     "budget": {
       "maxModelCalls": 40,
       "maxSubAgents": 0,
@@ -17,31 +17,31 @@
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5"
+        "scopeId": "HI2-11R5R"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5"
+        "scopeId": "HI2-11R5R"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5"
+        "scopeId": "HI2-11R5R"
       }
     ],
     "successCriteria": [
-      "Every Hunter V1 control result reports the number of recommendations produced by the real production control path.",
-      "A paired shadow observation is rejected before rollout evaluation when the V1 control produces zero recommendations.",
-      "Operational cohort construction screens Hunter-ready Brands with a read-only V1 preflight and excludes no-op controls before paired runs are assembled.",
-      "At least one persisted Brand remains mandatory; ephemeral public Brands may fill only remaining comparable cohort slots when explicitly enabled.",
-      "No invalid control observation is silently dropped after a paired run starts; any later no-op control fails closed.",
+      "A V1 control with zero accepted recommendations remains comparable when it retrieved non-zero evidence, executed the Hunter model, had no hunter-model degradation and produced a positive measured control cost.",
+      "A true no-op V1 control with zero evidence or zero model invocations is rejected before rollout ratio evaluation.",
+      "A V1 control with hunter-model degradation is rejected before rollout ratio evaluation.",
+      "A V1 control with zero measured cost is rejected because relative cost evidence would be undefined.",
+      "Operational cohort construction uses the same substantive comparability predicate during read-only preflight and paired execution.",
       "The existing maxP95LatencyRatio=1.5 and maxAverageCostRatio=1.5 remain unchanged.",
-      "The existing explorationMin=0.08, explorationMax=0.20, maximumTopicShare=0.34 and maxCandidates=6 remain unchanged.",
+      "The existing minShadowQualityDelta=-0.02, minRetrievalCoverage=0.85, maxFailureRate=0.05, explorationMin=0.08, explorationMax=0.20, maximumTopicShare=0.34 and maxCandidates=6 remain unchanged.",
       "Corrected 3x3 pre-gate passes before any 30-pair full gate.",
-      "Hunter V1 remains production authority; no V2 persistence, canary or production enablement.",
+      "Hunter V1 remains production authority; no V2 persistence, canary, scheduler or production enablement.",
       "PES v2 CI and Security baseline pass before merge/deployment."
     ]
   }
