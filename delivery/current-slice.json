@@ -43,6 +43,32 @@
       "Corrected 3x3 pre-gate passes before any 30-pair full gate.",
       "Hunter V1 remains production authority; no V2 persistence, canary, scheduler or production enablement.",
       "PES v2 CI and Security baseline pass before merge/deployment."
-    ]
+    ],
+    "preGateEvidence": {
+      "releaseSha": "bddc90ccd5838ca1515f3262939a1bff19f9c120",
+      "attempts": [
+        {
+          "runId": "HI2-11R5-PREGATE-20260921-A",
+          "status": "invalid",
+          "reason": "hunter-model rate limited during cohort screening"
+        },
+        {
+          "runId": "HI2-11R5-PREGATE-20260921-B",
+          "status": "invalid",
+          "reason": "first ephemeral public source returned HTTP 403"
+        },
+        {
+          "runId": "HI2-11R5-PREGATE-20260921-C",
+          "status": "invalid",
+          "reason": "disposable anchor tenant ambiguous without explicit Brand anchor"
+        },
+        {
+          "runId": "HI2-11R5-PREGATE-20260921-D",
+          "status": "blocked",
+          "reason": "V1 performed substantive evidence/model work but returned zero accepted recommendations, exposing R5 output-count comparability defect"
+        }
+      ],
+      "conclusion": "Control comparability must reflect measured substantive V1 work, not accepted recommendation count."
+    }
   }
 }
