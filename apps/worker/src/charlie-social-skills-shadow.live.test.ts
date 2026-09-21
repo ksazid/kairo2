@@ -11,7 +11,7 @@ import {
   type MarketingCreativePlan,
 } from "@kairo/domain/creative-formats";
 import { DirectModelRuntime } from "./agent-runtime";
-import { openAICompatibleGatewayFromEnv } from "./model-gateway";
+import { ModelGatewayError, openAICompatibleGatewayFromEnv } from "./model-gateway";
 import {
   MARKETING_CLOSED_WORLD_TRUTH_INSTRUCTION,
   MarketingShadowExecutionService,
@@ -24,6 +24,9 @@ import benchmarkData from "../../../evaluation/marketing-lab/benchmark-cases.jso
 import shadowConfig from "../../../evaluation/marketing-lab/charlie-social-skills-shadow.json";
 
 const live = process.env.KAIRO_CHARLIE_SHADOW_LIVE?.trim() === "1";
+const requestPacingMs = positiveIntegerFromEnv("KAIRO_CHARLIE_SHADOW_PACING_MS", 7_000);
+const rateLimitRetryMs = positiveIntegerFromEnv("KAIRO_CHARLIE_SHADOW_RATE_LIMIT_RETRY_MS", 30_000);
+const rateLimitAttempts = positiveIntegerFromEnv("KAIRO_CHARLIE_SHADOW_RATE_LIMIT_ATTEMPTS", 6);
 
 type Fixture = {
   id: string;
@@ -138,33 +141,45 @@ describe.runIf(live)("Charlie social-media-skills live shadow benchmark", () => 
     }
 
     const results: PairResult[] = [];
+    writeEvidence(results, false);
     for (const fixture of cases) {
       const benchmarkCase = toCase(fixture);
-      const native = await executeNative(runtime, benchmarkCase);
+      const native = await withRateLimitRetry(
+        fixture.id + ":native",
+        () => executeNative(runtime, benchmarkCase),
+      );
+      await delay(requestPacingMs);
       const skillId = fixture.format === "carousel"
         ? "charlie-gemini-carousel-shadow"
         : "charlie-reels-scripting-shadow";
       const snapshot = snapshots.get(skillId);
       if (!snapshot) throw new Error("Missing Charlie skill snapshot for " + skillId);
 
-      const challenger = await new MarketingShadowExecutionService(runtime, registry, {
-        maxCostUsd: 0.02,
-        timeoutMs: 30_000,
-        maxOutputTokens: 2_200,
-      }).execute({
-        challenger: {
-          id: skillId,
-          version: manifests.find((item) => item.id === skillId)!.version,
-        },
-        snapshot,
-        benchmarkCase,
-      });
+      const challenger = await withRateLimitRetry(
+        fixture.id + ":charlie",
+        () => new MarketingShadowExecutionService(runtime, registry, {
+          maxCostUsd: 0.02,
+          timeoutMs: 30_000,
+          maxOutputTokens: 2_200,
+        }).execute({
+          challenger: {
+            id: skillId,
+            version: manifests.find((item) => item.id === skillId)!.version,
+          },
+          snapshot,
+          benchmarkCase,
+        }),
+      );
+      await delay(requestPacingMs);
 
-      const evaluation = await evaluateMarketingShadowPair(runtime, {
-        benchmarkCase,
-        candidateA: native.output,
-        candidateB: challenger.output,
-      });
+      const evaluation = await withRateLimitRetry(
+        fixture.id + ":evaluation",
+        () => evaluateMarketingShadowPair(runtime, {
+          benchmarkCase,
+          candidateA: native.output,
+          candidateB: challenger.output,
+        }),
+      );
 
       results.push({
         caseId: fixture.id,
@@ -182,24 +197,11 @@ describe.runIf(live)("Charlie social-media-skills live shadow benchmark", () => 
         },
         evaluation,
       });
+      writeEvidence(results, results.length === cases.length);
+      if (results.length < cases.length) await delay(requestPacingMs);
     }
 
-    const evidence = {
-      schemaVersion: 1,
-      evidenceKind: "charlie-social-skills-live-shadow-poc",
-      upstream: shadowConfig.upstream,
-      dataPolicy: shadowConfig.dataPolicy,
-      pairCount: results.length,
-      summary: summarize(results),
-      pairs: results,
-    };
-
-    mkdirSync("artifacts", { recursive: true });
-    writeFileSync(
-      "artifacts/charlie-social-shadow-live.json",
-      JSON.stringify(evidence, null, 2) + "\n",
-      "utf8",
-    );
+    const evidence = writeEvidence(results, true);
     console.log(JSON.stringify({
       marker: "KAIRO_CHARLIE_SOCIAL_SHADOW_COMPLETE",
       pairCount: results.length,
@@ -208,8 +210,68 @@ describe.runIf(live)("Charlie social-media-skills live shadow benchmark", () => 
 
     expect(results).toHaveLength(8);
     expect(results.every((item) => item.evaluation.candidateA.truthPassed)).toBe(true);
-  }, 300_000);
+  }, 900_000);
 });
+
+function writeEvidence(results: PairResult[], complete: boolean) {
+  const evidence = {
+    schemaVersion: 1,
+    evidenceKind: "charlie-social-skills-live-shadow-poc",
+    upstream: shadowConfig.upstream,
+    dataPolicy: shadowConfig.dataPolicy,
+    complete,
+    pairCount: results.length,
+    totalPairCount: cases.length,
+    summary: summarize(results),
+    pairs: results,
+  };
+  mkdirSync("artifacts", { recursive: true });
+  writeFileSync(
+    "artifacts/charlie-social-shadow-live.json",
+    JSON.stringify(evidence, null, 2) + "\n",
+    "utf8",
+  );
+  console.log(JSON.stringify({
+    marker: complete ? "KAIRO_CHARLIE_SOCIAL_SHADOW_COMPLETE" : "KAIRO_CHARLIE_SOCIAL_SHADOW_CHECKPOINT",
+    pairCount: results.length,
+    totalPairCount: cases.length,
+  }));
+  return evidence;
+}
+
+async function withRateLimitRetry<T>(label: string, action: () => Promise<T>): Promise<T> {
+  for (let attempt = 1; attempt <= rateLimitAttempts; attempt += 1) {
+    try {
+      return await action();
+    } catch (error) {
+      const rateLimited = error instanceof ModelGatewayError
+        ? error.kind === "rate-limited"
+        : /\b429\b|rate.?limit/i.test(error instanceof Error ? error.message : String(error));
+      if (!rateLimited || attempt === rateLimitAttempts) throw error;
+      const waitMs = Math.min(rateLimitRetryMs * attempt, 120_000);
+      console.log(JSON.stringify({
+        marker: "KAIRO_CHARLIE_SOCIAL_SHADOW_RATE_LIMIT_RETRY",
+        label,
+        attempt,
+        waitMs,
+      }));
+      await delay(waitMs);
+    }
+  }
+  throw new Error("Rate-limit retry loop exhausted");
+}
+
+function positiveIntegerFromEnv(name: string, fallback: number): number {
+  const raw = process.env[name]?.trim();
+  if (!raw) return fallback;
+  const parsed = Number(raw);
+  if (!Number.isInteger(parsed) || parsed <= 0) throw new Error(name + " must be a positive integer");
+  return parsed;
+}
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 function toCase(fixture: Fixture): MarketingShadowBenchmarkCase {
   if (fixture.format !== "carousel" && fixture.format !== "reel") throw new Error("Unsupported benchmark format");
