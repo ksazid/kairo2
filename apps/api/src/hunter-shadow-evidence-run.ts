@@ -37,6 +37,7 @@ import {
   type HunterShadowExecutionContext,
 } from "@kairo/worker/hunter-shadow-lane-adapters";
 import {
+  isHunterShadowControlComparable,
   runHunterShadowEvidenceBatch,
   type HunterShadowEvidenceBatch,
   type HunterShadowRunCase,
@@ -237,6 +238,54 @@ export async function executeHunterShadowEvidenceRun(
     context: Omit<HunterShadowExecutionContext, "referenceTime">;
   }> = [];
 
+  const appendIfControlComparable = async (item: {
+    accountId: string;
+    workspaceId: string;
+    brandId: string;
+    origin: "persisted" | "disposable-persisted" | "ephemeral-public";
+    context: Omit<HunterShadowExecutionContext, "referenceTime">;
+  }): Promise<boolean> => {
+    if (baseContexts.length >= options.request.brandCount) return false;
+    const referenceTime = new Date().toISOString();
+    const context: HunterShadowExecutionContext = {
+      ...item.context,
+      referenceTime,
+      hunterInput: {
+        ...item.context.hunterInput,
+        refreshSeed: referenceTime,
+      },
+    };
+    const comparisonId =
+      options.request.runId + ":control-preflight:" + opaqueBrandKey(item.workspaceId, item.brandId);
+    const run: HunterShadowRunCase = {
+      comparisonId,
+      workspaceId: item.workspaceId,
+      brandId: item.brandId,
+      inputFingerprint: contextFingerprint({
+        releaseSha: options.request.releaseSha,
+        comparisonId,
+        brandId: item.brandId,
+        workspaceId: item.workspaceId,
+        contextVersion: context.hunterInput.brand.contextVersion,
+        planVersion: context.discoveryPlan.planVersion,
+        preferenceSnapshotVersion: context.preferenceState?.snapshotVersion ?? null,
+        referenceTime,
+      }),
+    };
+    const preflight = new ReadOnlyHunterShadowLaneExecutor({
+      loadContext: async () => context,
+      tools: options.tools,
+      runtime: options.runtime,
+      sourceRegistry: options.sourceRegistry,
+      searchCostUsdBySource: options.searchCostUsdBySource ?? {},
+      candidate: HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE,
+    });
+    const control = await preflight.runControl(run).catch(() => undefined);
+    if (!control || !isHunterShadowControlComparable(control)) return false;
+    baseContexts.push(item);
+    return true;
+  };
+
   for (const candidate of candidates) {
     if (baseContexts.length >= options.request.brandCount) break;
     const context = await loadReadOnlyBrandContext({
@@ -249,7 +298,7 @@ export async function executeHunterShadowEvidenceRun(
       brandId: candidate.brandId,
     }).catch(() => undefined);
     if (!context) continue;
-    baseContexts.push({
+    await appendIfControlComparable({
       accountId: candidate.accountId,
       workspaceId: candidate.workspaceId,
       brandId: candidate.brandId,
@@ -283,13 +332,18 @@ export async function executeHunterShadowEvidenceRun(
       accountId: disposable.accountId,
       brandId: disposable.brandId,
     };
-    baseContexts.push({
+    const accepted = await appendIfControlComparable({
       accountId: disposable.accountId,
       workspaceId: disposable.workspaceId,
       brandId: disposable.brandId,
       origin: "disposable-persisted",
       context: disposable.context,
     });
+    if (!accepted) {
+      throw new Error(
+        "Disposable persisted Hunter shadow anchor produced a non-comparable V1 control",
+      );
+    }
   }
 
   const persistedBrandCount = baseContexts.filter(
@@ -308,11 +362,11 @@ export async function executeHunterShadowEvidenceRun(
   ) {
     const ephemeral = await buildEphemeralPublicBrandContexts({
       runtime: options.runtime,
-      limit: options.request.brandCount - baseContexts.length,
+      limit: Math.max(2, options.request.brandCount - baseContexts.length),
     });
     for (const item of ephemeral) {
       if (baseContexts.length >= options.request.brandCount) break;
-      baseContexts.push({
+      await appendIfControlComparable({
         accountId: item.context.accountId,
         workspaceId: item.workspaceId,
         brandId: item.brandId,
@@ -324,7 +378,7 @@ export async function executeHunterShadowEvidenceRun(
 
   if (baseContexts.length < options.request.brandCount) {
     throw new Error(
-      "Hunter shadow evidence could not find enough Hunter-ready Brands",
+      "Hunter shadow evidence could not find enough Hunter-ready Brands with comparable V1 controls",
     );
   }
 
