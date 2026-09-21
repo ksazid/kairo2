@@ -1,67 +1,48 @@
 {
   "activeSlice": {
-    "id": "HI2-11R4",
-    "objectiveId": "OBJ-HI2-11R4",
-    "state": "blocked",
+    "id": "HI2-11R5",
+    "objectiveId": "OBJ-HI2-11R5",
+    "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Reduce Hunter V2 shadow evidence cost without changing rollout policy, production authority, EEI thresholds, persistence, or the certified six-item recommendation contract. Narrow only the operational evidence retrieval profile from three intents to two bounded intents: one core intent plus one reserved exploration intent.",
+    "scope": "Restore fail-closed Hunter V1/V2 shadow control comparability without changing rollout thresholds: require productive V1 control work for every paired observation and screen operational cohorts so no-op controls cannot enter cost or latency gate math.",
     "budget": {
-      "maxModelCalls": 30,
+      "maxModelCalls": 40,
       "maxSubAgents": 0,
-      "maxWallClockMinutes": 20,
-      "maxExternalWrites": 12
+      "maxWallClockMinutes": 25,
+      "maxExternalWrites": 14
     },
     "approvals": [
       {
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R4"
+        "scopeId": "HI2-11R5"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R4"
+        "scopeId": "HI2-11R5"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R4"
+        "scopeId": "HI2-11R5"
       }
     ],
     "successCriteria": [
-      "Operational shadow evidence uses at most two paid Agent Reach intents per comparison.",
-      "The bounded operational plan reserves exactly one exploration intent whenever exploration evidence is available.",
-      "The certified maxCandidates=6 remains unchanged.",
-      "The existing explorationMin=0.08, explorationMax=0.20 and maximumTopicShare=0.34 remain unchanged.",
-      "A corrected 3x3 pre-gate returns six recommendations per run with exactly one exploration item (16.7%) and maximum observed topic share <=34%.",
-      "Average retrieval coverage remains >=0.85 and V2 failure rate remains <=0.05.",
-      "Average quality delta remains >=-0.02 and p95 latency ratio remains <=1.5.",
-      "Average cost ratio is <=1.5 before any full 30-pair gate.",
-      "Hunter V1 remains production authority; no V2 persistence or canary enablement.",
+      "Every Hunter V1 control result reports the number of recommendations produced by the real production control path.",
+      "A paired shadow observation is rejected before rollout evaluation when the V1 control produces zero recommendations.",
+      "Operational cohort construction screens Hunter-ready Brands with a read-only V1 preflight and excludes no-op controls before paired runs are assembled.",
+      "At least one persisted Brand remains mandatory; ephemeral public Brands may fill only remaining comparable cohort slots when explicitly enabled.",
+      "No invalid control observation is silently dropped after a paired run starts; any later no-op control fails closed.",
+      "The existing maxP95LatencyRatio=1.5 and maxAverageCostRatio=1.5 remain unchanged.",
+      "The existing explorationMin=0.08, explorationMax=0.20, maximumTopicShare=0.34 and maxCandidates=6 remain unchanged.",
+      "Corrected 3x3 pre-gate passes before any 30-pair full gate.",
+      "Hunter V1 remains production authority; no V2 persistence, canary or production enablement.",
       "PES v2 CI and Security baseline pass before merge/deployment."
-    ],
-    "blockers": [
-      "The 3x3 pre-gate cannot produce a valid relative cost or latency decision while the V1 control lane returns zero-cost, near-no-op observations for a Hunter-ready Brand.",
-      "Do not run the 30-pair gate until control comparability is explicitly restored without weakening rollout thresholds."
-    ],
-    "preGateEvidence": {
-      "releaseSha": "dcc673f45a9dc73861244ec31fb8f05dac383553",
-      "attempts": [
-        "HI2-11R4-PREGATE-20260921-A",
-        "HI2-11R4-PREGATE-20260921-B"
-      ],
-      "candidateCostUsdPerRun": 0.014,
-      "previousCandidateCostUsdPerRun": 0.021,
-      "retrievalCoverage": 1,
-      "v2FailureRate": 0,
-      "explorationShare": 0.16666666666666666,
-      "maximumTopicShare": 0.16666666666666666,
-      "selectedRecommendationsPerRun": 6,
-      "controlComparability": "blocked"
-    }
+    ]
   }
 }
