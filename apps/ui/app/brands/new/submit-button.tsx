@@ -1,0 +1,1 @@
+"use client";\n\nimport { useFormStatus } from "react-dom";\n\nexport function SubmitButton() {\n  const { pending } = useFormStatus();\n\n  return (\n    <button type="submit" disabled={pending} aria-busy={pending}>\n      {pending ? "Analysing website and building Brand Brain…" : "Analyse website and build Brand Brain"}\n    </button>\n  );\n}\n

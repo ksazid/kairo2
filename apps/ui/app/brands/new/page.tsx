@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createBrand } from "../../../lib/api";
+import { SubmitButton } from "./submit-button";
 
 type SearchParams = Promise<{ error?: string; runtime?: string }>;
 
@@ -41,7 +42,7 @@ export default async function NewBrandPage({ searchParams }: { searchParams: Sea
       <form action={submit} className="onboarding-form">
         <label>Public website<input name="publicSourceUrl" required type="url" placeholder="https://example.com" autoComplete="url"/></label>
         <p className="onboarding-help">The Brand name is inferred from the website and can be refined later in Brand Brain.</p>
-        <button type="submit">Analyse website and build Brand Brain</button>
+        <SubmitButton />
       </form>
       <Link href="/">Cancel</Link>
     </section>
