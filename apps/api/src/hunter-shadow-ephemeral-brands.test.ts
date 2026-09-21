@@ -4,11 +4,13 @@ import type {
   AgentRuntimePort,
 } from "@kairo/agent-contracts";
 import type {
+  BrandBrainProposalGenerator,
   PublicBrandReference,
   PublicBrandReferenceReader,
 } from "@kairo/domain/brand-brain-bootstrap";
 import {
   buildEphemeralPublicBrandContexts,
+  HUNTER_SHADOW_EPHEMERAL_BOOTSTRAP_MODE,
   type EphemeralPublicBrandFixture,
 } from "./hunter-shadow-ephemeral-brands";
 
@@ -100,6 +102,28 @@ const runtime: AgentRuntimePort = {
 };
 
 describe("ephemeral public Hunter shadow Brand contexts", () => {
+  it("uses deterministic source-backed bootstrap without invoking the model runtime", async () => {
+    let invocationCount = 0;
+    const rejectingRuntime: AgentRuntimePort = {
+      async invoke<TOutput>() {
+        invocationCount += 1;
+        throw new Error("bootstrap model must not be invoked");
+      },
+    };
+
+    const contexts = await buildEphemeralPublicBrandContexts({
+      runtime: rejectingRuntime,
+      limit: 1,
+      fixtures,
+      reader,
+    });
+
+    expect(HUNTER_SHADOW_EPHEMERAL_BOOTSTRAP_MODE).toBe("source-backed-deterministic");
+    expect(invocationCount).toBe(0);
+    expect(contexts).toHaveLength(1);
+    expect(contexts[0]!.context.discoveryPlan.topics.length).toBeGreaterThanOrEqual(3);
+  });
+
   it("builds a real-source-only context that passes the unchanged Hunter readiness gate", async () => {
     const contexts = await buildEphemeralPublicBrandContexts({
       runtime,
@@ -113,7 +137,7 @@ describe("ephemeral public Hunter shadow Brand contexts", () => {
     expect(contexts[0]!.context.hunterInput.brand.brandName).toBe("Fixture AI");
     const profile = contexts[0]!.context.hunterInput.intelligenceProfile;
     expect(profile).toBeDefined();
-    expect(profile!.excludedTopics).toContain("Harmful");
+    expect(profile!.excludedTopics.some((item) => /harmful/i.test(item))).toBe(true);
   });
 
   it("skips a blocked public fixture and fills the requested cohort from the next real Brand", async () => {
@@ -150,25 +174,50 @@ describe("ephemeral public Hunter shadow Brand contexts", () => {
   });
 
   it("fails instead of overriding readiness when public evidence leaves a required group weak", async () => {
-    const weakRuntime: AgentRuntimePort = {
-      async invoke<TOutput>(request: AgentInvocationRequest) {
-        const result = await runtime.invoke<{ proposals: Array<Record<string, unknown>> }>(request);
-        return {
-          ...result,
-          output: {
-            proposals: result.output.proposals.filter(
-              (item) => item.fieldKey !== "boundaries.excluded-topics",
-            ),
-          } as TOutput,
-        };
+    const weakProposalGenerator: BrandBrainProposalGenerator = {
+      async propose(input) {
+        const source = input.references[0]!.sourceId;
+        return [
+          {
+            section: "identity",
+            fieldKey: "identity.description",
+            value: "AI software company building developer tools.",
+            sourceIds: [source],
+          },
+          {
+            section: "identity",
+            fieldKey: "identity.products-services",
+            value: "AI APIs and agent tools",
+            sourceIds: [source],
+          },
+          {
+            section: "audience",
+            fieldKey: "audience.primary",
+            value: "Developers and software teams",
+            sourceIds: [source],
+          },
+          {
+            section: "positioning",
+            fieldKey: "positioning.value-proposition",
+            value: "Build useful AI software with APIs and agent tooling.",
+            sourceIds: [source],
+          },
+          {
+            section: "content-strategy",
+            fieldKey: "content.core-topics",
+            value: "AI agents, developer tools, AI software",
+            sourceIds: [source],
+          },
+        ];
       },
     };
 
     await expect(buildEphemeralPublicBrandContexts({
-      runtime: weakRuntime,
+      runtime,
       limit: 1,
       fixtures,
       reader,
+      proposalGenerator: weakProposalGenerator,
     })).rejects.toThrow(/did not satisfy canonical Hunter readiness/);
   });
 });
