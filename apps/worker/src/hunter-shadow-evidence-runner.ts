@@ -24,6 +24,7 @@ export interface HunterShadowControlLaneResult {
   workspaceId: string;
   brandId: string;
   qualityScore: number;
+  recommendationCount: number;
   metadata: HunterShadowMeasuredMetadata;
 }
 
@@ -61,6 +62,7 @@ export async function runHunterShadowEvidencePair(
   const candidate = await executor.runCandidate(normalized);
 
   requireMeasuredMetadata(control.metadata, "control");
+  requireComparableControl(control);
   requireMeasuredMetadata(candidate.metadata, "candidate");
 
   const fingerprintMatches =
@@ -129,6 +131,20 @@ function prepareRunCase(input: HunterShadowRunCase): HunterShadowRunCase {
     brandId: text(input.brandId, "brandId", 200),
     inputFingerprint: fingerprint(input.inputFingerprint),
   };
+}
+
+export function isHunterShadowControlComparable(
+  control: HunterShadowControlLaneResult,
+): boolean {
+  return Number.isInteger(control.recommendationCount) && control.recommendationCount > 0;
+}
+
+function requireComparableControl(control: HunterShadowControlLaneResult): void {
+  if (!isHunterShadowControlComparable(control)) {
+    throw new Error(
+      "Comparable Hunter V1 control requires at least one measured recommendation",
+    );
+  }
 }
 
 function requireMeasuredMetadata(metadata: HunterShadowMeasuredMetadata, lane: string): void {
