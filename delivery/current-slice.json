@@ -1,11 +1,11 @@
 {
   "activeSlice": {
-    "id": "HI2-11R5R2",
-    "objectiveId": "OBJ-HI2-11R5R2",
+    "id": "HI2-11R5R3",
+    "objectiveId": "OBJ-HI2-11R5R3",
     "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Remove the unnecessary model invocation from the disposable Vercel Hunter shadow bootstrap while retaining verified public source ingestion, deterministic source-backed canonical readiness fields, the real measured V1 control model execution, substantive comparability, and every rollout/authority guard.",
+    "scope": "Make ephemeral public Hunter shadow Brand bootstrap deterministic and source-backed so benchmark model quota is reserved for the real V1/V2 comparison lanes. Preserve sanitized live public references, canonical Hunter readiness, provenance, substantive V1 comparability, all rollout thresholds, and Hunter V1 production authority.",
     "budget": {
       "maxModelCalls": 40,
       "maxSubAgents": 0,
@@ -17,27 +17,28 @@
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R2"
+        "scopeId": "HI2-11R5R3"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R2"
+        "scopeId": "HI2-11R5R3"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R2"
+        "scopeId": "HI2-11R5R3"
       }
     ],
     "successCriteria": [
-      "Disposable Vercel bootstrap fetches and persists verified public about/policy sources without invoking a model proposal generator.",
-      "The six canonical disposable Vercel readiness fields remain explicitly bound to the active about/policy source IDs.",
-      "Canonical Brand Brain activation must report Hunter-ready before the disposable context can enter the cohort.",
-      "The subsequent Hunter V1 control remains a real measured model execution and must satisfy substantive control comparability.",
-      "No synthetic readiness bypass or fabricated public evidence is introduced.",
+      "Default ephemeral public Brand bootstrap makes zero model-runtime invocations.",
+      "Every required Brand Brain group is derived from sanitized live public reference text and bound to the exact supporting source ID.",
+      "Policy/boundary context is bound to a policy-like public reference when available.",
+      "Canonical Brand Brain activation must be Hunter-ready before an ephemeral Brand enters the cohort.",
+      "Custom proposal-generator injection remains available for negative readiness tests and explicit experiments.",
+      "The actual V1 and V2 comparison lanes retain their real model calls and measured cost/latency.",
       "Three distinct Brands and nine paired observations remain mandatory for the pre-gate.",
       "All rollout thresholds remain unchanged, including latency 1.5x, cost 1.5x, retrieval 0.85, failure 0.05, exploration 0.08-0.20, and maximum topic share 0.34.",
       "Hunter V1 remains production authority; no V2 persistence, canary, scheduler or production enablement.",
@@ -45,10 +46,10 @@
       "PES v2 CI and Security baseline pass before merge/deployment."
     ],
     "priorPreGateEvidence": {
-      "runId": "HI2-11R5R1-PREGATE-20260922-F",
-      "releaseSha": "f997fab0b9507de0b1bb6d4f8d92d7144dd698a2",
+      "runId": "HI2-11R5R2-PREGATE-20260922-G",
+      "releaseSha": "071572bb98baeda13f5cdf760940abd57bb488e2",
       "status": "blocked",
-      "reason": "Targeted screening removed prior 429 pressure, but the disposable Vercel bootstrap consumed a model invocation immediately before the V1 control; the control then failed substantive comparability before producing a candidate-pipeline event."
+      "reason": "Disposable V1 control became comparable, but ephemeral Vercel/GitHub Brand Brain bootstrap still consumed model quota and both exhausted provider retries with HTTP 429 before the paired cohort could be assembled."
     }
   }
 }
