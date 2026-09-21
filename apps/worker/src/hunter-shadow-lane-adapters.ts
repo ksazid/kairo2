@@ -30,6 +30,7 @@ import type { DiscoverySourceDefinition } from "@kairo/domain/source-policy";
 import { DEFAULT_SOURCE_REGISTRY } from "@kairo/domain/source-registry";
 import {
   HunterOrchestrator,
+  type HunterFailureDiagnostic,
   type HunterRunInput,
 } from "./hunter";
 import {
@@ -133,6 +134,7 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
     const captured: OpportunityCandidateInput[] = [];
     const runtime = new MeteredRuntime(this.options.runtime);
     const tools = new MeteredToolGateway(this.options.tools, this.options.searchCostUsdBySource);
+    const controlFailures: HunterFailureDiagnostic[] = [];
     const sink = {
       async recordCandidate(
         _accountId: string,
@@ -152,6 +154,7 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
       runtime,
       sink,
       this.options.sourceRegistry ?? DEFAULT_SOURCE_REGISTRY,
+      (diagnostic) => controlFailures.push(diagnostic),
     );
 
     const started = performance.now();
@@ -172,7 +175,12 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
       recommendationCount: captured.length,
       evidenceCount: controlRun.evidenceCount,
       modelInvocationCount: runtime.invocations(),
-      modelDegraded: controlRun.degradedSources?.includes("hunter-model") ?? false,
+      modelDegraded:
+        (controlRun.degradedSources?.includes("hunter-model") ?? false) ||
+        controlFailures.some(
+          (diagnostic) =>
+            diagnostic.phase === "judgment" && diagnostic.source === "hunter-model",
+        ),
       metadata: {
         latencyMs,
         costUsd: runtime.measuredCostUsd() + tools.measuredCostUsd(),
