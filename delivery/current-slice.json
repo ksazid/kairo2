@@ -1,11 +1,11 @@
 {
   "activeSlice": {
-    "id": "HI2-11R5R3",
-    "objectiveId": "OBJ-HI2-11R5R3",
+    "id": "HI2-11R5R4",
+    "objectiveId": "OBJ-HI2-11R5R4",
     "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Make ephemeral public Hunter shadow Brand bootstrap deterministic and source-backed so benchmark model quota is reserved for the real V1/V2 comparison lanes. Preserve sanitized live public references, canonical Hunter readiness, provenance, substantive V1 comparability, all rollout thresholds, and Hunter V1 production authority.",
+    "scope": "Align Hunter V1 shadow comparability with the production Hunter degradation contract: reject discovery or judgment/model degradation, but allow individual enrichment-fetch fallback that production explicitly tolerates by retaining discovery evidence. Preserve measured evidence/model work, positive control cost, all rollout thresholds, and Hunter V1 production authority.",
     "budget": {
       "maxModelCalls": 40,
       "maxSubAgents": 0,
@@ -17,39 +17,37 @@
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R3"
+        "scopeId": "HI2-11R5R4"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R3"
+        "scopeId": "HI2-11R5R4"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R3"
+        "scopeId": "HI2-11R5R4"
       }
     ],
     "successCriteria": [
-      "Default ephemeral public Brand bootstrap makes zero model-runtime invocations.",
-      "Every required Brand Brain group is derived from sanitized live public reference text and bound to the exact supporting source ID.",
-      "Policy/boundary context is bound to a policy-like public reference when available.",
-      "Canonical Brand Brain activation must be Hunter-ready before an ephemeral Brand enters the cohort.",
-      "Custom proposal-generator injection remains available for negative readiness tests and explicit experiments.",
-      "The actual V1 and V2 comparison lanes retain their real model calls and measured cost/latency.",
+      "A V1 control is rejected when discovery degrades or Hunter judgment/model execution degrades.",
+      "A V1 control remains comparable when only individual enrichment fetches fail and production Hunter falls back to the original discovery evidence.",
+      "Comparable V1 controls still require non-zero evidence, at least one measured model invocation, and positive measured cost.",
+      "Valid zero-recommendation V1 judgments remain comparable when substantive control work completed.",
+      "No rollout threshold changes: latency 1.5x, cost 1.5x, retrieval 0.85, failure 0.05, exploration 0.08-0.20, maximum topic share 0.34.",
       "Three distinct Brands and nine paired observations remain mandatory for the pre-gate.",
-      "All rollout thresholds remain unchanged, including latency 1.5x, cost 1.5x, retrieval 0.85, failure 0.05, exploration 0.08-0.20, and maximum topic share 0.34.",
       "Hunter V1 remains production authority; no V2 persistence, canary, scheduler or production enablement.",
       "Corrected 3x3 pre-gate passes before any 30-pair full gate.",
       "PES v2 CI and Security baseline pass before merge/deployment."
     ],
     "priorPreGateEvidence": {
-      "runId": "HI2-11R5R2-PREGATE-20260922-G",
-      "releaseSha": "071572bb98baeda13f5cdf760940abd57bb488e2",
+      "runId": "HI2-11R5R3-PREGATE-20260922-H",
+      "releaseSha": "e26c50037f3a85a083713b6c8340516e596a2d82",
       "status": "blocked",
-      "reason": "Disposable V1 control became comparable, but ephemeral Vercel/GitHub Brand Brain bootstrap still consumed model quota and both exhausted provider retries with HTTP 429 before the paired cohort could be assembled."
+      "reason": "V1 controls completed real retrieval/model work (20→3 and 19→6/3) with measured Agent Reach searches, but comparability rejected production-tolerated enrichment fallback because the shadow guard treated every enrichment diagnostic as critical degradation."
     }
   }
 }

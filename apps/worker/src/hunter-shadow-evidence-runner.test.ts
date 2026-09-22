@@ -32,7 +32,7 @@ function executor(overrides: {
         recommendationCount: 1,
         evidenceCount: 8,
         modelInvocationCount: 1,
-        dependencyDegraded: false,
+        criticalDependencyDegraded: false,
         metadata: { latencyMs: 1000, costUsd: 0.08 },
       };
     },
@@ -45,7 +45,7 @@ function executor(overrides: {
         recommendationCount: 10,
         evidenceCount: 9,
         modelInvocationCount: 2,
-        dependencyDegraded: false,
+        criticalDependencyDegraded: false,
         metadata: { latencyMs: 1200, costUsd: 0.1 },
         retrievalExpected: 10,
         retrievalCovered: 9,
@@ -126,7 +126,7 @@ describe("Hunter shadow evidence runner", () => {
       recommendationCount: 0,
       evidenceCount: 8,
       modelInvocationCount: 2,
-      dependencyDegraded: false,
+      criticalDependencyDegraded: false,
       metadata: { latencyMs: 900, costUsd: 0.06 },
     });
 
@@ -143,7 +143,7 @@ describe("Hunter shadow evidence runner", () => {
       recommendationCount: 0,
       evidenceCount: 0,
       modelInvocationCount: 0,
-      dependencyDegraded: false,
+      criticalDependencyDegraded: false,
       metadata: { latencyMs: 250, costUsd: 0 },
     });
 
@@ -159,7 +159,7 @@ describe("Hunter shadow evidence runner", () => {
       recommendationCount: 0,
       evidenceCount: 8,
       modelInvocationCount: 1,
-      dependencyDegraded: false,
+      criticalDependencyDegraded: false,
       metadata: { latencyMs: 900, costUsd: 0 },
     });
 
@@ -168,20 +168,36 @@ describe("Hunter shadow evidence runner", () => {
     );
   });
 
-  it("rejects a degraded V1 dependency even when evidence was retrieved", async () => {
+  it("rejects discovery/model degradation even when evidence was retrieved", async () => {
     const broken = executor();
     broken.runControl = async (value) => ({
       ...(await executor().runControl(value)),
       recommendationCount: 0,
       evidenceCount: 8,
       modelInvocationCount: 1,
-      dependencyDegraded: true,
+      criticalDependencyDegraded: true,
       metadata: { latencyMs: 900, costUsd: 0.06 },
     });
 
     await expect(runHunterShadowEvidencePair(run(1), broken)).rejects.toThrow(
       /Comparable Hunter V1 control/,
     );
+  });
+
+  it("allows production-tolerated enrichment fallback to remain a comparable measured control", async () => {
+    const measured = executor();
+    measured.runControl = async (value) => ({
+      ...(await executor().runControl(value)),
+      recommendationCount: 2,
+      evidenceCount: 8,
+      modelInvocationCount: 1,
+      criticalDependencyDegraded: false,
+      metadata: { latencyMs: 1100, costUsd: 0.07 },
+    });
+
+    const result = await runHunterShadowEvidencePair(run(1), measured);
+    expect(result.observation.v1QualityScore).toBe(0.78);
+    expect(result.observation.v1CostUsd).toBe(0.07);
   });
 
   it("rejects missing or fabricated-looking metering instead of assuming zero cost or latency", async () => {

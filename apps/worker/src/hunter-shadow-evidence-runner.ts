@@ -27,7 +27,7 @@ export interface HunterShadowControlLaneResult {
   recommendationCount: number;
   evidenceCount: number;
   modelInvocationCount: number;
-  dependencyDegraded: boolean;
+  criticalDependencyDegraded: boolean;
   metadata: HunterShadowMeasuredMetadata;
 }
 
@@ -143,7 +143,7 @@ export function isHunterShadowControlComparable(
     control.evidenceCount > 0 &&
     Number.isInteger(control.modelInvocationCount) &&
     control.modelInvocationCount > 0 &&
-    control.dependencyDegraded === false &&
+    control.criticalDependencyDegraded === false &&
     Number.isFinite(control.metadata.costUsd) &&
     control.metadata.costUsd > 0;
 }
@@ -151,7 +151,7 @@ export function isHunterShadowControlComparable(
 function requireComparableControl(control: HunterShadowControlLaneResult): void {
   if (!isHunterShadowControlComparable(control)) {
     throw new Error(
-      "Comparable Hunter V1 control requires non-zero evidence, measured model execution, no dependency degradation and positive measured cost",
+      "Comparable Hunter V1 control requires non-zero evidence, measured model execution, no discovery/model degradation and positive measured cost",
     );
   }
 }
