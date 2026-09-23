@@ -1,51 +1,50 @@
 {
   "activeSlice": {
-    "id": "HI2-11R5R7",
-    "objectiveId": "OBJ-HI2-11R5R7",
+    "id": "HI2-11R5R8",
+    "objectiveId": "OBJ-HI2-11R5R8",
     "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Expose the exact critical Hunter V1 dependency failure diagnostics captured during shadow control execution so a non-comparable control identifies discovery/judgment phase, source, safe failure kind and optional HTTP status without changing comparability or rollout policy.",
+    "scope": "Include safe critical Hunter V1 dependency failure details in the pair-level comparability exception so failures after cohort assembly identify the same phase/source/kind/status already captured by the control result.",
     "budget": {
-      "maxModelCalls": 30,
+      "maxModelCalls": 20,
       "maxSubAgents": 0,
-      "maxWallClockMinutes": 20,
-      "maxExternalWrites": 12
+      "maxWallClockMinutes": 15,
+      "maxExternalWrites": 10
     },
     "approvals": [
       {
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R7"
+        "scopeId": "HI2-11R5R8"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R7"
+        "scopeId": "HI2-11R5R8"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R7"
+        "scopeId": "HI2-11R5R8"
       }
     ],
     "successCriteria": [
-      "Critical V1 control failure diagnostics preserve phase, source, safe failure kind and optional HTTP status.",
-      "Enrichment-only failures remain excluded from critical failure details as required by production fallback semantics.",
-      "Cohort screening diagnostics include the critical failure details alongside existing measured values.",
+      "Pair-level V1 comparability failures include the captured criticalDependencyFailures array.",
+      "Failure details preserve phase, source, safe kind and optional HTTP status.",
       "No comparability predicate or rollout threshold changes.",
       "Hunter V1 remains production authority; no V2 persistence, canary, scheduler or production enablement.",
       "PES v2 CI and Security baseline pass before merge/deployment.",
       "The same 3x3 pre-gate is rerun on the exact merge SHA before any 30-pair gate."
     ],
     "priorPreGateEvidence": {
-      "runId": "HI2-11R5R6-PREGATE-20260923-K",
-      "releaseSha": "089f25af4df915a97f2937a7a92ab6f237470d4b",
+      "runId": "HI2-11R5R7-PREGATE-20260923-L",
+      "releaseSha": "bb36d59830f03412fda02e4e5b75df12ee441524",
       "status": "blocked",
-      "reason": "GitHub ephemeral control had evidenceCount=20, costUsd=0.014, modelInvocationCount=0 and criticalDependencyDegraded=true. The safe HunterFailureDiagnostic kind/status was captured internally but not surfaced."
+      "reason": "The paired batch rejected the persisted anchor control with evidenceCount=20, modelInvocationCount=0, criticalDependencyDegraded=true and costUsd=0.014, but the pair-level exception omitted the already-captured criticalDependencyFailures details."
     }
   }
 }

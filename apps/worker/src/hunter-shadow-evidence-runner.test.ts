@@ -188,6 +188,25 @@ describe("Hunter shadow evidence runner", () => {
     );
   });
 
+  it("includes critical dependency failure details in the pair-level comparability error", async () => {
+    const broken = executor();
+    broken.runControl = async (value) => ({
+      ...(await executor().runControl(value)),
+      recommendationCount: 0,
+      evidenceCount: 20,
+      modelInvocationCount: 0,
+      criticalDependencyDegraded: true,
+      criticalDependencyFailures: [
+        { phase: "judgment", source: "hunter-model", kind: "rate-limited", statusCode: 429 },
+      ],
+      metadata: { latencyMs: 14654, costUsd: 0.014 },
+    });
+
+    await expect(runHunterShadowEvidencePair(run(1), broken)).rejects.toThrow(
+      /criticalDependencyFailures.*rate-limited.*429/,
+    );
+  });
+
   it("rejects discovery/model degradation even when evidence was retrieved", async () => {
     const broken = executor();
     broken.runControl = async (value) => ({
