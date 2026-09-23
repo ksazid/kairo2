@@ -183,7 +183,11 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
         ),
       criticalDependencyFailures: controlFailures
         .filter(
-          (diagnostic) =>
+          (
+            diagnostic,
+          ): diagnostic is HunterFailureDiagnostic & {
+            phase: "discovery" | "judgment";
+          } =>
             diagnostic.phase === "discovery" || diagnostic.phase === "judgment",
         )
         .map((diagnostic) => ({
