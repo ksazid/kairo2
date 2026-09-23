@@ -1,11 +1,11 @@
 {
   "activeSlice": {
-    "id": "HI2-11R5R6",
-    "objectiveId": "OBJ-HI2-11R5R6",
+    "id": "HI2-11R5R7",
+    "objectiveId": "OBJ-HI2-11R5R7",
     "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Extend Hunter V1 comparability diagnostics into operational cohort preflight so rejected persisted/disposable/ephemeral Brands retain their exact fail-closed reason and measured values instead of being silently dropped.",
+    "scope": "Expose the exact critical Hunter V1 dependency failure diagnostics captured during shadow control execution so a non-comparable control identifies discovery/judgment phase, source, safe failure kind and optional HTTP status without changing comparability or rollout policy.",
     "budget": {
       "maxModelCalls": 30,
       "maxSubAgents": 0,
@@ -17,35 +17,35 @@
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R6"
+        "scopeId": "HI2-11R5R7"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R6"
+        "scopeId": "HI2-11R5R7"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R6"
+        "scopeId": "HI2-11R5R7"
       }
     ],
     "successCriteria": [
-      "Every rejected cohort preflight records origin, Brand name/key, rejection reason and exact comparability failures.",
-      "Control execution errors remain fail-closed and are preserved in screening diagnostics.",
-      "Control non-comparability records evidenceCount, modelInvocationCount, criticalDependencyDegraded, costUsd, latencyMs and recommendationCount.",
+      "Critical V1 control failure diagnostics preserve phase, source, safe failure kind and optional HTTP status.",
+      "Enrichment-only failures remain excluded from critical failure details as required by production fallback semantics.",
+      "Cohort screening diagnostics include the critical failure details alongside existing measured values.",
       "No comparability predicate or rollout threshold changes.",
       "Hunter V1 remains production authority; no V2 persistence, canary, scheduler or production enablement.",
       "PES v2 CI and Security baseline pass before merge/deployment.",
       "The same 3x3 pre-gate is rerun on the exact merge SHA before any 30-pair gate."
     ],
     "priorPreGateEvidence": {
-      "runId": "HI2-11R5R5-PREGATE-20260923-J",
-      "releaseSha": "cf3568bdcc79261d188cc149c8f7e192fad78984",
+      "runId": "HI2-11R5R6-PREGATE-20260923-K",
+      "releaseSha": "089f25af4df915a97f2937a7a92ab6f237470d4b",
       "status": "blocked",
-      "reason": "Cohort construction ended with fewer than three comparable Brands. The preflight path silently discarded the exact rejection reason, so paired-batch diagnostics never ran."
+      "reason": "GitHub ephemeral control had evidenceCount=20, costUsd=0.014, modelInvocationCount=0 and criticalDependencyDegraded=true. The safe HunterFailureDiagnostic kind/status was captured internally but not surfaced."
     }
   }
 }

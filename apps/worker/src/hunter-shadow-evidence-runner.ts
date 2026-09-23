@@ -28,6 +28,12 @@ export interface HunterShadowControlLaneResult {
   evidenceCount: number;
   modelInvocationCount: number;
   criticalDependencyDegraded: boolean;
+  criticalDependencyFailures: Array<{
+    phase: "discovery" | "judgment";
+    source: string;
+    kind: string;
+    statusCode?: number;
+  }>;
   metadata: HunterShadowMeasuredMetadata;
 }
 

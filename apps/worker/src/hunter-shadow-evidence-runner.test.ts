@@ -34,6 +34,7 @@ function executor(overrides: {
         evidenceCount: 8,
         modelInvocationCount: 1,
         criticalDependencyDegraded: false,
+        criticalDependencyFailures: [],
         metadata: { latencyMs: 1000, costUsd: 0.08 },
       };
     },
@@ -47,6 +48,7 @@ function executor(overrides: {
         evidenceCount: 9,
         modelInvocationCount: 2,
         criticalDependencyDegraded: false,
+        criticalDependencyFailures: [],
         metadata: { latencyMs: 1200, costUsd: 0.1 },
         retrievalExpected: 10,
         retrievalCovered: 9,
@@ -146,6 +148,9 @@ describe("Hunter shadow evidence runner", () => {
       evidenceCount: 19,
       modelInvocationCount: 1,
       criticalDependencyDegraded: true,
+      criticalDependencyFailures: [
+        { phase: "judgment", source: "hunter-model", kind: "rate-limited", statusCode: 429 },
+      ],
       metadata: { latencyMs: 1400, costUsd: 0 },
     })).toEqual(["criticalDependencyDegraded", "costUsd"]);
   });
@@ -191,6 +196,9 @@ describe("Hunter shadow evidence runner", () => {
       evidenceCount: 8,
       modelInvocationCount: 1,
       criticalDependencyDegraded: true,
+      criticalDependencyFailures: [
+        { phase: "judgment", source: "hunter-model", kind: "invalid-response" },
+      ],
       metadata: { latencyMs: 900, costUsd: 0.06 },
     });
 

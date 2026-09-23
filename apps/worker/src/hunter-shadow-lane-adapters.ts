@@ -181,6 +181,23 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
           (diagnostic) =>
             diagnostic.phase === "discovery" || diagnostic.phase === "judgment",
         ),
+      criticalDependencyFailures: controlFailures
+        .filter(
+          (
+            diagnostic,
+          ): diagnostic is HunterFailureDiagnostic & {
+            phase: "discovery" | "judgment";
+          } =>
+            diagnostic.phase === "discovery" || diagnostic.phase === "judgment",
+        )
+        .map((diagnostic) => ({
+          phase: diagnostic.phase,
+          source: diagnostic.source,
+          kind: diagnostic.kind,
+          ...(diagnostic.statusCode !== undefined
+            ? { statusCode: diagnostic.statusCode }
+            : {}),
+        })),
       metadata: {
         latencyMs,
         costUsd: runtime.measuredCostUsd() + tools.measuredCostUsd(),
@@ -322,6 +339,7 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
       evidenceCount: retrieval.candidates.length,
       modelInvocationCount: runtime.invocations(),
       criticalDependencyDegraded: false,
+      criticalDependencyFailures: [],
       metadata: {
         latencyMs,
         costUsd: runtime.measuredCostUsd() + tools.measuredCostUsd(),
