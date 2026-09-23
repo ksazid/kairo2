@@ -1,11 +1,11 @@
 {
   "activeSlice": {
-    "id": "HI2-11R5R5",
-    "objectiveId": "OBJ-HI2-11R5R5",
+    "id": "HI2-11R5R6",
+    "objectiveId": "OBJ-HI2-11R5R6",
     "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Instrument Hunter V1 shadow comparability failures with exact fail-closed field/value diagnostics so the remaining 3x3 blocker can be identified without weakening any readiness or rollout threshold.",
+    "scope": "Extend Hunter V1 comparability diagnostics into operational cohort preflight so rejected persisted/disposable/ephemeral Brands retain their exact fail-closed reason and measured values instead of being silently dropped.",
     "budget": {
       "maxModelCalls": 30,
       "maxSubAgents": 0,
@@ -17,35 +17,35 @@
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R5"
+        "scopeId": "HI2-11R5R6"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R5"
+        "scopeId": "HI2-11R5R6"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R5"
+        "scopeId": "HI2-11R5R6"
       }
     ],
     "successCriteria": [
-      "Comparability failures identify each failed field among evidenceCount, modelInvocationCount, criticalDependencyDegraded and costUsd.",
-      "Failure diagnostics include measured field values plus latency, recommendation count, workspace and Brand identifiers.",
-      "The comparability predicate itself remains unchanged.",
-      "All rollout thresholds remain unchanged.",
+      "Every rejected cohort preflight records origin, Brand name/key, rejection reason and exact comparability failures.",
+      "Control execution errors remain fail-closed and are preserved in screening diagnostics.",
+      "Control non-comparability records evidenceCount, modelInvocationCount, criticalDependencyDegraded, costUsd, latencyMs and recommendationCount.",
+      "No comparability predicate or rollout threshold changes.",
       "Hunter V1 remains production authority; no V2 persistence, canary, scheduler or production enablement.",
       "PES v2 CI and Security baseline pass before merge/deployment.",
       "The same 3x3 pre-gate is rerun on the exact merge SHA before any 30-pair gate."
     ],
     "priorPreGateEvidence": {
-      "runId": "HI2-11R5R4-PREGATE-20260922-I",
-      "releaseSha": "37da5d3de1069430070e8a68534b916444c3be05",
+      "runId": "HI2-11R5R5-PREGATE-20260923-J",
+      "releaseSha": "cf3568bdcc79261d188cc149c8f7e192fad78984",
       "status": "blocked",
-      "reason": "The paired batch failed Hunter V1 comparability after three substantive cohort preflights, but the existing exception did not identify which comparability field failed."
+      "reason": "Cohort construction ended with fewer than three comparable Brands. The preflight path silently discarded the exact rejection reason, so paired-batch diagnostics never ran."
     }
   }
 }
