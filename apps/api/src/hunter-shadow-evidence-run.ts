@@ -37,8 +37,10 @@ import {
   type HunterShadowExecutionContext,
 } from "@kairo/worker/hunter-shadow-lane-adapters";
 import {
+  hunterShadowControlComparabilityFailures,
   isHunterShadowControlComparable,
   runHunterShadowEvidenceBatch,
+  type HunterShadowControlLaneResult,
   type HunterShadowEvidenceBatch,
   type HunterShadowRunCase,
 } from "@kairo/worker/hunter-shadow-evidence-runner";
@@ -242,6 +244,7 @@ export async function executeHunterShadowEvidenceRun(
           options.request.anchorBrandId,
         )]
       : candidates;
+  const screeningDiagnostics: HunterShadowControlScreeningDiagnostic[] = [];
   const baseContexts: Array<{
     accountId: string;
     workspaceId: string;
@@ -292,8 +295,25 @@ export async function executeHunterShadowEvidenceRun(
       searchCostUsdBySource: options.searchCostUsdBySource ?? {},
       candidate: HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE,
     });
-    const control = await preflight.runControl(run).catch(() => undefined);
-    if (!control || !isHunterShadowControlComparable(control)) return false;
+    let control: HunterShadowControlLaneResult;
+    try {
+      control = await preflight.runControl(run);
+    } catch (error) {
+      screeningDiagnostics.push(buildControlScreeningDiagnostic({
+        item,
+        reason: "control-execution-error",
+        error,
+      }));
+      return false;
+    }
+    if (!isHunterShadowControlComparable(control)) {
+      screeningDiagnostics.push(buildControlScreeningDiagnostic({
+        item,
+        reason: "control-non-comparable",
+        control,
+      }));
+      return false;
+    }
     baseContexts.push(item);
     return true;
   };
@@ -351,7 +371,8 @@ export async function executeHunterShadowEvidenceRun(
     });
     if (!accepted) {
       throw new Error(
-        "Disposable persisted Hunter shadow anchor produced a non-comparable V1 control",
+        "Disposable persisted Hunter shadow anchor produced a non-comparable V1 control; screeningDiagnostics=" +
+          JSON.stringify(screeningDiagnostics),
       );
     }
   }
@@ -388,7 +409,8 @@ export async function executeHunterShadowEvidenceRun(
 
   if (baseContexts.length < options.request.brandCount) {
     throw new Error(
-      "Hunter shadow evidence could not find enough Hunter-ready Brands with comparable V1 controls",
+      "Hunter shadow evidence could not find enough Hunter-ready Brands with comparable V1 controls; screeningDiagnostics=" +
+        JSON.stringify(screeningDiagnostics),
     );
   }
 
@@ -465,6 +487,60 @@ export async function executeHunterShadowEvidenceRun(
   }
 }
 
+
+export interface HunterShadowControlScreeningDiagnostic {
+  origin: "persisted" | "disposable-persisted" | "ephemeral-public";
+  brandName: string;
+  brandKey: string;
+  reason: "control-execution-error" | "control-non-comparable";
+  failures: string[];
+  values?: {
+    evidenceCount: number;
+    modelInvocationCount: number;
+    criticalDependencyDegraded: boolean;
+    costUsd: number;
+    latencyMs: number;
+    recommendationCount: number;
+  };
+  error?: string;
+}
+
+export function buildControlScreeningDiagnostic(input: {
+  item: {
+    workspaceId: string;
+    brandId: string;
+    origin: HunterShadowControlScreeningDiagnostic["origin"];
+    context: Pick<HunterShadowExecutionContext, "hunterInput">;
+  };
+  reason: HunterShadowControlScreeningDiagnostic["reason"];
+  control?: HunterShadowControlLaneResult;
+  error?: unknown;
+}): HunterShadowControlScreeningDiagnostic {
+  const diagnostic: HunterShadowControlScreeningDiagnostic = {
+    origin: input.item.origin,
+    brandName: input.item.context.hunterInput.brand.brandName,
+    brandKey: opaqueBrandKey(input.item.workspaceId, input.item.brandId),
+    reason: input.reason,
+    failures: input.control
+      ? hunterShadowControlComparabilityFailures(input.control)
+      : [],
+  };
+  if (input.control) {
+    diagnostic.values = {
+      evidenceCount: input.control.evidenceCount,
+      modelInvocationCount: input.control.modelInvocationCount,
+      criticalDependencyDegraded: input.control.criticalDependencyDegraded,
+      costUsd: input.control.metadata.costUsd,
+      latencyMs: input.control.metadata.latencyMs,
+      recommendationCount: input.control.recommendationCount,
+    };
+  }
+  if (input.error !== undefined) {
+    diagnostic.error =
+      input.error instanceof Error ? input.error.message : String(input.error);
+  }
+  return diagnostic;
+}
 
 export function selectTargetedPersistedScreeningCandidate(
   candidates: ReadonlyArray<{ accountId: string; workspaceId: string; brandId: string }>,
