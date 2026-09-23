@@ -193,6 +193,9 @@ describe("Hunter shadow operational evidence", () => {
         evidenceCount: 20,
         modelInvocationCount: 1,
         criticalDependencyDegraded: true,
+        criticalDependencyFailures: [
+          { phase: "judgment", source: "hunter-model", kind: "rate-limited", statusCode: 429 },
+        ],
         metadata: { latencyMs: 1200, costUsd: 0 },
       },
     })).toMatchObject({
@@ -204,6 +207,9 @@ describe("Hunter shadow operational evidence", () => {
         evidenceCount: 20,
         modelInvocationCount: 1,
         criticalDependencyDegraded: true,
+        criticalDependencyFailures: [
+          { phase: "judgment", source: "hunter-model", kind: "rate-limited", statusCode: 429 },
+        ],
         costUsd: 0,
         latencyMs: 1200,
         recommendationCount: 4,
