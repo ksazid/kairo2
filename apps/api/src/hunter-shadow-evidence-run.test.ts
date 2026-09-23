@@ -4,6 +4,7 @@ import type { BrandDiscoveryPlan } from "@kairo/domain/brand-discovery-plan";
 import {
   HUNTER_SHADOW_DISPOSABLE_BOOTSTRAP_MODE,
   HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE,
+  buildControlScreeningDiagnostic,
   hunterShadowEvidenceRequestFromEnv,
   hunterShadowSearchCostUsdBySourceFromEnv,
   resolveReadOnlyDiscoveryPlan,
@@ -164,6 +165,50 @@ describe("Hunter shadow operational evidence", () => {
     expect(() => selectDisposableAnchorTenant([
       { accountId: "account-z", workspaceId: "workspace-2", brandId: "brand-other" },
     ], "brand-target")).toThrow(/Target Hunter shadow anchor Brand is unavailable/);
+  });
+
+  it("reports exact preflight screening failures instead of dropping rejected controls", () => {
+    expect(buildControlScreeningDiagnostic({
+      item: {
+        workspaceId: "workspace-1",
+        brandId: "brand-1",
+        origin: "ephemeral-public",
+        context: {
+          hunterInput: {
+            brand: {
+              workspaceId: "workspace-1",
+              brandId: "brand-1",
+              brandName: "Fixture Brand",
+            },
+          } as never,
+        },
+      },
+      reason: "control-non-comparable",
+      control: {
+        inputFingerprint: "0".repeat(64),
+        workspaceId: "workspace-1",
+        brandId: "brand-1",
+        qualityScore: 0,
+        recommendationCount: 4,
+        evidenceCount: 20,
+        modelInvocationCount: 1,
+        criticalDependencyDegraded: true,
+        metadata: { latencyMs: 1200, costUsd: 0 },
+      },
+    })).toMatchObject({
+      origin: "ephemeral-public",
+      brandName: "Fixture Brand",
+      reason: "control-non-comparable",
+      failures: ["criticalDependencyDegraded", "costUsd"],
+      values: {
+        evidenceCount: 20,
+        modelInvocationCount: 1,
+        criticalDependencyDegraded: true,
+        costUsd: 0,
+        latencyMs: 1200,
+        recommendationCount: 4,
+      },
+    });
   });
 
   it("collapses targeted persisted screening to one account/Brand candidate", () => {
