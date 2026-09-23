@@ -178,6 +178,7 @@ function requireComparableControl(control: HunterShadowControlLaneResult): void 
           evidenceCount: control.evidenceCount,
           modelInvocationCount: control.modelInvocationCount,
           criticalDependencyDegraded: control.criticalDependencyDegraded,
+          criticalDependencyFailures: control.criticalDependencyFailures.map((item) => ({ ...item })),
           costUsd: control.metadata.costUsd,
           latencyMs: control.metadata.latencyMs,
           recommendationCount: control.recommendationCount,
