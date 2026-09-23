@@ -498,6 +498,12 @@ export interface HunterShadowControlScreeningDiagnostic {
     evidenceCount: number;
     modelInvocationCount: number;
     criticalDependencyDegraded: boolean;
+    criticalDependencyFailures: Array<{
+      phase: "discovery" | "judgment";
+      source: string;
+      kind: string;
+      statusCode?: number;
+    }>;
     costUsd: number;
     latencyMs: number;
     recommendationCount: number;
@@ -530,6 +536,7 @@ export function buildControlScreeningDiagnostic(input: {
       evidenceCount: input.control.evidenceCount,
       modelInvocationCount: input.control.modelInvocationCount,
       criticalDependencyDegraded: input.control.criticalDependencyDegraded,
+      criticalDependencyFailures: input.control.criticalDependencyFailures.map((item) => ({ ...item })),
       costUsd: input.control.metadata.costUsd,
       latencyMs: input.control.metadata.latencyMs,
       recommendationCount: input.control.recommendationCount,
