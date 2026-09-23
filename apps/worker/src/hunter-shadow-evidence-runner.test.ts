@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { describe, expect, it } from "vitest";
 import {
+  hunterShadowControlComparabilityFailures,
   runHunterShadowEvidenceBatch,
   runHunterShadowEvidencePair,
   type HunterShadowLaneExecutor,
@@ -135,6 +136,20 @@ describe("Hunter shadow evidence runner", () => {
     expect(result.observation.v1CostUsd).toBe(0.06);
   });
 
+  it("reports the exact comparability fields that fail", () => {
+    expect(hunterShadowControlComparabilityFailures({
+      inputFingerprint: hash("diagnostic"),
+      workspaceId: "workspace-1",
+      brandId: "brand-1",
+      qualityScore: 0,
+      recommendationCount: 3,
+      evidenceCount: 19,
+      modelInvocationCount: 1,
+      criticalDependencyDegraded: true,
+      metadata: { latencyMs: 1400, costUsd: 0 },
+    })).toEqual(["criticalDependencyDegraded", "costUsd"]);
+  });
+
   it("rejects a true no-op V1 control before ratio evaluation", async () => {
     const broken = executor();
     broken.runControl = async (value) => ({
@@ -148,7 +163,7 @@ describe("Hunter shadow evidence runner", () => {
     });
 
     await expect(runHunterShadowEvidencePair(run(1), broken)).rejects.toThrow(
-      /Comparable Hunter V1 control/,
+      /failed fields=evidenceCount,modelInvocationCount,costUsd/,
     );
   });
 
@@ -164,7 +179,7 @@ describe("Hunter shadow evidence runner", () => {
     });
 
     await expect(runHunterShadowEvidencePair(run(1), broken)).rejects.toThrow(
-      /Comparable Hunter V1 control/,
+      /failed fields=costUsd/,
     );
   });
 
@@ -180,7 +195,7 @@ describe("Hunter shadow evidence runner", () => {
     });
 
     await expect(runHunterShadowEvidencePair(run(1), broken)).rejects.toThrow(
-      /Comparable Hunter V1 control/,
+      /failed fields=criticalDependencyDegraded/,
     );
   });
 

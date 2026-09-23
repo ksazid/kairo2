@@ -136,22 +136,48 @@ function prepareRunCase(input: HunterShadowRunCase): HunterShadowRunCase {
   };
 }
 
+export function hunterShadowControlComparabilityFailures(
+  control: HunterShadowControlLaneResult,
+): string[] {
+  const failures: string[] = [];
+  if (!Number.isInteger(control.evidenceCount) || control.evidenceCount <= 0) {
+    failures.push("evidenceCount");
+  }
+  if (!Number.isInteger(control.modelInvocationCount) || control.modelInvocationCount <= 0) {
+    failures.push("modelInvocationCount");
+  }
+  if (control.criticalDependencyDegraded !== false) {
+    failures.push("criticalDependencyDegraded");
+  }
+  if (!Number.isFinite(control.metadata.costUsd) || control.metadata.costUsd <= 0) {
+    failures.push("costUsd");
+  }
+  return failures;
+}
+
 export function isHunterShadowControlComparable(
   control: HunterShadowControlLaneResult,
 ): boolean {
-  return Number.isInteger(control.evidenceCount) &&
-    control.evidenceCount > 0 &&
-    Number.isInteger(control.modelInvocationCount) &&
-    control.modelInvocationCount > 0 &&
-    control.criticalDependencyDegraded === false &&
-    Number.isFinite(control.metadata.costUsd) &&
-    control.metadata.costUsd > 0;
+  return hunterShadowControlComparabilityFailures(control).length === 0;
 }
 
 function requireComparableControl(control: HunterShadowControlLaneResult): void {
-  if (!isHunterShadowControlComparable(control)) {
+  const failures = hunterShadowControlComparabilityFailures(control);
+  if (failures.length > 0) {
     throw new Error(
-      "Comparable Hunter V1 control requires non-zero evidence, measured model execution, no discovery/model degradation and positive measured cost",
+      "Comparable Hunter V1 control failed fields=" +
+        failures.join(",") +
+        " values=" +
+        JSON.stringify({
+          evidenceCount: control.evidenceCount,
+          modelInvocationCount: control.modelInvocationCount,
+          criticalDependencyDegraded: control.criticalDependencyDegraded,
+          costUsd: control.metadata.costUsd,
+          latencyMs: control.metadata.latencyMs,
+          recommendationCount: control.recommendationCount,
+          workspaceId: control.workspaceId,
+          brandId: control.brandId,
+        }),
     );
   }
 }

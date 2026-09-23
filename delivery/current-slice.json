@@ -1,53 +1,51 @@
 {
   "activeSlice": {
-    "id": "HI2-11R5R4",
-    "objectiveId": "OBJ-HI2-11R5R4",
+    "id": "HI2-11R5R5",
+    "objectiveId": "OBJ-HI2-11R5R5",
     "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Align Hunter V1 shadow comparability with the production Hunter degradation contract: reject discovery or judgment/model degradation, but allow individual enrichment-fetch fallback that production explicitly tolerates by retaining discovery evidence. Preserve measured evidence/model work, positive control cost, all rollout thresholds, and Hunter V1 production authority.",
+    "scope": "Instrument Hunter V1 shadow comparability failures with exact fail-closed field/value diagnostics so the remaining 3x3 blocker can be identified without weakening any readiness or rollout threshold.",
     "budget": {
-      "maxModelCalls": 40,
+      "maxModelCalls": 30,
       "maxSubAgents": 0,
-      "maxWallClockMinutes": 25,
-      "maxExternalWrites": 14
+      "maxWallClockMinutes": 20,
+      "maxExternalWrites": 12
     },
     "approvals": [
       {
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R4"
+        "scopeId": "HI2-11R5R5"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R4"
+        "scopeId": "HI2-11R5R5"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R4"
+        "scopeId": "HI2-11R5R5"
       }
     ],
     "successCriteria": [
-      "A V1 control is rejected when discovery degrades or Hunter judgment/model execution degrades.",
-      "A V1 control remains comparable when only individual enrichment fetches fail and production Hunter falls back to the original discovery evidence.",
-      "Comparable V1 controls still require non-zero evidence, at least one measured model invocation, and positive measured cost.",
-      "Valid zero-recommendation V1 judgments remain comparable when substantive control work completed.",
-      "No rollout threshold changes: latency 1.5x, cost 1.5x, retrieval 0.85, failure 0.05, exploration 0.08-0.20, maximum topic share 0.34.",
-      "Three distinct Brands and nine paired observations remain mandatory for the pre-gate.",
+      "Comparability failures identify each failed field among evidenceCount, modelInvocationCount, criticalDependencyDegraded and costUsd.",
+      "Failure diagnostics include measured field values plus latency, recommendation count, workspace and Brand identifiers.",
+      "The comparability predicate itself remains unchanged.",
+      "All rollout thresholds remain unchanged.",
       "Hunter V1 remains production authority; no V2 persistence, canary, scheduler or production enablement.",
-      "Corrected 3x3 pre-gate passes before any 30-pair full gate.",
-      "PES v2 CI and Security baseline pass before merge/deployment."
+      "PES v2 CI and Security baseline pass before merge/deployment.",
+      "The same 3x3 pre-gate is rerun on the exact merge SHA before any 30-pair gate."
     ],
     "priorPreGateEvidence": {
-      "runId": "HI2-11R5R3-PREGATE-20260922-H",
-      "releaseSha": "e26c50037f3a85a083713b6c8340516e596a2d82",
+      "runId": "HI2-11R5R4-PREGATE-20260922-I",
+      "releaseSha": "37da5d3de1069430070e8a68534b916444c3be05",
       "status": "blocked",
-      "reason": "V1 controls completed real retrieval/model work (20→3 and 19→6/3) with measured Agent Reach searches, but comparability rejected production-tolerated enrichment fallback because the shadow guard treated every enrichment diagnostic as critical degradation."
+      "reason": "The paired batch failed Hunter V1 comparability after three substantive cohort preflights, but the existing exception did not identify which comparability field failed."
     }
   }
 }
