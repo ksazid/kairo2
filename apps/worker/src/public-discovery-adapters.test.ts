@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { DiscoveryRequest } from "@kairo/agent-contracts";
 import {
   BlueskyDiscoveryProvider,
+  GitHubDiscoveryProvider,
   HackerNewsDiscoveryProvider,
   PublicDiscoveryAdapterError,
   RssAtomDiscoveryProvider,
@@ -18,6 +19,62 @@ const request = (query: string, maxResults = 5): DiscoveryRequest => ({
 function jsonResponse(value: unknown, status = 200): Response {
   return new Response(JSON.stringify(value), { status, headers: { "content-type": "application/json" } });
 }
+
+describe("VS-13 GitHub discovery adapter", () => {
+  it("reuses recent identical repository searches to stay within GitHub search-rate limits", async () => {
+    let calls = 0;
+    let nowMs = Date.parse("2026-09-24T04:00:00.000Z");
+    const provider = new GitHubDiscoveryProvider({
+      cacheTtlMs: 300_000,
+      now: () => new Date(nowMs),
+      fetchImpl: async () => {
+        calls += 1;
+        return jsonResponse({
+          items: [{
+            full_name: "openai/openai-node",
+            description: "Official JavaScript and TypeScript library for the OpenAI API",
+            html_url: "https://github.com/openai/openai-node",
+            updated_at: "2026-09-24T03:55:00.000Z",
+          }],
+        });
+      },
+    });
+
+    const first = await provider.discover(request("openai api", 5));
+    const second = await provider.discover(request("openai api", 5));
+
+    expect(calls).toBe(1);
+    expect(second).toEqual(first);
+    expect(second).not.toBe(first);
+
+    nowMs += 300_001;
+    await provider.discover(request("openai api", 5));
+    expect(calls).toBe(2);
+  });
+
+  it("does not share cache entries across distinct GitHub queries", async () => {
+    let calls = 0;
+    const provider = new GitHubDiscoveryProvider({
+      fetchImpl: async (input) => {
+        calls += 1;
+        const url = new URL(String(input));
+        const q = url.searchParams.get("q") ?? "unknown";
+        return jsonResponse({
+          items: [{
+            full_name: "example/" + q.replace(/\s+/g, "-"),
+            html_url: "https://github.com/example/" + q.replace(/\s+/g, "-"),
+            updated_at: "2026-09-24T03:55:00.000Z",
+          }],
+        });
+      },
+      now: () => new Date("2026-09-24T04:00:00.000Z"),
+    });
+
+    await provider.discover(request("AI agents", 5));
+    await provider.discover(request("developer tools", 5));
+    expect(calls).toBe(2);
+  });
+});
 
 describe("VS-13 RSS/Atom discovery adapter", () => {
   it("uses one generic tagged feed adapter and normalizes RSS evidence", async () => {
