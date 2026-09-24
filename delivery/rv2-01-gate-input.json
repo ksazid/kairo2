@@ -1,0 +1,487 @@
+{
+  "slice": {
+    "id": "RV2-01",
+    "objectiveId": "OBJ-RV2-01",
+    "state": "testing",
+    "riskLevel": "high",
+    "implementationPermission": "runtime-enabled",
+    "scope": "Certify Reel Production V2 Phase 1 scene-level production foundation. Keep existing Reel storyboard fallback and Kairo approval/publishing authority unchanged; do not enable live providers, deploy, release or production-enable.",
+    "budget": {
+      "maxModelCalls": 0,
+      "maxSubAgents": 0,
+      "maxWallClockMinutes": 45,
+      "maxExternalWrites": 20
+    }
+  },
+  "context": {
+    "schemaVersion": 1,
+    "graphRevision": 36,
+    "requestedSeeds": [
+      "OBJ-RV2-01",
+      "TASK-RV2-01",
+      "ART-RV2-01",
+      "EVAL-RV2-01",
+      "EVID-RV2-01-01",
+      "EVID-RV2-01-02",
+      "EVID-RV2-01-03"
+    ],
+    "resolvedSeeds": [
+      "OBJ-RV2-01",
+      "TASK-RV2-01",
+      "ART-RV2-01",
+      "EVAL-RV2-01",
+      "EVID-RV2-01-01",
+      "EVID-RV2-01-02",
+      "EVID-RV2-01-03"
+    ],
+    "resolution": [
+      {
+        "requestedId": "OBJ-RV2-01",
+        "currentId": "OBJ-RV2-01",
+        "chain": [
+          "OBJ-RV2-01"
+        ]
+      },
+      {
+        "requestedId": "TASK-RV2-01",
+        "currentId": "TASK-RV2-01",
+        "chain": [
+          "TASK-RV2-01"
+        ]
+      },
+      {
+        "requestedId": "ART-RV2-01",
+        "currentId": "ART-RV2-01",
+        "chain": [
+          "ART-RV2-01"
+        ]
+      },
+      {
+        "requestedId": "EVAL-RV2-01",
+        "currentId": "EVAL-RV2-01",
+        "chain": [
+          "EVAL-RV2-01"
+        ]
+      },
+      {
+        "requestedId": "EVID-RV2-01-01",
+        "currentId": "EVID-RV2-01-01",
+        "chain": [
+          "EVID-RV2-01-01"
+        ]
+      },
+      {
+        "requestedId": "EVID-RV2-01-02",
+        "currentId": "EVID-RV2-01-02",
+        "chain": [
+          "EVID-RV2-01-02"
+        ]
+      },
+      {
+        "requestedId": "EVID-RV2-01-03",
+        "currentId": "EVID-RV2-01-03",
+        "chain": [
+          "EVID-RV2-01-03"
+        ]
+      }
+    ],
+    "nodes": [
+      {
+        "id": "EVID-RV2-01-01",
+        "type": "Evidence",
+        "status": "verified",
+        "title": "GitHub PES v2 CI run 36068146954 passed for PR #55 head 939b09a37268f1a77b7e937be3abe31b20e4931b",
+        "memoryProvenance": {
+          "eventId": "GM-000036",
+          "revision": 36,
+          "actorId": "pes-v2-reel-production-v2",
+          "runId": "RV2-01",
+          "sourceIds": [],
+          "recordedAt": "2026-09-24T22:40:00.000Z"
+        }
+      },
+      {
+        "id": "EVID-RV2-01-02",
+        "type": "Evidence",
+        "status": "verified",
+        "title": "GitHub Security baseline run 36068146937 passed for PR #55 head 939b09a37268f1a77b7e937be3abe31b20e4931b",
+        "memoryProvenance": {
+          "eventId": "GM-000036",
+          "revision": 36,
+          "actorId": "pes-v2-reel-production-v2",
+          "runId": "RV2-01",
+          "sourceIds": [],
+          "recordedAt": "2026-09-24T22:40:00.000Z"
+        }
+      },
+      {
+        "id": "EVID-RV2-01-03",
+        "type": "Evidence",
+        "status": "verified",
+        "title": "Worker regression suite covers provider capability selection, paid-generation consent, scene-only revisioning, narration, media rights, stale-scene detection, FFmpeg assembly and readiness",
+        "memoryProvenance": {
+          "eventId": "GM-000036",
+          "revision": 36,
+          "actorId": "pes-v2-reel-production-v2",
+          "runId": "RV2-01",
+          "sourceIds": [],
+          "recordedAt": "2026-09-24T22:40:00.000Z"
+        }
+      },
+      {
+        "id": "ART-RV2-01",
+        "type": "Artifact",
+        "status": "verified",
+        "title": "Reel Production V2 Phase 1 runtime-disabled foundation",
+        "runId": "RV2-01",
+        "version": "939b09a37268f1a77b7e937be3abe31b20e4931b",
+        "memoryProvenance": {
+          "eventId": "GM-000036",
+          "revision": 36,
+          "actorId": "pes-v2-reel-production-v2",
+          "runId": "RV2-01",
+          "sourceIds": [],
+          "recordedAt": "2026-09-24T22:40:00.000Z"
+        }
+      },
+      {
+        "id": "EVAL-RV2-01",
+        "type": "Evaluation",
+        "status": "verified",
+        "title": "Deterministic Reel Production V2 tests validate scene isolation, cost consent, rights, stale detection, narrated assembly and readiness",
+        "rubricId": "reel-production-v2-high-risk",
+        "memoryProvenance": {
+          "eventId": "GM-000036",
+          "revision": 36,
+          "actorId": "pes-v2-reel-production-v2",
+          "runId": "RV2-01",
+          "sourceIds": [],
+          "recordedAt": "2026-09-24T22:40:00.000Z"
+        }
+      },
+      {
+        "id": "OBJ-RV2-01",
+        "type": "Objective",
+        "status": "active",
+        "title": "Certify Reel Production V2 Phase 1 as a runtime-disabled scene production foundation",
+        "successCriteria": [
+          "Only the selected Reel scene is regenerated; unrelated scene revisions remain unchanged.",
+          "Billable video or narration generation requires explicit human confirmation before provider execution.",
+          "Each scene production revision preserves source version, scene fingerprint and Claim lineage.",
+          "Narration is explicit: current audio or a documented intentional-silence override.",
+          "Uploaded replacement media requires confirmed rights evidence.",
+          "FFmpeg Reel V2 assembly normalizes scene visual plus audio into one publishable MP4 contract.",
+          "Readiness fails closed when video, narration or assembly capability is unavailable or unverified.",
+          "Existing Kairo immutable approval, media fingerprint and publishing authority remain unchanged.",
+          "Reel Production V2 is not production-enabled and no live video-provider adapter is enabled by this slice.",
+          "PES v2 CI and Security baseline pass on the exact implementation SHA."
+        ],
+        "memoryProvenance": {
+          "eventId": "GM-000036",
+          "revision": 36,
+          "actorId": "pes-v2-reel-production-v2",
+          "runId": "RV2-01",
+          "sourceIds": [],
+          "recordedAt": "2026-09-24T22:40:00.000Z"
+        }
+      },
+      {
+        "id": "TASK-RV2-01",
+        "type": "Task",
+        "status": "active",
+        "objectiveId": "OBJ-RV2-01",
+        "title": "Add scene revisions, provider contracts, narration, FFmpeg assembly and readiness gating",
+        "memoryProvenance": {
+          "eventId": "GM-000036",
+          "revision": 36,
+          "actorId": "pes-v2-reel-production-v2",
+          "runId": "RV2-01",
+          "sourceIds": [],
+          "recordedAt": "2026-09-24T22:40:00.000Z"
+        }
+      },
+      {
+        "id": "RUN-RV2-01-01",
+        "type": "AgentRun",
+        "status": "verified",
+        "objectiveId": "OBJ-RV2-01",
+        "title": "Exact Reel Production V2 implementation 939b09a37268f1a77b7e937be3abe31b20e4931b passed PES v2 CI and Security",
+        "memoryProvenance": {
+          "eventId": "GM-000036",
+          "revision": 36,
+          "actorId": "pes-v2-reel-production-v2",
+          "runId": "RV2-01",
+          "sourceIds": [],
+          "recordedAt": "2026-09-24T22:40:00.000Z"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "EDGE-OBJ-RV2-01-TASK",
+        "type": "IMPLEMENTED_BY",
+        "from": "OBJ-RV2-01",
+        "to": "TASK-RV2-01",
+        "memoryProvenance": {
+          "eventId": "GM-000036",
+          "revision": 36,
+          "actorId": "pes-v2-reel-production-v2",
+          "runId": "RV2-01",
+          "sourceIds": [],
+          "recordedAt": "2026-09-24T22:40:00.000Z"
+        }
+      },
+      {
+        "id": "EDGE-TASK-RV2-01-PRODUCED-ART",
+        "type": "PRODUCED",
+        "from": "TASK-RV2-01",
+        "to": "ART-RV2-01",
+        "memoryProvenance": {
+          "eventId": "GM-000036",
+          "revision": 36,
+          "actorId": "pes-v2-reel-production-v2",
+          "runId": "RV2-01",
+          "sourceIds": [],
+          "recordedAt": "2026-09-24T22:40:00.000Z"
+        }
+      },
+      {
+        "id": "EDGE-RUN-RV2-01-01-PRODUCED-ART",
+        "type": "PRODUCED",
+        "from": "RUN-RV2-01-01",
+        "to": "ART-RV2-01",
+        "memoryProvenance": {
+          "eventId": "GM-000036",
+          "revision": 36,
+          "actorId": "pes-v2-reel-production-v2",
+          "runId": "RV2-01",
+          "sourceIds": [],
+          "recordedAt": "2026-09-24T22:40:00.000Z"
+        }
+      },
+      {
+        "id": "EDGE-EVAL-RV2-01-EVALUATES-ART",
+        "type": "EVALUATES",
+        "from": "EVAL-RV2-01",
+        "to": "ART-RV2-01",
+        "memoryProvenance": {
+          "eventId": "GM-000036",
+          "revision": 36,
+          "actorId": "pes-v2-reel-production-v2",
+          "runId": "RV2-01",
+          "sourceIds": [],
+          "recordedAt": "2026-09-24T22:40:00.000Z"
+        }
+      },
+      {
+        "id": "EDGE-EVID-RV2-01-01-SUPPORTS-ART",
+        "type": "SUPPORTS",
+        "from": "EVID-RV2-01-01",
+        "to": "ART-RV2-01",
+        "provenance": {
+          "kind": "github-actions",
+          "runId": "36068146954"
+        },
+        "memoryProvenance": {
+          "eventId": "GM-000036",
+          "revision": 36,
+          "actorId": "pes-v2-reel-production-v2",
+          "runId": "RV2-01",
+          "sourceIds": [],
+          "recordedAt": "2026-09-24T22:40:00.000Z"
+        }
+      },
+      {
+        "id": "EDGE-EVID-RV2-01-02-SUPPORTS-ART",
+        "type": "SUPPORTS",
+        "from": "EVID-RV2-01-02",
+        "to": "ART-RV2-01",
+        "provenance": {
+          "kind": "github-actions",
+          "runId": "36068146937"
+        },
+        "memoryProvenance": {
+          "eventId": "GM-000036",
+          "revision": 36,
+          "actorId": "pes-v2-reel-production-v2",
+          "runId": "RV2-01",
+          "sourceIds": [],
+          "recordedAt": "2026-09-24T22:40:00.000Z"
+        }
+      },
+      {
+        "id": "EDGE-EVID-RV2-01-03-SUPPORTS-ART",
+        "type": "SUPPORTS",
+        "from": "EVID-RV2-01-03",
+        "to": "ART-RV2-01",
+        "provenance": {
+          "kind": "github-pr",
+          "path": "apps/worker/src/reel-production-v2.test.ts"
+        },
+        "memoryProvenance": {
+          "eventId": "GM-000036",
+          "revision": 36,
+          "actorId": "pes-v2-reel-production-v2",
+          "runId": "RV2-01",
+          "sourceIds": [],
+          "recordedAt": "2026-09-24T22:40:00.000Z"
+        }
+      }
+    ],
+    "ranking": [
+      {
+        "id": "EVID-RV2-01-01",
+        "score": 1119,
+        "hop": 0,
+        "status": "verified"
+      },
+      {
+        "id": "EVID-RV2-01-02",
+        "score": 1119,
+        "hop": 0,
+        "status": "verified"
+      },
+      {
+        "id": "EVID-RV2-01-03",
+        "score": 1119,
+        "hop": 0,
+        "status": "verified"
+      },
+      {
+        "id": "ART-RV2-01",
+        "score": 1118,
+        "hop": 0,
+        "status": "verified"
+      },
+      {
+        "id": "EVAL-RV2-01",
+        "score": 1118,
+        "hop": 0,
+        "status": "verified"
+      },
+      {
+        "id": "OBJ-RV2-01",
+        "score": 1117,
+        "hop": 0,
+        "status": "active"
+      },
+      {
+        "id": "TASK-RV2-01",
+        "score": 1113,
+        "hop": 0,
+        "status": "active"
+      },
+      {
+        "id": "RUN-RV2-01-01",
+        "score": 101,
+        "hop": 1,
+        "status": "verified"
+      }
+    ],
+    "contradictions": [],
+    "omittedNodeIds": [],
+    "policy": {
+      "maxHops": 2,
+      "maxNodes": 40,
+      "maxTokens": 12000,
+      "includeStatuses": [
+        "approved",
+        "verified",
+        "active",
+        "superseded",
+        "failed"
+      ],
+      "preferVerified": true,
+      "includeContradictions": true,
+      "resolveSuperseded": true
+    },
+    "contextHash": "7a94ece448b2f7ec7e3016a4bd71e1c0763ff897c48a24341c6e46dbe29f48f6",
+    "estimatedTokens": 1897,
+    "truncated": false
+  },
+  "approvals": [
+    {
+      "type": "scope",
+      "status": "approved",
+      "actorType": "human",
+      "scopeId": "RV2-01"
+    },
+    {
+      "type": "policy",
+      "status": "approved",
+      "actorType": "human",
+      "scopeId": "RV2-01"
+    },
+    {
+      "type": "implementation",
+      "status": "approved",
+      "actorType": "human",
+      "scopeId": "RV2-01"
+    }
+  ],
+  "evidenceIds": [
+    "EVID-RV2-01-01",
+    "EVID-RV2-01-02",
+    "EVID-RV2-01-03"
+  ],
+  "changedPaths": [
+    "apps/worker/package.json",
+    "apps/worker/src/reel-production-v2.ts",
+    "apps/worker/src/reel-production-v2.test.ts",
+    "apps/worker/src/reel-assembler.ts",
+    "apps/worker/src/reel-assembler.test.ts",
+    "apps/worker/src/reel-production-readiness.ts",
+    "apps/worker/src/reel-production-readiness.test.ts"
+  ],
+  "deliveryGraph": {
+    "status": "ready",
+    "sliceId": "RV2-01",
+    "riskLevel": "high",
+    "purpose": "Add recoverable scene-level Reel production without replacing Kairo approval, publishing or production authority.",
+    "stages": [
+      {
+        "id": "scene-contracts",
+        "dependsOn": [],
+        "output": "typed video and narration provider contracts plus immutable scene revision evidence",
+        "authority": "runtime-disabled",
+        "rollback": "Revert RV2-01."
+      },
+      {
+        "id": "scene-repair",
+        "dependsOn": [
+          "scene-contracts"
+        ],
+        "output": "selected-scene regeneration with cost confirmation and media-rights evidence",
+        "authority": "runtime-disabled",
+        "rollback": "Use existing storyboard Reel path."
+      },
+      {
+        "id": "assembly",
+        "dependsOn": [
+          "scene-repair"
+        ],
+        "output": "FFmpeg visual plus narration scene normalization and final MP4 assembly",
+        "authority": "runtime-disabled",
+        "rollback": "Use existing storyboard Reel encoder."
+      },
+      {
+        "id": "readiness",
+        "dependsOn": [
+          "assembly"
+        ],
+        "output": "live provider, narration and assembly readiness gate",
+        "authority": "read-only",
+        "rollback": "Keep Reel Production V2 disabled."
+      }
+    ],
+    "constraints": {
+      "productionEnable": false,
+      "release": false,
+      "deployment": false,
+      "liveProviderAdapters": false,
+      "existingApprovalAuthority": "unchanged",
+      "existingPublishingAuthority": "unchanged",
+      "storyboardFallback": "retained"
+    }
+  }
+}
