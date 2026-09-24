@@ -116,14 +116,15 @@ export const HUNTER_SHADOW_MODEL_PRESSURE_POLICY = {
 } as const;
 
 export const HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE = {
-  maxIntents: 2,
+  maxIntents: 3,
   maxSourcesPerIntent: 2,
   maxPaidIntents: 2,
-  maxExternalCalls: 2,
+  maxExternalCalls: 3,
   maxSemanticCalls: 0,
   deepLimit: 2,
   deepAnalysisConcurrency: HUNTER_SHADOW_MODEL_PRESSURE_POLICY.deepAnalysisConcurrency,
   maxCandidates: 6,
+  enforceFinalExplorationShare: true,
 } as const;
 
 export interface ExecuteHunterShadowEvidenceOptions {

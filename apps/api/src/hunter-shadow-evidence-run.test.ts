@@ -80,6 +80,7 @@ describe("Hunter shadow operational evidence", () => {
 
   it("keeps the operational candidate capacity at six so the certified exploration ceiling is one item", () => {
     expect(HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE.maxCandidates).toBe(6);
+    expect(HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE.enforceFinalExplorationShare).toBe(true);
     expect(Math.floor(HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE.maxCandidates * 0.2)).toBe(1);
   });
 
@@ -262,16 +263,17 @@ describe("Hunter shadow operational evidence", () => {
     expect(fields.every((field) => field.value.trim().length > 20)).toBe(true);
   });
 
-  it("keeps the operational V2 profile on a two-intent cost bound with reserved exploration", () => {
+  it("keeps the operational V2 profile on a two-paid-search cost bound with three retrieval intents", () => {
     expect(HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE).toEqual({
-      maxIntents: 2,
+      maxIntents: 3,
       maxSourcesPerIntent: 2,
       maxPaidIntents: 2,
-      maxExternalCalls: 2,
+      maxExternalCalls: 3,
       maxSemanticCalls: 0,
       deepLimit: 2,
       deepAnalysisConcurrency: 1,
       maxCandidates: 6,
+      enforceFinalExplorationShare: true,
     });
   });
 
@@ -280,6 +282,9 @@ describe("Hunter shadow operational evidence", () => {
       deepAnalysisConcurrency: 1,
       betweenPairsDelayMs: 15_000,
     });
+    expect(HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE.maxIntents).toBe(3);
+    expect(HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE.maxPaidIntents).toBe(2);
+    expect(HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE.maxExternalCalls).toBe(3);
     expect(HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE.deepLimit).toBe(2);
     expect(HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE.maxCandidates).toBe(6);
   });

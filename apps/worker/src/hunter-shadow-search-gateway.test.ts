@@ -52,6 +52,7 @@ describe("GatewayShadowSearchPort", () => {
       .map(([request]) => request.input.source);
     expect(paidSources).toContain("agent-reach");
     expect(unpaidSources).not.toContain("agent-reach");
+    expect(unpaidSources).toContain("rss");
   });
 
   it("executes independent provider calls for one intent concurrently", async () => {
