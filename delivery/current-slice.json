@@ -1,11 +1,11 @@
 {
   "activeSlice": {
-    "id": "HI2-11R5R11",
-    "objectiveId": "OBJ-HI2-11R5R11",
+    "id": "HI2-11R5R12",
+    "objectiveId": "OBJ-HI2-11R5R12",
     "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Reduce shadow benchmark model-provider burst pressure without reducing evaluated work: serialize the existing two V2 deep-analysis calls and add a bounded 15-second scheduling gap between paired runs. Keep the model gateway retry contract, measured lane latency/cost, comparability predicate, rollout thresholds and Hunter V1 authority unchanged.",
+    "scope": "Restore the certified three-topic Hunter V2 shadow retrieval shape while keeping paid search cost at two Agent Reach calls: two core intents plus one exploration intent, with the unpaid core intent using the existing free RSS fallback. Enforce explorationMax=0.20 against the actual final recommendation count so sparse output cannot silently exceed the certified ceiling.",
     "budget": {
       "maxModelCalls": 40,
       "maxSubAgents": 0,
@@ -17,37 +17,48 @@
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R11"
+        "scopeId": "HI2-11R5R12"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R11"
+        "scopeId": "HI2-11R5R12"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R11"
+        "scopeId": "HI2-11R5R12"
       }
     ],
     "successCriteria": [
-      "Operational V2 shadow still requests exactly two deep analyses when two candidates are available; only their concurrency changes from burst to one-at-a-time.",
-      "The shadow evidence runner waits 15 seconds between completed pairs, outside per-lane measured latency, to avoid benchmark-induced provider bursts.",
-      "Default multi-stage behavior remains concurrent unless the operational shadow profile explicitly requests serialization.",
-      "Model gateway retry behavior and Retry-After handling remain unchanged.",
-      "No recommendation-capacity, exploration, topic-share, retrieval, cost, latency or failure threshold changes.",
-      "V1 controls still require non-zero evidence, measured model execution, no critical degradation and positive measured cost.",
+      "Operational V2 selects exactly three lexical intents when at least three discovery topics exist: two distinct core topics and one distinct exploration topic.",
+      "At most two intents are paid Agent Reach searches; an unpaid brand-core intent retains the existing RSS fallback so configured paid search cost remains at most $0.014 per candidate lane.",
+      "Operational retrieval may execute three intents but does not increase maxPaidIntents above 2.",
+      "Final exploration share never exceeds 0.20 based on the actual selected recommendation count, including sparse-output fallback cases.",
+      "If sparse evidence makes the certified 0.08-0.20 exploration interval mathematically impossible, the run remains honestly rollout-blocking rather than fabricating recommendations.",
+      "The R5R11 model-pressure policy remains unchanged: deep-analysis concurrency 1 and 15-second inter-pair pacing.",
+      "No quality, retrieval, latency, cost, failure, exploration or topic-share rollout threshold changes.",
       "Hunter V1 remains production authority; no V2 persistence, canary, scheduler or production enablement.",
       "PES v2 CI and Security baseline pass before merge/deployment.",
-      "The same 3x3 pre-gate passes on the exact merge SHA before any 30-pair gate."
+      "The same 3x3 pre-gate passes all non-sample-size gates before any 30-pair gate."
     ],
     "priorPreGateEvidence": {
-      "runId": "HI2-11R5R10-PREGATE-20260924-O",
-      "releaseSha": "a8475874c0374ff66b4c3f25e5050e4aef977d15",
+      "runId": "HI2-11R5R11-PREGATE-20260924-P",
+      "releaseSha": "60ca3289069154e1e2631cdf2d90ca069660764f",
       "status": "blocked",
-      "reason": "GitHub discovery remained healthy, but a paired persisted V1 judgment failed with hunter-model HTTP 429 after 20 evidence items. The control recorded modelInvocationCount=0, criticalDependencyDegraded=true, costUsd=0.028 and latencyMs=30436."
+      "metrics": {
+        "averageQualityDelta": -0.1896894444444445,
+        "averageRetrievalCoverage": 1,
+        "v2FailureRate": 0,
+        "p95LatencyRatio": 0.5965828013518588,
+        "averageCostRatio": 0.559140910433198,
+        "minimumExplorationShare": 0.16666666666666666,
+        "maximumExplorationShare": 0.25,
+        "maximumObservedTopicShare": 0.25
+      },
+      "reason": "R5R11 eliminated benchmark 429 failures and made latency/cost healthy, but one sparse 4-item result produced 25% exploration and V2 quality remained below the unchanged -0.02 delta gate. Operational retrieval had been narrowed to one core plus one exploration intent despite the earlier certified two-core-plus-one-exploration contract."
     }
   }
 }
