@@ -179,7 +179,11 @@ describe("shadow Preference-aware EEI V2", () => {
     const run = runShadowPreferenceAwareEEI({
       preRanked: input,
       preferenceState: { ...preferenceState, explorationBudget: 0.1 },
-      options: { maxCandidates: 6, adjacentShare: 0.2 },
+      options: {
+        maxCandidates: 6,
+        adjacentShare: 0.2,
+        enforceFinalExplorationShare: true,
+      },
     });
 
     const explorationShare = run.selected.length
