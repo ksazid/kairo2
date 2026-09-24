@@ -73,6 +73,7 @@ export interface ShadowEEIDiagnostics {
 export interface RunShadowEEIOptions {
   maxCandidates?: number;
   adjacentShare?: number;
+  enforceFinalExplorationShare?: boolean;
   engagementRisksByCandidateId?: Readonly<Record<string, ManipulationRiskInput>>;
 }
 
@@ -243,11 +244,17 @@ export function runShadowPreferenceAwareEEI(input: {
     );
   }
 
-  enforceFinalDistributionBounds(
+  enforceFinalTopicShare(
     selected,
     HUNTER_EEI_V2_SHADOW_POLICY.maximumTopicShare,
-    HUNTER_EEI_V2_SHADOW_POLICY.explorationMax,
   );
+  if (input.options?.enforceFinalExplorationShare === true) {
+    enforceFinalDistributionBounds(
+      selected,
+      HUNTER_EEI_V2_SHADOW_POLICY.maximumTopicShare,
+      HUNTER_EEI_V2_SHADOW_POLICY.explorationMax,
+    );
+  }
 
   const selectedTopicCounts = new Map<string, number>();
   for (const item of selected) {
