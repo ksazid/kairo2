@@ -5,7 +5,7 @@
     "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Restore the certified three-topic Hunter V2 shadow retrieval shape while keeping paid search cost at two Agent Reach calls: two core intents plus one exploration intent, with the unpaid core intent using the existing free RSS fallback. Enforce explorationMax=0.20 against the actual final recommendation count so sparse output cannot silently exceed the certified ceiling.",
+    "scope": "Restore the certified three-topic Hunter V2 shadow retrieval shape while keeping paid search cost at two Agent Reach calls: two core intents plus one exploration intent, with the unpaid core intent using the existing free RSS fallback. Enforce explorationMax=0.20 against the actual final recommendation count only in the operational shadow evidence profile, preserving generic EEI and learned-exploration semantics.",
     "budget": {
       "maxModelCalls": 40,
       "maxSubAgents": 0,
@@ -36,7 +36,8 @@
       "Operational V2 selects exactly three lexical intents when at least three discovery topics exist: two distinct core topics and one distinct exploration topic.",
       "At most two intents are paid Agent Reach searches; an unpaid brand-core intent retains the existing RSS fallback so configured paid search cost remains at most $0.014 per candidate lane.",
       "Operational retrieval may execute three intents but does not increase maxPaidIntents above 2.",
-      "Final exploration share never exceeds 0.20 based on the actual selected recommendation count, including sparse-output fallback cases.",
+      "Operational shadow evidence final exploration share never exceeds 0.20 based on the actual selected recommendation count, including sparse-output fallback cases.",
+      "Generic EEI calls keep existing explicit-exploration and feedback-learning behavior unless the operational final-share enforcement flag is enabled.",
       "If sparse evidence makes the certified 0.08-0.20 exploration interval mathematically impossible, the run remains honestly rollout-blocking rather than fabricating recommendations.",
       "The R5R11 model-pressure policy remains unchanged: deep-analysis concurrency 1 and 15-second inter-pair pacing.",
       "No quality, retrieval, latency, cost, failure, exploration or topic-share rollout threshold changes.",
