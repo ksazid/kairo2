@@ -1,0 +1,51 @@
+{
+  "status": "ready",
+  "sliceId": "RV2-01",
+  "riskLevel": "high",
+  "purpose": "Add recoverable scene-level Reel production without replacing Kairo approval, publishing or production authority.",
+  "stages": [
+    {
+      "id": "scene-contracts",
+      "dependsOn": [],
+      "output": "typed video and narration provider contracts plus immutable scene revision evidence",
+      "authority": "runtime-disabled",
+      "rollback": "Revert RV2-01."
+    },
+    {
+      "id": "scene-repair",
+      "dependsOn": [
+        "scene-contracts"
+      ],
+      "output": "selected-scene regeneration with cost confirmation and media-rights evidence",
+      "authority": "runtime-disabled",
+      "rollback": "Use existing storyboard Reel path."
+    },
+    {
+      "id": "assembly",
+      "dependsOn": [
+        "scene-repair"
+      ],
+      "output": "FFmpeg visual plus narration scene normalization and final MP4 assembly",
+      "authority": "runtime-disabled",
+      "rollback": "Use existing storyboard Reel encoder."
+    },
+    {
+      "id": "readiness",
+      "dependsOn": [
+        "assembly"
+      ],
+      "output": "live provider, narration and assembly readiness gate",
+      "authority": "read-only",
+      "rollback": "Keep Reel Production V2 disabled."
+    }
+  ],
+  "constraints": {
+    "productionEnable": false,
+    "release": false,
+    "deployment": false,
+    "liveProviderAdapters": false,
+    "existingApprovalAuthority": "unchanged",
+    "existingPublishingAuthority": "unchanged",
+    "storyboardFallback": "retained"
+  }
+}
