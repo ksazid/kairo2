@@ -121,6 +121,7 @@ export interface HunterShadowLaneAdapterOptions {
     deepLimit?: number;
     deepAnalysisConcurrency?: number;
     maxCandidates?: number;
+    enforceFinalExplorationShare?: boolean;
   };
 }
 
@@ -272,6 +273,8 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
       ...(context.preferenceState ? { preferenceState: context.preferenceState } : {}),
       options: {
         maxCandidates: this.options.candidate?.maxCandidates ?? 10,
+        enforceFinalExplorationShare:
+          this.options.candidate?.enforceFinalExplorationShare === true,
       },
     });
     const latencyMs = positiveElapsed(performance.now() - started);
