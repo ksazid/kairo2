@@ -110,6 +110,11 @@ export interface HunterShadowOperationalEvidence {
 
 export const HUNTER_SHADOW_DISPOSABLE_BOOTSTRAP_MODE = "source-backed-deterministic" as const;
 
+export const HUNTER_SHADOW_MODEL_PRESSURE_POLICY = {
+  deepAnalysisConcurrency: 1,
+  betweenPairsDelayMs: 15_000,
+} as const;
+
 export const HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE = {
   maxIntents: 2,
   maxSourcesPerIntent: 2,
@@ -117,6 +122,7 @@ export const HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE = {
   maxExternalCalls: 2,
   maxSemanticCalls: 0,
   deepLimit: 2,
+  deepAnalysisConcurrency: HUNTER_SHADOW_MODEL_PRESSURE_POLICY.deepAnalysisConcurrency,
   maxCandidates: 6,
 } as const;
 
@@ -463,7 +469,9 @@ export async function executeHunterShadowEvidenceRun(
     searchCostUsdBySource: options.searchCostUsdBySource ?? {},
     candidate: HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE,
   });
-  const batch = await runHunterShadowEvidenceBatch(runs, executor);
+  const batch = await runHunterShadowEvidenceBatch(runs, executor, {
+    betweenPairsDelayMs: HUNTER_SHADOW_MODEL_PRESSURE_POLICY.betweenPairsDelayMs,
+  });
   return redactOperationalEvidence(
     options.request,
     startedAt,
