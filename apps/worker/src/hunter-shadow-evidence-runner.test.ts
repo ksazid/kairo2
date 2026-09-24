@@ -108,6 +108,23 @@ describe("Hunter shadow evidence runner", () => {
     expect(batch.readiness.allowedStage).toBe("off");
   });
 
+  it("paces paired runs outside lane measurement without changing pair semantics", async () => {
+    const sleeps: number[] = [];
+    const batch = await runHunterShadowEvidenceBatch(
+      [run(1), run(2), run(3)],
+      executor(),
+      {
+        betweenPairsDelayMs: 15_000,
+        sleep: async (ms) => { sleeps.push(ms); },
+      },
+    );
+
+    expect(batch.pairs).toHaveLength(3);
+    expect(sleeps).toEqual([15_000, 15_000]);
+    expect(batch.pairs.every((pair) => pair.observation.v1LatencyMs === 1000)).toBe(true);
+    expect(batch.pairs.every((pair) => pair.observation.v2LatencyMs === 1200)).toBe(true);
+  });
+
   it("reaches canary eligibility only after sufficient safe measured shadow evidence", async () => {
     const batch = await runHunterShadowEvidenceBatch(
       Array.from({ length: 30 }, (_, i) => run(i)),
