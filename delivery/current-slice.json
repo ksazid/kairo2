@@ -1,53 +1,53 @@
 {
   "activeSlice": {
-    "id": "HI2-11R5R10",
-    "objectiveId": "OBJ-HI2-11R5R10",
+    "id": "HI2-11R5R11",
+    "objectiveId": "OBJ-HI2-11R5R11",
     "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Reduce real GitHub discovery rate-limit pressure by caching recent identical repository searches in the production GitHub discovery provider. Reuse only verified normalized evidence for a bounded TTL and bounded entry count; do not alter Hunter comparability or rollout thresholds.",
+    "scope": "Reduce shadow benchmark model-provider burst pressure without reducing evaluated work: serialize the existing two V2 deep-analysis calls and add a bounded 15-second scheduling gap between paired runs. Keep the model gateway retry contract, measured lane latency/cost, comparability predicate, rollout thresholds and Hunter V1 authority unchanged.",
     "budget": {
-      "maxModelCalls": 30,
+      "maxModelCalls": 40,
       "maxSubAgents": 0,
-      "maxWallClockMinutes": 20,
-      "maxExternalWrites": 12
+      "maxWallClockMinutes": 25,
+      "maxExternalWrites": 14
     },
     "approvals": [
       {
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R10"
+        "scopeId": "HI2-11R5R11"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R10"
+        "scopeId": "HI2-11R5R11"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R10"
+        "scopeId": "HI2-11R5R11"
       }
     ],
     "successCriteria": [
-      "Identical GitHub discovery queries within five minutes reuse normalized verified evidence without a second GitHub API request.",
-      "Different GitHub queries remain isolated cache entries.",
-      "The GitHub discovery cache is bounded to 64 entries by default and at most 500 entries by configuration.",
-      "Expired entries are fetched fresh and replaced.",
-      "Cached results are cloned on read/write so callers cannot mutate provider cache state.",
-      "No Hunter V1 comparability predicate or rollout threshold changes.",
+      "Operational V2 shadow still requests exactly two deep analyses when two candidates are available; only their concurrency changes from burst to one-at-a-time.",
+      "The shadow evidence runner waits 15 seconds between completed pairs, outside per-lane measured latency, to avoid benchmark-induced provider bursts.",
+      "Default multi-stage behavior remains concurrent unless the operational shadow profile explicitly requests serialization.",
+      "Model gateway retry behavior and Retry-After handling remain unchanged.",
+      "No recommendation-capacity, exploration, topic-share, retrieval, cost, latency or failure threshold changes.",
+      "V1 controls still require non-zero evidence, measured model execution, no critical degradation and positive measured cost.",
       "Hunter V1 remains production authority; no V2 persistence, canary, scheduler or production enablement.",
       "PES v2 CI and Security baseline pass before merge/deployment.",
-      "The corrected 3x3 pre-gate passes on the exact merge SHA before any 30-pair gate."
+      "The same 3x3 pre-gate passes on the exact merge SHA before any 30-pair gate."
     ],
     "priorPreGateEvidence": {
-      "runId": "HI2-11R5R9-PREGATE-20260924-N",
-      "releaseSha": "0e08fb7b301cf81ac1b12dad049f0870cde64b18",
+      "runId": "HI2-11R5R10-PREGATE-20260924-O",
+      "releaseSha": "a8475874c0374ff66b4c3f25e5050e4aef977d15",
       "status": "blocked",
-      "reason": "The paired persisted control still hit GitHub discovery rate limiting on the final attempt despite producing 16 evidence items, one measured model judgment and three recommendations. The retry was honestly metered at 39.958s and $0.0294871; comparability correctly remained fail-closed."
+      "reason": "GitHub discovery remained healthy, but a paired persisted V1 judgment failed with hunter-model HTTP 429 after 20 evidence items. The control recorded modelInvocationCount=0, criticalDependencyDegraded=true, costUsd=0.028 and latencyMs=30436."
     }
   }
 }
