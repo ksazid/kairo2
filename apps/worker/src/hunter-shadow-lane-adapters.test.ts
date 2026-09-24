@@ -12,6 +12,7 @@ import {
   ReadOnlyHunterShadowLaneExecutor,
   balancedShadowRetrievalPlan,
   isHunterDeepAnalysisOutput,
+  isRateLimitedControlDegradation,
   selectPaidShadowIntentIds,
   type HunterShadowExecutionContext,
 } from "./hunter-shadow-lane-adapters";
@@ -226,6 +227,87 @@ describe("read-only Hunter shadow lane adapters", () => {
     expect(pair.pair.candidate.productionGuardIntact).toBe(true);
     expect(pair.pair.candidate.provenanceComplete).toBe(true);
     expect(pair.observation.criticalViolations).toBeUndefined();
+  });
+
+  it("retries a rate-limited V1 control once and keeps retry latency/cost inside measured control evidence", async () => {
+    let modelAttempts = 0;
+    const sleeps: number[] = [];
+    const retryRuntime: AgentRuntimePort = {
+      async invoke<TOutput>(request: AgentInvocationRequest) {
+        if (request.outputSchema.name !== "hunter-opportunities") {
+          return runtime.invoke<TOutput>(request);
+        }
+        modelAttempts += 1;
+        if (modelAttempts === 1) {
+          throw { kind: "rate-limited", statusCode: 429 };
+        }
+        return runtime.invoke<TOutput>(request);
+      },
+    };
+    const executor = new ReadOnlyHunterShadowLaneExecutor({
+      loadContext: async () => context,
+      tools,
+      runtime: retryRuntime,
+      searchCostUsdBySource: { "agent-reach": 0.007 },
+      controlRetry: {
+        maxAttempts: 2,
+        delayMs: 25,
+        sleep: async (ms) => { sleeps.push(ms); },
+      },
+    });
+
+    const control = await executor.runControl(run);
+    expect(modelAttempts).toBe(2);
+    expect(sleeps).toEqual([25]);
+    expect(control.criticalDependencyDegraded).toBe(false);
+    expect(control.criticalDependencyFailures).toEqual([]);
+    expect(control.modelInvocationCount).toBe(1);
+    expect(control.metadata.costUsd).toBeGreaterThan(0.01);
+    expect(control.metadata.latencyMs).toBeGreaterThan(0);
+  });
+
+  it("does not retry non-rate-limit control degradation", async () => {
+    let modelAttempts = 0;
+    const sleeps: number[] = [];
+    const brokenRuntime: AgentRuntimePort = {
+      async invoke<TOutput>(request: AgentInvocationRequest) {
+        if (request.outputSchema.name !== "hunter-opportunities") {
+          return runtime.invoke<TOutput>(request);
+        }
+        modelAttempts += 1;
+        throw { kind: "invalid-response", statusCode: 400 };
+      },
+    };
+    const executor = new ReadOnlyHunterShadowLaneExecutor({
+      loadContext: async () => context,
+      tools,
+      runtime: brokenRuntime,
+      searchCostUsdBySource: { "agent-reach": 0.007 },
+      controlRetry: {
+        maxAttempts: 2,
+        delayMs: 25,
+        sleep: async (ms) => { sleeps.push(ms); },
+      },
+    });
+
+    const control = await executor.runControl(run);
+    expect(modelAttempts).toBe(1);
+    expect(sleeps).toEqual([]);
+    expect(control.criticalDependencyDegraded).toBe(true);
+    expect(control.criticalDependencyFailures).toEqual([
+      { phase: "judgment", source: "hunter-model", kind: "invalid-response", statusCode: 400 },
+    ]);
+  });
+
+  it("classifies only all-rate-limited critical failures as retryable", () => {
+    expect(isRateLimitedControlDegradation(true, [
+      { phase: "judgment", source: "hunter-model", kind: "rate-limited", statusCode: 429 },
+    ])).toBe(true);
+    expect(isRateLimitedControlDegradation(true, [
+      { phase: "discovery", source: "github", kind: "rate-limited" },
+      { phase: "judgment", source: "hunter-model", kind: "invalid-response" },
+    ])).toBe(false);
+    expect(isRateLimitedControlDegradation(false, [])).toBe(false);
   });
 
   it("rejects a context whose tenant scope differs from the requested shadow case before execution", async () => {

@@ -107,6 +107,11 @@ export interface HunterShadowLaneAdapterOptions {
   semanticExpansion?: HunterSemanticExpansionPort;
   semanticHardNegative?: ShadowHardNegativeSemanticPort;
   searchCostUsdBySource?: Readonly<Record<string, number>>;
+  controlRetry?: {
+    maxAttempts?: number;
+    delayMs?: number;
+    sleep?: (ms: number) => Promise<void>;
+  };
   candidate?: {
     maxIntents?: number;
     maxSourcesPerIntent?: number;
@@ -131,73 +136,75 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
 
   async runControl(run: HunterShadowRunCase): Promise<HunterShadowControlLaneResult> {
     const context = await this.context(run);
-    const captured: OpportunityCandidateInput[] = [];
     const runtime = new MeteredRuntime(this.options.runtime);
     const tools = new MeteredToolGateway(this.options.tools, this.options.searchCostUsdBySource);
-    const controlFailures: HunterFailureDiagnostic[] = [];
-    const sink = {
-      async recordCandidate(
-        _accountId: string,
-        _brandId: string,
-        input: OpportunityCandidateInput,
-      ): Promise<RecordCandidateResult> {
-        captured.push(structuredClone(input));
-        return {
-          signal: { id: "shadow-control-" + captured.length } as RecordCandidateResult["signal"],
-          opportunity: null,
-        };
-      },
-    };
-
-    const runner = new HunterOrchestrator(
-      tools,
-      runtime,
-      sink,
-      this.options.sourceRegistry ?? DEFAULT_SOURCE_REGISTRY,
-      (diagnostic) => controlFailures.push(diagnostic),
-    );
-
+    const retry = controlRetryPolicy(this.options.controlRetry);
     const started = performance.now();
-    const controlRun = await runner.runForAuthorizedBrand({
-      ...context.hunterInput,
-      accountId: context.accountId,
-      refreshSeed: context.referenceTime,
-    });
-    const latencyMs = positiveElapsed(performance.now() - started);
+    let final:
+      | {
+          captured: OpportunityCandidateInput[];
+          controlRun: Awaited<ReturnType<HunterOrchestrator["runForAuthorizedBrand"]>>;
+          criticalFailures: HunterShadowControlLaneResult["criticalDependencyFailures"];
+          criticalDegraded: boolean;
+        }
+      | undefined;
 
+    for (let attempt = 1; attempt <= retry.maxAttempts; attempt += 1) {
+      const captured: OpportunityCandidateInput[] = [];
+      const controlFailures: HunterFailureDiagnostic[] = [];
+      const sink = {
+        async recordCandidate(
+          _accountId: string,
+          _brandId: string,
+          input: OpportunityCandidateInput,
+        ): Promise<RecordCandidateResult> {
+          captured.push(structuredClone(input));
+          return {
+            signal: { id: "shadow-control-" + captured.length } as RecordCandidateResult["signal"],
+            opportunity: null,
+          };
+        },
+      };
+      const runner = new HunterOrchestrator(
+        tools,
+        runtime,
+        sink,
+        this.options.sourceRegistry ?? DEFAULT_SOURCE_REGISTRY,
+        (diagnostic) => controlFailures.push(diagnostic),
+      );
+      const controlRun = await runner.runForAuthorizedBrand({
+        ...context.hunterInput,
+        accountId: context.accountId,
+        refreshSeed: context.referenceTime,
+      });
+      const criticalFailures = criticalControlFailures(controlFailures);
+      const criticalDegraded =
+        Boolean(controlRun.degradedSources?.length) || criticalFailures.length > 0;
+      final = { captured, controlRun, criticalFailures, criticalDegraded };
+
+      if (
+        attempt >= retry.maxAttempts ||
+        !isRateLimitedControlDegradation(criticalDegraded, criticalFailures)
+      ) {
+        break;
+      }
+      await retry.sleep(retry.delayMs * attempt);
+    }
+
+    if (!final) throw new Error("Hunter shadow control did not execute");
+    const latencyMs = positiveElapsed(performance.now() - started);
     return {
       inputFingerprint: run.inputFingerprint,
       workspaceId: context.hunterInput.brand.workspaceId,
       brandId: context.hunterInput.brand.brandId,
       qualityScore: average(
-        captured.map((candidate) => evaluateOpportunity(candidate.scores).overall),
+        final.captured.map((candidate) => evaluateOpportunity(candidate.scores).overall),
       ),
-      recommendationCount: captured.length,
-      evidenceCount: controlRun.evidenceCount,
+      recommendationCount: final.captured.length,
+      evidenceCount: final.controlRun.evidenceCount,
       modelInvocationCount: runtime.invocations(),
-      criticalDependencyDegraded:
-        Boolean(controlRun.degradedSources?.length) ||
-        controlFailures.some(
-          (diagnostic) =>
-            diagnostic.phase === "discovery" || diagnostic.phase === "judgment",
-        ),
-      criticalDependencyFailures: controlFailures
-        .filter(
-          (
-            diagnostic,
-          ): diagnostic is HunterFailureDiagnostic & {
-            phase: "discovery" | "judgment";
-          } =>
-            diagnostic.phase === "discovery" || diagnostic.phase === "judgment",
-        )
-        .map((diagnostic) => ({
-          phase: diagnostic.phase,
-          source: diagnostic.source,
-          kind: diagnostic.kind,
-          ...(diagnostic.statusCode !== undefined
-            ? { statusCode: diagnostic.statusCode }
-            : {}),
-        })),
+      criticalDependencyDegraded: final.criticalDegraded,
+      criticalDependencyFailures: final.criticalFailures,
       metadata: {
         latencyMs,
         costUsd: runtime.measuredCostUsd() + tools.measuredCostUsd(),
@@ -501,6 +508,55 @@ class MeteredRuntime implements AgentRuntimePort {
   }
 }
 
+
+export function isRateLimitedControlDegradation(
+  criticalDegraded: boolean,
+  failures: HunterShadowControlLaneResult["criticalDependencyFailures"],
+): boolean {
+  return criticalDegraded &&
+    failures.length > 0 &&
+    failures.every((failure) => failure.kind === "rate-limited");
+}
+
+function criticalControlFailures(
+  diagnostics: readonly HunterFailureDiagnostic[],
+): HunterShadowControlLaneResult["criticalDependencyFailures"] {
+  return diagnostics
+    .filter(
+      (
+        diagnostic,
+      ): diagnostic is HunterFailureDiagnostic & {
+        phase: "discovery" | "judgment";
+      } =>
+        diagnostic.phase === "discovery" || diagnostic.phase === "judgment",
+    )
+    .map((diagnostic) => ({
+      phase: diagnostic.phase,
+      source: diagnostic.source,
+      kind: diagnostic.kind,
+      ...(diagnostic.statusCode !== undefined
+        ? { statusCode: diagnostic.statusCode }
+        : {}),
+    }));
+}
+
+function controlRetryPolicy(
+  input: HunterShadowLaneAdapterOptions["controlRetry"],
+): { maxAttempts: number; delayMs: number; sleep: (ms: number) => Promise<void> } {
+  const maxAttempts = input?.maxAttempts ?? 2;
+  const delayMs = input?.delayMs ?? 10_000;
+  if (!Number.isInteger(maxAttempts) || maxAttempts < 1 || maxAttempts > 3) {
+    throw new Error("Hunter shadow control retry maxAttempts must be an integer from 1 to 3");
+  }
+  if (!Number.isInteger(delayMs) || delayMs < 0 || delayMs > 30_000) {
+    throw new Error("Hunter shadow control retry delayMs must be an integer from 0 to 30000");
+  }
+  return {
+    maxAttempts,
+    delayMs,
+    sleep: input?.sleep ?? ((ms) => new Promise((resolve) => setTimeout(resolve, ms))),
+  };
+}
 
 export function selectPaidShadowIntentIds(
   plan: HunterRetrievalPlan,
