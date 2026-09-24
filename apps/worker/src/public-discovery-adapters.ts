@@ -26,14 +26,37 @@ export interface RssFeedDefinition {
   enabled?: boolean;
 }
 
-export interface GitHubDiscoveryProviderOptions { fetchImpl?: FetchLike; now?: () => Date; }
+export interface GitHubDiscoveryProviderOptions {
+  fetchImpl?: FetchLike;
+  now?: () => Date;
+  cacheTtlMs?: number;
+  maxCacheEntries?: number;
+}
 
 export class GitHubDiscoveryProvider implements DiscoverySourceProvider {
   private readonly fetchImpl: FetchLike;
   private readonly now: () => Date;
-  constructor(options: GitHubDiscoveryProviderOptions = {}) { this.fetchImpl = options.fetchImpl ?? fetch; this.now = options.now ?? (() => new Date()); }
+  private readonly cacheTtlMs: number;
+  private readonly maxCacheEntries: number;
+  private readonly cache = new Map<string, { expiresAt: number; value: DiscoveryEvidence[] }>();
+
+  constructor(options: GitHubDiscoveryProviderOptions = {}) {
+    this.fetchImpl = options.fetchImpl ?? fetch;
+    this.now = options.now ?? (() => new Date());
+    this.cacheTtlMs = boundedPositiveInteger(options.cacheTtlMs ?? 300_000, "cacheTtlMs", 3_600_000);
+    this.maxCacheEntries = boundedPositiveInteger(options.maxCacheEntries ?? 64, "maxCacheEntries", 500);
+  }
+
   async discover(request: DiscoveryRequest): Promise<DiscoveryEvidence[]> {
     const normalized = validateDiscoveryRequest(request);
+    const cacheKey = normalized.query.toLowerCase() + "\n" + String(normalized.maxResults);
+    const nowMs = this.now().getTime();
+    const cached = this.cache.get(cacheKey);
+    if (cached && cached.expiresAt > nowMs) {
+      return structuredClone(cached.value);
+    }
+    if (cached) this.cache.delete(cacheKey);
+
     const url = new URL("https://api.github.com/search/repositories");
     url.searchParams.set("q", normalized.query);
     url.searchParams.set("sort", "updated");
@@ -54,12 +77,27 @@ export class GitHubDiscoveryProvider implements DiscoverySourceProvider {
           retrievedAt, provider: "github", providerVersion: "rest-search-v1" });
         if (prepared) result.push(prepared);
       }
-      return result.slice(0, normalized.maxResults);
+      const bounded = result.slice(0, normalized.maxResults);
+      this.remember(cacheKey, bounded, nowMs);
+      return structuredClone(bounded);
     } catch (error) {
       if (controller.signal.aborted) throw new PublicDiscoveryAdapterError("timeout", "GitHub discovery timed out");
       if (error instanceof PublicDiscoveryAdapterError) throw error;
       throw new PublicDiscoveryAdapterError("invalid-response", "GitHub discovery response could not be processed");
     } finally { clearTimeout(timeout); }
+  }
+
+  private remember(key: string, value: DiscoveryEvidence[], nowMs: number): void {
+    if (this.cache.has(key)) this.cache.delete(key);
+    while (this.cache.size >= this.maxCacheEntries) {
+      const oldest = this.cache.keys().next().value as string | undefined;
+      if (!oldest) break;
+      this.cache.delete(oldest);
+    }
+    this.cache.set(key, {
+      expiresAt: nowMs + this.cacheTtlMs,
+      value: structuredClone(value),
+    });
   }
 }
 
