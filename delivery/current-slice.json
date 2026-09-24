@@ -1,52 +1,53 @@
 {
   "activeSlice": {
-    "id": "HI2-11R5R9",
-    "objectiveId": "OBJ-HI2-11R5R9",
+    "id": "HI2-11R5R10",
+    "objectiveId": "OBJ-HI2-11R5R10",
     "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Make read-only Hunter V1 shadow controls resilient to one transient rate-limit degradation by retrying only when every critical discovery/judgment failure is rate-limited, while accumulating total retry wall-clock latency, successful model cost, and search cost. All other degradation remains fail-closed.",
+    "scope": "Reduce real GitHub discovery rate-limit pressure by caching recent identical repository searches in the production GitHub discovery provider. Reuse only verified normalized evidence for a bounded TTL and bounded entry count; do not alter Hunter comparability or rollout thresholds.",
     "budget": {
-      "maxModelCalls": 40,
+      "maxModelCalls": 30,
       "maxSubAgents": 0,
-      "maxWallClockMinutes": 25,
-      "maxExternalWrites": 14
+      "maxWallClockMinutes": 20,
+      "maxExternalWrites": 12
     },
     "approvals": [
       {
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R9"
+        "scopeId": "HI2-11R5R10"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R9"
+        "scopeId": "HI2-11R5R10"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R9"
+        "scopeId": "HI2-11R5R10"
       }
     ],
     "successCriteria": [
-      "A shadow V1 control with only rate-limited critical failures may be retried once after a bounded delay.",
-      "A control with any non-rate-limit discovery/judgment failure is not retried and remains fail-closed.",
-      "Retry wall-clock delay and all attempted control work are included in the returned latency/cost meters; no successful paid search or model cost is discarded.",
-      "The final control must still satisfy unchanged comparability requirements: non-zero evidence, measured model execution, no critical degradation and positive measured cost.",
-      "No rollout threshold changes: latency 1.5x, cost 1.5x, retrieval 0.85, failure 0.05, exploration 0.08-0.20, maximum topic share 0.34.",
+      "Identical GitHub discovery queries within five minutes reuse normalized verified evidence without a second GitHub API request.",
+      "Different GitHub queries remain isolated cache entries.",
+      "The GitHub discovery cache is bounded to 64 entries by default and at most 500 entries by configuration.",
+      "Expired entries are fetched fresh and replaced.",
+      "Cached results are cloned on read/write so callers cannot mutate provider cache state.",
+      "No Hunter V1 comparability predicate or rollout threshold changes.",
       "Hunter V1 remains production authority; no V2 persistence, canary, scheduler or production enablement.",
       "PES v2 CI and Security baseline pass before merge/deployment.",
-      "The same 3x3 pre-gate passes on the exact merge SHA before any 30-pair gate."
+      "The corrected 3x3 pre-gate passes on the exact merge SHA before any 30-pair gate."
     ],
     "priorPreGateEvidence": {
-      "runId": "HI2-11R5R8-PREGATE-20260924-M",
-      "releaseSha": "cbf9090dac136974c33b5320ce47785dca041f59",
+      "runId": "HI2-11R5R9-PREGATE-20260924-N",
+      "releaseSha": "0e08fb7b301cf81ac1b12dad049f0870cde64b18",
       "status": "blocked",
-      "reason": "Cohort screening exposed transient critical rate limits: persisted Python discovery github rate-limited after producing a real judgment, and ephemeral Vercel hunter-model exhausted provider retries with HTTP 429."
+      "reason": "The paired persisted control still hit GitHub discovery rate limiting on the final attempt despite producing 16 evidence items, one measured model judgment and three recommendations. The retry was honestly metered at 39.958s and $0.0294871; comparability correctly remained fail-closed."
     }
   }
 }
