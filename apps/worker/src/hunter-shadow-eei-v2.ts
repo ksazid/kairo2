@@ -243,7 +243,11 @@ export function runShadowPreferenceAwareEEI(input: {
     );
   }
 
-  enforceFinalTopicShare(selected, HUNTER_EEI_V2_SHADOW_POLICY.maximumTopicShare);
+  enforceFinalDistributionBounds(
+    selected,
+    HUNTER_EEI_V2_SHADOW_POLICY.maximumTopicShare,
+    HUNTER_EEI_V2_SHADOW_POLICY.explorationMax,
+  );
 
   const selectedTopicCounts = new Map<string, number>();
   for (const item of selected) {
@@ -401,6 +405,38 @@ function enforceFinalTopicShare(items: ShadowEEIRankedItem[], maximumShare: numb
         right.index - left.index
       )[0];
 
+    if (!removable) return;
+    items.splice(removable.index, 1);
+  }
+}
+
+function enforceFinalDistributionBounds(
+  items: ShadowEEIRankedItem[],
+  maximumTopicShare: number,
+  maximumExplorationShare: number,
+): void {
+  for (let pass = 0; pass < 20; pass += 1) {
+    const before = items.length;
+    enforceFinalTopicShare(items, maximumTopicShare);
+    enforceFinalExplorationShare(items, maximumExplorationShare);
+    if (items.length === before) return;
+  }
+}
+
+function enforceFinalExplorationShare(
+  items: ShadowEEIRankedItem[],
+  maximumShare: number,
+): void {
+  while (items.length) {
+    const exploration = items
+      .map((item, index) => ({ item, index }))
+      .filter(({ item }) => item.bucket === "exploration");
+    if (!exploration.length || exploration.length / items.length <= maximumShare) return;
+
+    const removable = exploration.sort((left, right) =>
+      left.item.eeiScore - right.item.eeiScore ||
+      right.index - left.index
+    )[0];
     if (!removable) return;
     items.splice(removable.index, 1);
   }
