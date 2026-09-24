@@ -19,7 +19,11 @@ import { DEFAULT_SOURCE_REGISTRY } from "@kairo/domain/source-registry";
 import type { BrandIntelligenceTopicGraph } from "@kairo/domain/brand-intelligence";
 import { evaluateManipulationRisk, type ManipulationRiskInput } from "@kairo/domain/eei";
 import { confidenceLabelFor, prepareOpportunityIntelligence, type OpportunityIntelligence } from "@kairo/domain/opportunity-intelligence";
-import { rankAndFilterHunterCandidates } from "./hunter-quality";
+import {
+  buildHunterScoreCalibrationSamples,
+  evaluateHunterScoreCalibration,
+  rankAndFilterHunterCandidates,
+} from "./hunter-quality";
 import { applyHunterEEIRerank, HUNTER_EEI_VERSION } from "./hunter-eei";
 
 export interface BrandContextProjection {
@@ -243,7 +247,7 @@ export class HunterOrchestrator {
     }
 
     const byUrl = new Map(evidence.map((item) => [item.sourceUrl, item]));
-    const qualityQualified = rankAndFilterHunterCandidates(judgmentOutput.candidates, {
+    const qualityContext = {
       evidenceByUrl: byUrl,
       documentsByUrl: enrichedDocuments,
       ...(input.intelligenceProfile ? { intelligenceProfile: input.intelligenceProfile } : {}),
@@ -251,7 +255,17 @@ export class HunterOrchestrator {
       ...(input.existingOpportunityTitles?.length ? { existingOpportunityTitles: input.existingOpportunityTitles } : {}),
       ...(input.refreshSeed ? { referenceTime: input.refreshSeed } : {}),
       maxCandidates: 12,
-    });
+    };
+    const calibration = evaluateHunterScoreCalibration(
+      buildHunterScoreCalibrationSamples(judgmentOutput.candidates, qualityContext),
+    );
+    console.info(JSON.stringify({
+      event: "hunter_score_calibration",
+      hunterRunId: input.hunterRunId?.trim() || "untracked",
+      ...calibration,
+    }));
+
+    const qualityQualified = rankAndFilterHunterCandidates(judgmentOutput.candidates, qualityContext);
     const qualified = applyHunterEEIRerank(qualityQualified, { maxCandidates: 12 });
 
     console.info(JSON.stringify({
