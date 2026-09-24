@@ -3,6 +3,7 @@ import type { BrandIntelligenceSnapshot } from "@kairo/domain/brand-intelligence
 import type { BrandDiscoveryPlan } from "@kairo/domain/brand-discovery-plan";
 import {
   HUNTER_SHADOW_DISPOSABLE_BOOTSTRAP_MODE,
+  HUNTER_SHADOW_MODEL_PRESSURE_POLICY,
   HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE,
   buildControlScreeningDiagnostic,
   hunterShadowEvidenceRequestFromEnv,
@@ -269,8 +270,18 @@ describe("Hunter shadow operational evidence", () => {
       maxExternalCalls: 2,
       maxSemanticCalls: 0,
       deepLimit: 2,
+      deepAnalysisConcurrency: 1,
       maxCandidates: 6,
     });
+  });
+
+  it("serializes deep analysis and spaces paired runs without reducing the certified work profile", () => {
+    expect(HUNTER_SHADOW_MODEL_PRESSURE_POLICY).toEqual({
+      deepAnalysisConcurrency: 1,
+      betweenPairsDelayMs: 15_000,
+    });
+    expect(HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE.deepLimit).toBe(2);
+    expect(HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE.maxCandidates).toBe(6);
   });
 
   it("requires explicit Agent Reach cost metering when Exa is enabled", () => {

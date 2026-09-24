@@ -45,6 +45,7 @@ export interface RunShadowMultiStageOptions {
   maxInputClusters?: number;
   preRankLimit?: number;
   deepLimit?: number;
+  deepAnalysisConcurrency?: number;
   brandSemanticSimilarityByCandidateId?: Readonly<Record<string, number>>;
   duplicationPenaltyByCandidateId?: Readonly<Record<string, number>>;
   hardNegativeSimilarityByCandidateId?: Readonly<Record<string, number>>;
@@ -139,12 +140,20 @@ export async function runShadowMultiStageIntelligence(input: {
     .slice(0, preRankLimit);
 
   const deepCandidates = preRanked.slice(0, deepLimit);
+  const deepAnalysisConcurrency = boundedInteger(
+    options.deepAnalysisConcurrency ?? Math.max(1, deepCandidates.length || 1),
+    "deepAnalysisConcurrency",
+    1,
+    20,
+  );
   const deepIntelligence: ShadowDeepIntelligenceItem[] = [];
   let deepFailedCount = 0;
 
   if (input.deepAnalysis) {
-    const outcomes = await Promise.all(
-      deepCandidates.map(async (item) => {
+    const outcomes = await mapWithConcurrency(
+      deepCandidates,
+      Math.min(deepAnalysisConcurrency, Math.max(1, deepCandidates.length)),
+      async (item) => {
         try {
           const raw = await input.deepAnalysis!.analyze({
             candidateId: item.candidateId,
@@ -167,7 +176,7 @@ export async function runShadowMultiStageIntelligence(input: {
         } catch {
           return { ok: false as const };
         }
-      }),
+      },
     );
     for (const outcome of outcomes) {
       if (outcome.ok) deepIntelligence.push(outcome.item);
@@ -208,6 +217,30 @@ export async function runShadowMultiStageIntelligence(input: {
       },
     },
   };
+}
+
+async function mapWithConcurrency<TInput, TOutput>(
+  items: readonly TInput[],
+  concurrency: number,
+  worker: (item: TInput, index: number) => Promise<TOutput>,
+): Promise<TOutput[]> {
+  if (!items.length) return [];
+  const output = new Array<TOutput>(items.length);
+  let nextIndex = 0;
+
+  const runners = Array.from(
+    { length: Math.min(concurrency, items.length) },
+    async () => {
+      while (true) {
+        const index = nextIndex;
+        nextIndex += 1;
+        if (index >= items.length) return;
+        output[index] = await worker(items[index]!, index);
+      }
+    },
+  );
+  await Promise.all(runners);
+  return output;
 }
 
 function bestTopicMatch(value: string, topics: readonly BrandDiscoveryTopic[]): { topic: BrandDiscoveryTopic; fit: number } | undefined {

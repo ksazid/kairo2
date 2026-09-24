@@ -119,6 +119,7 @@ export interface HunterShadowLaneAdapterOptions {
     maxExternalCalls?: number;
     maxSemanticCalls?: number;
     deepLimit?: number;
+    deepAnalysisConcurrency?: number;
     maxCandidates?: number;
   };
 }
@@ -261,6 +262,7 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
       deepAnalysis: deep,
       options: {
         deepLimit: this.options.candidate?.deepLimit ?? 4,
+        deepAnalysisConcurrency: this.options.candidate?.deepAnalysisConcurrency,
         preRankLimit: 40,
       },
     });
