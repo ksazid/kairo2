@@ -1,50 +1,52 @@
 {
   "activeSlice": {
-    "id": "HI2-11R5R8",
-    "objectiveId": "OBJ-HI2-11R5R8",
+    "id": "HI2-11R5R9",
+    "objectiveId": "OBJ-HI2-11R5R9",
     "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Include safe critical Hunter V1 dependency failure details in the pair-level comparability exception so failures after cohort assembly identify the same phase/source/kind/status already captured by the control result.",
+    "scope": "Make read-only Hunter V1 shadow controls resilient to one transient rate-limit degradation by retrying only when every critical discovery/judgment failure is rate-limited, while accumulating total retry wall-clock latency, successful model cost, and search cost. All other degradation remains fail-closed.",
     "budget": {
-      "maxModelCalls": 20,
+      "maxModelCalls": 40,
       "maxSubAgents": 0,
-      "maxWallClockMinutes": 15,
-      "maxExternalWrites": 10
+      "maxWallClockMinutes": 25,
+      "maxExternalWrites": 14
     },
     "approvals": [
       {
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R8"
+        "scopeId": "HI2-11R5R9"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R8"
+        "scopeId": "HI2-11R5R9"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R8"
+        "scopeId": "HI2-11R5R9"
       }
     ],
     "successCriteria": [
-      "Pair-level V1 comparability failures include the captured criticalDependencyFailures array.",
-      "Failure details preserve phase, source, safe kind and optional HTTP status.",
-      "No comparability predicate or rollout threshold changes.",
+      "A shadow V1 control with only rate-limited critical failures may be retried once after a bounded delay.",
+      "A control with any non-rate-limit discovery/judgment failure is not retried and remains fail-closed.",
+      "Retry wall-clock delay and all attempted control work are included in the returned latency/cost meters; no successful paid search or model cost is discarded.",
+      "The final control must still satisfy unchanged comparability requirements: non-zero evidence, measured model execution, no critical degradation and positive measured cost.",
+      "No rollout threshold changes: latency 1.5x, cost 1.5x, retrieval 0.85, failure 0.05, exploration 0.08-0.20, maximum topic share 0.34.",
       "Hunter V1 remains production authority; no V2 persistence, canary, scheduler or production enablement.",
       "PES v2 CI and Security baseline pass before merge/deployment.",
-      "The same 3x3 pre-gate is rerun on the exact merge SHA before any 30-pair gate."
+      "The same 3x3 pre-gate passes on the exact merge SHA before any 30-pair gate."
     ],
     "priorPreGateEvidence": {
-      "runId": "HI2-11R5R7-PREGATE-20260923-L",
-      "releaseSha": "bb36d59830f03412fda02e4e5b75df12ee441524",
+      "runId": "HI2-11R5R8-PREGATE-20260924-M",
+      "releaseSha": "cbf9090dac136974c33b5320ce47785dca041f59",
       "status": "blocked",
-      "reason": "The paired batch rejected the persisted anchor control with evidenceCount=20, modelInvocationCount=0, criticalDependencyDegraded=true and costUsd=0.014, but the pair-level exception omitted the already-captured criticalDependencyFailures details."
+      "reason": "Cohort screening exposed transient critical rate limits: persisted Python discovery github rate-limited after producing a real judgment, and ephemeral Vercel hunter-model exhausted provider retries with HTTP 429."
     }
   }
 }
