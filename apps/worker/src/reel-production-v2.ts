@@ -176,6 +176,27 @@ export class VideoProviderRegistry {
     }));
   }
 
+  async probeAvailable(): Promise<Array<{ id: string; model?: string; status: "ready" | "unavailable" | "unverified"; message: string }>> {
+    const results: Array<{ id: string; model?: string; status: "ready" | "unavailable" | "unverified"; message: string }> = [];
+    for (const provider of this.providers.values()) {
+      if (!provider.isAvailable()) {
+        results.push({ id: provider.id, ...(provider.model ? { model: provider.model } : {}), status: "unavailable", message: "Provider is not configured or available" });
+        continue;
+      }
+      if (!provider.probe) {
+        results.push({ id: provider.id, ...(provider.model ? { model: provider.model } : {}), status: "unverified", message: "Provider is configured but has no live readiness probe" });
+        continue;
+      }
+      try {
+        const result = await provider.probe();
+        results.push({ id: provider.id, ...(provider.model ? { model: provider.model } : {}), status: result.status, message: result.message });
+      } catch (error) {
+        results.push({ id: provider.id, ...(provider.model ? { model: provider.model } : {}), status: "unavailable", message: `Provider readiness probe failed: ${message(error)}` });
+      }
+    }
+    return results;
+  }
+
   select(request: VideoGenerationRequest, requestedId?: string): VideoGenerationProvider {
     if (requestedId) {
       const provider = this.providers.get(requestedId);
