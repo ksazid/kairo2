@@ -55,6 +55,11 @@ export interface HunterShadowLaneExecutor {
   runCandidate(run: HunterShadowRunCase): Promise<HunterShadowCandidateLaneResult>;
 }
 
+export interface HunterShadowEvidenceBatchPacing {
+  betweenPairsDelayMs?: number;
+  sleep?: (ms: number) => Promise<void>;
+}
+
 export interface HunterShadowEvidenceBatch {
   schemaVersion: 1;
   evidenceKind: "hunter-v2-shadow-readiness";
@@ -115,10 +120,21 @@ export async function runHunterShadowEvidencePair(
 export async function runHunterShadowEvidenceBatch(
   runs: readonly HunterShadowRunCase[],
   executor: HunterShadowLaneExecutor,
+  pacing: HunterShadowEvidenceBatchPacing = {},
 ): Promise<HunterShadowEvidenceBatch> {
   const bounded = runs.slice(0, 200);
+  const betweenPairsDelayMs = boundedDelay(
+    pacing.betweenPairsDelayMs ?? 0,
+    "betweenPairsDelayMs",
+    0,
+    60_000,
+  );
+  const sleep = pacing.sleep ?? ((ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms)));
   const pairs: PreparedHunterShadowEvidence[] = [];
-  for (const run of bounded) {
+  for (const [index, run] of bounded.entries()) {
+    if (index > 0 && betweenPairsDelayMs > 0) {
+      await sleep(betweenPairsDelayMs);
+    }
     pairs.push(await runHunterShadowEvidencePair(run, executor));
   }
 
@@ -199,6 +215,13 @@ function requireMeasuredMetadata(metadata: HunterShadowMeasuredMetadata, lane: s
   if (!Number.isFinite(metadata.costUsd) || metadata.costUsd < 0) {
     throw new Error("Measured non-negative cost is required for " + lane);
   }
+}
+
+function boundedDelay(value: unknown, field: string, min: number, max: number): number {
+  if (typeof value !== "number" || !Number.isInteger(value) || value < min || value > max) {
+    throw new Error(field + " must be an integer from " + min + " to " + max);
+  }
+  return value;
 }
 
 function fingerprint(value: unknown): string {
