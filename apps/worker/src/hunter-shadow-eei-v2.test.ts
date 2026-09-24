@@ -166,6 +166,29 @@ describe("shadow Preference-aware EEI V2", () => {
     expect(run.diagnostics.explorationSelectedCount / run.selected.length).toBeLessThanOrEqual(0.2);
   });
 
+  it("enforces the certified exploration ceiling against the actual final output size", () => {
+    const input = [
+      item("core-a", "Core subject A", 0.9, "core-a"),
+      item("core-b", "Core subject B", 0.9, "core-b"),
+      item("core-c", "Core subject C", 0.9, "core-c"),
+      item("exp-a", "Explore subject A", 0.1, "exp-a", 0.2, 0, true),
+      item("exp-b", "Explore subject B", 0.1, "exp-b", 0.2, 0, true),
+      item("exp-c", "Explore subject C", 0.1, "exp-c", 0.2, 0, true),
+    ];
+
+    const run = runShadowPreferenceAwareEEI({
+      preRanked: input,
+      preferenceState: { ...preferenceState, explorationBudget: 0.1 },
+      options: { maxCandidates: 6, adjacentShare: 0.2 },
+    });
+
+    const explorationShare = run.selected.length
+      ? run.diagnostics.explorationSelectedCount / run.selected.length
+      : 0;
+    expect(explorationShare).toBeLessThanOrEqual(0.2);
+    expect(run.diagnostics.maximumObservedTopicShare).toBeLessThanOrEqual(0.34);
+  });
+
   it("blocks manipulation, strong negative preferences and exhausted saturated duplicates", () => {
     const run = runShadowPreferenceAwareEEI({
       preRanked: [
