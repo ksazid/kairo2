@@ -8,6 +8,38 @@ import {
 import type { BrandIntelligenceProfile } from "@kairo/domain/source-policy";
 
 export const HUNTER_QUALITY_VERSION = "hunter-quality-v1" as const;
+export const HUNTER_SCORE_CALIBRATION_VERSION = "hunter-score-calibration-v1" as const;
+
+export type HunterScoreDimension = keyof OpportunityEvaluationInput;
+
+export interface HunterScoreCalibrationSample {
+  schemaVersion: typeof HUNTER_SCORE_CALIBRATION_VERSION;
+  model: OpportunityEvaluationInput;
+  proxy: Partial<OpportunityEvaluationInput>;
+  adjusted: OpportunityEvaluationInput;
+  modelQualifies: boolean;
+  adjustedQualifies: boolean;
+}
+
+export interface HunterScoreCalibrationDimensionReport {
+  count: number;
+  modelMean: number;
+  proxyMean: number;
+  meanAbsoluteError: number;
+  meanSignedError: number;
+  largeDisagreementRate: number;
+}
+
+export interface HunterScoreCalibrationReport {
+  schemaVersion: typeof HUNTER_SCORE_CALIBRATION_VERSION;
+  sampleCount: number;
+  dimensions: Record<HunterScoreDimension, HunterScoreCalibrationDimensionReport>;
+  modelQualificationRate: number;
+  adjustedQualificationRate: number;
+  qualificationFlipRate: number;
+  modelOnlyQualificationCount: number;
+  adjustedOnlyQualificationCount: number;
+}
 
 export interface HunterQualityCandidate {
   sourceUrl: string;
@@ -105,6 +137,120 @@ export function rankAndFilterHunterCandidates<TCandidate extends HunterQualityCa
   }
 
   return accepted;
+}
+
+
+const SCORE_DIMENSIONS: readonly HunterScoreDimension[] = [
+  "relevance",
+  "evidence",
+  "novelty",
+  "timeliness",
+  "brandAuthority",
+  "audienceFit",
+];
+
+export function buildHunterScoreCalibrationSamples<TCandidate extends HunterQualityCandidate>(
+  candidates: readonly TCandidate[],
+  context: HunterQualityContext,
+): HunterScoreCalibrationSample[] {
+  const referenceMs = referenceTimeMs(context.referenceTime);
+  const hasProfile = Boolean(context.intelligenceProfile);
+  const samples: HunterScoreCalibrationSample[] = [];
+
+  for (const candidate of candidates.slice(0, 36)) {
+    const source = context.evidenceByUrl.get(candidate.sourceUrl);
+    if (!source) continue;
+
+    const previousSimilarity = maxPreviousSimilarity(candidate.title, context.existingOpportunityTitles);
+    const signals = deterministicSignals(candidate, source, context, referenceMs);
+    const adjusted = adjustScores(candidate.scores, signals, previousSimilarity, hasProfile);
+    const modelEvaluation = evaluateOpportunity(candidate.scores);
+    const adjustedEvaluation = evaluateOpportunity(adjusted);
+
+    samples.push({
+      schemaVersion: HUNTER_SCORE_CALIBRATION_VERSION,
+      model: { ...candidate.scores },
+      proxy: deterministicProxyScores(signals, previousSimilarity, hasProfile),
+      adjusted,
+      modelQualifies: modelEvaluation.qualifies,
+      adjustedQualifies: adjustedEvaluation.qualifies,
+    });
+  }
+
+  return samples;
+}
+
+export function evaluateHunterScoreCalibration(
+  samples: readonly HunterScoreCalibrationSample[],
+): HunterScoreCalibrationReport {
+  const dimensions = Object.fromEntries(SCORE_DIMENSIONS.map((dimension) => {
+    const comparable = samples.flatMap((sample) => {
+      const proxy = sample.proxy[dimension];
+      return typeof proxy === "number" && Number.isFinite(proxy)
+        ? [{ model: sample.model[dimension], proxy }]
+        : [];
+    });
+    const count = comparable.length;
+    const sum = (selector: (item: { model: number; proxy: number }) => number) =>
+      comparable.reduce((total, item) => total + selector(item), 0);
+
+    return [dimension, {
+      count,
+      modelMean: count ? roundMetric(sum((item) => item.model) / count) : 0,
+      proxyMean: count ? roundMetric(sum((item) => item.proxy) / count) : 0,
+      meanAbsoluteError: count ? roundMetric(sum((item) => Math.abs(item.model - item.proxy)) / count) : 0,
+      meanSignedError: count ? roundMetric(sum((item) => item.model - item.proxy) / count) : 0,
+      largeDisagreementRate: count
+        ? roundMetric(comparable.filter((item) => Math.abs(item.model - item.proxy) >= 0.20).length / count)
+        : 0,
+    } satisfies HunterScoreCalibrationDimensionReport];
+  })) as Record<HunterScoreDimension, HunterScoreCalibrationDimensionReport>;
+
+  const sampleCount = samples.length;
+  const modelQualified = samples.filter((sample) => sample.modelQualifies).length;
+  const adjustedQualified = samples.filter((sample) => sample.adjustedQualifies).length;
+  const modelOnlyQualificationCount = samples.filter(
+    (sample) => sample.modelQualifies && !sample.adjustedQualifies,
+  ).length;
+  const adjustedOnlyQualificationCount = samples.filter(
+    (sample) => !sample.modelQualifies && sample.adjustedQualifies,
+  ).length;
+
+  return {
+    schemaVersion: HUNTER_SCORE_CALIBRATION_VERSION,
+    sampleCount,
+    dimensions,
+    modelQualificationRate: sampleCount ? roundMetric(modelQualified / sampleCount) : 0,
+    adjustedQualificationRate: sampleCount ? roundMetric(adjustedQualified / sampleCount) : 0,
+    qualificationFlipRate: sampleCount
+      ? roundMetric((modelOnlyQualificationCount + adjustedOnlyQualificationCount) / sampleCount)
+      : 0,
+    modelOnlyQualificationCount,
+    adjustedOnlyQualificationCount,
+  };
+}
+
+function deterministicProxyScores(
+  signals: DeterministicSignals,
+  previousSimilarity: number,
+  hasProfile: boolean,
+): Partial<OpportunityEvaluationInput> {
+  return {
+    ...(hasProfile
+      ? {
+          relevance: clamp01(signals.brandFit * 0.65 + signals.graphFit * 0.35),
+          audienceFit: clamp01(signals.audienceFit),
+        }
+      : {}),
+    evidence: clamp01(signals.evidenceQuality * 0.70 + signals.sourceAuthority * 0.30),
+    novelty: clamp01(1 - previousSimilarity),
+    ...(signals.freshness !== undefined ? { timeliness: clamp01(signals.freshness) } : {}),
+    brandAuthority: clamp01(signals.sourceAuthority * 0.75 + signals.graphFit * 0.25),
+  };
+}
+
+function roundMetric(value: number): number {
+  return Math.round(value * 10_000) / 10_000;
 }
 
 interface DeterministicSignals {
