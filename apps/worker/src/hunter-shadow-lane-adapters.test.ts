@@ -199,10 +199,10 @@ describe("read-only Hunter shadow lane adapters", () => {
       runtime,
       searchCostUsdBySource: { "agent-reach": 0.007 },
       candidate: {
-        maxIntents: 2,
+        maxIntents: 3,
         maxSourcesPerIntent: 2,
         maxPaidIntents: 2,
-        maxExternalCalls: 2,
+        maxExternalCalls: 3,
         maxSemanticCalls: 0,
         deepLimit: 2,
         maxCandidates: 5,
@@ -348,7 +348,11 @@ describe("read-only Hunter shadow lane adapters", () => {
 
     expect(first.intents).toHaveLength(3);
     expect(new Set(first.intents.map((intent) => intent.topicId)).size).toBe(3);
+    expect(first.intents.filter((intent) => intent.generator === "brand-core")).toHaveLength(2);
     expect(first.intents.filter((intent) => intent.generator === "adjacent-exploration")).toHaveLength(1);
+    const paid = selectPaidShadowIntentIds(first, 2);
+    expect(paid).toHaveLength(2);
+    expect(first.intents.filter((intent) => !paid.includes(intent.id))).toHaveLength(1);
     expect(second.intents).toHaveLength(3);
     expect(new Set(second.intents.map((intent) => intent.topicId)).size).toBe(3);
     expect(first.intents.map((intent) => intent.topicId)).not.toEqual(
