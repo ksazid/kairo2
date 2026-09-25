@@ -121,6 +121,7 @@ export interface HunterShadowLaneAdapterOptions {
     deepLimit?: number;
     deepAnalysisConcurrency?: number;
     maxCandidates?: number;
+    enforceCertifiedFinalShares?: boolean;
   };
 }
 
@@ -217,10 +218,13 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
     const context = await this.context(run);
     const runtime = new MeteredRuntime(this.options.runtime);
     const tools = new MeteredToolGateway(this.options.tools, this.options.searchCostUsdBySource);
-    const retrievalPlan = balancedShadowRetrievalPlan(buildHunterRetrievalPlan({
-      plan: context.discoveryPlan,
-      ...(context.preferenceState ? { preferenceState: context.preferenceState } : {}),
-    }), this.options.candidate?.maxIntents ?? 12, run.comparisonId);
+    const retrievalPlan = anchorShadowRetrievalPlanToBrand(
+      balancedShadowRetrievalPlan(buildHunterRetrievalPlan({
+        plan: context.discoveryPlan,
+        ...(context.preferenceState ? { preferenceState: context.preferenceState } : {}),
+      }), this.options.candidate?.maxIntents ?? 12, run.comparisonId),
+      context.hunterInput.brand.brandName,
+    );
     const paidIntentIds = selectPaidShadowIntentIds(
       retrievalPlan,
       this.options.candidate?.maxPaidIntents ?? 3,
@@ -255,6 +259,12 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
       brandId: context.hunterInput.brand.brandId,
       approvedContextVersion: context.hunterInput.brand.contextVersion,
     });
+    const brandSemanticSimilarityByCandidateId = Object.fromEntries(
+      trend.clusters.map((cluster) => [
+        cluster.intelligence.trendId,
+        brandIdentityFit(cluster.subject, context.hunterInput.brand.brandName),
+      ]),
+    );
     const multistage = await runShadowMultiStageIntelligence({
       clusters: trend.clusters,
       plan: context.discoveryPlan,
@@ -263,6 +273,7 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
       options: {
         deepLimit: this.options.candidate?.deepLimit ?? 4,
         deepAnalysisConcurrency: this.options.candidate?.deepAnalysisConcurrency,
+        brandSemanticSimilarityByCandidateId,
         preRankLimit: 40,
       },
     });
@@ -272,6 +283,8 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
       ...(context.preferenceState ? { preferenceState: context.preferenceState } : {}),
       options: {
         maxCandidates: this.options.candidate?.maxCandidates ?? 10,
+        enforceCertifiedFinalShares:
+          this.options.candidate?.enforceCertifiedFinalShares ?? true,
       },
     });
     const latencyMs = positiveElapsed(performance.now() - started);
@@ -560,6 +573,39 @@ function controlRetryPolicy(
   };
 }
 
+export function anchorShadowRetrievalPlanToBrand(
+  plan: HunterRetrievalPlan,
+  brandName: string,
+): HunterRetrievalPlan {
+  const brand = brandName.replace(/\s+/g, " ").trim();
+  if (!brand) return plan;
+  return {
+    ...plan,
+    intents: plan.intents.map((intent) => ({
+      ...intent,
+      query: anchorQuery(intent.query, brand),
+      semanticQuery: anchorQuery(intent.semanticQuery, brand),
+    })),
+  };
+}
+
+export function brandIdentityFit(text: string, brandName: string): number {
+  const brandTokens = meaningfulIdentityTokens(brandName);
+  if (!brandTokens.length) return 0;
+  const textTokens = new Set(meaningfulIdentityTokens(text));
+  const matched = brandTokens.filter((token) => textTokens.has(token)).length;
+  return matched / brandTokens.length;
+}
+
+function anchorQuery(query: string, brandName: string): string {
+  if (brandIdentityFit(query, brandName) >= 1) return query;
+  return (brandName + " " + query).replace(/\s+/g, " ").trim().slice(0, 500);
+}
+
+function meaningfulIdentityTokens(value: string): string[] {
+  return value.toLowerCase().match(/[a-z0-9]+/g)?.filter((token) => token.length > 1) ?? [];
+}
+
 export function selectPaidShadowIntentIds(
   plan: HunterRetrievalPlan,
   maxPaidInput: number,
@@ -746,13 +792,18 @@ function commonCandidateQuality(
   item: ReturnType<typeof runShadowPreferenceAwareEEI>["selected"][number],
 ): number {
   const topicFit = item.preRanked.topicFit;
+  const brandIdentityFitScore =
+    item.preRanked.preRank.features.brandSemanticSimilarity;
+  const relevance = brandIdentityFitScore === undefined
+    ? topicFit
+    : clamp01(topicFit * 0.65 + brandIdentityFitScore * 0.35);
   const preference = item.preferenceAffinity;
   const audienceFit = preference === undefined
-    ? topicFit
-    : clamp01(topicFit * 0.6 + preference * 0.4);
+    ? relevance
+    : clamp01(relevance * 0.6 + preference * 0.4);
 
   return evaluateOpportunity({
-    relevance: clamp01(topicFit),
+    relevance,
     evidence: clamp01(item.preRanked.cluster.intelligence.evidenceConfidence),
     novelty: clamp01(1 - item.saturationPenalty),
     timeliness: clamp01(
