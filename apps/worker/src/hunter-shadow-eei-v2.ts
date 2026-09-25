@@ -74,6 +74,7 @@ export interface RunShadowEEIOptions {
   maxCandidates?: number;
   adjacentShare?: number;
   engagementRisksByCandidateId?: Readonly<Record<string, ManipulationRiskInput>>;
+  enforceCertifiedFinalShares?: boolean;
 }
 
 export function runShadowPreferenceAwareEEI(input: {
@@ -244,6 +245,32 @@ export function runShadowPreferenceAwareEEI(input: {
   }
 
   enforceFinalTopicShare(selected, HUNTER_EEI_V2_SHADOW_POLICY.maximumTopicShare);
+  if (input.options?.enforceCertifiedFinalShares) {
+    refillCertifiedSelection(
+      selected,
+      eligible,
+      maxCandidates,
+      HUNTER_EEI_V2_SHADOW_POLICY.maximumTopicShare,
+      HUNTER_EEI_V2_SHADOW_POLICY.explorationMax,
+    );
+    enforceFinalTopicShare(selected, HUNTER_EEI_V2_SHADOW_POLICY.maximumTopicShare);
+    enforceActualExplorationShare(
+      selected,
+      HUNTER_EEI_V2_SHADOW_POLICY.explorationMax,
+    );
+    refillCertifiedSelection(
+      selected,
+      eligible,
+      maxCandidates,
+      HUNTER_EEI_V2_SHADOW_POLICY.maximumTopicShare,
+      HUNTER_EEI_V2_SHADOW_POLICY.explorationMax,
+    );
+    enforceFinalTopicShare(selected, HUNTER_EEI_V2_SHADOW_POLICY.maximumTopicShare);
+    enforceActualExplorationShare(
+      selected,
+      HUNTER_EEI_V2_SHADOW_POLICY.explorationMax,
+    );
+  }
 
   const selectedTopicCounts = new Map<string, number>();
   for (const item of selected) {
@@ -401,6 +428,59 @@ function enforceFinalTopicShare(items: ShadowEEIRankedItem[], maximumShare: numb
         right.index - left.index
       )[0];
 
+    if (!removable) return;
+    items.splice(removable.index, 1);
+  }
+}
+
+function refillCertifiedSelection(
+  selected: ShadowEEIRankedItem[],
+  eligible: readonly ShadowEEIRankedItem[],
+  maxCandidates: number,
+  maximumTopicShare: number,
+  maximumExplorationShare: number,
+): void {
+  const selectedIds = new Set(selected.map((item) => item.candidateId));
+  const candidates = eligible
+    .filter((item) => !selectedIds.has(item.candidateId))
+    .sort(compareRankedItems);
+
+  while (selected.length < maxCandidates) {
+    const candidate = candidates.find((item) => {
+      if (selectedIds.has(item.candidateId)) return false;
+      const prospectiveSize = selected.length + 1;
+      const topic = normalize(item.topic);
+      const topicCount =
+        selected.filter((value) => normalize(value.topic) === topic).length + 1;
+      if (topicCount / prospectiveSize > maximumTopicShare) return false;
+      if (item.bucket === "exploration") {
+        const explorationCount =
+          selected.filter((value) => value.bucket === "exploration").length + 1;
+        if (explorationCount / prospectiveSize > maximumExplorationShare) return false;
+      }
+      return true;
+    });
+    if (!candidate) return;
+    selected.push(candidate);
+    selectedIds.add(candidate.candidateId);
+  }
+}
+
+function enforceActualExplorationShare(
+  items: ShadowEEIRankedItem[],
+  maximumShare: number,
+): void {
+  while (
+    items.length > 0 &&
+    items.filter((item) => item.bucket === "exploration").length / items.length > maximumShare
+  ) {
+    const removable = items
+      .map((item, index) => ({ item, index }))
+      .filter(({ item }) => item.bucket === "exploration")
+      .sort((left, right) =>
+        left.item.eeiScore - right.item.eeiScore ||
+        right.index - left.index
+      )[0];
     if (!removable) return;
     items.splice(removable.index, 1);
   }
