@@ -10,7 +10,9 @@ import type {
 import type { BrandDiscoveryPlan } from "@kairo/domain/brand-discovery-plan";
 import {
   ReadOnlyHunterShadowLaneExecutor,
+  anchorShadowRetrievalPlanToBrand,
   balancedShadowRetrievalPlan,
+  brandIdentityFit,
   isHunterDeepAnalysisOutput,
   isRateLimitedControlDegradation,
   selectPaidShadowIntentIds,
@@ -87,11 +89,11 @@ const tools: ToolGatewayPort = {
       return {
         output: [{
           title: exploration
-            ? "Developer workflow governance shifts around autonomous tools"
-            : "AI agents move into production workflows",
+            ? "Example developer workflow governance shifts around autonomous tools"
+            : "Example AI agents move into production workflows",
           summary: exploration
-            ? "Teams are examining adjacent governance and workflow patterns around autonomous developer tooling."
-            : "Teams are adopting agent workflows with stronger evaluation and observability.",
+            ? "Example teams are examining adjacent governance and workflow patterns around autonomous developer tooling."
+            : "Example teams are adopting agent workflows with stronger evaluation and observability.",
           sourceUrl: exploration
             ? "https://example.com/autonomous-workflow-governance"
             : "https://example.com/agents",
@@ -325,6 +327,40 @@ describe("read-only Hunter shadow lane adapters", () => {
     });
 
     await expect(executor.runControl(run)).rejects.toThrow(/workspace and Brand/);
+  });
+
+  it("anchors shadow search queries to Brand identity without changing intent identity", () => {
+    const plan = {
+      schemaVersion: "1" as const,
+      workspaceId: "workspace-1",
+      brandId: "brand-1",
+      snapshotVersion: "snapshot-1",
+      planVersion: "plan-brand-anchor",
+      explorationBudget: 0.1,
+      intents: [{
+        id: "core-agents",
+        generator: "brand-core" as const,
+        mode: "lexical-search" as const,
+        topicId: "agents",
+        topicName: "AI agents",
+        query: "AI agents software teams",
+        semanticQuery: "AI agents production",
+        audience: "software teams",
+        sourceClasses: ["Industry news"],
+        priority: "high" as const,
+        maxResults: 5,
+        reason: "core",
+      }],
+      hardNegatives: [],
+    };
+
+    const anchored = anchorShadowRetrievalPlanToBrand(plan, "Example Labs");
+    expect(anchored.intents[0]!.id).toBe("core-agents");
+    expect(anchored.intents[0]!.query).toContain("Example Labs");
+    expect(anchored.intents[0]!.semanticQuery).toContain("Example Labs");
+    expect(anchorShadowRetrievalPlanToBrand(anchored, "Example Labs")).toEqual(anchored);
+    expect(brandIdentityFit("Example Labs launches agent tooling", "Example Labs")).toBe(1);
+    expect(brandIdentityFit("Generic agent tooling", "Example Labs")).toBe(0);
   });
 
   it("builds a rotating three-topic plan with a distinct exploration topic", () => {

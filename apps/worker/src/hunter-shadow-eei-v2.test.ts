@@ -212,6 +212,56 @@ describe("shadow Preference-aware EEI V2", () => {
     expect(new Set(run.selected.map((value) => value.topic)).size).toBe(6);
   });
 
+  it("refills after topic-share pruning so certified six-item output keeps exploration within 20%", () => {
+    const input = [
+      item("dup-1", "parent a", 0.9, "source-a", 0.2, 0, false, "Same subject"),
+      item("dup-2", "parent b", 0.9, "source-b", 0.2, 0, false, "Same subject"),
+      item("dup-3", "parent c", 0.9, "source-c", 0.2, 0, false, "Same subject"),
+      item("core-1", "parent d", 0.9, "source-d", 0.2, 0, false, "Unique D"),
+      item("core-2", "parent e", 0.9, "source-e", 0.2, 0, false, "Unique E"),
+      item("core-3", "parent f", 0.9, "source-f", 0.2, 0, false, "Unique F"),
+      item("core-4", "parent g", 0.9, "source-g", 0.2, 0, false, "Unique G"),
+      item("exp-1", "parent x", 0.1, "source-x", 0.2, 0, true, "Explore X"),
+    ];
+
+    const run = runShadowPreferenceAwareEEI({
+      preRanked: input,
+      preferenceState: { ...preferenceState, explorationBudget: 0.1 },
+      options: {
+        maxCandidates: 6,
+        adjacentShare: 0.2,
+        enforceCertifiedFinalShares: true,
+      },
+    });
+
+    expect(run.selected).toHaveLength(6);
+    expect(run.diagnostics.explorationSelectedCount).toBe(1);
+    expect(run.diagnostics.explorationSelectedCount / run.selected.length).toBeLessThanOrEqual(0.2);
+    expect(run.diagnostics.maximumObservedTopicShare).toBeLessThanOrEqual(0.34);
+  });
+
+  it("never reports exploration above 20% when too few candidates survive for a valid minimum share", () => {
+    const run = runShadowPreferenceAwareEEI({
+      preRanked: [
+        item("core-small-1", "core one", 0.9, "source-1"),
+        item("core-small-2", "core two", 0.9, "source-2"),
+        item("core-small-3", "core three", 0.9, "source-3"),
+        item("exp-small", "explore one", 0.1, "source-x", 0.2, 0, true),
+      ],
+      preferenceState: { ...preferenceState, explorationBudget: 0.1 },
+      options: {
+        maxCandidates: 6,
+        adjacentShare: 0.2,
+        enforceCertifiedFinalShares: true,
+      },
+    });
+
+    const share = run.selected.length
+      ? run.diagnostics.explorationSelectedCount / run.selected.length
+      : 0;
+    expect(share).toBeLessThanOrEqual(0.2);
+  });
+
   it("enforces topic concentration and dynamically favors source diversity", () => {
     const input = [
       item("a1", "agents", 0.9, "same"),

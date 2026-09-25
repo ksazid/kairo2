@@ -1,15 +1,15 @@
 {
   "activeSlice": {
-    "id": "HI2-11R5R11",
-    "objectiveId": "OBJ-HI2-11R5R11",
+    "id": "HI2-11R5R12",
+    "objectiveId": "OBJ-HI2-11R5R12",
     "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Reduce shadow benchmark model-provider burst pressure without reducing evaluated work: serialize the existing two V2 deep-analysis calls and add a bounded 15-second scheduling gap between paired runs. Keep the model gateway retry contract, measured lane latency/cost, comparability predicate, rollout thresholds and Hunter V1 authority unchanged.",
+    "scope": "Improve Hunter V2 shadow recommendation quality without changing rollout gates: anchor retrieval queries to the Brand identity, feed deterministic Brand-name evidence fit into pre-ranking and common quality, and make certified final EEI selection refill after topic-diversity pruning while enforcing the actual <=20% exploration share.",
     "budget": {
       "maxModelCalls": 40,
       "maxSubAgents": 0,
-      "maxWallClockMinutes": 25,
+      "maxWallClockMinutes": 30,
       "maxExternalWrites": 14
     },
     "approvals": [
@@ -17,37 +17,47 @@
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R11"
+        "scopeId": "HI2-11R5R12"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R11"
+        "scopeId": "HI2-11R5R12"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R11"
+        "scopeId": "HI2-11R5R12"
       }
     ],
     "successCriteria": [
-      "Operational V2 shadow still requests exactly two deep analyses when two candidates are available; only their concurrency changes from burst to one-at-a-time.",
-      "The shadow evidence runner waits 15 seconds between completed pairs, outside per-lane measured latency, to avoid benchmark-induced provider bursts.",
-      "Default multi-stage behavior remains concurrent unless the operational shadow profile explicitly requests serialization.",
-      "Model gateway retry behavior and Retry-After handling remain unchanged.",
-      "No recommendation-capacity, exploration, topic-share, retrieval, cost, latency or failure threshold changes.",
-      "V1 controls still require non-zero evidence, measured model execution, no critical degradation and positive measured cost.",
-      "Hunter V1 remains production authority; no V2 persistence, canary, scheduler or production enablement.",
+      "Every operational shadow lexical/semantic retrieval query includes the Brand identity without changing intent IDs or the two-intent paid-search budget.",
+      "Brand-specific evidence subjects receive deterministic Brand identity fit; generic subjects do not receive synthetic relevance credit.",
+      "V2 common quality uses deterministic Brand identity fit instead of treating every parent-topic-labelled result as fully Brand-relevant.",
+      "Certified EEI finalization refills from eligible alternatives after topic-share pruning when possible, preserving up to six useful recommendations.",
+      "The actual final exploration share never exceeds 0.20, including when fewer than six recommendations survive.",
+      "No quality-delta, exploration, topic-share, retrieval, failure, latency or cost rollout threshold changes.",
+      "R5R11 pacing remains intact; Hunter V1 remains production authority; no V2 persistence, canary, scheduler or production enablement.",
       "PES v2 CI and Security baseline pass before merge/deployment.",
-      "The same 3x3 pre-gate passes on the exact merge SHA before any 30-pair gate."
+      "The same 3x3 pre-gate must pass all non-sample-size gates on the exact merge SHA before any 30-pair gate."
     ],
     "priorPreGateEvidence": {
-      "runId": "HI2-11R5R10-PREGATE-20260924-O",
-      "releaseSha": "a8475874c0374ff66b4c3f25e5050e4aef977d15",
+      "runId": "HI2-11R5R11-PREGATE-20260924-P",
+      "releaseSha": "60ca3289069154e1e2631cdf2d90ca069660764f",
       "status": "blocked",
-      "reason": "GitHub discovery remained healthy, but a paired persisted V1 judgment failed with hunter-model HTTP 429 after 20 evidence items. The control recorded modelInvocationCount=0, criticalDependencyDegraded=true, costUsd=0.028 and latencyMs=30436."
+      "metrics": {
+        "averageQualityDelta": -0.1896894444444445,
+        "averageRetrievalCoverage": 1,
+        "v2FailureRate": 0,
+        "p95LatencyRatio": 0.5965828013518588,
+        "averageCostRatio": 0.559140910433198,
+        "minimumExplorationShare": 0.16666666666666666,
+        "maximumExplorationShare": 0.25,
+        "maximumObservedTopicShare": 0.25
+      },
+      "reason": "Model pressure/429s were cleared. Remaining blockers were V2 quality regression and a 25% exploration share caused by a four-item final list. Evidence also showed generic Python searches that omitted the Brand identity."
     }
   }
 }
