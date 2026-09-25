@@ -284,7 +284,7 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
       options: {
         maxCandidates: this.options.candidate?.maxCandidates ?? 10,
         enforceCertifiedFinalShares:
-          this.options.candidate?.enforceCertifiedFinalShares ?? true,
+          this.options.candidate?.enforceCertifiedFinalShares ?? false,
       },
     });
     const latencyMs = positiveElapsed(performance.now() - started);
