@@ -89,11 +89,11 @@ const tools: ToolGatewayPort = {
       return {
         output: [{
           title: exploration
-            ? "Developer workflow governance shifts around autonomous tools"
-            : "AI agents move into production workflows",
+            ? "Example developer workflow governance shifts around autonomous tools"
+            : "Example AI agents move into production workflows",
           summary: exploration
-            ? "Teams are examining adjacent governance and workflow patterns around autonomous developer tooling."
-            : "Teams are adopting agent workflows with stronger evaluation and observability.",
+            ? "Example teams are examining adjacent governance and workflow patterns around autonomous developer tooling."
+            : "Example teams are adopting agent workflows with stronger evaluation and observability.",
           sourceUrl: exploration
             ? "https://example.com/autonomous-workflow-governance"
             : "https://example.com/agents",
