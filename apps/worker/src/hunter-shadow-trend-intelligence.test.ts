@@ -215,6 +215,20 @@ describe("runShadowTrendIntelligence", () => {
     expect(run.diagnostics.unknownFeatureRates.velocity).toBe(1);
   });
 
+  it("does not treat an undated landing page as a fresh emerging trend", async () => {
+    const undated = candidate({
+      key: "undated-home",
+      title: "GitHub features and pricing",
+      sourceUrl: "https://github.com/features",
+    });
+    delete undated.publishedAt;
+    const run = await runShadowTrendIntelligence([undated], {
+      now: new Date("2026-09-25T00:00:00Z"),
+    });
+    expect(run.clusters[0]!.intelligence.freshness).toBe(0);
+    expect(run.clusters[0]!.intelligence.stage).not.toBe("emerging");
+  });
+
   it("uses bounded semantic similarity only for plausible lexical neighbors", async () => {
     const semantic = {
       similarity: vi.fn(async () => 0.9),

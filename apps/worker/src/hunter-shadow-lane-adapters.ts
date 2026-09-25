@@ -218,13 +218,13 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
     const context = await this.context(run);
     const runtime = new MeteredRuntime(this.options.runtime);
     const tools = new MeteredToolGateway(this.options.tools, this.options.searchCostUsdBySource);
-    const retrievalPlan = anchorShadowRetrievalPlanToBrand(
+    const retrievalPlan = focusShadowRetrievalPlanOnDevelopments(anchorShadowRetrievalPlanToBrand(
       balancedShadowRetrievalPlan(buildHunterRetrievalPlan({
         plan: context.discoveryPlan,
         ...(context.preferenceState ? { preferenceState: context.preferenceState } : {}),
       }), this.options.candidate?.maxIntents ?? 12, run.comparisonId),
       context.hunterInput.brand.brandName,
-    );
+    ), context.referenceTime);
     const paidIntentIds = selectPaidShadowIntentIds(
       retrievalPlan,
       this.options.candidate?.maxPaidIntents ?? 3,
@@ -585,6 +585,25 @@ export function anchorShadowRetrievalPlanToBrand(
       ...intent,
       query: anchorQuery(intent.query, brand),
       semanticQuery: anchorQuery(intent.semanticQuery, brand),
+    })),
+  };
+}
+
+/** Keep shadow searches tied to a dated development, not a Brand landing page. */
+export function focusShadowRetrievalPlanOnDevelopments(
+  plan: HunterRetrievalPlan,
+  referenceTime: string,
+): HunterRetrievalPlan {
+  const year = new Date(referenceTime).getUTCFullYear();
+  if (!Number.isFinite(year)) throw new Error("Hunter shadow referenceTime is invalid");
+  const developmentTerms = ` ${year} recent announcement update release news`;
+  const focus = (query: string) => query.slice(0, 500 - developmentTerms.length).trimEnd() + developmentTerms;
+  return {
+    ...plan,
+    intents: plan.intents.map((intent) => ({
+      ...intent,
+      query: focus(intent.query),
+      semanticQuery: focus(intent.semanticQuery),
     })),
   };
 }

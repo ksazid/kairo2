@@ -11,6 +11,7 @@ import type { BrandDiscoveryPlan } from "@kairo/domain/brand-discovery-plan";
 import {
   ReadOnlyHunterShadowLaneExecutor,
   anchorShadowRetrievalPlanToBrand,
+  focusShadowRetrievalPlanOnDevelopments,
   balancedShadowRetrievalPlan,
   brandIdentityFit,
   isHunterDeepAnalysisOutput,
@@ -361,6 +362,12 @@ describe("read-only Hunter shadow lane adapters", () => {
     expect(anchorShadowRetrievalPlanToBrand(anchored, "Example Labs")).toEqual(anchored);
     expect(brandIdentityFit("Example Labs launches agent tooling", "Example Labs")).toBe(1);
     expect(brandIdentityFit("Generic agent tooling", "Example Labs")).toBe(0);
+    const focused = focusShadowRetrievalPlanOnDevelopments(anchored, "2026-09-25T00:00:00Z");
+    expect(focused.intents[0]!.id).toBe(anchored.intents[0]!.id);
+    expect(focused.intents[0]!.query).toContain("Example Labs AI agents");
+    expect(focused.intents[0]!.query).toContain("2026 recent announcement update release news");
+    expect(focused.intents[0]!.semanticQuery).toContain("2026 recent announcement update release news");
+    expect(anchored.intents[0]!.query).not.toContain("announcement update release news");
   });
 
   it("builds a rotating three-topic plan with a distinct exploration topic", () => {
