@@ -1,63 +1,60 @@
 {
   "activeSlice": {
-    "id": "HI2-11R5R12",
-    "objectiveId": "OBJ-HI2-11R5R12",
+    "id": "HI2-11R5R13",
+    "objectiveId": "OBJ-HI2-11R5R13",
     "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Improve Hunter V2 shadow recommendation quality without changing rollout gates: anchor retrieval queries to the Brand identity, feed deterministic Brand-name evidence fit into pre-ranking and common quality, and make certified final EEI selection refill after topic-diversity pruning while enforcing the actual <=20% exploration share.",
+    "scope": "Improve operational Hunter V2 shadow evidence quality after the R12 3x3: focus the two existing Brand-anchored searches on dated developments and stop treating undated pages as freshly published trends. Keep the quality rubric, gate thresholds, paid search budget, V1 authority and production switches unchanged.",
     "budget": {
-      "maxModelCalls": 40,
+      "maxModelCalls": 35,
       "maxSubAgents": 0,
-      "maxWallClockMinutes": 30,
-      "maxExternalWrites": 14
+      "maxWallClockMinutes": 35,
+      "maxExternalWrites": 10
     },
     "approvals": [
       {
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R12"
+        "scopeId": "HI2-11R5R13"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R12"
+        "scopeId": "HI2-11R5R13"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R12"
+        "scopeId": "HI2-11R5R13"
       }
     ],
     "successCriteria": [
-      "Every operational shadow lexical/semantic retrieval query includes the Brand identity without changing intent IDs or the two-intent paid-search budget.",
-      "Brand-specific evidence subjects receive deterministic Brand identity fit; generic subjects do not receive synthetic relevance credit.",
-      "V2 common quality uses deterministic Brand identity fit instead of treating every parent-topic-labelled result as fully Brand-relevant.",
-      "Certified EEI finalization refills from eligible alternatives after topic-share pruning when possible, preserving up to six useful recommendations.",
-      "The actual final exploration share never exceeds 0.20, including when fewer than six recommendations survive.",
+      "Operational Brand-anchored shadow queries request recent developments for the fixed reference year without increasing the two-intent paid-search budget.",
+      "Undated evidence never receives synthetic freshness or emerging-trend classification merely because it was retrieved now.",
       "No quality-delta, exploration, topic-share, retrieval, failure, latency or cost rollout threshold changes.",
       "R5R11 pacing remains intact; Hunter V1 remains production authority; no V2 persistence, canary, scheduler or production enablement.",
       "PES v2 CI and Security baseline pass before merge/deployment.",
       "The same 3x3 pre-gate must pass all non-sample-size gates on the exact merge SHA before any 30-pair gate."
     ],
     "priorPreGateEvidence": {
-      "runId": "HI2-11R5R11-PREGATE-20260924-P",
-      "releaseSha": "60ca3289069154e1e2631cdf2d90ca069660764f",
+      "runId": "HI2-11R5R12-PREGATE-20260925-Q",
+      "releaseSha": "ab417fa74232cd55e46ecd661175135276080438",
       "status": "blocked",
       "metrics": {
-        "averageQualityDelta": -0.1896894444444445,
+        "averageQualityDelta": -0.1540396296296296,
         "averageRetrievalCoverage": 1,
         "v2FailureRate": 0,
-        "p95LatencyRatio": 0.5965828013518588,
-        "averageCostRatio": 0.559140910433198,
+        "p95LatencyRatio": 0.7302982731554161,
+        "averageCostRatio": 0.7017791490665588,
         "minimumExplorationShare": 0.16666666666666666,
-        "maximumExplorationShare": 0.25,
-        "maximumObservedTopicShare": 0.25
+        "maximumExplorationShare": 0.2,
+        "maximumObservedTopicShare": 0.2
       },
-      "reason": "Model pressure/429s were cleared. Remaining blockers were V2 quality regression and a 25% exploration share caused by a four-item final list. Evidence also showed generic Python searches that omitted the Brand identity."
+      "reason": "Exploration and all operational gates except quality passed. Traces showed static homepages, pricing, tutorials and undated documentation in V2 recommendations. Quality delta -0.154 remained below -0.02."
     }
   }
 }

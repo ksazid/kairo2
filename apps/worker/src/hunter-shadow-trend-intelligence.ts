@@ -242,7 +242,8 @@ function buildCluster(
   const newestAgeDays = Math.max(0, (now.getTime() - lastMs) / 86_400_000);
   const observationSpanDays = Math.max(0, (lastMs - firstMs) / 86_400_000);
 
-  const freshness = clamp01(1 / (1 + newestAgeDays / 7));
+  // An undated page has unknown publication time. Retrieval time is not evidence of recency.
+  const freshness = observedTimes.length ? clamp01(1 / (1 + newestAgeDays / 7)) : 0;
   const crossSourceSpread = clamp01(sourceKeys.length / 3);
   const crossPlatformSpread = clamp01(platformKeys.length / 3);
   const saturation = clamp01(Math.log2(sorted.length + 1) / 3);
