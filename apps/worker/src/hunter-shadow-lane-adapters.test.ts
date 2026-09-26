@@ -408,6 +408,28 @@ describe("read-only Hunter shadow lane adapters", () => {
     ]);
   });
 
+  it("preserves bounded provider rate-limit hints in a failed control", async () => {
+    const failedRuntime: AgentRuntimePort = {
+      async invoke<TOutput>() {
+        throw {
+          kind: "rate-limited", statusCode: 429,
+          rateLimit: { retryAfterSeconds: 180, remainingRequests: 0, remainingTokens: 6000, secret: "private" },
+        };
+      },
+    };
+    const executor = new ReadOnlyHunterShadowLaneExecutor({
+      loadContext: async () => context, tools, runtime: failedRuntime,
+      searchCostUsdBySource: { "agent-reach": 0.007 },
+      controlRetry: { maxAttempts: 1 },
+    });
+    const control = await executor.runControl(run);
+    expect(control.criticalDependencyFailures).toEqual([{
+      phase: "judgment", source: "hunter-model", kind: "rate-limited", statusCode: 429,
+      rateLimit: { retryAfterSeconds: 180, remainingRequests: 0, remainingTokens: 6000 },
+    }]);
+    expect(JSON.stringify(control)).not.toContain("private");
+  });
+
   it("classifies only all-rate-limited critical failures as retryable", () => {
     expect(isRateLimitedControlDegradation(true, [
       { phase: "judgment", source: "hunter-model", kind: "rate-limited", statusCode: 429 },

@@ -101,6 +101,26 @@ export interface HunterFailureDiagnostic {
   kind: string;
   statusCode?: number;
   providerCode?: "context-length" | "schema-rejected" | "model-unavailable" | "quota-exhausted" | "other";
+  rateLimit?: { retryAfterSeconds?: number; remainingRequests?: number; remainingTokens?: number };
+}
+
+function boundedRateLimitHints(value: unknown): HunterFailureDiagnostic["rateLimit"] | undefined {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return undefined;
+  const hints = value as Record<string, unknown>;
+  const bounded = (key: string, maximum: number): number | undefined => {
+    const number = hints[key];
+    return typeof number === "number" && Number.isFinite(number) && number >= 0 && number <= maximum
+      ? number : undefined;
+  };
+  const retryAfterSeconds = bounded("retryAfterSeconds", 86_400);
+  const remainingRequests = bounded("remainingRequests", 1_000_000_000);
+  const remainingTokens = bounded("remainingTokens", 1_000_000_000);
+  if (retryAfterSeconds === undefined && remainingRequests === undefined && remainingTokens === undefined) return undefined;
+  return {
+    ...(retryAfterSeconds !== undefined ? { retryAfterSeconds } : {}),
+    ...(remainingRequests !== undefined ? { remainingRequests } : {}),
+    ...(remainingTokens !== undefined ? { remainingTokens } : {}),
+  };
 }
 
 export interface HunterOpportunityIntelligenceWriter {
@@ -127,13 +147,15 @@ export class HunterOrchestrator {
     const kind = error && typeof error === "object" ? (error as { kind?: unknown }).kind : undefined;
     const statusCode = error && typeof error === "object" ? (error as { statusCode?: unknown }).statusCode : undefined;
     const providerCode = error && typeof error === "object" ? (error as { providerCode?: unknown }).providerCode : undefined;
+    const rateLimit = error && typeof error === "object" ? (error as { rateLimit?: unknown }).rateLimit : undefined;
     const safeKind = typeof kind === "string" && ["unavailable", "rate-limited", "upstream", "invalid-response", "timeout"].includes(kind)
       ? kind : "unknown";
     const safeStatusCode = typeof statusCode === "number" && Number.isInteger(statusCode) && statusCode >= 400 && statusCode <= 599
       ? statusCode : undefined;
     const safeProviderCode = ["context-length", "schema-rejected", "model-unavailable", "quota-exhausted", "other"].includes(String(providerCode))
       ? providerCode as HunterFailureDiagnostic["providerCode"] : undefined;
-    try { this.reportFailure?.({ phase, source, kind: safeKind, ...(safeStatusCode ? { statusCode: safeStatusCode } : {}), ...(safeProviderCode ? { providerCode: safeProviderCode } : {}) }); } catch { /* Diagnostics must not fail the run. */ }
+    const safeRateLimit = safeStatusCode === 429 ? boundedRateLimitHints(rateLimit) : undefined;
+    try { this.reportFailure?.({ phase, source, kind: safeKind, ...(safeStatusCode ? { statusCode: safeStatusCode } : {}), ...(safeProviderCode ? { providerCode: safeProviderCode } : {}), ...(safeRateLimit ? { rateLimit: safeRateLimit } : {}) }); } catch { /* Diagnostics must not fail the run. */ }
   }
 
   async runForAuthorizedBrand(input: HunterRunInput): Promise<HunterRunResult> {
