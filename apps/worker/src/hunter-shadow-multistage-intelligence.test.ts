@@ -279,5 +279,6 @@ describe("runShadowMultiStageIntelligence", () => {
     expect(run.preRanked).toHaveLength(2);
     expect(run.diagnostics.deepFailedCount).toBe(1);
     expect(run.diagnostics.deepSucceededCount).toBe(1);
+    expect(run.diagnostics.deepFailureKinds.other).toBe(1);
   });
 });

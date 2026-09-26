@@ -44,6 +44,7 @@ import type {
   HunterShadowRunCase,
 } from "./hunter-shadow-evidence-runner";
 import {
+  classifyDeepFailure,
   runShadowMultiStageIntelligence,
 } from "./hunter-shadow-multistage-intelligence";
 import {
@@ -96,6 +97,9 @@ export interface HunterShadowCandidateTrace {
     eeiEligible: number;
     eeiSelected: number;
     explorationSelected: number;
+    deepRequested: number;
+    deepSucceeded: number;
+    deepFailureKinds: Record<"rate-limited" | "timeout" | "invalid-output" | "other", number>;
   };
 }
 
@@ -308,8 +312,10 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
     const totalExecuted =
       retrieval.diagnostics.executedLexicalIntentCount +
       retrieval.diagnostics.executedSemanticIntentCount;
-    const failed = totalExecuted > 0 &&
+    const retrievalFailed = totalExecuted > 0 &&
       retrieval.diagnostics.failedIntentCount >= totalExecuted;
+    const deepUnavailable = multistage.diagnostics.deepRequestedCount > 0 &&
+      multistage.diagnostics.deepSucceededCount === 0;
 
     this.candidateTraces.set(run.comparisonId, {
       brandName: context.hunterInput.brand.brandName,
@@ -349,6 +355,9 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
         eeiEligible: eei.diagnostics.eligibleCount,
         eeiSelected: eei.diagnostics.selectedCount,
         explorationSelected: eei.diagnostics.explorationSelectedCount,
+        deepRequested: multistage.diagnostics.deepRequestedCount,
+        deepSucceeded: multistage.diagnostics.deepSucceededCount,
+        deepFailureKinds: { ...multistage.diagnostics.deepFailureKinds },
       },
     });
 
@@ -360,7 +369,7 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
       recommendationCount: eei.selected.length,
       evidenceCount: retrieval.candidates.length,
       modelInvocationCount: runtime.invocations(),
-      criticalDependencyDegraded: false,
+      criticalDependencyDegraded: deepUnavailable,
       criticalDependencyFailures: [],
       metadata: {
         latencyMs,
@@ -368,7 +377,7 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
       },
       retrievalExpected: plannedTopics.length,
       retrievalCovered: coveredTopics.length,
-      failed,
+      failed: retrievalFailed || deepUnavailable,
       explorationRecommendations: eei.selected.filter(
         (item) => item.bucket === "exploration",
       ).length,
@@ -404,6 +413,7 @@ export class RuntimeHunterDeepAnalysisPort implements HunterDeepAnalysisPort {
       brandId: string;
       approvedContextVersion: string;
     },
+    private readonly retry: { sleep?: (ms: number) => Promise<void>; delayMs?: number } = {},
   ) {}
 
   async analyze(request: HunterDeepAnalysisRequest): Promise<HunterDeepAnalysisResult> {
@@ -430,8 +440,16 @@ export class RuntimeHunterDeepAnalysisPort implements HunterDeepAnalysisPort {
       },
     });
 
-    const result = await this.runtime.invoke<HunterDeepAnalysisResult>(invocation);
-    return prepareHunterDeepAnalysisResult(result.output);
+    try {
+      const result = await this.runtime.invoke<HunterDeepAnalysisResult>(invocation);
+      return prepareHunterDeepAnalysisResult(result.output);
+    } catch (error) {
+      if (classifyDeepFailure(error) !== "rate-limited" && classifyDeepFailure(error) !== "timeout") throw error;
+      const delayMs = this.retry.delayMs ?? 8_000;
+      await (this.retry.sleep ?? ((ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms))))(delayMs);
+      const result = await this.runtime.invoke<HunterDeepAnalysisResult>(invocation);
+      return prepareHunterDeepAnalysisResult(result.output);
+    }
   }
 }
 

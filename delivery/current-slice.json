@@ -1,11 +1,11 @@
 {
   "activeSlice": {
-    "id": "HI2-11R5R13",
-    "objectiveId": "OBJ-HI2-11R5R13",
+    "id": "HI2-11R5R14",
+    "objectiveId": "OBJ-HI2-11R5R14",
     "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Improve operational Hunter V2 shadow evidence quality after the R12 3x3: focus the two existing Brand-anchored searches on dated developments and stop treating undated pages as freshly published trends. Keep the quality rubric, gate thresholds, paid search budget, V1 authority and production switches unchanged.",
+    "scope": "Diagnose and recover operational Hunter V2 deep analysis on the read-only shadow lane. Retry only transient model failures once; expose bounded failure-kind counts; mark the candidate failed when every requested deep analysis fails. Keep V1 authority, source budgets, scoring rubric and rollout thresholds unchanged.",
     "budget": {
       "maxModelCalls": 35,
       "maxSubAgents": 0,
@@ -17,44 +17,44 @@
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R13"
+        "scopeId": "HI2-11R5R14"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R13"
+        "scopeId": "HI2-11R5R14"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R13"
+        "scopeId": "HI2-11R5R14"
       }
     ],
     "successCriteria": [
-      "Operational Brand-anchored shadow queries request recent developments for the fixed reference year without increasing the two-intent paid-search budget.",
-      "Undated evidence never receives synthetic freshness or emerging-trend classification merely because it was retrieved now.",
-      "No quality-delta, exploration, topic-share, retrieval, failure, latency or cost rollout threshold changes.",
-      "R5R11 pacing remains intact; Hunter V1 remains production authority; no V2 persistence, canary, scheduler or production enablement.",
-      "PES v2 CI and Security baseline pass before merge/deployment.",
-      "The same 3x3 pre-gate must pass all non-sample-size gates on the exact merge SHA before any 30-pair gate."
+      "A transient rate limit or timeout receives one bounded retry without changing the candidate or model-work profile.",
+      "Deep analysis successes and bounded failure categories appear in read-only benchmark evidence without raw model error text.",
+      "A candidate whose every requested deep analysis fails is measured as a V2 failure.",
+      "No quality-delta, retrieval, failure, latency, cost, exploration or topic-share rollout threshold changes.",
+      "V1 remains production authority; no V2 persistence, canary, scheduler or production enablement.",
+      "PES v2 CI and Security baseline pass; rerun 3x3 on exact merge SHA before any 30-pair gate."
     ],
     "priorPreGateEvidence": {
-      "runId": "HI2-11R5R12-PREGATE-20260925-Q",
-      "releaseSha": "ab417fa74232cd55e46ecd661175135276080438",
+      "runId": "HI2-11R5R13-PREGATE-20260925-R",
+      "releaseSha": "f53456446fa4b9bafa5e0b07869fe14e41f2b735",
       "status": "blocked",
       "metrics": {
-        "averageQualityDelta": -0.1540396296296296,
+        "averageQualityDelta": -0.2204775925925926,
         "averageRetrievalCoverage": 1,
         "v2FailureRate": 0,
-        "p95LatencyRatio": 0.7302982731554161,
-        "averageCostRatio": 0.7017791490665588,
+        "p95LatencyRatio": 0.49458351632264674,
+        "averageCostRatio": 0.4665991019196821,
         "minimumExplorationShare": 0.16666666666666666,
         "maximumExplorationShare": 0.2,
         "maximumObservedTopicShare": 0.2
       },
-      "reason": "Exploration and all operational gates except quality passed. Traces showed static homepages, pricing, tutorials and undated documentation in V2 recommendations. Quality delta -0.154 remained below -0.02."
+      "reason": "R produced timely subjects but lower quality. All 52 selected items had one source and none had a proposed deep angle; model failures were swallowed and V2 failure rate reported zero. Cohort included two Vercel contexts, so direct Q-versus-R quality comparison is not valid."
     }
   }
 }

@@ -34,6 +34,7 @@ export interface ShadowMultiStageDiagnostics {
   deepRequestedCount: number;
   deepSucceededCount: number;
   deepFailedCount: number;
+  deepFailureKinds: Record<"rate-limited" | "timeout" | "invalid-output" | "other", number>;
   deepSkippedCount: number;
   preRankMin: number;
   preRankMedian: number;
@@ -148,6 +149,9 @@ export async function runShadowMultiStageIntelligence(input: {
   );
   const deepIntelligence: ShadowDeepIntelligenceItem[] = [];
   let deepFailedCount = 0;
+  const deepFailureKinds: ShadowMultiStageDiagnostics["deepFailureKinds"] = {
+    "rate-limited": 0, timeout: 0, "invalid-output": 0, other: 0,
+  };
 
   if (input.deepAnalysis) {
     const outcomes = await mapWithConcurrency(
@@ -173,14 +177,17 @@ export async function runShadowMultiStageIntelligence(input: {
             ok: true as const,
             item: { candidateId: item.candidateId, preRank: item.preRank, analysis },
           };
-        } catch {
-          return { ok: false as const };
+        } catch (error) {
+          return { ok: false as const, kind: classifyDeepFailure(error) };
         }
       },
     );
     for (const outcome of outcomes) {
       if (outcome.ok) deepIntelligence.push(outcome.item);
-      else deepFailedCount += 1;
+      else {
+        deepFailedCount += 1;
+        deepFailureKinds[outcome.kind] += 1;
+      }
     }
   }
 
@@ -205,6 +212,7 @@ export async function runShadowMultiStageIntelligence(input: {
       deepRequestedCount: input.deepAnalysis ? deepCandidates.length : 0,
       deepSucceededCount: deepIntelligence.length,
       deepFailedCount,
+      deepFailureKinds,
       deepSkippedCount: input.deepAnalysis ? Math.max(0, preRanked.length - deepCandidates.length) : preRanked.length,
       preRankMin: overallScores.length ? Math.min(...overallScores) : 0,
       preRankMedian: median(overallScores) ?? 0,
@@ -217,6 +225,16 @@ export async function runShadowMultiStageIntelligence(input: {
       },
     },
   };
+}
+
+export function classifyDeepFailure(error: unknown): keyof ShadowMultiStageDiagnostics["deepFailureKinds"] {
+  const record = error && typeof error === "object" ? error as Record<string, unknown> : {};
+  const status = Number(record.statusCode ?? record.status);
+  const message = error instanceof Error ? error.message : "";
+  if (status === 429 || /(?:^|\D)429(?:\D|$)|rate.limit/i.test(message)) return "rate-limited";
+  if (/timed? ?out|abort/i.test(message)) return "timeout";
+  if (/schema|validat|invalid output/i.test(message)) return "invalid-output";
+  return "other";
 }
 
 async function mapWithConcurrency<TInput, TOutput>(
