@@ -87,6 +87,7 @@ export interface HunterDeepAnalysisRequest {
   candidateId: string;
   topic: string;
   stage: string;
+  brandName?: string;
   audience?: string;
   evidenceSummary: string;
   supportingSignalIds: string[];
