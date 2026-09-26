@@ -260,6 +260,32 @@ const MARKETING_PAIR_QUALITY_EVALUATION_SCHEMA = Object.freeze({
 });
 
 const GROQ_STRICT_MODELS = new Set(["openai/gpt-oss-20b", "openai/gpt-oss-120b"]);
+
+function hunterDeepIntelligenceSchema(input: string | undefined): Record<string, unknown> {
+  let candidateId: unknown;
+  try {
+    candidateId = input ? (JSON.parse(input) as { context?: { candidateId?: unknown } }).context?.candidateId : undefined;
+  } catch { /* The caller still has to satisfy the output validator. */ }
+  const exactCandidateId = typeof candidateId === "string" && candidateId.length > 0 && candidateId.length <= 240
+    ? candidateId : undefined;
+  return {
+    type: "object",
+    properties: {
+      version: { type: "string", enum: ["hunter-deep-v1"] },
+      candidateId: exactCandidateId ? { type: "string", enum: [exactCandidateId] } : { type: "string", minLength: 1, maxLength: 240 },
+      brandReason: { type: "string", minLength: 1, maxLength: 1_200 },
+      audienceReason: { type: "string", minLength: 1, maxLength: 1_200 },
+      whyNow: { type: "string", minLength: 1, maxLength: 1_200 },
+      contentGap: { type: "string", minLength: 1, maxLength: 1_200 },
+      proposedAngle: { type: "string", minLength: 1, maxLength: 1_200 },
+      originality: { type: "number", minimum: 0, maximum: 1 },
+      actionability: { type: "number", minimum: 0, maximum: 1 },
+      confidence: { type: "number", minimum: 0, maximum: 1 },
+    },
+    required: ["version", "candidateId", "brandReason", "audienceReason", "whyNow", "contentGap", "proposedAngle", "originality", "actionability", "confidence"],
+    additionalProperties: false,
+  };
+}
 const QUALIFICATION_CASE_IDS = new Set([
   "motorcycle-carousel-01",
   "motorcycle-carousel-02",
@@ -321,6 +347,16 @@ export function responseFormatForOutputSchema(
           name: "hunter_opportunities_2",
           strict: true,
           schema: HUNTER_OPPORTUNITIES_SCHEMA,
+        },
+      };
+    }
+    if (outputSchema.name === "hunter-deep-intelligence" && outputSchema.version === "1") {
+      return {
+        type: "json_schema",
+        json_schema: {
+          name: "hunter_deep_intelligence_1",
+          strict: true,
+          schema: hunterDeepIntelligenceSchema(input),
         },
       };
     }

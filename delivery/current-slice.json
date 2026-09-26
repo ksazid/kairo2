@@ -1,15 +1,15 @@
 {
   "activeSlice": {
-    "id": "HI2-11R5R15",
-    "objectiveId": "OBJ-HI2-11R5R15",
+    "id": "HI2-11R5R16",
+    "objectiveId": "OBJ-HI2-11R5R16",
     "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Classify bounded model-provider 400 reasons in Hunter diagnostics and reduce model pressure in the read-only 3x3 benchmark. Space paired runs and allow two bounded V1 rate-limit retries. Keep non-transient 400 failures blocking, V1 authority, V2 work profile, scoring rubric and rollout thresholds unchanged.",
+    "scope": "Repair the Hunter V2 shadow deep-analysis output contract. Provide an exact candidate-bound strict schema for the supported Groq route and explicit required-field instructions for generic JSON routes. Keep V1 authority, V2 work profile, source budgets, scoring rubric and rollout thresholds unchanged.",
     "budget": {
-      "maxModelCalls": 80,
+      "maxModelCalls": 65,
       "maxSubAgents": 0,
-      "maxWallClockMinutes": 75,
+      "maxWallClockMinutes": 60,
       "maxExternalWrites": 10
     },
     "approvals": [
@@ -17,33 +17,43 @@
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R15"
+        "scopeId": "HI2-11R5R16"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R15"
+        "scopeId": "HI2-11R5R16"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R15"
+        "scopeId": "HI2-11R5R16"
       }
     ],
     "successCriteria": [
-      "A model-provider 400 is classified into a bounded diagnostic category without raw provider text and remains non-retryable.",
-      "V1 control retries only all-rate-limited degradation, at most twice with increasing delay; paired runs are spaced without changing the V2 work profile.",
+      "The supported Groq strict-output route requires every certified Hunter deep field and the exact requested candidate ID.",
+      "Generic JSON routes receive explicit deep-output field instructions; all outputs still pass the domain validator and candidate identity check.",
       "No quality-delta, retrieval, failure, latency, cost, exploration or topic-share rollout threshold changes.",
       "V1 remains production authority; no V2 persistence, canary, scheduler or production enablement.",
-      "PES v2 CI and Security baseline pass; rerun 3x3 on exact merge SHA before any 30-pair gate. Abort and report if model pressure persists."
+      "PES v2 CI and Security baseline pass; rerun one 3x3 on exact merge SHA before any 30-pair gate. Stop if quality or failure remains outside policy."
     ],
     "priorPreGateEvidence": {
-      "releaseSha": "73b77480fb040501ae1d574ba51a107482cd3978",
-      "status": "no-comparable-result",
-      "runIds": ["HI2-11R5R14-PREGATE-20260926-S", "HI2-11R5R14-PREGATE-20260926-T"],
-      "reason": "R14 S aborted on a V1 judgment HTTP 400; R14 T aborted on V1 HTTP 429 after its existing bounded retry. Both startup flags were cleared. No R14 quality result exists; the last completed R13 3x3 quality delta was -0.2204775925925926."
+      "runId": "HI2-11R5R15-PREGATE-20260927-U",
+      "releaseSha": "1f87fcda1fbeb65e48d70c46b55b72f02e7fb247",
+      "status": "blocked",
+      "metrics": {
+        "averageQualityDelta": -0.25122333333333335,
+        "averageRetrievalCoverage": 1,
+        "v2FailureRate": 1,
+        "p95LatencyRatio": 1.2543993879112472,
+        "averageCostRatio": 0.8316788728995443,
+        "minimumExplorationShare": 0.16666666666666666,
+        "maximumExplorationShare": 0.2,
+        "maximumObservedTopicShare": 0.2
+      },
+      "reason": "The paced nine-pair run completed with 18 of 18 deep-analysis requests failing invalid-output. The deep output had generic JSON mode and the instruction did not enumerate required fields. Startup flags were cleared after completion."
     }
   }
 }

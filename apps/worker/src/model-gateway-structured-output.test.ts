@@ -187,6 +187,30 @@ describe("strict structured model output", () => {
     });
   });
 
+  it("binds Hunter deep analysis to the requested candidate and complete domain fields", () => {
+    const format = responseFormatForOutputSchema(
+      "groq", "openai/gpt-oss-120b", { name: "hunter-deep-intelligence", version: "1" },
+      JSON.stringify({ context: { candidateId: "trend:python:123" } }),
+    );
+    expect(format).toMatchObject({
+      type: "json_schema",
+      json_schema: {
+        name: "hunter_deep_intelligence_1", strict: true,
+        schema: {
+          properties: {
+            version: { enum: ["hunter-deep-v1"] },
+            candidateId: { enum: ["trend:python:123"] },
+            originality: { minimum: 0, maximum: 1 },
+          },
+          required: ["version", "candidateId", "brandReason", "audienceReason", "whyNow", "contentGap", "proposedAngle", "originality", "actionability", "confidence"],
+          additionalProperties: false,
+        },
+      },
+    });
+    expect(responseFormatForOutputSchema("groq", "openai/gpt-oss-20b", { name: "hunter-deep-intelligence", version: "1" }).type).toBe("json_schema");
+    expect(responseFormatForOutputSchema("groq", "other-model", { name: "hunter-deep-intelligence", version: "1" })).toEqual({ type: "json_object" });
+  });
+
   it("uses strict production project schemas for carousel and Reel generation", () => {
     const carousel = responseFormatForOutputSchema("groq", "openai/gpt-oss-120b", { name: "production-carousel-project", version: "1" });
     expect(carousel).toMatchObject({

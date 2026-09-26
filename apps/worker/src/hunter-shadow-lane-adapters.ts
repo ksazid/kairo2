@@ -428,7 +428,7 @@ export class RuntimeHunterDeepAnalysisPort implements HunterDeepAnalysisPort {
       capabilities: ["public-content-search"],
       task: {
         instruction:
-          "Analyze only the supplied Hunter evidence summary. Return a concise Brand-relevant opportunity analysis. Do not invent facts, do not infer private traits, and do not optimize for compulsive engagement. Originality and actionability are 0..1 confidence-like scores.",
+          "Analyze only the supplied Hunter evidence summary. Return one JSON object with version hunter-deep-v1 and candidateId exactly as supplied. Include nonempty brandReason, audienceReason, whyNow, contentGap and proposedAngle, plus numeric originality, actionability and confidence scores from 0 to 1. Keep each reason and angle concise and evidence-grounded. Do not invent facts, infer private traits, or optimize for compulsive engagement.",
         context: deepContext(request),
       },
       outputSchema: { name: "hunter-deep-intelligence", version: "1" },
