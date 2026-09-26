@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import type {
   AgentInvocationRequest,
   AgentRuntimePort,
@@ -10,6 +10,7 @@ import type {
 import type { BrandDiscoveryPlan } from "@kairo/domain/brand-discovery-plan";
 import {
   ReadOnlyHunterShadowLaneExecutor,
+  RuntimeHunterDeepAnalysisPort,
   anchorShadowRetrievalPlanToBrand,
   focusShadowRetrievalPlanOnDevelopments,
   balancedShadowRetrievalPlan,
@@ -195,6 +196,58 @@ const runtime: AgentRuntimePort = {
 };
 
 describe("read-only Hunter shadow lane adapters", () => {
+  it("marks the candidate degraded when every requested deep analysis fails validation", async () => {
+    const invalidDeepRuntime: AgentRuntimePort = {
+      async invoke<TOutput>(request: AgentInvocationRequest) {
+        if (request.outputSchema.name === "hunter-deep-intelligence") {
+          throw new Error("Direct-model output failed Kairo schema validation");
+        }
+        return runtime.invoke<TOutput>(request);
+      },
+    };
+    const executor = new ReadOnlyHunterShadowLaneExecutor({
+      loadContext: async () => context, tools, runtime: invalidDeepRuntime,
+      searchCostUsdBySource: { "agent-reach": 0.007 },
+      candidate: { maxIntents: 2, maxPaidIntents: 2, maxExternalCalls: 2,
+        maxSemanticCalls: 0, deepLimit: 2, maxCandidates: 5 },
+    });
+    const candidate = await executor.runCandidate(run);
+    const trace = executor.traceFor(run.comparisonId);
+    expect(candidate.failed).toBe(true);
+    expect(candidate.criticalDependencyDegraded).toBe(true);
+    expect(trace?.diagnostics.deepRequested).toBeGreaterThan(0);
+    expect(trace?.diagnostics.deepSucceeded).toBe(0);
+    expect(trace?.diagnostics.deepFailureKinds["invalid-output"]).toBeGreaterThan(0);
+  });
+
+  it("retries a rate-limited deep analysis once and keeps the same candidate", async () => {
+    const sleep = vi.fn(async () => {});
+    let attempts = 0;
+    const model = {
+      invoke: vi.fn(async () => {
+        attempts += 1;
+        if (attempts === 1) throw new Error("Model provider returned 429");
+        return { output: {
+          version: "hunter-deep-v1", candidateId: "candidate-1",
+          brandReason: "Relevant.", audienceReason: "Useful.", whyNow: "Recent.",
+          contentGap: "Gap.", proposedAngle: "Explain the change.",
+          originality: 0.7, actionability: 0.8, confidence: 0.8,
+        } };
+      }),
+    } as unknown as AgentRuntimePort;
+    const port = new RuntimeHunterDeepAnalysisPort(model, {
+      workspaceId: "workspace-1", brandId: "brand-1", approvedContextVersion: "snapshot-1",
+    }, { sleep });
+    const result = await port.analyze({
+      candidateId: "candidate-1", topic: "AI agents", stage: "emerging",
+      evidenceSummary: "A dated announcement.", supportingSignalIds: ["signal-1"],
+      sourceClasses: ["Industry news"], preRankScore: 0.8,
+    });
+    expect(result.proposedAngle).toBe("Explain the change.");
+    expect(model.invoke).toHaveBeenCalledTimes(2);
+    expect(sleep).toHaveBeenCalledWith(8_000);
+  });
+
   it("runs the real production control path and certified V2 shadow pipeline without persistence authority", async () => {
     const executor = new ReadOnlyHunterShadowLaneExecutor({
       loadContext: async () => context,
