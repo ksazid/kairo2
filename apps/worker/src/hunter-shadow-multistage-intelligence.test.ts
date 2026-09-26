@@ -177,6 +177,40 @@ describe("runShadowMultiStageIntelligence", () => {
     expect(run.diagnostics.deepSkippedCount).toBe(2);
   });
 
+  it("passes bounded, matching public source details and the specific subject to deep analysis", async () => {
+    const analyze = vi.fn(async (request: any) => ({
+      version: HUNTER_DEEP_INTELLIGENCE_VERSION,
+      candidateId: request.candidateId,
+      brandReason: "Relevant.", audienceReason: "Useful.", whyNow: "Recent.",
+      contentGap: "Missing explanation.", proposedAngle: "Explain the announcement.",
+      originality: 0.6, actionability: 0.7, confidence: 0.7,
+    }));
+    const item = cluster("t1", "A specific battery recall");
+    await runShadowMultiStageIntelligence({
+      clusters: [item], plan, deepAnalysis: { analyze },
+      options: {
+        deepLimit: 1, brandName: "Example Motors",
+        sourceEvidenceBySignalId: {
+          "t1:a": {
+            title: "Battery recall expands to two models",
+            summary: "Owners can check their vehicle identification number.".repeat(20),
+            sourceUrl: "https://example.org/recall",
+            publisher: "Example News",
+            publishedAt: "2026-09-20T08:00:00Z",
+          },
+          unrelated: { title: "Unrelated", sourceUrl: "https://example.org/unrelated" },
+        },
+      },
+    });
+    const request = analyze.mock.calls[0]![0];
+    expect(request.topic).toBe("A specific battery recall");
+    expect(request.brandName).toBe("Example Motors");
+    expect(request.evidenceSummary).toContain("Battery recall expands to two models");
+    expect(request.evidenceSummary).toContain("https://example.org/recall");
+    expect(request.evidenceSummary).not.toContain("Unrelated");
+    expect(request.evidenceSummary.length).toBeLessThan(1_200);
+  });
+
   it("executes bounded deep-analysis requests concurrently while preserving output order", async () => {
     let active = 0;
     let maxActive = 0;

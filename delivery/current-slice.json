@@ -1,15 +1,15 @@
 {
   "activeSlice": {
-    "id": "HI2-11R5R16",
-    "objectiveId": "OBJ-HI2-11R5R16",
+    "id": "HI2-11R5R17",
+    "objectiveId": "OBJ-HI2-11R5R17",
     "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Repair the Hunter V2 shadow deep-analysis output contract. Provide an exact candidate-bound strict schema for the supported Groq route and explicit required-field instructions for generic JSON routes. Keep V1 authority, V2 work profile, source budgets, scoring rubric and rollout thresholds unchanged.",
+    "scope": "Ground Hunter V2 shadow deep analysis in the matched public retrieval evidence and specific development, then evaluate quality on the same three-brand, three-repetition cohort. Keep V1 authority, source budgets, scoring rubric and rollout thresholds unchanged.",
     "budget": {
-      "maxModelCalls": 65,
+      "maxModelCalls": 80,
       "maxSubAgents": 0,
-      "maxWallClockMinutes": 60,
+      "maxWallClockMinutes": 75,
       "maxExternalWrites": 10
     },
     "approvals": [
@@ -17,43 +17,43 @@
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R16"
+        "scopeId": "HI2-11R5R17"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R16"
+        "scopeId": "HI2-11R5R17"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R16"
+        "scopeId": "HI2-11R5R17"
       }
     ],
     "successCriteria": [
-      "The supported Groq strict-output route requires every certified Hunter deep field and the exact requested candidate ID.",
-      "Generic JSON routes receive explicit deep-output field instructions; all outputs still pass the domain validator and candidate identity check.",
+      "Deep analysis receives bounded public title, summary, URL, publisher and date for matching supporting signals, plus the specific cluster subject and Brand name.",
+      "The deep output still passes the domain validator and exact candidate identity check.",
       "No quality-delta, retrieval, failure, latency, cost, exploration or topic-share rollout threshold changes.",
       "V1 remains production authority; no V2 persistence, canary, scheduler or production enablement.",
-      "PES v2 CI and Security baseline pass; rerun one 3x3 on exact merge SHA before any 30-pair gate. Stop if quality or failure remains outside policy."
+      "PES v2 CI and Security baseline pass; rerun one 3x3 on exact approved merge SHA before any 30-pair gate. Stop if quality or failure remains outside policy."
     ],
     "priorPreGateEvidence": {
-      "runId": "HI2-11R5R15-PREGATE-20260927-U",
-      "releaseSha": "1f87fcda1fbeb65e48d70c46b55b72f02e7fb247",
+      "runId": "HI2-11R5R16-PREGATE-20260927-V",
+      "releaseSha": "7f0d92d180119d2897054f83dce0b24f18fb187c",
       "status": "blocked",
       "metrics": {
-        "averageQualityDelta": -0.25122333333333335,
+        "averageQualityDelta": -0.2586094444,
         "averageRetrievalCoverage": 1,
-        "v2FailureRate": 1,
-        "p95LatencyRatio": 1.2543993879112472,
-        "averageCostRatio": 0.8316788728995443,
+        "v2FailureRate": 0,
+        "p95LatencyRatio": 1.259545,
+        "averageCostRatio": 0.943209,
         "minimumExplorationShare": 0.16666666666666666,
         "maximumExplorationShare": 0.2,
         "maximumObservedTopicShare": 0.2
       },
-      "reason": "The paced nine-pair run completed with 18 of 18 deep-analysis requests failing invalid-output. The deep output had generic JSON mode and the instruction did not enumerate required fields. Startup flags were cleared after completion."
+      "reason": "The paced nine-pair run completed with all 18 deep requests succeeding, but quality and latency failed. Deep requests received numeric summaries without actual article content, producing generic or off-topic angles. Startup flags were cleared after completion."
     }
   }
 }

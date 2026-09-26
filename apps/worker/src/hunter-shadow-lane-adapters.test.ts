@@ -294,10 +294,16 @@ describe("read-only Hunter shadow lane adapters", () => {
   });
 
   it("runs the real production control path and certified V2 shadow pipeline without persistence authority", async () => {
+    const deepRequests: AgentInvocationRequest[] = [];
     const executor = new ReadOnlyHunterShadowLaneExecutor({
       loadContext: async () => context,
       tools,
-      runtime,
+      runtime: {
+        invoke: async <TOutput>(request: AgentInvocationRequest) => {
+          if (request.outputSchema.name === "hunter-deep-intelligence") deepRequests.push(request);
+          return runtime.invoke<TOutput>(request);
+        },
+      },
       searchCostUsdBySource: { "agent-reach": 0.007 },
       candidate: {
         maxIntents: 2,
@@ -323,6 +329,10 @@ describe("read-only Hunter shadow lane adapters", () => {
     expect(trace!.intents.filter((item) => item.paidAgentReach).length).toBeLessThanOrEqual(2);
     expect(trace!.selected.length).toBeGreaterThan(0);
     expect(trace!.selected.some((item) => item.bucket === "exploration")).toBe(true);
+    expect(deepRequests.length).toBe(2);
+    expect(deepRequests[0]!.task.context.brandName).toBe("Example");
+    expect(String(deepRequests[0]!.task.context.evidenceSummary)).toContain("https://");
+    expect(trace!.selected.every((item) => item.supportingSignalCount >= 1)).toBe(true);
     expect(pair.observation.explorationShare).toBeGreaterThan(0);
     expect(pair.pair.candidate.persistenceAttempted).toBe(false);
     expect(pair.pair.candidate.productionGuardIntact).toBe(true);

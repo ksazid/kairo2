@@ -50,6 +50,14 @@ export interface RunShadowMultiStageOptions {
   brandSemanticSimilarityByCandidateId?: Readonly<Record<string, number>>;
   duplicationPenaltyByCandidateId?: Readonly<Record<string, number>>;
   hardNegativeSimilarityByCandidateId?: Readonly<Record<string, number>>;
+  brandName?: string;
+  sourceEvidenceBySignalId?: Readonly<Record<string, {
+    title: string;
+    summary?: string;
+    sourceUrl: string;
+    publisher?: string;
+    publishedAt?: string;
+  }>>;
 }
 
 export async function runShadowMultiStageIntelligence(input: {
@@ -161,10 +169,11 @@ export async function runShadowMultiStageIntelligence(input: {
         try {
           const raw = await input.deepAnalysis!.analyze({
             candidateId: item.candidateId,
-            topic: item.cluster.intelligence.topic,
+            topic: item.cluster.subject,
             stage: item.cluster.intelligence.stage,
+            ...(options.brandName ? { brandName: options.brandName } : {}),
             ...(item.audience ? { audience: item.audience } : {}),
-            evidenceSummary: evidenceSummary(item.cluster),
+            evidenceSummary: evidenceSummary(item.cluster, options.sourceEvidenceBySignalId),
             supportingSignalIds: [...item.cluster.intelligence.supportingSignalIds],
             sourceClasses: [...item.sourceClasses],
             preRankScore: item.preRank.overall,
@@ -339,11 +348,14 @@ function momentumScore(cluster: ShadowTrendCluster): number {
   return denominator ? clamp01(numerator / denominator) : 0;
 }
 
-function evidenceSummary(cluster: ShadowTrendCluster): string {
+function evidenceSummary(
+  cluster: ShadowTrendCluster,
+  sources?: RunShadowMultiStageOptions["sourceEvidenceBySignalId"],
+): string {
   const unknown = cluster.features.unknownFeatures.length
     ? " Unknown metrics: " + cluster.features.unknownFeatures.join(", ") + "."
     : "";
-  return [
+  const metrics = [
     cluster.features.signalCount + " supporting signals",
     cluster.features.independentPublisherCount + " independent publishers",
     cluster.features.uniqueSourceCount + " source groups",
@@ -351,6 +363,22 @@ function evidenceSummary(cluster: ShadowTrendCluster): string {
     "evidence confidence " + cluster.intelligence.evidenceConfidence.toFixed(3),
     "freshness " + cluster.intelligence.freshness.toFixed(3),
   ].join("; ") + "." + unknown;
+  const excerpts = cluster.intelligence.supportingSignalIds
+    .slice(0, 3)
+    .map((id) => sources?.[id])
+    .filter((source): source is NonNullable<typeof source> => source !== undefined)
+    .map((source, index) => [
+      `Source ${index + 1}: ${boundedEvidenceText(source.title, 180)}`,
+      source.publisher ? `publisher ${boundedEvidenceText(source.publisher, 100)}` : undefined,
+      source.publishedAt ? `published ${boundedEvidenceText(source.publishedAt, 35)}` : undefined,
+      `URL ${boundedEvidenceText(source.sourceUrl, 300)}`,
+      source.summary ? `summary ${boundedEvidenceText(source.summary, 400)}` : undefined,
+    ].filter(Boolean).join("; "));
+  return `${metrics} Subject: ${boundedEvidenceText(cluster.subject, 180)}.${excerpts.length ? ` Public evidence: ${excerpts.join(" | ")}` : ""}`;
+}
+
+function boundedEvidenceText(value: string, limit: number): string {
+  return value.replace(/\s+/g, " ").trim().slice(0, limit);
 }
 
 function lookupOptionalScore(values: Readonly<Record<string, number>> | undefined, key: string): number | undefined {
