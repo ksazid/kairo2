@@ -285,7 +285,7 @@ describe("read-only Hunter shadow lane adapters", () => {
     expect(pair.observation.criticalViolations).toBeUndefined();
   });
 
-  it("retries a rate-limited V1 control once and keeps retry latency/cost inside measured control evidence", async () => {
+  it("backs off a rate-limited V1 control twice and keeps retry latency/cost inside measured control evidence", async () => {
     let modelAttempts = 0;
     const sleeps: number[] = [];
     const retryRuntime: AgentRuntimePort = {
@@ -294,7 +294,7 @@ describe("read-only Hunter shadow lane adapters", () => {
           return runtime.invoke<TOutput>(request);
         }
         modelAttempts += 1;
-        if (modelAttempts === 1) {
+        if (modelAttempts <= 2) {
           throw { kind: "rate-limited", statusCode: 429 };
         }
         return runtime.invoke<TOutput>(request);
@@ -306,15 +306,13 @@ describe("read-only Hunter shadow lane adapters", () => {
       runtime: retryRuntime,
       searchCostUsdBySource: { "agent-reach": 0.007 },
       controlRetry: {
-        maxAttempts: 2,
-        delayMs: 25,
         sleep: async (ms) => { sleeps.push(ms); },
       },
     });
 
     const control = await executor.runControl(run);
-    expect(modelAttempts).toBe(2);
-    expect(sleeps).toEqual([25]);
+    expect(modelAttempts).toBe(3);
+    expect(sleeps).toEqual([30_000, 60_000]);
     expect(control.criticalDependencyDegraded).toBe(false);
     expect(control.criticalDependencyFailures).toEqual([]);
     expect(control.modelInvocationCount).toBe(1);
@@ -331,7 +329,7 @@ describe("read-only Hunter shadow lane adapters", () => {
           return runtime.invoke<TOutput>(request);
         }
         modelAttempts += 1;
-        throw { kind: "invalid-response", statusCode: 400 };
+        throw { kind: "invalid-response", statusCode: 400, providerCode: "context-length" };
       },
     };
     const executor = new ReadOnlyHunterShadowLaneExecutor({
@@ -351,7 +349,7 @@ describe("read-only Hunter shadow lane adapters", () => {
     expect(sleeps).toEqual([]);
     expect(control.criticalDependencyDegraded).toBe(true);
     expect(control.criticalDependencyFailures).toEqual([
-      { phase: "judgment", source: "hunter-model", kind: "invalid-response", statusCode: 400 },
+      { phase: "judgment", source: "hunter-model", kind: "invalid-response", statusCode: 400, providerCode: "context-length" },
     ]);
   });
 

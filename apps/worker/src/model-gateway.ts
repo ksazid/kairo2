@@ -11,6 +11,7 @@ export class ModelGatewayError extends Error {
     message: string,
     readonly kind: "unknown" | "rate-limited" | "upstream" | "invalid-response" | "timeout" = "unknown",
     readonly statusCode?: number,
+    readonly providerCode?: "context-length" | "schema-rejected" | "model-unavailable" | "quota-exhausted" | "other",
   ) {
     super(message);
   }
@@ -88,7 +89,10 @@ export class OpenAICompatibleModelGateway implements ModelGatewayPort {
       this.maxRetryDelayMs,
       this.sleep,
     );
-    if (!response.ok) throw new ModelGatewayError(`Model provider returned ${response.status}`, statusFailureKind(response.status), response.status);
+    if (!response.ok) {
+      const providerCode = response.status === 400 ? await safeProviderFailureCode(response) : undefined;
+      throw new ModelGatewayError(`Model provider returned ${response.status}`, statusFailureKind(response.status), response.status, providerCode);
+    }
     const payload = await response.json() as {
       model?: string;
       choices?: Array<{ message?: { content?: string } }>;
@@ -115,6 +119,19 @@ export class OpenAICompatibleModelGateway implements ModelGatewayPort {
       },
     };
   }
+}
+
+async function safeProviderFailureCode(response: Response): Promise<ModelGatewayError["providerCode"]> {
+  try {
+    const payload = await response.json() as { error?: { code?: unknown; type?: unknown } };
+    const code = payload?.error?.code;
+    const type = payload?.error?.type;
+    if (code === "context_length_exceeded" || code === "context_window_exceeded") return "context-length";
+    if (code === "invalid_json_schema" || code === "invalid_schema") return "schema-rejected";
+    if (code === "model_not_found" || code === "model_decommissioned") return "model-unavailable";
+    if (code === "insufficient_quota" || type === "insufficient_quota") return "quota-exhausted";
+  } catch { /* Never include provider response text in diagnostics. */ }
+  return "other";
 }
 
 export function openAICompatibleGatewayFromEnv(env: NodeJS.ProcessEnv = process.env): OpenAICompatibleModelGateway | null {
