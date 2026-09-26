@@ -104,6 +104,21 @@ describe("OpenAICompatibleModelGateway", () => {
     expect(sleep).not.toHaveBeenCalled();
   });
 
+  it("classifies a provider 400 without retaining its response text", async () => {
+    const fetchImpl = vi.fn(async () => new Response(JSON.stringify({
+      error: { code: "context_length_exceeded", message: "private prompt and provider detail" },
+    }), { status: 400, headers: { "content-type": "application/json" } }));
+    const gateway = new OpenAICompatibleModelGateway({
+      provider: "openai", baseUrl: "https://models.example.test/v1", apiKey: "secret", model: "test-model", pricing,
+      fetchImpl,
+    });
+
+    await expect(gateway.generate(request)).rejects.toMatchObject({
+      message: "Model provider returned 400", statusCode: 400, providerCode: "context-length",
+    });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
   it("classifies exhausted rate limits without exposing provider response bodies", async () => {
     const fetchImpl = vi.fn(async () => new Response("private provider detail", { status: 429 }));
     const gateway = new OpenAICompatibleModelGateway({

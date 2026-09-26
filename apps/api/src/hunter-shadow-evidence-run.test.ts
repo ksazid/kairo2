@@ -280,7 +280,7 @@ describe("Hunter shadow operational evidence", () => {
   it("serializes deep analysis and spaces paired runs without reducing the certified work profile", () => {
     expect(HUNTER_SHADOW_MODEL_PRESSURE_POLICY).toEqual({
       deepAnalysisConcurrency: 1,
-      betweenPairsDelayMs: 15_000,
+      betweenPairsDelayMs: 60_000,
     });
     expect(HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE.deepLimit).toBe(2);
     expect(HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE.maxCandidates).toBe(6);

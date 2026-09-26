@@ -112,7 +112,7 @@ export const HUNTER_SHADOW_DISPOSABLE_BOOTSTRAP_MODE = "source-backed-determinis
 
 export const HUNTER_SHADOW_MODEL_PRESSURE_POLICY = {
   deepAnalysisConcurrency: 1,
-  betweenPairsDelayMs: 15_000,
+  betweenPairsDelayMs: 60_000,
 } as const;
 
 export const HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE = {
@@ -512,6 +512,7 @@ export interface HunterShadowControlScreeningDiagnostic {
       source: string;
       kind: string;
       statusCode?: number;
+      providerCode?: "context-length" | "schema-rejected" | "model-unavailable" | "quota-exhausted" | "other";
     }>;
     costUsd: number;
     latencyMs: number;

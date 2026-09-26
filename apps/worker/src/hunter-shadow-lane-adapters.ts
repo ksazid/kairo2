@@ -570,14 +570,17 @@ function criticalControlFailures(
       ...(diagnostic.statusCode !== undefined
         ? { statusCode: diagnostic.statusCode }
         : {}),
+      ...(diagnostic.providerCode !== undefined
+        ? { providerCode: diagnostic.providerCode }
+        : {}),
     }));
 }
 
 function controlRetryPolicy(
   input: HunterShadowLaneAdapterOptions["controlRetry"],
 ): { maxAttempts: number; delayMs: number; sleep: (ms: number) => Promise<void> } {
-  const maxAttempts = input?.maxAttempts ?? 2;
-  const delayMs = input?.delayMs ?? 10_000;
+  const maxAttempts = input?.maxAttempts ?? 3;
+  const delayMs = input?.delayMs ?? 30_000;
   if (!Number.isInteger(maxAttempts) || maxAttempts < 1 || maxAttempts > 3) {
     throw new Error("Hunter shadow control retry maxAttempts must be an integer from 1 to 3");
   }

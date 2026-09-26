@@ -100,6 +100,7 @@ export interface HunterFailureDiagnostic {
   source: string;
   kind: string;
   statusCode?: number;
+  providerCode?: "context-length" | "schema-rejected" | "model-unavailable" | "quota-exhausted" | "other";
 }
 
 export interface HunterOpportunityIntelligenceWriter {
@@ -125,11 +126,14 @@ export class HunterOrchestrator {
   private diagnose(phase: HunterFailureDiagnostic["phase"], source: string, error: unknown): void {
     const kind = error && typeof error === "object" ? (error as { kind?: unknown }).kind : undefined;
     const statusCode = error && typeof error === "object" ? (error as { statusCode?: unknown }).statusCode : undefined;
+    const providerCode = error && typeof error === "object" ? (error as { providerCode?: unknown }).providerCode : undefined;
     const safeKind = typeof kind === "string" && ["unavailable", "rate-limited", "upstream", "invalid-response", "timeout"].includes(kind)
       ? kind : "unknown";
     const safeStatusCode = typeof statusCode === "number" && Number.isInteger(statusCode) && statusCode >= 400 && statusCode <= 599
       ? statusCode : undefined;
-    try { this.reportFailure?.({ phase, source, kind: safeKind, ...(safeStatusCode ? { statusCode: safeStatusCode } : {}) }); } catch { /* Diagnostics must not fail the run. */ }
+    const safeProviderCode = ["context-length", "schema-rejected", "model-unavailable", "quota-exhausted", "other"].includes(String(providerCode))
+      ? providerCode as HunterFailureDiagnostic["providerCode"] : undefined;
+    try { this.reportFailure?.({ phase, source, kind: safeKind, ...(safeStatusCode ? { statusCode: safeStatusCode } : {}), ...(safeProviderCode ? { providerCode: safeProviderCode } : {}) }); } catch { /* Diagnostics must not fail the run. */ }
   }
 
   async runForAuthorizedBrand(input: HunterRunInput): Promise<HunterRunResult> {
