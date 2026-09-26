@@ -21,6 +21,8 @@ import {
   type HunterShadowExecutionContext,
 } from "./hunter-shadow-lane-adapters";
 import { runHunterShadowEvidencePair } from "./hunter-shadow-evidence-runner";
+import { DirectModelRuntime } from "./agent-runtime";
+import { OpenAICompatibleModelGateway } from "./model-gateway";
 
 const fingerprint = createHash("sha256").update("same-input").digest("hex");
 
@@ -246,6 +248,49 @@ describe("read-only Hunter shadow lane adapters", () => {
     expect(result.proposedAngle).toBe("Explain the change.");
     expect(model.invoke).toHaveBeenCalledTimes(2);
     expect(sleep).toHaveBeenCalledWith(8_000);
+  });
+
+  it("sends the exact deep candidate schema through the direct model runtime", async () => {
+    const fetchImpl = vi.fn(async (_url: string | URL | Request, init?: RequestInit) => {
+      const body = JSON.parse(String(init?.body)) as {
+        messages: Array<{ content: string }>;
+        response_format: { type: string; json_schema: { schema: { properties: { candidateId: { enum: string[] } } } } };
+      };
+      expect(body.response_format.type).toBe("json_schema");
+      expect(body.response_format.json_schema.schema.properties.candidateId.enum).toEqual(["candidate-1"]);
+      expect(body.messages[1]?.content).toContain("proposedAngle");
+      return new Response(JSON.stringify({
+        model: "openai/gpt-oss-120b",
+        choices: [{ message: { content: JSON.stringify({
+          version: "hunter-deep-v1", candidateId: "candidate-1",
+          brandReason: "Relevant to the Brand.", audienceReason: "Useful to developers.",
+          whyNow: "A recent announcement.", contentGap: "Missing practical explanation.",
+          proposedAngle: "Explain the dated change for developers.",
+          originality: 0.7, actionability: 0.8, confidence: 0.8,
+        }) } }],
+        usage: { prompt_tokens: 100, completion_tokens: 100 },
+      }), { status: 200 });
+    });
+    const gateway = new OpenAICompatibleModelGateway({
+      provider: "groq", baseUrl: "https://api.groq.com/openai/v1", apiKey: "test-key",
+      model: "openai/gpt-oss-120b", pricing: {
+        inputUsdPerMillionTokens: 0.15, outputUsdPerMillionTokens: 0.60, version: "test",
+      }, fetchImpl,
+    });
+    const direct = new DirectModelRuntime({
+      gateway, validators: { "hunter-deep-intelligence@1": isHunterDeepAnalysisOutput },
+      policy: () => ({ qualityTier: "balanced", privacyClass: "brand-private", maxCostUsd: 0.03,
+        maxOutputTokens: 1_600, allowedProviders: ["groq"] }),
+    });
+    const port = new RuntimeHunterDeepAnalysisPort(direct, {
+      workspaceId: "workspace-1", brandId: "brand-1", approvedContextVersion: "snapshot-1",
+    });
+    await expect(port.analyze({
+      candidateId: "candidate-1", topic: "AI agents", stage: "emerging",
+      evidenceSummary: "A dated announcement.", supportingSignalIds: ["signal-1"],
+      sourceClasses: ["Industry news"], preRankScore: 0.8,
+    })).resolves.toMatchObject({ candidateId: "candidate-1", proposedAngle: "Explain the dated change for developers." });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
   });
 
   it("runs the real production control path and certified V2 shadow pipeline without persistence authority", async () => {
