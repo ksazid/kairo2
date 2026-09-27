@@ -5,6 +5,7 @@ import {
   HUNTER_SHADOW_DISPOSABLE_BOOTSTRAP_MODE,
   HUNTER_SHADOW_MODEL_PRESSURE_POLICY,
   HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE,
+  aggregateHunterShadowPreGateChunks,
   buildControlScreeningDiagnostic,
   hunterControlCapacityCheckFromEnv,
   hunterShadowEvidenceRequestFromEnv,
@@ -13,6 +14,7 @@ import {
   selectDisposableAnchorTenant,
   selectTargetedPersistedScreeningCandidate,
   disposableVercelCanonicalFields,
+  type HunterShadowOperationalEvidence,
 } from "./hunter-shadow-evidence-run";
 
 const snapshot = {
@@ -122,6 +124,50 @@ describe("Hunter shadow operational evidence", () => {
       KAIRO_HUNTER_SHADOW_EVIDENCE_BRANDS: "3",
       KAIRO_HUNTER_SHADOW_EVIDENCE_RUNS_PER_BRAND: "3",
     })).toThrow(/at least 30/);
+  });
+
+  it("only enables one-pair mode for indexed 3-by-3 pre-gates", () => {
+    const base = {
+      KAIRO_HUNTER_SHADOW_EVIDENCE_RUN_ID: "hi2-11r5r22-pre",
+      KAIRO_HUNTER_SHADOW_EVIDENCE_RELEASE_SHA: "a".repeat(40),
+      KAIRO_RELEASE_SHA: "a".repeat(40),
+      KAIRO_HUNTER_SHADOW_EVIDENCE_BRANDS: "3",
+      KAIRO_HUNTER_SHADOW_EVIDENCE_RUNS_PER_BRAND: "3",
+      KAIRO_HUNTER_SHADOW_EVIDENCE_PRE_GATE: "true",
+    };
+    expect(hunterShadowEvidenceRequestFromEnv({ ...base, KAIRO_HUNTER_SHADOW_EVIDENCE_CASE_INDEX: "9" })?.caseIndex).toBe(9);
+    expect(() => hunterShadowEvidenceRequestFromEnv({ ...base, KAIRO_HUNTER_SHADOW_EVIDENCE_CASE_INDEX: "10" })).toThrow(/CASE_INDEX/);
+    expect(() => hunterShadowEvidenceRequestFromEnv({ ...base, KAIRO_HUNTER_SHADOW_EVIDENCE_PRE_GATE: "false", KAIRO_HUNTER_SHADOW_EVIDENCE_RUNS_PER_BRAND: "10", KAIRO_HUNTER_SHADOW_EVIDENCE_CASE_INDEX: "1" })).toThrow(/3-by-3 pre-gate/);
+  });
+
+  it("aggregates exactly nine matching saved pairs and rejects gaps, duplicates and changed cohorts", () => {
+    const chunks = Array.from({ length: 9 }, (_, position): HunterShadowOperationalEvidence => {
+      const index = position + 1;
+      const brandKey = `brand-${Math.floor(position / 3)}`;
+      return {
+        schemaVersion: 1, evidenceKind: "hunter-v2-shadow-operational",
+        runId: "hi2-11r5r22-pre", releaseSha: "a".repeat(40),
+        startedAt: "2026-09-27T00:00:00Z", completedAt: "2026-09-27T00:01:00Z",
+        brandCount: 1, pairCount: 1,
+        cohort: { persistedBrands: 1, disposablePersistedBrands: 0, ephemeralPublicBrands: 2 },
+        costScope: "model-plus-configured-search", gateMode: "pre-gate",
+        chunk: { caseIndex: index, caseCount: 9, cohortFingerprint: "f".repeat(64) },
+        readiness: {} as HunterShadowOperationalEvidence["readiness"],
+        observations: [{
+          comparisonId: `hi2-11r5r22-pre:${brandKey}:${String(position % 3 + 1).padStart(2, "0")}`,
+          brandKey, v1QualityScore: 0.7, v2QualityScore: 0.7,
+          retrievalCoverage: 1, v1LatencyMs: 1000, v2LatencyMs: 1000,
+          v1CostUsd: 0.01, v2CostUsd: 0.01, v2Failure: false,
+          explorationShare: 1 / 6, maximumTopicShare: 0.25,
+        }],
+      };
+    });
+    expect(aggregateHunterShadowPreGateChunks(chunks)).toMatchObject({ pairCount: 9, preGatePassed: true });
+    expect(() => aggregateHunterShadowPreGateChunks(chunks.slice(0, 8))).toThrow(/nine/);
+    expect(() => aggregateHunterShadowPreGateChunks([...chunks.slice(0, 8), chunks[0]!])).toThrow(/duplicate/);
+    expect(() => aggregateHunterShadowPreGateChunks([...chunks.slice(0, 8), { ...chunks[8]!, chunk: { ...chunks[8]!.chunk!, cohortFingerprint: "e".repeat(64) } }])).toThrow(/inconsistent/);
+    const poor = chunks.map((item) => ({ ...item, observations: item.observations.map((observation) => ({ ...observation, v2QualityScore: 0.5 })) }));
+    expect(aggregateHunterShadowPreGateChunks(poor)).toMatchObject({ preGatePassed: false });
   });
 
   it("enables ephemeral public Brand coverage only by an explicit exact true flag", () => {

@@ -1,11 +1,11 @@
 {
   "activeSlice": {
-    "id": "HI2-11R5R21",
-    "objectiveId": "OBJ-HI2-11R5R21",
+    "id": "HI2-11R5R22",
+    "objectiveId": "OBJ-HI2-11R5R22",
     "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Repair the blocked Hunter shadow pre-gate by pacing control screening and paired runs and by bounding Agent Reach Exa fields before public evidence validation. Preserve control comparability, quality and rollout gates and production routing. Do not start a paid benchmark in this implementation slice.",
+    "scope": "Keep Render on Free and run the Hunter 3-by-3 pre-gate as nine individually captured paired runs, one startup activation at a time. Validate case identity and cohort consistency before aggregating. Preserve all gates and production routing. Do not start paid model calls in this implementation slice.",
     "budget": {
       "maxModelCalls": 0,
       "maxSubAgents": 0,
@@ -17,34 +17,34 @@
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R21"
+        "scopeId": "HI2-11R5R22"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R21"
+        "scopeId": "HI2-11R5R22"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R21"
+        "scopeId": "HI2-11R5R22"
       }
     ],
     "successCriteria": [
-      "Hunter shadow preflight controls and paired runs are spaced 90 seconds to reduce model token pressure, without changing measured lane latency.",
-      "Agent Reach Exa text and dates comply with public evidence bounds; unsafe URLs remain rejected and typed failures remain visible.",
+      "A selected pre-gate case executes exactly one comparable V1/V2 pair after cohort screening, with nine planned cases and the existing pacing.",
+      "Each captured result names its case and stable cohort fingerprint; aggregation rejects missing, duplicate and inconsistent cases.",
       "No quality-delta, retrieval, failure, latency, cost, exploration or topic-share rollout threshold changes.",
       "V1 remains production authority; no V2 persistence, canary, scheduler or production enablement.",
-      "PES v2 CI and Security baseline pass. Keep benchmark startup flags clear; make no paid model calls in this slice."
+      "PES v2 CI and Security baseline pass. Keep benchmark startup flags clear; make no paid model calls in this slice. Render stays on Free."
     ],
     "priorPreGateEvidence": {
-      "runId": "HI2-11R5R20-PREGATE-20260927-Y",
-      "releaseSha": "32d9a52ca4b2f9f7346a9e992b6c645f4aca9a79",
+      "runId": "HI2-11R5R21-PREGATE-20260927-Z",
+      "releaseSha": "450fe7a08c71a86db2573b5d21fbef922fcb7e67",
       "status": "blocked",
       "metrics": null,
-      "reason": "The one-control V1 check was comparable, but the 3x3 stopped before nine pairs: a later V1 control had Agent Reach unknown discovery failure and Groq 429 with Retry-After 6s and remainingTokens 5395. Exa logged 200 responses; an overlong highlight or other field is a plausible normalization failure, not a confirmed cause. The startup flag was cleared and a clean deploy is live."
+      "reason": "The paced 3x3 had no terminal outcome before the Render Free service idled during the long startup job. The startup flag was cleared and a clean deploy is live. No valid quality result exists for this attempt."
     }
   }
 }
