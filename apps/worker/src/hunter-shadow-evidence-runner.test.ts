@@ -153,6 +153,9 @@ describe("Hunter shadow evidence runner", () => {
     const result = await runHunterShadowEvidencePair(run(1), measured);
     expect(result.observation.v1QualityScore).toBe(0);
     expect(result.observation.v1CostUsd).toBe(0.06);
+    await expect(runHunterShadowEvidencePair(run(1), measured, true)).rejects.toThrow(
+      /failed fields=recommendationCount,qualityScore/,
+    );
   });
 
   it("reports the exact comparability fields that fail", () => {
