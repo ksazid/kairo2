@@ -138,6 +138,13 @@ describe("Hunter shadow operational evidence", () => {
     expect(hunterShadowEvidenceRequestFromEnv({ ...base, KAIRO_HUNTER_SHADOW_EVIDENCE_CASE_INDEX: "9" })?.caseIndex).toBe(9);
     expect(() => hunterShadowEvidenceRequestFromEnv({ ...base, KAIRO_HUNTER_SHADOW_EVIDENCE_CASE_INDEX: "10" })).toThrow(/CASE_INDEX/);
     expect(() => hunterShadowEvidenceRequestFromEnv({ ...base, KAIRO_HUNTER_SHADOW_EVIDENCE_PRE_GATE: "false", KAIRO_HUNTER_SHADOW_EVIDENCE_RUNS_PER_BRAND: "10", KAIRO_HUNTER_SHADOW_EVIDENCE_CASE_INDEX: "1" })).toThrow(/3-by-3 pre-gate/);
+    expect(hunterShadowEvidenceRequestFromEnv({
+      ...base, KAIRO_HUNTER_SHADOW_EVIDENCE_EPHEMERAL_PUBLIC_BRANDS: "true",
+      KAIRO_HUNTER_SHADOW_EVIDENCE_PERSISTED_BRAND_NAME: "Python",
+    })?.persistedAnchorBrandName).toBe("Python");
+    expect(() => hunterShadowEvidenceRequestFromEnv({
+      ...base, KAIRO_HUNTER_SHADOW_EVIDENCE_PERSISTED_BRAND_NAME: "Python",
+    })).toThrow(/public fixtures/);
   });
 
   it("aggregates exactly nine matching saved pairs and rejects gaps, duplicates and changed cohorts", () => {

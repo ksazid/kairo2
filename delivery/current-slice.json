@@ -1,11 +1,11 @@
 {
   "activeSlice": {
-    "id": "HI2-11R5R22",
-    "objectiveId": "OBJ-HI2-11R5R22",
+    "id": "HI2-11R5R23",
+    "objectiveId": "OBJ-HI2-11R5R23",
     "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Keep Render on Free and run the Hunter 3-by-3 pre-gate as nine individually captured paired runs, one startup activation at a time. Validate case identity and cohort consistency before aggregating. Preserve all gates and production routing. Do not start paid model calls in this implementation slice.",
+    "scope": "Repair the invalid first Free-plan pre-gate case: pin the original Python persisted anchor plus two public fixtures, and require scored V1 recommendations at screening and pair time. Preserve the production V1 path and rollout thresholds. Do not start paid model calls in this implementation slice.",
     "budget": {
       "maxModelCalls": 0,
       "maxSubAgents": 0,
@@ -17,34 +17,34 @@
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R22"
+        "scopeId": "HI2-11R5R23"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R22"
+        "scopeId": "HI2-11R5R23"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R22"
+        "scopeId": "HI2-11R5R23"
       }
     ],
     "successCriteria": [
-      "A selected pre-gate case executes exactly one comparable V1/V2 pair after cohort screening, with nine planned cases and the existing pacing.",
-      "Each captured result names its case and stable cohort fingerprint; aggregation rejects missing, duplicate and inconsistent cases.",
+      "A named persisted Python anchor forces the original Python plus Vercel and GitHub 3-by-3 pre-gate cohort.",
+      "The operational benchmark rejects a zero-recommendation or zero-quality V1 control at screening and paired measurement, while preserving normal V1 production behavior.",
       "No quality-delta, retrieval, failure, latency, cost, exploration or topic-share rollout threshold changes.",
       "V1 remains production authority; no V2 persistence, canary, scheduler or production enablement.",
       "PES v2 CI and Security baseline pass. Keep benchmark startup flags clear; make no paid model calls in this slice. Render stays on Free."
     ],
     "priorPreGateEvidence": {
-      "runId": "HI2-11R5R21-PREGATE-20260927-Z",
-      "releaseSha": "450fe7a08c71a86db2573b5d21fbef922fcb7e67",
+      "runId": "HI2-11R5R22-PREGATE-20260927-A",
+      "releaseSha": "bce6d8eeced0c710a003040301651f8182de96d2",
       "status": "blocked",
       "metrics": null,
-      "reason": "The paced 3x3 had no terminal outcome before the Render Free service idled during the long startup job. The startup flag was cleared and a clean deploy is live. No valid quality result exists for this attempt."
+      "reason": "One pair completed, but V1 returned zero recommendations and quality zero despite measured work, inflating the apparent positive quality delta. The cohort drifted to three persisted Brands rather than Python plus Vercel and GitHub. This observation is invalid for the intended pre-gate; the startup flags were cleared and the clean Free deploy is live."
     }
   }
 }

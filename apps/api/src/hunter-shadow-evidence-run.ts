@@ -71,6 +71,7 @@ export interface HunterShadowOperationalRequest {
   includeDetails: boolean;
   anchorBrandId?: string;
   caseIndex?: number;
+  persistedAnchorBrandName?: string;
 }
 
 export interface HunterShadowOperationalEvidence {
@@ -327,6 +328,12 @@ export function hunterShadowEvidenceRequestFromEnv(
   if (caseIndex !== undefined && (!preGate || brandCount !== 3 || runsPerBrand !== 3)) {
     throw new Error("One-pair Hunter shadow evidence requires the 3-by-3 pre-gate cohort");
   }
+  const persistedAnchorBrandName = env.KAIRO_HUNTER_SHADOW_EVIDENCE_PERSISTED_BRAND_NAME?.trim();
+  if (persistedAnchorBrandName && (
+    !/^[A-Za-z0-9][A-Za-z0-9 ._-]{0,119}$/.test(persistedAnchorBrandName) ||
+    !preGate || brandCount !== 3 || runsPerBrand !== 3 ||
+    env.KAIRO_HUNTER_SHADOW_EVIDENCE_EPHEMERAL_PUBLIC_BRANDS?.trim().toLowerCase() !== "true"
+  )) throw new Error("Named persisted Hunter anchor requires a 3-by-3 pre-gate with public fixtures");
 
   if (
     env.EXA_API_KEY?.trim() &&
@@ -358,6 +365,7 @@ export function hunterShadowEvidenceRequestFromEnv(
     includeDetails,
     ...(anchorBrandIdRaw ? { anchorBrandId: anchorBrandIdRaw } : {}),
     ...(caseIndex !== undefined ? { caseIndex } : {}),
+    ...(persistedAnchorBrandName ? { persistedAnchorBrandName } : {}),
   };
 }
 
@@ -387,8 +395,12 @@ export async function executeHunterShadowEvidenceRun(
     options.request.anchorBrandId && options.request.allowDisposablePersistedAnchor
       ? await listTargetBrandCandidates(options.pool, options.request.anchorBrandId)
       : undefined;
-  const screeningCandidates =
-    targetedAnchorCandidates && options.request.anchorBrandId
+  const namedCandidates = options.request.persistedAnchorBrandName
+    ? await listNamedBrandCandidates(options.pool, options.request.persistedAnchorBrandName)
+    : undefined;
+  const screeningCandidates = namedCandidates
+    ? namedCandidates
+    : targetedAnchorCandidates && options.request.anchorBrandId
       ? [selectTargetedPersistedScreeningCandidate(
           targetedAnchorCandidates,
           options.request.anchorBrandId,
@@ -462,11 +474,12 @@ export async function executeHunterShadowEvidenceRun(
       }));
       return false;
     }
-    if (!isHunterShadowControlComparable(control)) {
+    if (!isHunterShadowControlComparable(control, true)) {
       screeningDiagnostics.push(buildControlScreeningDiagnostic({
         item,
         reason: "control-non-comparable",
         control,
+        requireScoredControl: true,
       }));
       return false;
     }
@@ -639,6 +652,7 @@ export async function executeHunterShadowEvidenceRun(
   const batch = await runHunterShadowEvidenceBatch(selectedRuns, executor, {
     betweenPairsDelayMs: HUNTER_SHADOW_MODEL_PRESSURE_POLICY.betweenPairsDelayMs,
     sleep,
+    requireScoredControl: true,
   });
   return redactOperationalEvidence(
     options.request,
@@ -703,6 +717,7 @@ export function buildControlScreeningDiagnostic(input: {
   };
   reason: HunterShadowControlScreeningDiagnostic["reason"];
   control?: HunterShadowControlLaneResult;
+  requireScoredControl?: boolean;
   error?: unknown;
 }): HunterShadowControlScreeningDiagnostic {
   const diagnostic: HunterShadowControlScreeningDiagnostic = {
@@ -711,7 +726,7 @@ export function buildControlScreeningDiagnostic(input: {
     brandKey: opaqueBrandKey(input.item.workspaceId, input.item.brandId),
     reason: input.reason,
     failures: input.control
-      ? hunterShadowControlComparabilityFailures(input.control)
+      ? hunterShadowControlComparabilityFailures(input.control, input.requireScoredControl)
       : [],
   };
   if (input.control) {
@@ -1100,6 +1115,29 @@ async function listCandidateBrands(
     workspaceId: row.workspace_id,
     brandId: row.brand_id,
   }));
+}
+
+async function listNamedBrandCandidates(
+  pool: Pool,
+  name: string,
+): Promise<Array<{ accountId: string; workspaceId: string; brandId: string }>> {
+  const result = await pool.query<{
+    account_id: string; workspace_id: string; brand_id: string;
+  }>(
+    `select distinct on (b.id)
+       m.account_id,b.workspace_id,b.id as brand_id
+       from brands b
+       join workspace_memberships m on m.workspace_id=b.workspace_id
+      where m.active=true and lower(b.name)=lower($1)
+      order by b.id,m.account_id
+      limit 2`,
+    [name],
+  );
+  if (result.rows.length !== 1) {
+    throw new Error("Named persisted Hunter anchor must resolve to exactly one Brand");
+  }
+  const row = result.rows[0]!;
+  return [{ accountId: row.account_id, workspaceId: row.workspace_id, brandId: row.brand_id }];
 }
 
 async function readPreferenceState(

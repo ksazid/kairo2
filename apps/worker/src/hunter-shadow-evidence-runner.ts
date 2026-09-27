@@ -60,6 +60,7 @@ export interface HunterShadowLaneExecutor {
 export interface HunterShadowEvidenceBatchPacing {
   betweenPairsDelayMs?: number;
   sleep?: (ms: number) => Promise<void>;
+  requireScoredControl?: boolean;
 }
 
 export interface HunterShadowEvidenceBatch {
@@ -72,13 +73,14 @@ export interface HunterShadowEvidenceBatch {
 export async function runHunterShadowEvidencePair(
   run: HunterShadowRunCase,
   executor: HunterShadowLaneExecutor,
+  requireScoredControl = false,
 ): Promise<PreparedHunterShadowEvidence> {
   const normalized = prepareRunCase(run);
   const control = await executor.runControl(normalized);
   const candidate = await executor.runCandidate(normalized);
 
   requireMeasuredMetadata(control.metadata, "control");
-  requireComparableControl(control);
+  requireComparableControl(control, requireScoredControl);
   requireMeasuredMetadata(candidate.metadata, "candidate");
 
   const fingerprintMatches =
@@ -137,7 +139,7 @@ export async function runHunterShadowEvidenceBatch(
     if (index > 0 && betweenPairsDelayMs > 0) {
       await sleep(betweenPairsDelayMs);
     }
-    pairs.push(await runHunterShadowEvidencePair(run, executor));
+    pairs.push(await runHunterShadowEvidencePair(run, executor, pacing.requireScoredControl));
   }
 
   return {
@@ -162,6 +164,7 @@ function prepareRunCase(input: HunterShadowRunCase): HunterShadowRunCase {
 
 export function hunterShadowControlComparabilityFailures(
   control: HunterShadowControlLaneResult,
+  requireScoredControl = false,
 ): string[] {
   const failures: string[] = [];
   if (!Number.isInteger(control.evidenceCount) || control.evidenceCount <= 0) {
@@ -176,17 +179,26 @@ export function hunterShadowControlComparabilityFailures(
   if (!Number.isFinite(control.metadata.costUsd) || control.metadata.costUsd <= 0) {
     failures.push("costUsd");
   }
+  if (requireScoredControl) {
+    if (!Number.isInteger(control.recommendationCount) || control.recommendationCount <= 0) {
+      failures.push("recommendationCount");
+    }
+    if (!Number.isFinite(control.qualityScore) || control.qualityScore <= 0) {
+      failures.push("qualityScore");
+    }
+  }
   return failures;
 }
 
 export function isHunterShadowControlComparable(
   control: HunterShadowControlLaneResult,
+  requireScoredControl = false,
 ): boolean {
-  return hunterShadowControlComparabilityFailures(control).length === 0;
+  return hunterShadowControlComparabilityFailures(control, requireScoredControl).length === 0;
 }
 
-function requireComparableControl(control: HunterShadowControlLaneResult): void {
-  const failures = hunterShadowControlComparabilityFailures(control);
+function requireComparableControl(control: HunterShadowControlLaneResult, requireScoredControl: boolean): void {
+  const failures = hunterShadowControlComparabilityFailures(control, requireScoredControl);
   if (failures.length > 0) {
     throw new Error(
       "Comparable Hunter V1 control failed fields=" +
