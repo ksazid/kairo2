@@ -5,6 +5,7 @@ import {
   type ManipulationRiskInput,
   type RecommendationExplanation,
 } from "@kairo/domain/eei";
+import { evaluateOpportunity } from "@kairo/domain/discovery";
 import type {
   BrandPreferenceState,
   NegativePreference,
@@ -75,6 +76,7 @@ export interface RunShadowEEIOptions {
   adjacentShare?: number;
   engagementRisksByCandidateId?: Readonly<Record<string, ManipulationRiskInput>>;
   enforceCertifiedFinalShares?: boolean;
+  preferMeasuredQuality?: boolean;
 }
 
 export function runShadowPreferenceAwareEEI(input: {
@@ -171,7 +173,9 @@ export function runShadowPreferenceAwareEEI(input: {
     });
   }
 
-  eligible.sort(compareRankedItems);
+  const compareSelection = input.options?.preferMeasuredQuality
+    ? compareQualityThenEEI : compareRankedItems;
+  eligible.sort(compareSelection);
 
   const explorationTargetCount = targetCount(maxCandidates, explorationBudget, true);
   const explorationMaxCount = Math.max(
@@ -211,14 +215,16 @@ export function runShadowPreferenceAwareEEI(input: {
         )
         .filter((item) => (topicCounts.get(normalize(item.topic)) ?? 0) < topicLimit)
         .sort((left, right) => {
-          if (left.bucket === "exploration" && right.bucket === "exploration") {
+          if (!input.options?.preferMeasuredQuality && left.bucket === "exploration" && right.bucket === "exploration") {
             const affinityDelta =
               (right.preferenceAffinity ?? 0) - (left.preferenceAffinity ?? 0);
             if (Math.abs(affinityDelta) > 1e-9) return affinityDelta;
           }
           const leftCount = sourceCounts.get(primarySourceKey(left)) ?? 0;
           const rightCount = sourceCounts.get(primarySourceKey(right)) ?? 0;
-          return leftCount - rightCount || compareRankedItems(left, right);
+          return input.options?.preferMeasuredQuality
+            ? compareSelection(left, right) || leftCount - rightCount
+            : leftCount - rightCount || compareSelection(left, right);
         });
       const item = eligiblePool[0];
       if (!item) break;
@@ -244,7 +250,7 @@ export function runShadowPreferenceAwareEEI(input: {
     );
   }
 
-  enforceFinalTopicShare(selected, HUNTER_EEI_V2_SHADOW_POLICY.maximumTopicShare);
+  enforceFinalTopicShare(selected, HUNTER_EEI_V2_SHADOW_POLICY.maximumTopicShare, compareSelection);
   if (input.options?.enforceCertifiedFinalShares) {
     refillCertifiedSelection(
       selected,
@@ -252,11 +258,13 @@ export function runShadowPreferenceAwareEEI(input: {
       maxCandidates,
       HUNTER_EEI_V2_SHADOW_POLICY.maximumTopicShare,
       HUNTER_EEI_V2_SHADOW_POLICY.explorationMax,
+      compareSelection,
     );
-    enforceFinalTopicShare(selected, HUNTER_EEI_V2_SHADOW_POLICY.maximumTopicShare);
+    enforceFinalTopicShare(selected, HUNTER_EEI_V2_SHADOW_POLICY.maximumTopicShare, compareSelection);
     enforceActualExplorationShare(
       selected,
       HUNTER_EEI_V2_SHADOW_POLICY.explorationMax,
+      compareSelection,
     );
     refillCertifiedSelection(
       selected,
@@ -264,11 +272,13 @@ export function runShadowPreferenceAwareEEI(input: {
       maxCandidates,
       HUNTER_EEI_V2_SHADOW_POLICY.maximumTopicShare,
       HUNTER_EEI_V2_SHADOW_POLICY.explorationMax,
+      compareSelection,
     );
-    enforceFinalTopicShare(selected, HUNTER_EEI_V2_SHADOW_POLICY.maximumTopicShare);
+    enforceFinalTopicShare(selected, HUNTER_EEI_V2_SHADOW_POLICY.maximumTopicShare, compareSelection);
     enforceActualExplorationShare(
       selected,
       HUNTER_EEI_V2_SHADOW_POLICY.explorationMax,
+      compareSelection,
     );
   }
 
@@ -403,7 +413,10 @@ function classifyBucket(
   return "exploration";
 }
 
-function enforceFinalTopicShare(items: ShadowEEIRankedItem[], maximumShare: number): void {
+function enforceFinalTopicShare(
+  items: ShadowEEIRankedItem[], maximumShare: number,
+  compareSelection: (left: ShadowEEIRankedItem, right: ShadowEEIRankedItem) => number,
+): void {
   if (items.length < 3) return;
 
   while (items.length >= 3) {
@@ -424,7 +437,7 @@ function enforceFinalTopicShare(items: ShadowEEIRankedItem[], maximumShare: numb
       .map((item, index) => ({ item, index }))
       .filter(({ item }) => normalize(item.topic) === topic)
       .sort((left, right) =>
-        left.item.eeiScore - right.item.eeiScore ||
+        compareSelection(right.item, left.item) ||
         right.index - left.index
       )[0];
 
@@ -439,11 +452,12 @@ function refillCertifiedSelection(
   maxCandidates: number,
   maximumTopicShare: number,
   maximumExplorationShare: number,
+  compareSelection: (left: ShadowEEIRankedItem, right: ShadowEEIRankedItem) => number,
 ): void {
   const selectedIds = new Set(selected.map((item) => item.candidateId));
   const candidates = eligible
     .filter((item) => !selectedIds.has(item.candidateId))
-    .sort(compareRankedItems);
+    .sort(compareSelection);
 
   while (selected.length < maxCandidates) {
     const candidate = candidates.find((item) => {
@@ -469,6 +483,7 @@ function refillCertifiedSelection(
 function enforceActualExplorationShare(
   items: ShadowEEIRankedItem[],
   maximumShare: number,
+  compareSelection: (left: ShadowEEIRankedItem, right: ShadowEEIRankedItem) => number,
 ): void {
   while (
     items.length > 0 &&
@@ -478,7 +493,7 @@ function enforceActualExplorationShare(
       .map((item, index) => ({ item, index }))
       .filter(({ item }) => item.bucket === "exploration")
       .sort((left, right) =>
-        left.item.eeiScore - right.item.eeiScore ||
+        compareSelection(right.item, left.item) ||
         right.index - left.index
       )[0];
     if (!removable) return;
@@ -548,6 +563,36 @@ function compareRankedItems(left: ShadowEEIRankedItem, right: ShadowEEIRankedIte
       left.preRanked.cluster.intelligence.evidenceConfidence ||
     left.candidateId.localeCompare(right.candidateId)
   );
+}
+
+function compareQualityThenEEI(left: ShadowEEIRankedItem, right: ShadowEEIRankedItem): number {
+  return shadowCandidateQuality(right) - shadowCandidateQuality(left) ||
+    compareRankedItems(left, right);
+}
+
+/** The same measured opportunity rubric used by the operational V1/V2 quality gate. */
+export function shadowCandidateQuality(item: ShadowEEIRankedItem): number {
+  const topicFit = item.preRanked.topicFit;
+  const brandIdentityFitScore = item.preRanked.preRank.features.brandSemanticSimilarity;
+  const relevance = brandIdentityFitScore === undefined
+    ? topicFit
+    : clamp01(topicFit * 0.65 + brandIdentityFitScore * 0.35);
+  const preference = item.preferenceAffinity;
+  const audienceFit = preference === undefined
+    ? relevance
+    : clamp01(relevance * 0.6 + preference * 0.4);
+
+  return evaluateOpportunity({
+    relevance,
+    evidence: clamp01(item.preRanked.cluster.intelligence.evidenceConfidence),
+    novelty: clamp01(1 - item.saturationPenalty),
+    timeliness: clamp01(
+      item.preRanked.cluster.intelligence.freshness * 0.6 +
+      item.preRanked.preRank.features.trendMomentum * 0.4,
+    ),
+    brandAuthority: clamp01(item.sourceDiversity),
+    audienceFit,
+  }).overall;
 }
 
 function maxSimilarity(value: string, keys: readonly string[]): number {

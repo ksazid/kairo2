@@ -191,6 +191,7 @@ export const HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE = {
   deepAnalysisConcurrency: HUNTER_SHADOW_MODEL_PRESSURE_POLICY.deepAnalysisConcurrency,
   maxCandidates: 6,
   enforceCertifiedFinalShares: true,
+  preferMeasuredQuality: true,
 } as const;
 
 export interface ExecuteHunterShadowEvidenceOptions {

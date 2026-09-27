@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { BrandPreferenceState } from "@kairo/domain/brand-preference-state";
 import type { ShadowPreRankedTrend } from "./hunter-shadow-multistage-intelligence";
-import { runShadowPreferenceAwareEEI } from "./hunter-shadow-eei-v2";
+import { runShadowPreferenceAwareEEI, shadowCandidateQuality } from "./hunter-shadow-eei-v2";
 
 const preferenceState: BrandPreferenceState = {
   schemaVersion: "1",
@@ -103,6 +103,34 @@ function item(
 }
 
 describe("shadow Preference-aware EEI V2", () => {
+  it("prefers a fresh supported recommendation over a high EEI but stale index within certified shares", () => {
+    const stale = item("stale-index", "core topic", 0.9, "rss-a");
+    stale.preRank.overall = 0.99;
+    stale.cluster.intelligence.freshness = 0;
+    stale.cluster.intelligence.evidenceConfidence = 0.2;
+    stale.preRank.features.trendMomentum = 0;
+    const fresh = item("fresh-story", "core topic", 0.85, "rss-b");
+    fresh.preRank.overall = 0.55;
+    const preRanked = [
+      stale, fresh,
+      item("core-b", "release news", 0.9, "rss-c"),
+      item("core-c", "developer tools", 0.9, "rss-d"),
+      item("core-d", "security updates", 0.9, "rss-e"),
+      item("adjacent", "community practices", 0.5, "rss-f", 0.2, 0, false),
+      item("explore", "adjacent development", 0.2, "rss-g"),
+    ];
+    const baseline = runShadowPreferenceAwareEEI({ preRanked, options: { maxCandidates: 6, enforceCertifiedFinalShares: true } });
+    const quality = runShadowPreferenceAwareEEI({ preRanked, options: {
+      maxCandidates: 6, enforceCertifiedFinalShares: true, preferMeasuredQuality: true,
+    } });
+    expect(baseline.selected.map((candidate) => candidate.candidateId)).toContain("stale-index");
+    expect(quality.selected.map((candidate) => candidate.candidateId)).toContain("fresh-story");
+    expect(quality.selected.map((candidate) => candidate.candidateId)).not.toContain("stale-index");
+    expect(quality.selected.reduce((sum, candidate) => sum + shadowCandidateQuality(candidate), 0))
+      .toBeGreaterThan(baseline.selected.reduce((sum, candidate) => sum + shadowCandidateQuality(candidate), 0));
+    expect(quality.diagnostics.explorationSelectedCount).toBe(1);
+    expect(quality.diagnostics.maximumObservedTopicShare).toBeLessThanOrEqual(0.34);
+  });
   it("allocates a real exploration quota while preserving core and adjacent recommendations", () => {
     const input = [
       ...Array.from({ length: 6 }, (_, i) => item("core-" + i, "core topic " + i, 0.9, "core-source-" + i)),

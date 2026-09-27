@@ -99,6 +99,7 @@ describe("Hunter shadow operational evidence", () => {
   it("keeps the operational candidate capacity at six so the certified exploration ceiling is one item", () => {
     expect(HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE.maxCandidates).toBe(6);
     expect(HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE.enforceCertifiedFinalShares).toBe(true);
+    expect(HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE.preferMeasuredQuality).toBe(true);
     expect(Math.floor(HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE.maxCandidates * 0.2)).toBe(1);
   });
 
@@ -347,6 +348,7 @@ describe("Hunter shadow operational evidence", () => {
       deepAnalysisConcurrency: 1,
       maxCandidates: 6,
       enforceCertifiedFinalShares: true,
+      preferMeasuredQuality: true,
     });
   });
 
