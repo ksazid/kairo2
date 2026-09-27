@@ -140,11 +140,15 @@ describe("Hunter shadow operational evidence", () => {
     expect(() => hunterShadowEvidenceRequestFromEnv({ ...base, KAIRO_HUNTER_SHADOW_EVIDENCE_PRE_GATE: "false", KAIRO_HUNTER_SHADOW_EVIDENCE_RUNS_PER_BRAND: "10", KAIRO_HUNTER_SHADOW_EVIDENCE_CASE_INDEX: "1" })).toThrow(/3-by-3 pre-gate/);
     expect(hunterShadowEvidenceRequestFromEnv({
       ...base, KAIRO_HUNTER_SHADOW_EVIDENCE_EPHEMERAL_PUBLIC_BRANDS: "true",
-      KAIRO_HUNTER_SHADOW_EVIDENCE_PERSISTED_BRAND_NAME: "Python",
-    })?.persistedAnchorBrandName).toBe("Python");
+      KAIRO_HUNTER_SHADOW_EVIDENCE_PERSISTED_BRAND_KEY: "ab476ffdc20309da",
+    })?.persistedAnchorBrandKey).toBe("ab476ffdc20309da");
     expect(() => hunterShadowEvidenceRequestFromEnv({
-      ...base, KAIRO_HUNTER_SHADOW_EVIDENCE_PERSISTED_BRAND_NAME: "Python",
+      ...base, KAIRO_HUNTER_SHADOW_EVIDENCE_PERSISTED_BRAND_KEY: "ab476ffdc20309da",
     })).toThrow(/public fixtures/);
+    expect(() => hunterShadowEvidenceRequestFromEnv({
+      ...base, KAIRO_HUNTER_SHADOW_EVIDENCE_EPHEMERAL_PUBLIC_BRANDS: "true",
+      KAIRO_HUNTER_SHADOW_EVIDENCE_PERSISTED_BRAND_KEY: "invalid",
+    })).toThrow(/Pinned persisted/);
   });
 
   it("aggregates exactly nine matching saved pairs and rejects gaps, duplicates and changed cohorts", () => {
