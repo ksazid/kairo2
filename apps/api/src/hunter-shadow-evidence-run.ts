@@ -138,6 +138,75 @@ export interface ExecuteHunterShadowEvidenceOptions {
   searchCostUsdBySource?: Readonly<Record<string, number>>;
 }
 
+export function hunterControlCapacityCheckFromEnv(
+  env: NodeJS.ProcessEnv = process.env,
+): { runId: string; releaseSha: string } | undefined {
+  const runId = env.KAIRO_HUNTER_CONTROL_CAPACITY_CHECK_RUN_ID?.trim();
+  if (!runId) return undefined;
+  if (!RUN_ID.test(runId)) throw new Error("Hunter control capacity check run ID is invalid");
+  const releaseSha = env.KAIRO_RELEASE_SHA?.trim() ?? "";
+  if (!SHA40.test(releaseSha)) throw new Error("Hunter control capacity check requires exact release SHA");
+  return { runId, releaseSha };
+}
+
+export async function executeHunterControlCapacityCheck(
+  options: Omit<ExecuteHunterShadowEvidenceOptions, "request"> & {
+    request: { runId: string; releaseSha: string };
+  },
+): Promise<{
+  runId: string;
+  releaseSha: string;
+  comparable: boolean;
+  evidenceCount: number;
+  modelInvocationCount: number;
+  recommendationCount: number;
+  costUsd: number;
+  latencyMs: number;
+  criticalDependencyFailures: HunterShadowControlLaneResult["criticalDependencyFailures"];
+}> {
+  const core = new KairoService(options.store);
+  const planStore = new PgBrandDiscoveryPlanRepository(options.pool);
+  const closedLoop = new PgHunterClosedLoopStore(options.pool);
+  let selected: Omit<HunterShadowExecutionContext, "referenceTime"> | undefined;
+  for (const candidate of await listCandidateBrands(options.pool, 30)) {
+    selected = await loadReadOnlyBrandContext({
+      pool: options.pool, core, discovery: options.discovery, planStore, closedLoop,
+      accountId: candidate.accountId, brandId: candidate.brandId,
+    }).catch(() => undefined);
+    if (selected) break;
+  }
+  if (!selected) throw new Error("Hunter control capacity check found no Hunter-ready persisted Brand");
+  const referenceTime = new Date().toISOString();
+  const context: HunterShadowExecutionContext = {
+    ...selected, referenceTime,
+    hunterInput: { ...selected.hunterInput, refreshSeed: referenceTime },
+  };
+  const executor = new ReadOnlyHunterShadowLaneExecutor({
+    loadContext: async () => context,
+    tools: options.tools,
+    runtime: options.runtime,
+    sourceRegistry: options.sourceRegistry,
+    searchCostUsdBySource: options.searchCostUsdBySource ?? {},
+    controlRetry: { maxAttempts: 1 },
+  });
+  const control = await executor.runControl({
+    comparisonId: options.request.runId + ":control-capacity",
+    workspaceId: context.hunterInput.brand.workspaceId,
+    brandId: context.hunterInput.brand.brandId,
+    inputFingerprint: createHash("sha256").update(options.request.runId + options.request.releaseSha).digest("hex"),
+  });
+  return {
+    ...options.request,
+    comparable: isHunterShadowControlComparable(control),
+    evidenceCount: control.evidenceCount,
+    modelInvocationCount: control.modelInvocationCount,
+    recommendationCount: control.recommendationCount,
+    costUsd: control.metadata.costUsd,
+    latencyMs: control.metadata.latencyMs,
+    criticalDependencyFailures: control.criticalDependencyFailures,
+  };
+}
+
 export function hunterShadowEvidenceRequestFromEnv(
   env: NodeJS.ProcessEnv = process.env,
 ): HunterShadowOperationalRequest | undefined {

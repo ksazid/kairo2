@@ -80,7 +80,7 @@ import{SimplePublishFlowService}from"@kairo/domain/simple-publish-flow";import{P
 import{PgCommandSearchRepository}from"./command-search-postgres";import{registerCommandSearchRoutes}from"./command-search-routes";
 import{PgBrandNotificationRepository}from"./brand-notifications-postgres";import{registerBrandNotificationRoutes}from"./brand-notifications-routes";
 import{ConceptMockupAssetService}from"./concept-mockup-assets";import{registerConceptMockupAssetRoutes}from"./concept-mockup-asset-routes";
-import{PgHunterOpportunityIntelligenceWriter}from"./hunter-opportunity-intelligence-postgres";import{executeHunterShadowEvidenceRun,hunterShadowEvidenceRequestFromEnv,hunterShadowSearchCostUsdBySourceFromEnv}from"./hunter-shadow-evidence-run";
+import{PgHunterOpportunityIntelligenceWriter}from"./hunter-opportunity-intelligence-postgres";import{executeHunterControlCapacityCheck,executeHunterShadowEvidenceRun,hunterControlCapacityCheckFromEnv,hunterShadowEvidenceRequestFromEnv,hunterShadowSearchCostUsdBySourceFromEnv}from"./hunter-shadow-evidence-run";
 
 function requiredEnv(name: string): string {
   const value = process.env[name]?.trim();
@@ -120,6 +120,7 @@ const agentOutputValidators={
 };
 const evidenceRequest=marketingShadowEvidenceRequestFromEnv();
 const hunterShadowEvidenceRequest=hunterShadowEvidenceRequestFromEnv();
+const hunterControlCapacityRequest=hunterControlCapacityCheckFromEnv();
 const hunterShadowSearchCosts=hunterShadowSearchCostUsdBySourceFromEnv();
 const evidenceStore=evidenceRequest?new PgMarketingShadowEvidenceRunStore(pool):undefined;
 const directModelDiagnosticRequested=directModelProviderDiagnosticRequested();
@@ -310,6 +311,18 @@ try {
         searchCostUsdBySource:hunterShadowSearchCosts,
       }).then(evidence=>app.log.info({evidence},"KAIRO_HUNTER_SHADOW_EVIDENCE_COMPLETE"))
         .catch(error=>app.log.error({err:error,runId:hunterShadowEvidenceRequest.runId,releaseSha:hunterShadowEvidenceRequest.releaseSha},"KAIRO_HUNTER_SHADOW_EVIDENCE_FAILED"));
+    }
+  }
+  if(hunterControlCapacityRequest){
+    if(!baseRuntime){
+      app.log.error({runId:hunterControlCapacityRequest.runId},"KAIRO_HUNTER_CONTROL_CAPACITY_CHECK_FAILED: base AgentRuntime is not configured");
+    }else{
+      void executeHunterControlCapacityCheck({
+        pool,store:coreStore,discovery:discoveryService,tools:createHunterToolGateway(),
+        runtime:baseRuntime,sourceRegistry:configuredHunterSourceRegistry(),
+        request:hunterControlCapacityRequest,searchCostUsdBySource:hunterShadowSearchCosts,
+      }).then(evidence=>app.log.warn({evidence},"KAIRO_HUNTER_CONTROL_CAPACITY_CHECK_COMPLETE"))
+        .catch(()=>app.log.error({runId:hunterControlCapacityRequest.runId,releaseSha:hunterControlCapacityRequest.releaseSha},"KAIRO_HUNTER_CONTROL_CAPACITY_CHECK_FAILED"));
     }
   }
 } catch (error) {

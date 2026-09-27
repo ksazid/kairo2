@@ -6,6 +6,7 @@ import {
   HUNTER_SHADOW_MODEL_PRESSURE_POLICY,
   HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE,
   buildControlScreeningDiagnostic,
+  hunterControlCapacityCheckFromEnv,
   hunterShadowEvidenceRequestFromEnv,
   hunterShadowSearchCostUsdBySourceFromEnv,
   resolveReadOnlyDiscoveryPlan,
@@ -50,6 +51,21 @@ const customized: BrandDiscoveryPlan = {
 };
 
 describe("Hunter shadow operational evidence", () => {
+  it("requires an explicit run ID and exact release SHA for the one-control check", () => {
+    expect(hunterControlCapacityCheckFromEnv({})).toBeUndefined();
+    expect(hunterControlCapacityCheckFromEnv({
+      KAIRO_HUNTER_CONTROL_CAPACITY_CHECK_RUN_ID: "hi2-11r5r20-v1-capacity",
+      KAIRO_RELEASE_SHA: "a".repeat(40),
+    })).toEqual({ runId: "hi2-11r5r20-v1-capacity", releaseSha: "a".repeat(40) });
+    expect(() => hunterControlCapacityCheckFromEnv({
+      KAIRO_HUNTER_CONTROL_CAPACITY_CHECK_RUN_ID: "invalid run",
+      KAIRO_RELEASE_SHA: "a".repeat(40),
+    })).toThrow(/run ID/);
+    expect(() => hunterControlCapacityCheckFromEnv({
+      KAIRO_HUNTER_CONTROL_CAPACITY_CHECK_RUN_ID: "hi2-11r5r20-v1-capacity",
+      KAIRO_RELEASE_SHA: "short",
+    })).toThrow(/exact release SHA/);
+  });
   it("requires a release-pinned 30-run minimum request", () => {
     const request = hunterShadowEvidenceRequestFromEnv({
       KAIRO_HUNTER_SHADOW_EVIDENCE_RUN_ID: "hi2-10r-shadow-001",
