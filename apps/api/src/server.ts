@@ -309,7 +309,7 @@ try {
         sourceRegistry:configuredHunterSourceRegistry(),
         request:hunterShadowEvidenceRequest,
         searchCostUsdBySource:hunterShadowSearchCosts,
-      }).then(evidence=>app.log.info({evidence},"KAIRO_HUNTER_SHADOW_EVIDENCE_COMPLETE"))
+      }).then(evidence=>app.log.info({evidence},evidence.chunk ? "KAIRO_HUNTER_SHADOW_EVIDENCE_CHUNK_COMPLETE" : "KAIRO_HUNTER_SHADOW_EVIDENCE_COMPLETE"))
         .catch(error=>app.log.error({err:error,runId:hunterShadowEvidenceRequest.runId,releaseSha:hunterShadowEvidenceRequest.releaseSha},"KAIRO_HUNTER_SHADOW_EVIDENCE_FAILED"));
     }
   }

@@ -5,6 +5,11 @@ import type {
   ToolGatewayPort,
 } from "@kairo/agent-contracts";
 import { KairoService, type KairoRepository } from "@kairo/domain";
+import {
+  DEFAULT_HUNTER_ROLLOUT_POLICY,
+  evaluateHunterRolloutReadiness,
+  type HunterCriticalViolation,
+} from "@kairo/domain/hunter-rollout";
 import { BrandBrainBootstrapService } from "@kairo/domain/brand-brain-bootstrap";
 import { SanitizingPublicBrandReferenceReader } from "@kairo/domain/brand-brain-sanitizing-reader";
 import { createBrandBrainActivationSnapshot } from "@kairo/domain/brand-brain-activation";
@@ -65,6 +70,7 @@ export interface HunterShadowOperationalRequest {
   preGate: boolean;
   includeDetails: boolean;
   anchorBrandId?: string;
+  caseIndex?: number;
 }
 
 export interface HunterShadowOperationalEvidence {
@@ -79,6 +85,7 @@ export interface HunterShadowOperationalEvidence {
   cohort: { persistedBrands: number; disposablePersistedBrands: number; ephemeralPublicBrands: number };
   costScope: "model-plus-configured-search";
   gateMode: "pre-gate" | "full";
+  chunk?: { caseIndex: number; caseCount: 9; cohortFingerprint: string };
   readiness: HunterShadowEvidenceBatch["readiness"];
   observations: Array<{
     comparisonId: string;
@@ -106,6 +113,62 @@ export interface HunterShadowOperationalEvidence {
       diagnostics: HunterShadowCandidateTrace["diagnostics"];
     }>;
   }>;
+}
+
+/** Combines independently captured Free-plan pre-gate pairs; never certifies the 30-pair gate. */
+export function aggregateHunterShadowPreGateChunks(chunks: readonly HunterShadowOperationalEvidence[]) {
+  if (chunks.length !== 9) throw new Error("The 3-by-3 pre-gate requires all nine one-pair chunks");
+  const first = chunks[0]!;
+  if (!first.chunk) throw new Error("Missing one-pair chunk metadata");
+  const seen = new Set<number>();
+  const brandByPosition = new Map<number, string>();
+  for (const item of chunks) {
+    const index = item.chunk?.caseIndex;
+    if (
+      item.schemaVersion !== 1 || item.evidenceKind !== "hunter-v2-shadow-operational" ||
+      item.gateMode !== "pre-gate" || item.costScope !== "model-plus-configured-search" ||
+      item.runId !== first.runId || item.releaseSha !== first.releaseSha ||
+      item.chunk?.cohortFingerprint !== first.chunk.cohortFingerprint ||
+      item.chunk?.caseCount !== 9 || !Number.isInteger(index) ||
+      index === undefined || index < 1 || index > 9 || seen.has(index) ||
+      item.pairCount !== 1 || item.observations.length !== 1 ||
+      item.cohort.persistedBrands !== first.cohort.persistedBrands ||
+      item.cohort.disposablePersistedBrands !== first.cohort.disposablePersistedBrands ||
+      item.cohort.ephemeralPublicBrands !== first.cohort.ephemeralPublicBrands
+    ) throw new Error("One-pair chunks have missing, duplicate or inconsistent provenance");
+    seen.add(index);
+    const observation = item.observations[0]!;
+    if (observation.comparisonId !== `${item.runId}:${observation.brandKey}:${String((index - 1) % 3 + 1).padStart(2, "0")}`) {
+      throw new Error("One-pair chunk does not match its planned case index");
+    }
+    const brandPosition = Math.floor((index - 1) / 3);
+    const prior = brandByPosition.get(brandPosition);
+    if (prior && prior !== observation.brandKey) throw new Error("Brand changed within the planned cohort");
+    brandByPosition.set(brandPosition, observation.brandKey);
+  }
+  if (new Set(brandByPosition.values()).size !== 3) throw new Error("The pre-gate requires three distinct Brands");
+  const observations = [...chunks].sort((a, b) => a.chunk!.caseIndex - b.chunk!.caseIndex)
+    .map((item) => {
+      const { comparisonId, brandKey, criticalViolations, ...metrics } = item.observations[0]!;
+      return {
+        runId: comparisonId, brandId: brandKey, ...metrics,
+        ...(criticalViolations ? { criticalViolations: criticalViolations as HunterCriticalViolation[] } : {}),
+      };
+    });
+  const readiness = evaluateHunterRolloutReadiness({
+    shadow: observations,
+    policy: { ...DEFAULT_HUNTER_ROLLOUT_POLICY, minShadowRuns: 9 },
+    productionEnableApproved: false,
+  });
+  return {
+    runId: first.runId,
+    releaseSha: first.releaseSha,
+    cohortFingerprint: first.chunk.cohortFingerprint,
+    pairCount: 9 as const,
+    preGatePassed: readiness.shadowReady,
+    metrics: readiness.metrics,
+    blockers: readiness.blockers,
+  };
 }
 
 export const HUNTER_SHADOW_DISPOSABLE_BOOTSTRAP_MODE = "source-backed-deterministic" as const;
@@ -257,6 +320,13 @@ export function hunterShadowEvidenceRequestFromEnv(
       "Hunter shadow evidence requires at least " + minimumPairs + " paired runs",
     );
   }
+  const caseIndexRaw = env.KAIRO_HUNTER_SHADOW_EVIDENCE_CASE_INDEX?.trim();
+  const caseIndex = caseIndexRaw
+    ? boundedInteger(caseIndexRaw, 1, "KAIRO_HUNTER_SHADOW_EVIDENCE_CASE_INDEX", 1, 9)
+    : undefined;
+  if (caseIndex !== undefined && (!preGate || brandCount !== 3 || runsPerBrand !== 3)) {
+    throw new Error("One-pair Hunter shadow evidence requires the 3-by-3 pre-gate cohort");
+  }
 
   if (
     env.EXA_API_KEY?.trim() &&
@@ -287,6 +357,7 @@ export function hunterShadowEvidenceRequestFromEnv(
     preGate,
     includeDetails,
     ...(anchorBrandIdRaw ? { anchorBrandId: anchorBrandIdRaw } : {}),
+    ...(caseIndex !== undefined ? { caseIndex } : {}),
   };
 }
 
@@ -500,6 +571,19 @@ export async function executeHunterShadowEvidenceRun(
   }
 
   const contexts = new Map<string, HunterShadowExecutionContext>();
+  const cohortFingerprint = contextFingerprint(baseContexts.map((item) => ({
+    origin: item.origin,
+    workspaceId: item.workspaceId,
+    brandId: item.brandId,
+    brand: {
+      ...item.context.hunterInput.brand,
+      contextVersion: undefined,
+    },
+    topics: item.context.discoveryPlan.topics.map((topic) => ({
+      id: topic.id, name: topic.name, audience: topic.audience,
+      entities: topic.entities, sourceClasses: topic.sourceClasses,
+    })),
+  })));
   const runs: HunterShadowRunCase[] = [];
   for (const [brandIndex, item] of baseContexts.entries()) {
     const brandKey = opaqueBrandKey(item.workspaceId, item.brandId);
@@ -549,7 +633,10 @@ export async function executeHunterShadowEvidenceRun(
     candidate: HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE,
   });
   await sleep(HUNTER_SHADOW_MODEL_PRESSURE_POLICY.afterScreeningDelayMs);
-  const batch = await runHunterShadowEvidenceBatch(runs, executor, {
+  const selectedRuns = options.request.caseIndex === undefined
+    ? runs
+    : runs.slice(options.request.caseIndex - 1, options.request.caseIndex);
+  const batch = await runHunterShadowEvidenceBatch(selectedRuns, executor, {
     betweenPairsDelayMs: HUNTER_SHADOW_MODEL_PRESSURE_POLICY.betweenPairsDelayMs,
     sleep,
   });
@@ -564,6 +651,11 @@ export async function executeHunterShadowEvidenceRun(
       ephemeralPublicBrands: baseContexts.filter((item) => item.origin === "ephemeral-public").length,
     },
     executor,
+    options.request.caseIndex === undefined ? undefined : {
+      caseIndex: options.request.caseIndex,
+      caseCount: 9,
+      cohortFingerprint,
+    },
   );
   } finally {
     if (disposableAnchor) {
@@ -1037,6 +1129,7 @@ function redactOperationalEvidence(
   batch: HunterShadowEvidenceBatch,
   cohort: { persistedBrands: number; disposablePersistedBrands: number; ephemeralPublicBrands: number },
   executor: ReadOnlyHunterShadowLaneExecutor,
+  chunk?: HunterShadowOperationalEvidence["chunk"],
 ): HunterShadowOperationalEvidence {
   return {
     schemaVersion: 1,
@@ -1050,6 +1143,7 @@ function redactOperationalEvidence(
     cohort,
     costScope: "model-plus-configured-search",
     gateMode: request.preGate ? "pre-gate" : "full",
+    ...(chunk ? { chunk } : {}),
     readiness: batch.readiness,
     observations: batch.pairs.map((pair) => ({
       comparisonId: pair.pair.comparisonId,
