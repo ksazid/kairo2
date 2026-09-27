@@ -71,7 +71,7 @@ export interface HunterShadowOperationalRequest {
   includeDetails: boolean;
   anchorBrandId?: string;
   caseIndex?: number;
-  persistedAnchorBrandName?: string;
+  persistedAnchorBrandKey?: string;
 }
 
 export interface HunterShadowOperationalEvidence {
@@ -328,12 +328,12 @@ export function hunterShadowEvidenceRequestFromEnv(
   if (caseIndex !== undefined && (!preGate || brandCount !== 3 || runsPerBrand !== 3)) {
     throw new Error("One-pair Hunter shadow evidence requires the 3-by-3 pre-gate cohort");
   }
-  const persistedAnchorBrandName = env.KAIRO_HUNTER_SHADOW_EVIDENCE_PERSISTED_BRAND_NAME?.trim();
-  if (persistedAnchorBrandName && (
-    !/^[A-Za-z0-9][A-Za-z0-9 ._-]{0,119}$/.test(persistedAnchorBrandName) ||
+  const persistedAnchorBrandKey = env.KAIRO_HUNTER_SHADOW_EVIDENCE_PERSISTED_BRAND_KEY?.trim();
+  if (persistedAnchorBrandKey && (
+    !/^[0-9a-f]{16}$/.test(persistedAnchorBrandKey) ||
     !preGate || brandCount !== 3 || runsPerBrand !== 3 ||
     env.KAIRO_HUNTER_SHADOW_EVIDENCE_EPHEMERAL_PUBLIC_BRANDS?.trim().toLowerCase() !== "true"
-  )) throw new Error("Named persisted Hunter anchor requires a 3-by-3 pre-gate with public fixtures");
+  )) throw new Error("Pinned persisted Hunter anchor requires a 3-by-3 pre-gate with public fixtures");
 
   if (
     env.EXA_API_KEY?.trim() &&
@@ -365,7 +365,7 @@ export function hunterShadowEvidenceRequestFromEnv(
     includeDetails,
     ...(anchorBrandIdRaw ? { anchorBrandId: anchorBrandIdRaw } : {}),
     ...(caseIndex !== undefined ? { caseIndex } : {}),
-    ...(persistedAnchorBrandName ? { persistedAnchorBrandName } : {}),
+    ...(persistedAnchorBrandKey ? { persistedAnchorBrandKey } : {}),
   };
 }
 
@@ -390,16 +390,21 @@ export async function executeHunterShadowEvidenceRun(
   const core = new KairoService(options.store);
   const planStore = new PgBrandDiscoveryPlanRepository(options.pool);
   const closedLoop = new PgHunterClosedLoopStore(options.pool);
-  const candidates = await listCandidateBrands(options.pool, Math.max(30, options.request.brandCount * 10));
+  const candidates = await listCandidateBrands(options.pool, options.request.persistedAnchorBrandKey
+    ? 1000 : Math.max(30, options.request.brandCount * 10));
   const targetedAnchorCandidates =
     options.request.anchorBrandId && options.request.allowDisposablePersistedAnchor
       ? await listTargetBrandCandidates(options.pool, options.request.anchorBrandId)
       : undefined;
-  const namedCandidates = options.request.persistedAnchorBrandName
-    ? await listNamedBrandCandidates(options.pool, options.request.persistedAnchorBrandName)
+  const pinnedCandidates = options.request.persistedAnchorBrandKey
+    ? candidates.filter((candidate) =>
+        opaqueBrandKey(candidate.workspaceId, candidate.brandId) === options.request.persistedAnchorBrandKey)
     : undefined;
-  const screeningCandidates = namedCandidates
-    ? namedCandidates
+  if (pinnedCandidates && pinnedCandidates.length !== 1) {
+    throw new Error("Pinned persisted Hunter anchor must resolve to exactly one Brand");
+  }
+  const screeningCandidates = pinnedCandidates
+    ? pinnedCandidates
     : targetedAnchorCandidates && options.request.anchorBrandId
       ? [selectTargetedPersistedScreeningCandidate(
           targetedAnchorCandidates,
@@ -1115,29 +1120,6 @@ async function listCandidateBrands(
     workspaceId: row.workspace_id,
     brandId: row.brand_id,
   }));
-}
-
-async function listNamedBrandCandidates(
-  pool: Pool,
-  name: string,
-): Promise<Array<{ accountId: string; workspaceId: string; brandId: string }>> {
-  const result = await pool.query<{
-    account_id: string; workspace_id: string; brand_id: string;
-  }>(
-    `select distinct on (b.id)
-       m.account_id,b.workspace_id,b.id as brand_id
-       from brands b
-       join workspace_memberships m on m.workspace_id=b.workspace_id
-      where m.active=true and lower(b.name)=lower($1)
-      order by b.id,m.account_id
-      limit 2`,
-    [name],
-  );
-  if (result.rows.length !== 1) {
-    throw new Error("Named persisted Hunter anchor must resolve to exactly one Brand");
-  }
-  const row = result.rows[0]!;
-  return [{ accountId: row.account_id, workspaceId: row.workspace_id, brandId: row.brand_id }];
 }
 
 async function readPreferenceState(

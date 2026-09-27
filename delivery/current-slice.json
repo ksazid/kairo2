@@ -1,11 +1,11 @@
 {
   "activeSlice": {
-    "id": "HI2-11R5R23",
-    "objectiveId": "OBJ-HI2-11R5R23",
+    "id": "HI2-11R5R24",
+    "objectiveId": "OBJ-HI2-11R5R24",
     "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Repair the invalid first Free-plan pre-gate case: pin the original Python persisted anchor plus two public fixtures, and require scored V1 recommendations at screening and pair time. Preserve the production V1 path and rollout thresholds. Do not start paid model calls in this implementation slice.",
+    "scope": "Pin the original Python persisted anchor by its evidence-derived opaque workspace/Brand key after exact name lookup failed. Preserve the scored V1 benchmark comparability rule, the two public fixtures, rollout thresholds and production V1 path. Do not start paid model calls in this implementation slice.",
     "budget": {
       "maxModelCalls": 0,
       "maxSubAgents": 0,
@@ -17,34 +17,34 @@
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R23"
+        "scopeId": "HI2-11R5R24"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R23"
+        "scopeId": "HI2-11R5R24"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R23"
+        "scopeId": "HI2-11R5R24"
       }
     ],
     "successCriteria": [
-      "A named persisted Python anchor forces the original Python plus Vercel and GitHub 3-by-3 pre-gate cohort.",
+      "An opaque persisted Python key from the earlier valid 3-by-3 evidence resolves exactly one original Brand before screening; Vercel and GitHub remain the public fixtures.",
       "The operational benchmark rejects a zero-recommendation or zero-quality V1 control at screening and paired measurement, while preserving normal V1 production behavior.",
       "No quality-delta, retrieval, failure, latency, cost, exploration or topic-share rollout threshold changes.",
       "V1 remains production authority; no V2 persistence, canary, scheduler or production enablement.",
       "PES v2 CI and Security baseline pass. Keep benchmark startup flags clear; make no paid model calls in this slice. Render stays on Free."
     ],
     "priorPreGateEvidence": {
-      "runId": "HI2-11R5R22-PREGATE-20260927-A",
-      "releaseSha": "bce6d8eeced0c710a003040301651f8182de96d2",
+      "runId": "HI2-11R5R23-PREGATE-20260927-A",
+      "releaseSha": "2a7982851a989d29ae40aed1347d1ab3f268ce26",
       "status": "blocked",
       "metrics": null,
-      "reason": "One pair completed, but V1 returned zero recommendations and quality zero despite measured work, inflating the apparent positive quality delta. The cohort drifted to three persisted Brands rather than Python plus Vercel and GitHub. This observation is invalid for the intended pre-gate; the startup flags were cleared and the clean Free deploy is live."
+      "reason": "The exact persisted Brand name Python resolved to zero or multiple active database rows, so the run stopped before model calls. Historical operational evidence supplies the stable opaque key ab476ffdc20309da for the Python workspace/Brand. Startup flags were cleared and the clean Free deploy is live."
     }
   }
 }
