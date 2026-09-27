@@ -1,13 +1,13 @@
 {
   "activeSlice": {
-    "id": "HI2-11R5R19",
-    "objectiveId": "OBJ-HI2-11R5R19",
+    "id": "HI2-11R5R20",
+    "objectiveId": "OBJ-HI2-11R5R20",
     "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Repair the one-shot direct-model provider diagnostic after its 400 response by using a minimal strict Groq output schema. Keep Hunter control, V2, retries, production routing, budgets and rollout thresholds unchanged. Do not start another paid benchmark.",
+    "scope": "Add one release-pinned read-only Hunter V1 control capacity check on a persisted Hunter-ready Brand. Report bounded dependency and rate-limit diagnostics, then clear its startup flag. Do not run the 3x3 benchmark or change V1/V2 production routing or rollout thresholds.",
     "budget": {
-      "maxModelCalls": 0,
+      "maxModelCalls": 3,
       "maxSubAgents": 0,
       "maxWallClockMinutes": 60,
       "maxExternalWrites": 10
@@ -17,34 +17,34 @@
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R19"
+        "scopeId": "HI2-11R5R20"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R19"
+        "scopeId": "HI2-11R5R20"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R19"
+        "scopeId": "HI2-11R5R20"
       }
     ],
     "successCriteria": [
-      "The one-shot Groq diagnostic uses a strict JSON schema requiring exactly ok=true.",
-      "The diagnostic remains synthetic, public, zero-tool and capped at $0.01 per logical invocation.",
+      "Exactly one persisted Hunter-ready V1 control is executed read-only with no control-level retry.",
+      "The check reports comparability and allowlisted 429 hints without raw provider data or Brand details.",
       "No quality-delta, retrieval, failure, latency, cost, exploration or topic-share rollout threshold changes.",
       "V1 remains production authority; no V2 persistence, canary, scheduler or production enablement.",
-      "PES v2 CI and Security baseline pass. Keep benchmark startup flags clear; make no paid model calls in this slice."
+      "PES v2 CI and Security baseline pass. Keep benchmark startup flags clear before and after the single check."
     ],
     "priorPreGateEvidence": {
-      "runId": "HI2-11R5R18-DIRECT-MODEL-DIAGNOSTIC-20260927",
-      "releaseSha": "9c1e53fe67f318119dce68da54972aa8706811b6",
+      "runId": "HI2-11R5R19-DIRECT-MODEL-DIAGNOSTIC-20260927",
+      "releaseSha": "4659b73a019ca8f93822d92986ba47543ffd5c7b",
       "status": "blocked",
       "metrics": null,
-      "reason": "The one-shot synthetic diagnostic returned provider HTTP 400 with safe providerCode other, so it did not characterize the prior V1 429s. Its generic JSON output mode differs from the strict Groq Hunter path. The flag was cleared and the backend returned to a live non-diagnostic deploy. This is a hypothesis-driven repair, not an established provider root cause."
+      "reason": "The small direct Groq diagnostic succeeded (234 input and 61 output tokens; $0.0000717), but it does not establish that the larger V1 Hunter request fits provider capacity. Startup flags were cleared and the clean deploy is live."
     }
   }
 }
