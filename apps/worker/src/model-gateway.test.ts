@@ -62,6 +62,38 @@ describe("OpenAICompatibleModelGateway", () => {
     expect(fetchImpl).toHaveBeenCalledTimes(1);
   });
 
+  it("uses a strict candidate-free schema for the Groq provider diagnostic", async () => {
+    const fetchImpl = vi.fn(async (_url: string | URL | Request, init?: RequestInit) => {
+      const body = JSON.parse(String(init?.body)) as { response_format: {
+        type: string; json_schema: { strict: boolean; schema: Record<string, unknown> };
+      } };
+      expect(body.response_format).toEqual({
+        type: "json_schema",
+        json_schema: {
+          name: "direct_model_diagnostic_1",
+          strict: true,
+          schema: {
+            type: "object", properties: { ok: { type: "boolean", enum: [true] } },
+            required: ["ok"], additionalProperties: false,
+          },
+        },
+      });
+      return new Response(JSON.stringify({
+        model: "openai/gpt-oss-120b",
+        choices: [{ message: { content: JSON.stringify({ ok: true }) } }],
+        usage: { prompt_tokens: 12, completion_tokens: 6 },
+      }), { status: 200 });
+    });
+    const gateway = new OpenAICompatibleModelGateway({
+      provider: "groq", baseUrl: "https://api.groq.com/openai/v1", apiKey: "secret",
+      model: "openai/gpt-oss-120b", pricing, fetchImpl,
+    });
+    await expect(gateway.generate({
+      ...request, policy: { ...request.policy, allowedProviders: ["groq"] },
+      outputSchema: { name: "direct-model-diagnostic", version: "1" },
+    })).resolves.toMatchObject({ output: { ok: true } });
+  });
+
   it("retries a provider 429 and honors Retry-After within the bounded delay", async () => {
     const fetchImpl = vi.fn()
       .mockResolvedValueOnce(new Response("rate limited", { status: 429, headers: { "retry-after": "1" } }))
