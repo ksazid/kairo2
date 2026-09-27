@@ -588,6 +588,9 @@ function criticalControlFailures(
       ...(diagnostic.providerCode !== undefined
         ? { providerCode: diagnostic.providerCode }
         : {}),
+      ...(diagnostic.rateLimit !== undefined
+        ? { rateLimit: { ...diagnostic.rateLimit } }
+        : {}),
     }));
 }
 

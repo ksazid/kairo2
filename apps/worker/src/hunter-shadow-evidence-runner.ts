@@ -34,6 +34,7 @@ export interface HunterShadowControlLaneResult {
     kind: string;
     statusCode?: number;
     providerCode?: "context-length" | "schema-rejected" | "model-unavailable" | "quota-exhausted" | "other";
+    rateLimit?: { retryAfterSeconds?: number; remainingRequests?: number; remainingTokens?: number };
   }>;
   metadata: HunterShadowMeasuredMetadata;
 }

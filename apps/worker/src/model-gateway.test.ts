@@ -129,6 +129,31 @@ describe("OpenAICompatibleModelGateway", () => {
     await expect(gateway.generate(request)).rejects.toMatchObject({ message: "Model provider returned 429", kind: "rate-limited" });
   });
 
+  it("retains only bounded rate-limit hints and a safe quota code on a 429", async () => {
+    const fetchImpl = vi.fn(async () => new Response(JSON.stringify({
+      error: { code: "insufficient_quota", message: "private account and prompt detail" },
+    }), { status: 429, headers: {
+      "retry-after": "120",
+      "x-ratelimit-remaining-requests": "0",
+      "x-ratelimit-remaining-tokens": "7234",
+      "x-private-token": "must-not-appear",
+    } }));
+    const gateway = new OpenAICompatibleModelGateway({
+      provider: "openai", baseUrl: "https://models.example.test/v1", apiKey: "secret", model: "test-model", pricing,
+      fetchImpl, maxAttempts: 1,
+    });
+
+    let caught: unknown;
+    try { await gateway.generate(request); } catch (error) { caught = error; }
+    expect(caught).toMatchObject({
+      message: "Model provider returned 429", kind: "rate-limited", statusCode: 429,
+      providerCode: "quota-exhausted",
+      rateLimit: { retryAfterSeconds: 120, remainingRequests: 0, remainingTokens: 7234 },
+    });
+    expect(JSON.stringify(caught)).not.toContain("private account");
+    expect(JSON.stringify(caught)).not.toContain("must-not-appear");
+  });
+
   it("records a defensible zero cost when configured rates are zero", async () => {
     const gateway = new OpenAICompatibleModelGateway({
       provider: "ollama",

@@ -12,9 +12,16 @@ export class ModelGatewayError extends Error {
     readonly kind: "unknown" | "rate-limited" | "upstream" | "invalid-response" | "timeout" = "unknown",
     readonly statusCode?: number,
     readonly providerCode?: "context-length" | "schema-rejected" | "model-unavailable" | "quota-exhausted" | "other",
+    readonly rateLimit?: ModelRateLimitHints,
   ) {
     super(message);
   }
+}
+
+export interface ModelRateLimitHints {
+  retryAfterSeconds?: number;
+  remainingRequests?: number;
+  remainingTokens?: number;
 }
 
 type FetchLike = (input: string | URL | Request, init?: RequestInit) => Promise<Response>;
@@ -90,8 +97,10 @@ export class OpenAICompatibleModelGateway implements ModelGatewayPort {
       this.sleep,
     );
     if (!response.ok) {
-      const providerCode = response.status === 400 ? await safeProviderFailureCode(response) : undefined;
-      throw new ModelGatewayError(`Model provider returned ${response.status}`, statusFailureKind(response.status), response.status, providerCode);
+      const rateLimit = response.status === 429 ? safeRateLimitHints(response.headers) : undefined;
+      const providerCode = response.status === 400 || response.status === 429
+        ? await safeProviderFailureCode(response) : undefined;
+      throw new ModelGatewayError(`Model provider returned ${response.status}`, statusFailureKind(response.status), response.status, providerCode, rateLimit);
     }
     const payload = await response.json() as {
       model?: string;
@@ -132,6 +141,24 @@ async function safeProviderFailureCode(response: Response): Promise<ModelGateway
     if (code === "insufficient_quota" || type === "insufficient_quota") return "quota-exhausted";
   } catch { /* Never include provider response text in diagnostics. */ }
   return "other";
+}
+
+function safeRateLimitHints(headers: Headers): ModelRateLimitHints | undefined {
+  const retryAfterSeconds = boundedHeaderNumber(headers.get("retry-after"), 86_400);
+  const remainingRequests = boundedHeaderNumber(headers.get("x-ratelimit-remaining-requests"), 1_000_000_000);
+  const remainingTokens = boundedHeaderNumber(headers.get("x-ratelimit-remaining-tokens"), 1_000_000_000);
+  if (retryAfterSeconds === undefined && remainingRequests === undefined && remainingTokens === undefined) return undefined;
+  return {
+    ...(retryAfterSeconds !== undefined ? { retryAfterSeconds } : {}),
+    ...(remainingRequests !== undefined ? { remainingRequests } : {}),
+    ...(remainingTokens !== undefined ? { remainingTokens } : {}),
+  };
+}
+
+function boundedHeaderNumber(value: string | null, maximum: number): number | undefined {
+  if (value === null || !/^\d+(?:\.\d+)?$/.test(value.trim())) return undefined;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed >= 0 && parsed <= maximum ? parsed : undefined;
 }
 
 export function openAICompatibleGatewayFromEnv(env: NodeJS.ProcessEnv = process.env): OpenAICompatibleModelGateway | null {
