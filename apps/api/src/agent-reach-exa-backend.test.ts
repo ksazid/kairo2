@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { ExaAgentReachSearchBackend, agentReachSearchBackendFromEnv } from "./agent-reach-exa-backend";
+import { AgentReachDiscoveryProvider } from "@kairo/worker/discovery-provider";
 
 describe("Agent Reach Exa backend", () => {
   it("uses the fixed approved endpoint and normalizes bounded result fields", async () => {
@@ -19,6 +20,25 @@ describe("Agent Reach Exa backend", () => {
   it("does not advertise a runtime backend without the required server-side key", () => {
     expect(agentReachSearchBackendFromEnv({})).toBeUndefined();
     expect(agentReachSearchBackendFromEnv({ EXA_API_KEY: "key" })).toBeInstanceOf(ExaAgentReachSearchBackend);
+  });
+
+  it("bounds Exa text and drops invalid dates before evidence validation", async () => {
+    const backend = new ExaAgentReachSearchBackend("secret", async () => new Response(JSON.stringify({ results: [{
+      title: "T".repeat(350), url: "https://example.com/story", author: "A".repeat(250),
+      publishedDate: "not a date", highlights: ["S".repeat(2_500)],
+    }] }), { status: 200 }));
+    const provider = new AgentReachDiscoveryProvider(backend);
+    await expect(provider.discover({ query: "public", scope: { visibility: "global-public" }, maxResults: 1, timeoutMs: 1_000 }))
+      .resolves.toEqual([expect.objectContaining({
+        title: "T".repeat(300), summary: "S".repeat(2_000), author: "A".repeat(200),
+      })]);
+  });
+
+  it("classifies Exa rate limiting without exposing response text", async () => {
+    const backend = new ExaAgentReachSearchBackend("secret", async () => new Response("private upstream detail", { status: 429 }));
+    await expect(new AgentReachDiscoveryProvider(backend).discover({
+      query: "public", scope: { visibility: "global-public" }, maxResults: 1, timeoutMs: 1_000,
+    })).rejects.toMatchObject({ kind: "rate-limited", statusCode: 429 });
   });
 
   it("rejects oversized upstream responses", async () => {

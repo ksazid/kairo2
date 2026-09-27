@@ -114,13 +114,13 @@ describe("Hunter shadow evidence runner", () => {
       [run(1), run(2), run(3)],
       executor(),
       {
-        betweenPairsDelayMs: 15_000,
+        betweenPairsDelayMs: 90_000,
         sleep: async (ms) => { sleeps.push(ms); },
       },
     );
 
     expect(batch.pairs).toHaveLength(3);
-    expect(sleeps).toEqual([15_000, 15_000]);
+    expect(sleeps).toEqual([90_000, 90_000]);
     expect(batch.pairs.every((pair) => pair.observation.v1LatencyMs === 1000)).toBe(true);
     expect(batch.pairs.every((pair) => pair.observation.v2LatencyMs === 1200)).toBe(true);
   });

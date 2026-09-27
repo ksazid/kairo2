@@ -13,6 +13,11 @@ export const AGENT_REACH_PIN = "93ae1d18c37b707dec053c7c4f9d91cd8ef8943d";
 
 export class DiscoveryProviderError extends Error {
   readonly code = "discovery_provider_error";
+  constructor(
+    message: string,
+    readonly kind: "unknown" | "rate-limited" | "upstream" | "invalid-response" | "timeout" = "unknown",
+    readonly statusCode?: number,
+  ) { super(message); }
 }
 
 export interface RawPublicSearchResult {
@@ -57,37 +62,41 @@ export class AgentReachDiscoveryProvider implements DiscoverySourceProvider {
       });
       const retrievedAt = this.now().toISOString();
       return raw.slice(0, request.maxResults).map((result) => {
-        const prepared = preparePublicSignal({
-          title: result.title,
-          ...(result.summary ? { summary: result.summary } : {}),
-          sourceUrl: result.url,
-          platform: result.platform ?? "web",
-          ...(result.publisher ? { publisher: result.publisher } : {}),
-          ...(result.author ? { author: result.author } : {}),
-          ...(result.publishedAt ? { publishedAt: result.publishedAt } : {}),
-          retrievedAt,
-          provider: "agent-reach",
-          providerVersion: AGENT_REACH_PIN,
-          ...(result.contentHash ? { contentHash: result.contentHash } : {}),
-        });
-        return {
-          title: prepared.title,
-          ...(prepared.summary ? { summary: prepared.summary } : {}),
-          sourceUrl: prepared.sourceUrl,
-          platform: prepared.platform,
-          ...(prepared.publisher ? { publisher: prepared.publisher } : {}),
-          ...(prepared.author ? { author: prepared.author } : {}),
-          ...(prepared.publishedAt ? { publishedAt: prepared.publishedAt } : {}),
-          retrievedAt: prepared.retrievedAt,
-          provider: prepared.provider,
-          providerVersion: prepared.providerVersion,
-          ...(prepared.contentHash ? { contentHash: prepared.contentHash } : {}),
-        } satisfies DiscoveryEvidence;
+        try {
+          const prepared = preparePublicSignal({
+            title: result.title,
+            ...(result.summary ? { summary: result.summary } : {}),
+            sourceUrl: result.url,
+            platform: result.platform ?? "web",
+            ...(result.publisher ? { publisher: result.publisher } : {}),
+            ...(result.author ? { author: result.author } : {}),
+            ...(result.publishedAt ? { publishedAt: result.publishedAt } : {}),
+            retrievedAt,
+            provider: "agent-reach",
+            providerVersion: AGENT_REACH_PIN,
+            ...(result.contentHash ? { contentHash: result.contentHash } : {}),
+          });
+          return {
+            title: prepared.title,
+            ...(prepared.summary ? { summary: prepared.summary } : {}),
+            sourceUrl: prepared.sourceUrl,
+            platform: prepared.platform,
+            ...(prepared.publisher ? { publisher: prepared.publisher } : {}),
+            ...(prepared.author ? { author: prepared.author } : {}),
+            ...(prepared.publishedAt ? { publishedAt: prepared.publishedAt } : {}),
+            retrievedAt: prepared.retrievedAt,
+            provider: prepared.provider,
+            providerVersion: prepared.providerVersion,
+            ...(prepared.contentHash ? { contentHash: prepared.contentHash } : {}),
+          } satisfies DiscoveryEvidence;
+        } catch {
+          throw new DiscoveryProviderError("Agent Reach returned invalid public evidence", "invalid-response");
+        }
       });
     } catch (error) {
-      if (controller.signal.aborted) throw new DiscoveryProviderError("Discovery provider timed out");
+      if (controller.signal.aborted) throw new DiscoveryProviderError("Discovery provider timed out", "timeout");
       if (error instanceof DiscoveryProviderError) throw error;
-      throw new DiscoveryProviderError(`Discovery provider failed: ${error instanceof Error ? error.message : "unknown error"}`);
+      throw new DiscoveryProviderError("Discovery provider failed", "upstream");
     } finally {
       clearTimeout(timeout);
     }

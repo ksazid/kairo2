@@ -112,7 +112,9 @@ export const HUNTER_SHADOW_DISPOSABLE_BOOTSTRAP_MODE = "source-backed-determinis
 
 export const HUNTER_SHADOW_MODEL_PRESSURE_POLICY = {
   deepAnalysisConcurrency: 1,
-  betweenPairsDelayMs: 60_000,
+  betweenControlPreflightsMs: 90_000,
+  afterScreeningDelayMs: 90_000,
+  betweenPairsDelayMs: 90_000,
 } as const;
 
 export const HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE = {
@@ -136,6 +138,7 @@ export interface ExecuteHunterShadowEvidenceOptions {
   sourceRegistry: readonly DiscoverySourceDefinition[];
   request: HunterShadowOperationalRequest;
   searchCostUsdBySource?: Readonly<Record<string, number>>;
+  sleep?: (ms: number) => Promise<void>;
 }
 
 export function hunterControlCapacityCheckFromEnv(
@@ -321,6 +324,8 @@ export async function executeHunterShadowEvidenceRun(
         )]
       : candidates;
   const screeningDiagnostics: HunterShadowControlScreeningDiagnostic[] = [];
+  const sleep = options.sleep ?? ((ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms)));
+  let controlPreflightAttempts = 0;
   const baseContexts: Array<{
     accountId: string;
     workspaceId: string;
@@ -371,6 +376,10 @@ export async function executeHunterShadowEvidenceRun(
       searchCostUsdBySource: options.searchCostUsdBySource ?? {},
       candidate: HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE,
     });
+    if (controlPreflightAttempts > 0) {
+      await sleep(HUNTER_SHADOW_MODEL_PRESSURE_POLICY.betweenControlPreflightsMs);
+    }
+    controlPreflightAttempts += 1;
     let control: HunterShadowControlLaneResult;
     try {
       control = await preflight.runControl(run);
@@ -539,8 +548,10 @@ export async function executeHunterShadowEvidenceRun(
     searchCostUsdBySource: options.searchCostUsdBySource ?? {},
     candidate: HUNTER_SHADOW_OPERATIONAL_CANDIDATE_PROFILE,
   });
+  await sleep(HUNTER_SHADOW_MODEL_PRESSURE_POLICY.afterScreeningDelayMs);
   const batch = await runHunterShadowEvidenceBatch(runs, executor, {
     betweenPairsDelayMs: HUNTER_SHADOW_MODEL_PRESSURE_POLICY.betweenPairsDelayMs,
+    sleep,
   });
   return redactOperationalEvidence(
     options.request,
