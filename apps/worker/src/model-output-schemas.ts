@@ -260,6 +260,12 @@ const MARKETING_PAIR_QUALITY_EVALUATION_SCHEMA = Object.freeze({
 });
 
 const GROQ_STRICT_MODELS = new Set(["openai/gpt-oss-20b", "openai/gpt-oss-120b"]);
+const DIRECT_MODEL_DIAGNOSTIC_SCHEMA = Object.freeze({
+  type: "object",
+  properties: { ok: { type: "boolean", enum: [true] } },
+  required: ["ok"],
+  additionalProperties: false,
+});
 
 function hunterDeepIntelligenceSchema(input: string | undefined): Record<string, unknown> {
   let candidateId: unknown;
@@ -300,6 +306,16 @@ export function responseFormatForOutputSchema(
   input?: string,
 ): OpenAICompatibleResponseFormat {
   if (provider === "groq" && GROQ_STRICT_MODELS.has(model)) {
+    if (outputSchema.name === "direct-model-diagnostic" && outputSchema.version === "1") {
+      return {
+        type: "json_schema",
+        json_schema: {
+          name: "direct_model_diagnostic_1",
+          strict: true,
+          schema: DIRECT_MODEL_DIAGNOSTIC_SCHEMA,
+        },
+      };
+    }
     if (outputSchema.name === "production-carousel-project" && outputSchema.version === "1") {
       return {
         type: "json_schema",
