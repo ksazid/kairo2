@@ -1,11 +1,11 @@
 {
   "activeSlice": {
-    "id": "HI2-11R5R24",
-    "objectiveId": "OBJ-HI2-11R5R24",
+    "id": "HI2-11R5R25",
+    "objectiveId": "OBJ-HI2-11R5R25",
     "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Pin the original Python persisted anchor by its evidence-derived opaque workspace/Brand key after exact name lookup failed. Preserve the scored V1 benchmark comparability rule, the two public fixtures, rollout thresholds and production V1 path. Do not start paid model calls in this implementation slice.",
+    "scope": "Prefer the unchanged measured opportunity-quality rubric when choosing eligible Hunter V2 recommendations for the operational shadow benchmark, while preserving EEI eligibility, topic and exploration shares, V1 scoring, rollout thresholds and production routing. Do not start paid model calls in this implementation slice.",
     "budget": {
       "maxModelCalls": 0,
       "maxSubAgents": 0,
@@ -17,34 +17,44 @@
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R24"
+        "scopeId": "HI2-11R5R25"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R24"
+        "scopeId": "HI2-11R5R25"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R24"
+        "scopeId": "HI2-11R5R25"
       }
     ],
     "successCriteria": [
-      "An opaque persisted Python key from the earlier valid 3-by-3 evidence resolves exactly one original Brand before screening; Vercel and GitHub remain the public fixtures.",
-      "The operational benchmark rejects a zero-recommendation or zero-quality V1 control at screening and paired measurement, while preserving normal V1 production behavior.",
+      "Within each EEI bucket, favor candidates with higher measured opportunity quality before EEI/source-diversity tie breakers; topic and exploration ceilings remain enforced.",
+      "The benchmark's quality score formula and V1 control remain unchanged; default non-benchmark EEI ordering remains unchanged.",
       "No quality-delta, retrieval, failure, latency, cost, exploration or topic-share rollout threshold changes.",
       "V1 remains production authority; no V2 persistence, canary, scheduler or production enablement.",
       "PES v2 CI and Security baseline pass. Keep benchmark startup flags clear; make no paid model calls in this slice. Render stays on Free."
     ],
     "priorPreGateEvidence": {
-      "runId": "HI2-11R5R23-PREGATE-20260927-A",
-      "releaseSha": "2a7982851a989d29ae40aed1347d1ab3f268ce26",
-      "status": "blocked",
-      "metrics": null,
-      "reason": "The exact persisted Brand name Python resolved to zero or multiple active database rows, so the run stopped before model calls. Historical operational evidence supplies the stable opaque key ab476ffdc20309da for the Python workspace/Brand. Startup flags were cleared and the clean Free deploy is live."
+      "runId": "HI2-11R5R24-PREGATE-20260927-A",
+      "releaseSha": "58d28ebeff3afc47f98533a2fb4cb1e5b3c03109",
+      "status": "one-valid-pair-quality-regression",
+      "metrics": {
+        "pairCount": 1,
+        "averageQualityDelta": -0.19581666666666675,
+        "averageRetrievalCoverage": 1,
+        "v2FailureRate": 0,
+        "p95LatencyRatio": 0.35270740188772975,
+        "averageCostRatio": 0.9503121764502872,
+        "minimumExplorationShare": 0.16666666666666666,
+        "maximumExplorationShare": 0.16666666666666666,
+        "maximumObservedTopicShare": 0.16666666666666666
+      },
+      "reason": "The pinned Python pair had a scored V1 baseline and the intended Python plus Vercel/GitHub cohort. V2 quality 0.598617 versus V1 0.794433 fails the unchanged -0.02 quality delta. V2 selected lower-quality eligible items including a documentation index; the prior R16 nine pairs were all negative. The startup flags were cleared and the clean Free deploy is live."
     }
   }
 }

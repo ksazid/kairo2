@@ -36,6 +36,7 @@ import {
 import {
   HUNTER_EEI_V2_SHADOW_POLICY,
   runShadowPreferenceAwareEEI,
+  shadowCandidateQuality,
 } from "./hunter-shadow-eei-v2";
 import type {
   HunterShadowCandidateLaneResult,
@@ -128,6 +129,7 @@ export interface HunterShadowLaneAdapterOptions {
     deepAnalysisConcurrency?: number;
     maxCandidates?: number;
     enforceCertifiedFinalShares?: boolean;
+    preferMeasuredQuality?: boolean;
   };
 }
 
@@ -302,6 +304,8 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
         maxCandidates: this.options.candidate?.maxCandidates ?? 10,
         enforceCertifiedFinalShares:
           this.options.candidate?.enforceCertifiedFinalShares ?? false,
+        preferMeasuredQuality:
+          this.options.candidate?.preferMeasuredQuality ?? false,
       },
     });
     const latencyMs = positiveElapsed(performance.now() - started);
@@ -351,7 +355,7 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
         candidateId: item.candidateId,
         topic: item.topic,
         bucket: item.bucket,
-        qualityScore: commonCandidateQuality(item),
+        qualityScore: shadowCandidateQuality(item),
         sourceKeys: [...item.preRanked.cluster.sourceKeys],
         supportingSignalCount: item.preRanked.cluster.features.signalCount,
         independentPublisherCount: item.preRanked.cluster.features.independentPublisherCount,
@@ -380,7 +384,7 @@ export class ReadOnlyHunterShadowLaneExecutor implements HunterShadowLaneExecuto
       inputFingerprint: run.inputFingerprint,
       workspaceId: context.hunterInput.brand.workspaceId,
       brandId: context.hunterInput.brand.brandId,
-      qualityScore: average(eei.selected.map(commonCandidateQuality)),
+      qualityScore: average(eei.selected.map(shadowCandidateQuality)),
       recommendationCount: eei.selected.length,
       evidenceCount: retrieval.candidates.length,
       modelInvocationCount: runtime.invocations(),
@@ -846,33 +850,6 @@ function validateExecutionContext(
   }
 }
 
-function commonCandidateQuality(
-  item: ReturnType<typeof runShadowPreferenceAwareEEI>["selected"][number],
-): number {
-  const topicFit = item.preRanked.topicFit;
-  const brandIdentityFitScore =
-    item.preRanked.preRank.features.brandSemanticSimilarity;
-  const relevance = brandIdentityFitScore === undefined
-    ? topicFit
-    : clamp01(topicFit * 0.65 + brandIdentityFitScore * 0.35);
-  const preference = item.preferenceAffinity;
-  const audienceFit = preference === undefined
-    ? relevance
-    : clamp01(relevance * 0.6 + preference * 0.4);
-
-  return evaluateOpportunity({
-    relevance,
-    evidence: clamp01(item.preRanked.cluster.intelligence.evidenceConfidence),
-    novelty: clamp01(1 - item.saturationPenalty),
-    timeliness: clamp01(
-      item.preRanked.cluster.intelligence.freshness * 0.6 +
-      item.preRanked.preRank.features.trendMomentum * 0.4,
-    ),
-    brandAuthority: clamp01(item.sourceDiversity),
-    audienceFit,
-  }).overall;
-}
-
 function deepContext(request: HunterDeepAnalysisRequest): Record<string, JsonValue> {
   return {
     candidateId: request.candidateId,
@@ -895,8 +872,4 @@ function average(values: readonly number[]): number {
 function positiveElapsed(value: number): number {
   if (!Number.isFinite(value)) return 1;
   return Math.max(1, Math.round(value));
-}
-
-function clamp01(value: number): number {
-  return Math.max(0, Math.min(1, value));
 }
