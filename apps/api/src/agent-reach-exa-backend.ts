@@ -1,4 +1,5 @@
 import type { AgentReachSearchBackend, RawPublicSearchResult } from "@kairo/worker/discovery-provider";
+import { DiscoveryProviderError } from "@kairo/worker/discovery-provider";
 
 type FetchLike = (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
 
@@ -37,25 +38,32 @@ export class ExaAgentReachSearchBackend implements AgentReachSearchBackend {
         durationMs: Date.now() - startedAt,
         maxResults: options.maxResults,
       }));
-      throw new Error(`Agent Reach search upstream returned ${response.status}`);
+      throw new DiscoveryProviderError(
+        `Agent Reach search upstream returned ${response.status}`,
+        response.status === 429 ? "rate-limited" : "upstream",
+        response.status,
+      );
     }
     const payload = asRecord(await readBoundedJson(response));
     const results = Array.isArray(payload?.results) ? payload.results : [];
     const normalized = results.flatMap((raw) => {
       const item = asRecord(raw);
-      const title = text(item?.title);
+      const title = text(item?.title)?.slice(0, 300);
       const url = text(item?.url);
       if (!title || !url) return [];
       const highlights = Array.isArray(item?.highlights)
         ? item.highlights.filter((value): value is string => typeof value === "string" && Boolean(value.trim())).join("\n")
         : undefined;
+      const publishedAt = text(item?.publishedDate);
+      const author = text(item?.author)?.slice(0, 200);
       return [{
         title,
         url,
-        ...(highlights ? { summary: highlights.slice(0, 4_000) } : {}),
+        ...(highlights ? { summary: highlights.slice(0, 2_000) } : {}),
         platform: "web",
-        ...(text(item?.author) ? { author: text(item?.author) } : {}),
-        ...(text(item?.publishedDate) ? { publishedAt: text(item?.publishedDate) } : {}),
+        ...(author ? { author } : {}),
+        ...(publishedAt && publishedAt.length <= 80 && !Number.isNaN(Date.parse(publishedAt))
+          ? { publishedAt } : {}),
       } satisfies RawPublicSearchResult];
     }).slice(0, options.maxResults);
     console.info(JSON.stringify({

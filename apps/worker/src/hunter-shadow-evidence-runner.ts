@@ -129,7 +129,7 @@ export async function runHunterShadowEvidenceBatch(
     pacing.betweenPairsDelayMs ?? 0,
     "betweenPairsDelayMs",
     0,
-    60_000,
+    120_000,
   );
   const sleep = pacing.sleep ?? ((ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms)));
   const pairs: PreparedHunterShadowEvidence[] = [];

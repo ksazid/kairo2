@@ -82,7 +82,7 @@ describe("Discovery provider boundary", () => {
       async search() { return [{ title: "Unsafe", url: "http://127.0.0.1/private" }]; },
     });
     await expect(provider.discover({ query: "x", scope: { visibility: "global-public" }, maxResults: 1, timeoutMs: 1000 }))
-      .rejects.toBeInstanceOf(DiscoveryProviderError);
+      .rejects.toMatchObject({ kind: "invalid-response" });
   });
 
   it("keeps legacy KairoToolGateway calls on Agent Reach without requiring a source key", async () => {

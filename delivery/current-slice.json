@@ -1,13 +1,13 @@
 {
   "activeSlice": {
-    "id": "HI2-11R5R20",
-    "objectiveId": "OBJ-HI2-11R5R20",
+    "id": "HI2-11R5R21",
+    "objectiveId": "OBJ-HI2-11R5R21",
     "state": "implementing",
     "riskLevel": "high",
     "implementationPermission": "runtime-disabled",
-    "scope": "Add one release-pinned read-only Hunter V1 control capacity check on a persisted Hunter-ready Brand. Report bounded dependency and rate-limit diagnostics, then clear its startup flag. Do not run the 3x3 benchmark or change V1/V2 production routing or rollout thresholds.",
+    "scope": "Repair the blocked Hunter shadow pre-gate by pacing control screening and paired runs and by bounding Agent Reach Exa fields before public evidence validation. Preserve control comparability, quality and rollout gates and production routing. Do not start a paid benchmark in this implementation slice.",
     "budget": {
-      "maxModelCalls": 3,
+      "maxModelCalls": 0,
       "maxSubAgents": 0,
       "maxWallClockMinutes": 60,
       "maxExternalWrites": 10
@@ -17,34 +17,34 @@
         "type": "scope",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R20"
+        "scopeId": "HI2-11R5R21"
       },
       {
         "type": "policy",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R20"
+        "scopeId": "HI2-11R5R21"
       },
       {
         "type": "implementation",
         "status": "approved",
         "actorType": "human",
-        "scopeId": "HI2-11R5R20"
+        "scopeId": "HI2-11R5R21"
       }
     ],
     "successCriteria": [
-      "Exactly one persisted Hunter-ready V1 control is executed read-only with no control-level retry.",
-      "The check reports comparability and allowlisted 429 hints without raw provider data or Brand details.",
+      "Hunter shadow preflight controls and paired runs are spaced 90 seconds to reduce model token pressure, without changing measured lane latency.",
+      "Agent Reach Exa text and dates comply with public evidence bounds; unsafe URLs remain rejected and typed failures remain visible.",
       "No quality-delta, retrieval, failure, latency, cost, exploration or topic-share rollout threshold changes.",
       "V1 remains production authority; no V2 persistence, canary, scheduler or production enablement.",
-      "PES v2 CI and Security baseline pass. Keep benchmark startup flags clear before and after the single check."
+      "PES v2 CI and Security baseline pass. Keep benchmark startup flags clear; make no paid model calls in this slice."
     ],
     "priorPreGateEvidence": {
-      "runId": "HI2-11R5R19-DIRECT-MODEL-DIAGNOSTIC-20260927",
-      "releaseSha": "4659b73a019ca8f93822d92986ba47543ffd5c7b",
+      "runId": "HI2-11R5R20-PREGATE-20260927-Y",
+      "releaseSha": "32d9a52ca4b2f9f7346a9e992b6c645f4aca9a79",
       "status": "blocked",
       "metrics": null,
-      "reason": "The small direct Groq diagnostic succeeded (234 input and 61 output tokens; $0.0000717), but it does not establish that the larger V1 Hunter request fits provider capacity. Startup flags were cleared and the clean deploy is live."
+      "reason": "The one-control V1 check was comparable, but the 3x3 stopped before nine pairs: a later V1 control had Agent Reach unknown discovery failure and Groq 429 with Retry-After 6s and remainingTokens 5395. Exa logged 200 responses; an overlong highlight or other field is a plausible normalization failure, not a confirmed cause. The startup flag was cleared and a clean deploy is live."
     }
   }
 }
