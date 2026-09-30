@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "version": 2,
-  "revision": 37,
+  "revision": 38,
   "nodes": [
     {
       "id": "OBJ-001",
@@ -3250,6 +3250,109 @@
         ],
         "recordedAt": "2026-09-30T12:28:40.383Z"
       }
+    },
+    {
+      "id": "RUN-CEQ-01-R2",
+      "type": "AgentRun",
+      "status": "active",
+      "objectiveId": "OBJ-CEQ-01",
+      "title": "Prepare exact-commit certification candidate",
+      "runId": "CEQ-01-R2",
+      "memoryProvenance": {
+        "eventId": "GM-000038",
+        "revision": 38,
+        "actorId": "codex",
+        "runId": "CEQ-01-R2",
+        "sourceIds": [
+          "EVID-CEQ-01-CHECKS",
+          "EVID-CEQ-01-CI"
+        ],
+        "recordedAt": "2026-09-30T12:52:31.591Z"
+      }
+    },
+    {
+      "id": "EVID-CEQ-01-CI",
+      "type": "Evidence",
+      "status": "verified",
+      "title": "Exact remote commit passes PES CI and security baseline",
+      "commitSha": "9951cdec41702790423c9b75e2a463f22a9c35d8",
+      "path": "delivery/ceq-01/ci-evidence-v1.json",
+      "checks": [
+        {
+          "name": "Security baseline",
+          "runId": 36717275545,
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/ksazid/kairo2/actions/runs/36717275545"
+        },
+        {
+          "name": "PES v2 CI",
+          "runId": 36717275585,
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/ksazid/kairo2/actions/runs/36717275585"
+        }
+      ],
+      "memoryProvenance": {
+        "eventId": "GM-000038",
+        "revision": 38,
+        "actorId": "codex",
+        "runId": "CEQ-01-R2",
+        "sourceIds": [
+          "EVID-CEQ-01-CHECKS",
+          "EVID-CEQ-01-CI"
+        ],
+        "recordedAt": "2026-09-30T12:52:31.591Z"
+      }
+    },
+    {
+      "id": "ART-CEQ-01-R2",
+      "type": "Artifact",
+      "status": "verified",
+      "title": "Deterministically verified CEQ-01 implementation",
+      "commitSha": "9951cdec41702790423c9b75e2a463f22a9c35d8",
+      "treeSha": "63f8d74d9518ec3bba81496ef5f6b066e47800b4",
+      "runId": "CEQ-01-R2",
+      "version": 2,
+      "memoryProvenance": {
+        "eventId": "GM-000038",
+        "revision": 38,
+        "actorId": "codex",
+        "runId": "CEQ-01-R2",
+        "sourceIds": [
+          "EVID-CEQ-01-CHECKS",
+          "EVID-CEQ-01-CI"
+        ],
+        "recordedAt": "2026-09-30T12:52:31.591Z"
+      }
+    },
+    {
+      "id": "EVAL-CEQ-01-R2",
+      "type": "Evaluation",
+      "status": "verified",
+      "title": "Local preflight plus independent GitHub CI confirms candidate",
+      "rubricId": "ceq-01-regression-and-runtime",
+      "runId": "CEQ-01-R2",
+      "decision": "candidate-for-human-certification",
+      "path": "delivery/ceq-01/evaluation-v1.json",
+      "limitations": [
+        "No deployment or live re-test of these source changes",
+        "Factual sentence entailment remains model-backed; selected-claim prompts are not proof of factual correctness",
+        "Named-product anchoring is a lexical safeguard, not semantic source verification",
+        "Automatic image generation and a new asset-selection UI are not implemented; existing asset-library API remains the attachment path",
+        "Database integration suites require configured credentials and remain skipped"
+      ],
+      "memoryProvenance": {
+        "eventId": "GM-000038",
+        "revision": 38,
+        "actorId": "codex",
+        "runId": "CEQ-01-R2",
+        "sourceIds": [
+          "EVID-CEQ-01-CHECKS",
+          "EVID-CEQ-01-CI"
+        ],
+        "recordedAt": "2026-09-30T12:52:31.591Z"
+      }
     }
   ],
   "edges": [
@@ -5973,6 +6076,108 @@
         ],
         "recordedAt": "2026-09-30T12:28:40.383Z"
       }
+    },
+    {
+      "id": "EDGE-CEQ-01-R2-RUN",
+      "type": "ABOUT",
+      "from": "RUN-CEQ-01-R2",
+      "to": "OBJ-CEQ-01",
+      "memoryProvenance": {
+        "eventId": "GM-000038",
+        "revision": 38,
+        "actorId": "codex",
+        "runId": "CEQ-01-R2",
+        "sourceIds": [
+          "EVID-CEQ-01-CHECKS",
+          "EVID-CEQ-01-CI"
+        ],
+        "recordedAt": "2026-09-30T12:52:31.591Z"
+      }
+    },
+    {
+      "id": "EDGE-CEQ-01-CI",
+      "type": "ABOUT",
+      "from": "EVID-CEQ-01-CI",
+      "to": "OBJ-CEQ-01",
+      "memoryProvenance": {
+        "eventId": "GM-000038",
+        "revision": 38,
+        "actorId": "codex",
+        "runId": "CEQ-01-R2",
+        "sourceIds": [
+          "EVID-CEQ-01-CHECKS",
+          "EVID-CEQ-01-CI"
+        ],
+        "recordedAt": "2026-09-30T12:52:31.591Z"
+      }
+    },
+    {
+      "id": "EDGE-CEQ-01-R2-ART",
+      "type": "ABOUT",
+      "from": "ART-CEQ-01-R2",
+      "to": "OBJ-CEQ-01",
+      "memoryProvenance": {
+        "eventId": "GM-000038",
+        "revision": 38,
+        "actorId": "codex",
+        "runId": "CEQ-01-R2",
+        "sourceIds": [
+          "EVID-CEQ-01-CHECKS",
+          "EVID-CEQ-01-CI"
+        ],
+        "recordedAt": "2026-09-30T12:52:31.591Z"
+      }
+    },
+    {
+      "id": "EDGE-CEQ-01-R2-EVAL",
+      "type": "ABOUT",
+      "from": "EVAL-CEQ-01-R2",
+      "to": "OBJ-CEQ-01",
+      "memoryProvenance": {
+        "eventId": "GM-000038",
+        "revision": 38,
+        "actorId": "codex",
+        "runId": "CEQ-01-R2",
+        "sourceIds": [
+          "EVID-CEQ-01-CHECKS",
+          "EVID-CEQ-01-CI"
+        ],
+        "recordedAt": "2026-09-30T12:52:31.591Z"
+      }
+    },
+    {
+      "id": "EDGE-CEQ-01-R2-ART-SUPERSEDES",
+      "type": "SUPERSEDES",
+      "from": "ART-CEQ-01-R2",
+      "to": "ART-CEQ-01-R1",
+      "memoryProvenance": {
+        "eventId": "GM-000038",
+        "revision": 38,
+        "actorId": "codex",
+        "runId": "CEQ-01-R2",
+        "sourceIds": [
+          "EVID-CEQ-01-CHECKS",
+          "EVID-CEQ-01-CI"
+        ],
+        "recordedAt": "2026-09-30T12:52:31.591Z"
+      }
+    },
+    {
+      "id": "EDGE-CEQ-01-R2-EVAL-SUPERSEDES",
+      "type": "SUPERSEDES",
+      "from": "EVAL-CEQ-01-R2",
+      "to": "EVAL-CEQ-01-R1",
+      "memoryProvenance": {
+        "eventId": "GM-000038",
+        "revision": 38,
+        "actorId": "codex",
+        "runId": "CEQ-01-R2",
+        "sourceIds": [
+          "EVID-CEQ-01-CHECKS",
+          "EVID-CEQ-01-CI"
+        ],
+        "recordedAt": "2026-09-30T12:52:31.591Z"
+      }
     }
   ],
   "events": [
@@ -6878,6 +7083,33 @@
         "EDGE-CEQ-01-ART"
       ],
       "recordedAt": "2026-09-30T12:28:40.383Z"
+    },
+    {
+      "id": "GM-000038",
+      "revision": 38,
+      "operation": "append",
+      "actorId": "codex",
+      "runId": "CEQ-01-R2",
+      "reason": "Record exact-commit CI evidence and verified candidate artifacts without self-certification",
+      "sourceIds": [
+        "EVID-CEQ-01-CHECKS",
+        "EVID-CEQ-01-CI"
+      ],
+      "addedNodeIds": [
+        "RUN-CEQ-01-R2",
+        "EVID-CEQ-01-CI",
+        "ART-CEQ-01-R2",
+        "EVAL-CEQ-01-R2"
+      ],
+      "addedEdgeIds": [
+        "EDGE-CEQ-01-R2-RUN",
+        "EDGE-CEQ-01-CI",
+        "EDGE-CEQ-01-R2-ART",
+        "EDGE-CEQ-01-R2-EVAL",
+        "EDGE-CEQ-01-R2-ART-SUPERSEDES",
+        "EDGE-CEQ-01-R2-EVAL-SUPERSEDES"
+      ],
+      "recordedAt": "2026-09-30T12:52:31.591Z"
     }
   ]
 }

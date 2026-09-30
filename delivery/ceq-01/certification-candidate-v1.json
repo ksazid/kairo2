@@ -1,0 +1,751 @@
+{
+  "schemaVersion": 1,
+  "bundleId": "CERT-CEQ-01-9951CDEC",
+  "status": "candidate",
+  "sliceId": "CEQ-01",
+  "objectiveId": "OBJ-CEQ-01",
+  "riskLevel": "medium",
+  "commitSha": "9951cdec41702790423c9b75e2a463f22a9c35d8",
+  "graphRevision": 38,
+  "contextHash": "eb584a857756109a0f10a98faa166908422dad610cba8c95569b92b4fc6591e5",
+  "contextSnapshot": {
+    "schemaVersion": 1,
+    "graphRevision": 38,
+    "requestedSeeds": [
+      "OBJ-CEQ-01",
+      "ART-CEQ-01-R2",
+      "EVAL-CEQ-01-R2",
+      "EVID-CEQ-01-CI"
+    ],
+    "resolvedSeeds": [
+      "OBJ-CEQ-01",
+      "ART-CEQ-01-R2",
+      "EVAL-CEQ-01-R2",
+      "EVID-CEQ-01-CI"
+    ],
+    "resolution": [
+      {
+        "requestedId": "OBJ-CEQ-01",
+        "currentId": "OBJ-CEQ-01",
+        "chain": [
+          "OBJ-CEQ-01"
+        ]
+      },
+      {
+        "requestedId": "ART-CEQ-01-R2",
+        "currentId": "ART-CEQ-01-R2",
+        "chain": [
+          "ART-CEQ-01-R2"
+        ]
+      },
+      {
+        "requestedId": "EVAL-CEQ-01-R2",
+        "currentId": "EVAL-CEQ-01-R2",
+        "chain": [
+          "EVAL-CEQ-01-R2"
+        ]
+      },
+      {
+        "requestedId": "EVID-CEQ-01-CI",
+        "currentId": "EVID-CEQ-01-CI",
+        "chain": [
+          "EVID-CEQ-01-CI"
+        ]
+      }
+    ],
+    "nodes": [
+      {
+        "id": "EVID-CEQ-01-CI",
+        "type": "Evidence",
+        "status": "verified",
+        "title": "Exact remote commit passes PES CI and security baseline",
+        "commitSha": "9951cdec41702790423c9b75e2a463f22a9c35d8",
+        "path": "delivery/ceq-01/ci-evidence-v1.json",
+        "checks": [
+          {
+            "name": "Security baseline",
+            "runId": 36717275545,
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/ksazid/kairo2/actions/runs/36717275545"
+          },
+          {
+            "name": "PES v2 CI",
+            "runId": 36717275585,
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/ksazid/kairo2/actions/runs/36717275585"
+          }
+        ],
+        "memoryProvenance": {
+          "eventId": "GM-000038",
+          "revision": 38,
+          "actorId": "codex",
+          "runId": "CEQ-01-R2",
+          "sourceIds": [
+            "EVID-CEQ-01-CHECKS",
+            "EVID-CEQ-01-CI"
+          ],
+          "recordedAt": "2026-09-30T12:52:31.591Z"
+        }
+      },
+      {
+        "id": "ART-CEQ-01-R2",
+        "type": "Artifact",
+        "status": "verified",
+        "title": "Deterministically verified CEQ-01 implementation",
+        "commitSha": "9951cdec41702790423c9b75e2a463f22a9c35d8",
+        "treeSha": "63f8d74d9518ec3bba81496ef5f6b066e47800b4",
+        "runId": "CEQ-01-R2",
+        "version": 2,
+        "memoryProvenance": {
+          "eventId": "GM-000038",
+          "revision": 38,
+          "actorId": "codex",
+          "runId": "CEQ-01-R2",
+          "sourceIds": [
+            "EVID-CEQ-01-CHECKS",
+            "EVID-CEQ-01-CI"
+          ],
+          "recordedAt": "2026-09-30T12:52:31.591Z"
+        }
+      },
+      {
+        "id": "EVAL-CEQ-01-R2",
+        "type": "Evaluation",
+        "status": "verified",
+        "title": "Local preflight plus independent GitHub CI confirms candidate",
+        "rubricId": "ceq-01-regression-and-runtime",
+        "runId": "CEQ-01-R2",
+        "decision": "candidate-for-human-certification",
+        "path": "delivery/ceq-01/evaluation-v1.json",
+        "limitations": [
+          "No deployment or live re-test of these source changes",
+          "Factual sentence entailment remains model-backed; selected-claim prompts are not proof of factual correctness",
+          "Named-product anchoring is a lexical safeguard, not semantic source verification",
+          "Automatic image generation and a new asset-selection UI are not implemented; existing asset-library API remains the attachment path",
+          "Database integration suites require configured credentials and remain skipped"
+        ],
+        "memoryProvenance": {
+          "eventId": "GM-000038",
+          "revision": 38,
+          "actorId": "codex",
+          "runId": "CEQ-01-R2",
+          "sourceIds": [
+            "EVID-CEQ-01-CHECKS",
+            "EVID-CEQ-01-CI"
+          ],
+          "recordedAt": "2026-09-30T12:52:31.591Z"
+        }
+      },
+      {
+        "id": "OBJ-CEQ-01",
+        "type": "Objective",
+        "status": "active",
+        "title": "Repair the observed Nike content evidence and review journey",
+        "successCriteria": [
+          "Nike product evidence excludes architecture/economic matches",
+          "Draft rejects unsupported selected facts and unknown inline claim IDs",
+          "Social caption has no raw internal references or Markdown and is validated without truncation",
+          "Current-version review findings reach the UI",
+          "Preview uses selected account or current Brand identity",
+          "Missing media is explicit; approval never bypasses server checks"
+        ],
+        "memoryProvenance": {
+          "eventId": "GM-000036",
+          "revision": 36,
+          "actorId": "codex",
+          "runId": "CEQ-01-R1",
+          "sourceIds": [
+            "EVID-CEQ-01-LIVE"
+          ],
+          "recordedAt": "2026-09-30T12:15:07.654Z"
+        }
+      },
+      {
+        "id": "EVID-CEQ-01-CHECKS",
+        "type": "Evidence",
+        "status": "verified",
+        "title": "Deterministic preflight passed",
+        "path": "delivery/ceq-01/preflight-v1.log",
+        "sha256": "b38a65d5a5d55a023b271c5240fadde16e3e9f62ce5b0787565bf0ce8115b0a6",
+        "memoryProvenance": {
+          "eventId": "GM-000037",
+          "revision": 37,
+          "actorId": "codex",
+          "runId": "CEQ-01-R1",
+          "sourceIds": [
+            "EVID-CEQ-01-LIVE",
+            "EVID-CEQ-01-CHECKS"
+          ],
+          "recordedAt": "2026-09-30T12:28:40.383Z"
+        }
+      },
+      {
+        "id": "DEC-CEQ-01",
+        "type": "Decision",
+        "status": "approved",
+        "title": "User-authorized implementation and evaluation under unchanged policy",
+        "approvals": [
+          {
+            "type": "scope",
+            "status": "approved",
+            "actorType": "human",
+            "scopeId": "CEQ-01",
+            "source": "User Go on 2026-09-30 following governed implementation proposal; earlier explicit instruction to follow governance",
+            "meaning": "Implement and locally evaluate the stated reversible slice"
+          },
+          {
+            "type": "policy",
+            "status": "approved",
+            "actorType": "human",
+            "scopeId": "CEQ-01",
+            "source": "User Go on 2026-09-30 following governed implementation proposal; earlier explicit instruction to follow governance",
+            "meaning": "Retain existing PES and content policy; no policy changes authorized"
+          },
+          {
+            "type": "implementation",
+            "status": "approved",
+            "actorType": "human",
+            "scopeId": "CEQ-01",
+            "source": "User Go on 2026-09-30 following governed implementation proposal; earlier explicit instruction to follow governance",
+            "meaning": "Implement and locally evaluate the stated reversible slice"
+          }
+        ],
+        "memoryProvenance": {
+          "eventId": "GM-000036",
+          "revision": 36,
+          "actorId": "codex",
+          "runId": "CEQ-01-R1",
+          "sourceIds": [
+            "EVID-CEQ-01-LIVE"
+          ],
+          "recordedAt": "2026-09-30T12:15:07.654Z"
+        }
+      },
+      {
+        "id": "EVID-CEQ-01-LIVE",
+        "type": "Evidence",
+        "status": "verified",
+        "title": "Nike live draft exhibits unsupported specs, internal citation IDs and placeholder media",
+        "libraryFileId": "libfile_ed9bcc823c0c81919ffc406fc7ae7af5",
+        "memoryProvenance": {
+          "eventId": "GM-000036",
+          "revision": 36,
+          "actorId": "codex",
+          "runId": "CEQ-01-R1",
+          "sourceIds": [
+            "EVID-CEQ-01-LIVE"
+          ],
+          "recordedAt": "2026-09-30T12:15:07.654Z"
+        }
+      },
+      {
+        "id": "RUN-CEQ-01-R2",
+        "type": "AgentRun",
+        "status": "active",
+        "objectiveId": "OBJ-CEQ-01",
+        "title": "Prepare exact-commit certification candidate",
+        "runId": "CEQ-01-R2",
+        "memoryProvenance": {
+          "eventId": "GM-000038",
+          "revision": 38,
+          "actorId": "codex",
+          "runId": "CEQ-01-R2",
+          "sourceIds": [
+            "EVID-CEQ-01-CHECKS",
+            "EVID-CEQ-01-CI"
+          ],
+          "recordedAt": "2026-09-30T12:52:31.591Z"
+        }
+      },
+      {
+        "id": "RUN-CEQ-01-R1",
+        "type": "AgentRun",
+        "status": "active",
+        "objectiveId": "OBJ-CEQ-01",
+        "title": "Implement governed Nike journey corrections",
+        "memoryProvenance": {
+          "eventId": "GM-000036",
+          "revision": 36,
+          "actorId": "codex",
+          "runId": "CEQ-01-R1",
+          "sourceIds": [
+            "EVID-CEQ-01-LIVE"
+          ],
+          "recordedAt": "2026-09-30T12:15:07.654Z"
+        }
+      },
+      {
+        "id": "ART-CEQ-01-R1",
+        "type": "Artifact",
+        "status": "candidate",
+        "title": "Nike content evidence and review fixes",
+        "branch": "fix/nike-content-evidence-review",
+        "runId": "CEQ-01-R1",
+        "authoringRunId": "CEQ-01-R1",
+        "version": 1,
+        "memoryProvenance": {
+          "eventId": "GM-000037",
+          "revision": 37,
+          "actorId": "codex",
+          "runId": "CEQ-01-R1",
+          "sourceIds": [
+            "EVID-CEQ-01-LIVE",
+            "EVID-CEQ-01-CHECKS"
+          ],
+          "recordedAt": "2026-09-30T12:28:40.383Z"
+        }
+      },
+      {
+        "id": "EVAL-CEQ-01-R1",
+        "type": "Evaluation",
+        "status": "passed",
+        "title": "CEQ-01 regression evaluation",
+        "rubricId": "ceq-01-regression-and-runtime",
+        "path": "delivery/ceq-01/evaluation-v1.json",
+        "authoringRunId": "CEQ-01-R1",
+        "memoryProvenance": {
+          "eventId": "GM-000037",
+          "revision": 37,
+          "actorId": "codex",
+          "runId": "CEQ-01-R1",
+          "sourceIds": [
+            "EVID-CEQ-01-LIVE",
+            "EVID-CEQ-01-CHECKS"
+          ],
+          "recordedAt": "2026-09-30T12:28:40.383Z"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "EDGE-CEQ-01-RUN",
+        "type": "ABOUT",
+        "from": "RUN-CEQ-01-R1",
+        "to": "OBJ-CEQ-01",
+        "memoryProvenance": {
+          "eventId": "GM-000036",
+          "revision": 36,
+          "actorId": "codex",
+          "runId": "CEQ-01-R1",
+          "sourceIds": [
+            "EVID-CEQ-01-LIVE"
+          ],
+          "recordedAt": "2026-09-30T12:15:07.654Z"
+        }
+      },
+      {
+        "id": "EDGE-CEQ-01-SCOPE",
+        "type": "ABOUT",
+        "from": "DEC-CEQ-01",
+        "to": "OBJ-CEQ-01",
+        "memoryProvenance": {
+          "eventId": "GM-000036",
+          "revision": 36,
+          "actorId": "codex",
+          "runId": "CEQ-01-R1",
+          "sourceIds": [
+            "EVID-CEQ-01-LIVE"
+          ],
+          "recordedAt": "2026-09-30T12:15:07.654Z"
+        }
+      },
+      {
+        "id": "EDGE-CEQ-01-LIVE",
+        "type": "ABOUT",
+        "from": "EVID-CEQ-01-LIVE",
+        "to": "OBJ-CEQ-01",
+        "memoryProvenance": {
+          "eventId": "GM-000036",
+          "revision": 36,
+          "actorId": "codex",
+          "runId": "CEQ-01-R1",
+          "sourceIds": [
+            "EVID-CEQ-01-LIVE"
+          ],
+          "recordedAt": "2026-09-30T12:15:07.654Z"
+        }
+      },
+      {
+        "id": "EDGE-CEQ-01-CHECKS",
+        "type": "ABOUT",
+        "from": "EVID-CEQ-01-CHECKS",
+        "to": "OBJ-CEQ-01",
+        "memoryProvenance": {
+          "eventId": "GM-000037",
+          "revision": 37,
+          "actorId": "codex",
+          "runId": "CEQ-01-R1",
+          "sourceIds": [
+            "EVID-CEQ-01-LIVE",
+            "EVID-CEQ-01-CHECKS"
+          ],
+          "recordedAt": "2026-09-30T12:28:40.383Z"
+        }
+      },
+      {
+        "id": "EDGE-CEQ-01-EVAL",
+        "type": "ABOUT",
+        "from": "EVAL-CEQ-01-R1",
+        "to": "OBJ-CEQ-01",
+        "memoryProvenance": {
+          "eventId": "GM-000037",
+          "revision": 37,
+          "actorId": "codex",
+          "runId": "CEQ-01-R1",
+          "sourceIds": [
+            "EVID-CEQ-01-LIVE",
+            "EVID-CEQ-01-CHECKS"
+          ],
+          "recordedAt": "2026-09-30T12:28:40.383Z"
+        }
+      },
+      {
+        "id": "EDGE-CEQ-01-ART",
+        "type": "ABOUT",
+        "from": "ART-CEQ-01-R1",
+        "to": "OBJ-CEQ-01",
+        "memoryProvenance": {
+          "eventId": "GM-000037",
+          "revision": 37,
+          "actorId": "codex",
+          "runId": "CEQ-01-R1",
+          "sourceIds": [
+            "EVID-CEQ-01-LIVE",
+            "EVID-CEQ-01-CHECKS"
+          ],
+          "recordedAt": "2026-09-30T12:28:40.383Z"
+        }
+      },
+      {
+        "id": "EDGE-CEQ-01-R2-RUN",
+        "type": "ABOUT",
+        "from": "RUN-CEQ-01-R2",
+        "to": "OBJ-CEQ-01",
+        "memoryProvenance": {
+          "eventId": "GM-000038",
+          "revision": 38,
+          "actorId": "codex",
+          "runId": "CEQ-01-R2",
+          "sourceIds": [
+            "EVID-CEQ-01-CHECKS",
+            "EVID-CEQ-01-CI"
+          ],
+          "recordedAt": "2026-09-30T12:52:31.591Z"
+        }
+      },
+      {
+        "id": "EDGE-CEQ-01-CI",
+        "type": "ABOUT",
+        "from": "EVID-CEQ-01-CI",
+        "to": "OBJ-CEQ-01",
+        "memoryProvenance": {
+          "eventId": "GM-000038",
+          "revision": 38,
+          "actorId": "codex",
+          "runId": "CEQ-01-R2",
+          "sourceIds": [
+            "EVID-CEQ-01-CHECKS",
+            "EVID-CEQ-01-CI"
+          ],
+          "recordedAt": "2026-09-30T12:52:31.591Z"
+        }
+      },
+      {
+        "id": "EDGE-CEQ-01-R2-ART",
+        "type": "ABOUT",
+        "from": "ART-CEQ-01-R2",
+        "to": "OBJ-CEQ-01",
+        "memoryProvenance": {
+          "eventId": "GM-000038",
+          "revision": 38,
+          "actorId": "codex",
+          "runId": "CEQ-01-R2",
+          "sourceIds": [
+            "EVID-CEQ-01-CHECKS",
+            "EVID-CEQ-01-CI"
+          ],
+          "recordedAt": "2026-09-30T12:52:31.591Z"
+        }
+      },
+      {
+        "id": "EDGE-CEQ-01-R2-EVAL",
+        "type": "ABOUT",
+        "from": "EVAL-CEQ-01-R2",
+        "to": "OBJ-CEQ-01",
+        "memoryProvenance": {
+          "eventId": "GM-000038",
+          "revision": 38,
+          "actorId": "codex",
+          "runId": "CEQ-01-R2",
+          "sourceIds": [
+            "EVID-CEQ-01-CHECKS",
+            "EVID-CEQ-01-CI"
+          ],
+          "recordedAt": "2026-09-30T12:52:31.591Z"
+        }
+      },
+      {
+        "id": "EDGE-CEQ-01-R2-ART-SUPERSEDES",
+        "type": "SUPERSEDES",
+        "from": "ART-CEQ-01-R2",
+        "to": "ART-CEQ-01-R1",
+        "memoryProvenance": {
+          "eventId": "GM-000038",
+          "revision": 38,
+          "actorId": "codex",
+          "runId": "CEQ-01-R2",
+          "sourceIds": [
+            "EVID-CEQ-01-CHECKS",
+            "EVID-CEQ-01-CI"
+          ],
+          "recordedAt": "2026-09-30T12:52:31.591Z"
+        }
+      },
+      {
+        "id": "EDGE-CEQ-01-R2-EVAL-SUPERSEDES",
+        "type": "SUPERSEDES",
+        "from": "EVAL-CEQ-01-R2",
+        "to": "EVAL-CEQ-01-R1",
+        "memoryProvenance": {
+          "eventId": "GM-000038",
+          "revision": 38,
+          "actorId": "codex",
+          "runId": "CEQ-01-R2",
+          "sourceIds": [
+            "EVID-CEQ-01-CHECKS",
+            "EVID-CEQ-01-CI"
+          ],
+          "recordedAt": "2026-09-30T12:52:31.591Z"
+        }
+      }
+    ],
+    "ranking": [
+      {
+        "id": "EVID-CEQ-01-CI",
+        "score": 1124,
+        "hop": 0,
+        "status": "verified"
+      },
+      {
+        "id": "ART-CEQ-01-R2",
+        "score": 1123,
+        "hop": 0,
+        "status": "verified"
+      },
+      {
+        "id": "EVAL-CEQ-01-R2",
+        "score": 1123,
+        "hop": 0,
+        "status": "verified"
+      },
+      {
+        "id": "OBJ-CEQ-01",
+        "score": 1117,
+        "hop": 0,
+        "status": "active"
+      },
+      {
+        "id": "EVID-CEQ-01-CHECKS",
+        "score": 106.811,
+        "hop": 1,
+        "status": "verified"
+      },
+      {
+        "id": "DEC-CEQ-01",
+        "score": 105,
+        "hop": 1,
+        "status": "approved"
+      },
+      {
+        "id": "EVID-CEQ-01-LIVE",
+        "score": 105,
+        "hop": 1,
+        "status": "verified"
+      },
+      {
+        "id": "RUN-CEQ-01-R2",
+        "score": 104,
+        "hop": 1,
+        "status": "active"
+      },
+      {
+        "id": "RUN-CEQ-01-R1",
+        "score": 99,
+        "hop": 1,
+        "status": "active"
+      },
+      {
+        "id": "ART-CEQ-01-R1",
+        "score": 93.811,
+        "hop": 1,
+        "status": "candidate"
+      },
+      {
+        "id": "EVAL-CEQ-01-R1",
+        "score": 93.811,
+        "hop": 1,
+        "status": "passed"
+      }
+    ],
+    "contradictions": [],
+    "omittedNodeIds": [],
+    "policy": {
+      "maxHops": 2,
+      "maxNodes": 40,
+      "maxTokens": 12000,
+      "includeStatuses": [
+        "approved",
+        "verified",
+        "active",
+        "superseded",
+        "failed"
+      ],
+      "preferVerified": true,
+      "includeContradictions": true,
+      "resolveSuperseded": true
+    },
+    "contextHash": "eb584a857756109a0f10a98faa166908422dad610cba8c95569b92b4fc6591e5",
+    "estimatedTokens": 2766,
+    "truncated": false
+  },
+  "gateDecisionHash": "4b53b094a2fa1e951b02a951940b51623fcf1e092f21e3359986cd9ff6a67704",
+  "gateSnapshot": {
+    "allowed": true,
+    "sliceId": "CEQ-01",
+    "fromState": "testing",
+    "requestedState": "certification",
+    "blockers": [],
+    "warnings": [],
+    "requiredApprovals": [
+      "scope",
+      "policy",
+      "implementation"
+    ],
+    "validApprovals": [
+      "scope",
+      "policy",
+      "implementation"
+    ],
+    "protectedPaths": [],
+    "evidence": {
+      "accepted": [
+        {
+          "id": "EVID-CEQ-01-LIVE",
+          "type": "Evidence",
+          "status": "verified",
+          "distance": 1
+        },
+        {
+          "id": "EVID-CEQ-01-CHECKS",
+          "type": "Evidence",
+          "status": "verified",
+          "distance": 1
+        },
+        {
+          "id": "EVID-CEQ-01-CI",
+          "type": "Evidence",
+          "status": "verified",
+          "distance": 1
+        }
+      ],
+      "rejected": []
+    },
+    "deliveryGraph": {
+      "required": true,
+      "blocking": false,
+      "status": "ready",
+      "reasons": [
+        "signal:crossModule"
+      ]
+    },
+    "context": {
+      "hash": "eb584a857756109a0f10a98faa166908422dad610cba8c95569b92b4fc6591e5",
+      "graphRevision": 38,
+      "contradictions": 0
+    }
+  },
+  "approvals": [
+    {
+      "type": "scope",
+      "status": "approved",
+      "actorType": "human",
+      "scopeId": "CEQ-01",
+      "source": "User Go on 2026-09-30 following governed implementation proposal; earlier explicit instruction to follow governance",
+      "meaning": "Implement and locally evaluate the stated reversible slice"
+    },
+    {
+      "type": "policy",
+      "status": "approved",
+      "actorType": "human",
+      "scopeId": "CEQ-01",
+      "source": "User Go on 2026-09-30 following governed implementation proposal; earlier explicit instruction to follow governance",
+      "meaning": "Retain existing PES and content policy; no policy changes authorized"
+    },
+    {
+      "type": "implementation",
+      "status": "approved",
+      "actorType": "human",
+      "scopeId": "CEQ-01",
+      "source": "User Go on 2026-09-30 following governed implementation proposal; earlier explicit instruction to follow governance",
+      "meaning": "Implement and locally evaluate the stated reversible slice"
+    }
+  ],
+  "artifactIds": [
+    "ART-CEQ-01-R2"
+  ],
+  "evidenceIds": [
+    "EVID-CEQ-01-LIVE",
+    "EVID-CEQ-01-CHECKS",
+    "EVID-CEQ-01-CI"
+  ],
+  "evaluationIds": [
+    "EVAL-CEQ-01-R2"
+  ],
+  "unresolvedRisks": [],
+  "trace": [
+    {
+      "id": "ART-CEQ-01-R2",
+      "type": "Artifact",
+      "status": "verified",
+      "nodeHash": "ba9353a89f4b8f195efa58ede49d1feb7d78e18eeaed332cbe67af07a67b880f",
+      "memoryEventId": "GM-000038",
+      "distanceFromObjective": 1
+    },
+    {
+      "id": "EVAL-CEQ-01-R2",
+      "type": "Evaluation",
+      "status": "verified",
+      "nodeHash": "4a03b0cb6c4a12644989968851f1a1c2d103672480fe82a19eafe48fe7b22842",
+      "memoryEventId": "GM-000038",
+      "distanceFromObjective": 1
+    },
+    {
+      "id": "EVID-CEQ-01-CHECKS",
+      "type": "Evidence",
+      "status": "verified",
+      "nodeHash": "d11a201ec71bf9f50b9066b76c1c2b5b9dad22d5fc24668e0b0e7d8decf06824",
+      "memoryEventId": "GM-000037",
+      "distanceFromObjective": 1
+    },
+    {
+      "id": "EVID-CEQ-01-CI",
+      "type": "Evidence",
+      "status": "verified",
+      "nodeHash": "d57a63dee97e0d933d622bcb9c2f6830d08db126891d454c284c60ee23a9eb1e",
+      "memoryEventId": "GM-000038",
+      "distanceFromObjective": 1
+    },
+    {
+      "id": "EVID-CEQ-01-LIVE",
+      "type": "Evidence",
+      "status": "verified",
+      "nodeHash": "7bd0d82ffd8fec66c360852f4f4b081c2e6aeffd7be63bcf075d463dcc8077ff",
+      "memoryEventId": "GM-000036",
+      "distanceFromObjective": 1
+    }
+  ],
+  "createdAt": "2026-09-30T12:52:31.642Z",
+  "candidateHash": "2763088c108c5091e74b2c041d1f061e07c6ed0f1791df8327f4d6da7e3eaa32"
+}
