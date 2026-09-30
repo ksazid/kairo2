@@ -255,3 +255,10 @@ describe("VS-73 explicit public Research grounding", () => {
     expect(sink.saved[0]?.evidence.map((item) => item.sourceUrl)).toEqual(pinned.map((item) => item.sourceUrl));
   });
 });
+
+it("rejects Alphafly 3 and unrelated keyword matches when researching Alphafly 4", async () => {
+  const sources = ["Classical colonnades improve marathon racing performance", "Nike Alphafly 3 improves marathon racing performance for runners in size 4"].map((title,i) => ({...evidence[0]!,title,summary:title,sourceUrl:`https://example.com/wrong-${i}`}));
+  const runtime = new FakeRuntime(output());
+  await expect(new ResearcherOrchestrator(new FakeTools(sources),runtime,new FakeSink()).run({...input,idea:{id:"nike",title:"Nike Alphafly 4 marathon racing",premise:"Explain marathon racing performance"},query:"Nike Alphafly 4 marathon racing performance"})).rejects.toThrow(/insufficient relevant evidence/i);
+  expect(runtime.calls).toBe(0);
+});

@@ -45,3 +45,10 @@ describe("VS-06 Truth, review and approval domain", () => {
     expect(() => approveContentVersion({ id: "approval-2", review, currentVersionId: "version-3", approverAccountId: "account-1", destination: { channel: "linkedin", accountRef: "company-page" }, approvedAt: "2026-08-13T10:03:00Z" })).toThrow(/current version/i);
   });
 });
+
+it("cannot approve a critic pass that contains mandatory revision findings", () => {
+  const truth = evaluateTruthGate({...scope,claimUses:[],prohibitedBrandLanguage:[]});
+  const review = completeContentReview({review:requestContentReview({id:"review-conflict",...scope,truth,requestedAt:"2026-09-30T10:00:00Z"}),critic:{passed:true,score:99,findings:[{code:"unsupported-spec",severity:"revision",message:"Remove unsupported product specification"}]},revisionCycle:0,completedAt:"2026-09-30T10:01:00Z"});
+  expect(review.status).toBe("revision-required");
+  expect(() => approveContentVersion({id:"approval-conflict",review,currentVersionId:scope.versionId,approverAccountId:"account-1",destination:{channel:"linkedin",accountRef:"page"},approvedAt:"2026-09-30T10:02:00Z"})).toThrow();
+});

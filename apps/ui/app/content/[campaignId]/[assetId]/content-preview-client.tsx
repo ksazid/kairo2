@@ -22,17 +22,18 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import type { ChannelAccountView } from "../../../../lib/api";
 import type { ContentItem } from "../../../../lib/content";
-import { contentWithCaption } from "../../../../lib/content";
+import { captionNeedsSave, contentWithCaption } from "../../../../lib/content";
 
 type ActionContext = {
   brandId: string;
   reviewStatus: "review" | "revision-required" | "passed" | "archived" | null;
   approved: boolean;
+  findings?: string[];
   eligibleAccounts: ChannelAccountView[];
   approvedAccountId?: string;
 };
 
-export function ContentPreviewClient({ item, authenticated, actionContext }: { item: ContentItem; authenticated: boolean; actionContext?: ActionContext }) {
+export function ContentPreviewClient({ item, brandName = "Brand", authenticated, actionContext }: { item: ContentItem; brandName?: string; authenticated: boolean; actionContext?: ActionContext }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [slide, setSlide] = useState(0);
@@ -44,12 +45,17 @@ export function ContentPreviewClient({ item, authenticated, actionContext }: { i
   const [reviewStatus, setReviewStatus] = useState(actionContext?.reviewStatus ?? null);
   const [accountId, setAccountId] = useState(actionContext?.approvedAccountId ?? actionContext?.eligibleAccounts[0]?.id ?? "");
   const [scheduledFor, setScheduledFor] = useState(defaultScheduleTime);
+  const [reviewFindings, setReviewFindings] = useState(actionContext?.findings ?? []);
+  const identity = actionContext?.eligibleAccounts.find(account => account.id === accountId)?.displayName ?? brandName;
+  const missingMedia = !item.media.some(ref => ref !== "/kairo-media-placeholder.svg");
+  const copyChanged = captionNeedsSave(item.rawContent, caption);
   const media = item.media.length ? item.media : [item.image];
   const currentMedia = media[Math.min(slide, media.length - 1)] ?? item.image;
   const ChannelIcon = item.channel === "Facebook" ? Facebook : item.channel === "LinkedIn" ? Linkedin : Instagram;
 
   useEffect(() => {
     setCaption(item.caption);
+    setReviewFindings(actionContext?.findings ?? []);
     setApproved(item.status === "published" || item.status === "scheduled" || Boolean(actionContext?.approved));
     setScheduled(item.status === "scheduled");
     setReviewStatus(actionContext?.reviewStatus ?? null);
@@ -73,9 +79,9 @@ export function ContentPreviewClient({ item, authenticated, actionContext }: { i
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ action, brandId: actionContext.brandId, campaignId: item.campaignId, assetId: item.id, expectedVersion: item.currentVersion, ...extra }),
     });
-    const result = await response.json().catch(() => null) as { message?: string; error?: string; review?: { status?: typeof reviewStatus } } | null;
+    const result = await response.json().catch(() => null) as { message?: string; error?: string; review?: { status?: typeof reviewStatus; truth?: { findings?: Array<{message:string}> }; critic?: { findings?: Array<{message:string}> } } } | null;
     if (!response.ok) throw new Error(result?.error ?? "Kairo could not update this content.");
-    if (action === "review") setReviewStatus(result?.review?.status ?? null);
+    if (action === "review") { setReviewStatus(result?.review?.status ?? null); setReviewFindings([...(result?.review?.truth?.findings ?? []), ...(result?.review?.critic?.findings ?? [])].map(finding => finding.message)); }
     if (action === "approve") setApproved(true);
     if (action === "schedule") setScheduled(true);
     setNotice(result?.message ?? "Content updated.");
@@ -116,19 +122,19 @@ export function ContentPreviewClient({ item, authenticated, actionContext }: { i
 
         <div className="social-preview-wrap">
           <article className="social-preview-card" aria-label={`${item.channel} ${item.formatLabel} preview`}>
-            <header><span className="social-brand-avatar">S</span><strong>sazzid</strong><MoreHorizontal aria-hidden="true"/></header>
+            <header><span className="social-brand-avatar">{identity.charAt(0)}</span><strong>{identity}</strong><MoreHorizontal aria-hidden="true"/></header>
             <div className={`social-media-stage format-${item.format}`}>
               <img src={currentMedia} alt={`${item.title}${media.length > 1 ? ` card ${slide + 1}` : ""}`}/>
               {item.format === "reel" ? <button type="button" aria-label="Play Reel"><Play aria-hidden="true"/></button> : null}
               {media.length > 1 ? <><button className="media-previous" type="button" disabled={slide === 0} onClick={() => setSlide((value) => Math.max(0, value - 1))} aria-label="Previous card"><ChevronLeft aria-hidden="true"/></button><button className="media-next" type="button" disabled={slide === media.length - 1} onClick={() => setSlide((value) => Math.min(media.length - 1, value + 1))} aria-label="Next card"><ChevronRight aria-hidden="true"/></button><span className="media-count">{slide + 1}/{item.cardCount ?? media.length}</span></> : null}
             </div>
             <div className="social-actions" aria-hidden="true"><Heart/><MessageCircle/><Send/><Bookmark className="push-right"/></div>
-            <div className="social-caption"><strong>Likes unavailable</strong>{authenticated ? <label htmlFor="caption-editor"><b>sazzid</b><textarea id="caption-editor" aria-label="Content caption" value={caption} disabled={pending || approved} maxLength={20_000} onChange={(event) => { setCaption(event.target.value); setNotice(""); setError(""); }}/></label> : <p><b>sazzid</b> {caption}</p>}</div>
+            <div className="social-caption"><strong>Likes unavailable</strong>{authenticated ? <label htmlFor="caption-editor"><b>{identity}</b><textarea id="caption-editor" aria-label="Content caption" value={caption} disabled={pending || approved} maxLength={20_000} onChange={(event) => { setCaption(event.target.value); setNotice(""); setError(""); }}/></label> : <p><b>{identity}</b> {caption}</p>}</div>
           </article>
           {media.length > 1 ? <div className="social-dots" aria-label="Carousel position">{media.map((_, index) => <button type="button" key={index} aria-label={`Show card ${index + 1}`} aria-pressed={slide === index} onClick={() => setSlide(index)}/>)}</div> : null}
         </div>
 
-        <section className="content-ai-assistance"><div><h3>AI assistance</h3><p>Improve your content with Kairo.</p></div><div><button type="button" disabled={pending} onClick={() => refine("improve")}><Sparkles/>Improve copy</button><button type="button" disabled={pending} onClick={() => refine("shorten")}><WandSparkles/>Shorten</button><button type="button" disabled={pending} onClick={() => refine("tone")}><WandSparkles/>Change tone</button><button type="button" disabled={pending} onClick={() => refine("ideas")}><Sparkles/>More ideas</button>{authenticated && caption !== item.caption ? <button className="save-content-version" type="button" disabled={pending} onClick={() => run("save", { content: contentWithCaption(item.rawContent, caption) })}><Check/>Save version</button> : null}</div>{notice ? <p role="status">{notice}</p> : null}{error ? <p className="content-action-error" role="alert">{error}</p> : null}</section>
+        <section className="content-ai-assistance"><div><h3>AI assistance</h3><p>Improve your content with Kairo.</p></div><div><button type="button" disabled={pending} onClick={() => refine("improve")}><Sparkles/>Improve copy</button><button type="button" disabled={pending} onClick={() => refine("shorten")}><WandSparkles/>Shorten</button><button type="button" disabled={pending} onClick={() => refine("tone")}><WandSparkles/>Change tone</button><button type="button" disabled={pending} onClick={() => refine("ideas")}><Sparkles/>More ideas</button>{authenticated && copyChanged ? <button className="save-content-version" type="button" disabled={pending} onClick={() => run("save", { content: contentWithCaption(item.rawContent, caption) })}><Check/>Save version</button> : null}</div>{notice ? <p role="status">{notice}</p> : null}{error ? <p className="content-action-error" role="alert">{error}</p> : null}</section>
       </section>
 
       <aside className="content-preview-rail" aria-label="Content context">
@@ -138,7 +144,8 @@ export function ContentPreviewClient({ item, authenticated, actionContext }: { i
       </aside>
     </div>
 
-    <section className="content-approval-bar" aria-label="Approval actions"><div><span><Lock aria-hidden="true"/></span><p><strong>{scheduled ? "Scheduled" : approved ? "Approved & locked" : reviewStatus === "passed" ? "Ready to approve" : reviewStatus === "revision-required" ? "Changes needed" : "Needs review"}</strong><small>{scheduled ? "This content is ready for its publishing slot." : approved ? "This exact version is locked for its destination." : reviewStatus === "revision-required" ? "Make the required changes and run the review again." : "Run readiness review before approval."}</small></p></div><div className="content-approval-controls">{authenticated && !approved && reviewStatus !== "passed" ? <button type="button" disabled={pending || caption !== item.caption} onClick={() => run("review")}><Sparkles/>{reviewStatus === "revision-required" ? "Check again" : "Check readiness"}</button> : null}{authenticated && !approved && actionContext && actionContext.eligibleAccounts.length > 1 ? <select aria-label="Publishing destination" value={accountId} disabled={pending} onChange={(event) => setAccountId(event.target.value)}>{actionContext.eligibleAccounts.map((account) => <option key={account.id} value={account.id}>{account.displayName}</option>)}</select> : null}<button className="approve" type="button" disabled={pending || approved || (authenticated && (reviewStatus !== "passed" || !accountId || caption !== item.caption))} onClick={approve}>{approved ? <Check/> : <Lock/>}{approved ? "Approved & Locked" : "Approve & Lock"}</button>{authenticated && approved && !scheduled ? <input aria-label="Publishing time" type="datetime-local" value={scheduledFor} min={defaultScheduleTime()} disabled={pending} onChange={(event) => setScheduledFor(event.target.value)}/> : null}<button type="button" disabled={pending || !approved || scheduled || (authenticated && !actionContext?.approvedAccountId)} onClick={schedule}><CalendarDays/>{scheduled ? "Scheduled" : "Schedule"}</button></div></section>
+    {authenticated && (reviewFindings.length > 0 || missingMedia || !accountId || copyChanged) ? <section aria-label="Required changes" className="content-review-findings"><h2>Before approval</h2><ul>{reviewFindings.map((finding,index) => <li key={index}>{finding}</li>)}{missingMedia ? <li>Production media is missing. Attach an approved image through the asset-library workflow, then review the new version.</li> : null}{!accountId ? <li>Connect a publishing account in Settings before approving.</li> : null}{copyChanged ? <li>Save the cleaned caption as a new version, then run readiness review.</li> : null}</ul></section> : null}
+    <section className="content-approval-bar" aria-label="Approval actions"><div><span><Lock aria-hidden="true"/></span><p><strong>{scheduled ? "Scheduled" : approved ? "Approved & locked" : reviewStatus === "passed" ? "Ready to approve" : reviewStatus === "revision-required" ? "Changes needed" : "Needs review"}</strong><small>{scheduled ? "This content is ready for its publishing slot." : approved ? "This exact version is locked for its destination." : reviewStatus === "revision-required" ? "Make the required changes and run the review again." : "Run readiness review before approval."}</small></p></div><div className="content-approval-controls">{authenticated && !approved && reviewStatus !== "passed" ? <button type="button" disabled={pending || copyChanged} onClick={() => run("review")}><Sparkles/>{reviewStatus === "revision-required" ? "Check again" : "Check readiness"}</button> : null}{authenticated && !approved && actionContext && actionContext.eligibleAccounts.length > 1 ? <select aria-label="Publishing destination" value={accountId} disabled={pending} onChange={(event) => setAccountId(event.target.value)}>{actionContext.eligibleAccounts.map((account) => <option key={account.id} value={account.id}>{account.displayName}</option>)}</select> : null}<button className="approve" type="button" disabled={pending || approved || (authenticated && (reviewStatus !== "passed" || !accountId || copyChanged))} onClick={approve}>{approved ? <Check/> : <Lock/>}{approved ? "Approved & Locked" : "Approve & Lock"}</button>{authenticated && approved && !scheduled ? <input aria-label="Publishing time" type="datetime-local" value={scheduledFor} min={defaultScheduleTime()} disabled={pending} onChange={(event) => setScheduledFor(event.target.value)}/> : null}<button type="button" disabled={pending || !approved || scheduled || (authenticated && !actionContext?.approvedAccountId)} onClick={schedule}><CalendarDays/>{scheduled ? "Scheduled" : "Schedule"}</button></div></section>
   </>;
 }
 

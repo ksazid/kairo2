@@ -1,3 +1,4 @@
+import { normalizePublishableCopy } from "@kairo/domain/publishable-copy";
 import { randomUUID } from "node:crypto";
 import { prepareAgentInvocation, type AgentRuntimePort } from "@kairo/agent-contracts";
 import { appendContentVersion, type ContentAction, type ContentAsset, type ContentVersion } from "@kairo/domain/campaign";
@@ -33,6 +34,10 @@ export class DrafterOrchestrator {
       throw new Error("Content scope mismatch");
     }
 
+    const selected = new Set(input.asset.supportingClaimIds);
+    const claims = input.claims.filter(claim => selected.has(claim.id) && (claim.classification !== "fact" || claim.verificationState === "supported"));
+    if (input.asset.supportingClaimIds.some(id => !claims.some(claim => claim.id === id))) throw new Error("Selected draft Claims are missing or unsupported; research must be corrected before drafting");
+
     const channelProfile = resolveChannelContentProfile(input.asset.channel, input.asset.format);
     const request = prepareAgentInvocation({
       role: "drafter",
@@ -41,7 +46,7 @@ export class DrafterOrchestrator {
       capabilities: [],
       task: {
         instruction:
-          "Produce only the requested bounded draft revision. Supplied Claims are authoritative context; cite only their IDs. Obey the supplied channelProfile requirements. Do not invent evidence, results, first-person experience, policy, tools or approval state.",
+          "Produce only the requested bounded draft revision. Use only the supplied supported selected Claims. Every factual sentence and product specification must be supported by those Claims; omit unsupported specifics and training advice. Preserve the supplied audience, objective and CTA. Return a plain-text publishable caption in content, with no Markdown or inline claim IDs; keep citation IDs only in supportingClaimIds. Obey the supplied channelProfile requirements. Do not invent evidence, results, first-person experience, policy, tools or approval state.",
         context: {
           campaign: input.campaign,
           asset: {
@@ -56,7 +61,7 @@ export class DrafterOrchestrator {
           parent: { content: input.parent.content, supportingClaimIds: input.parent.supportingClaimIds },
           action: input.action,
           ...(input.section ? { section: input.section } : {}),
-          claims: input.claims,
+          claims,
           ...(input.brandBrain?.length ? { brandBrain: input.brandBrain.filter((field) => field.state !== "stale") } : {}),
         },
       },
@@ -67,19 +72,22 @@ export class DrafterOrchestrator {
     const result = await this.runtime.invoke<DrafterOutput>(request);
     if (!valid(result.output)) throw new Error("Drafter output failed schema validation");
 
-    const known = new Set(input.claims.map((claim) => claim.id));
+    const known = new Set(claims.map((claim) => claim.id));
+    const inlineIds = [...result.output.content.matchAll(/(?:【|\[)([^\]】\n]+:claim-[^\]】\n]+)(?:】|\])/g)].map(match => match[1]!);
+    if (inlineIds.some(id => !known.has(id))) throw new Error("Drafter references an unknown inline Claim");
+    const content = normalizePublishableCopy(result.output.content);
     if (result.output.supportingClaimIds.some((id) => !known.has(id))) {
       throw new Error("Drafter references an unknown Claim");
     }
 
-    validateChannelContent(channelProfile, result.output.content);
+    validateChannelContent(channelProfile, content);
 
     return appendContentVersion({
       id: randomUUID(),
       asset: input.asset,
       parent: input.parent,
       expectedVersion: input.asset.currentVersion,
-      content: result.output.content,
+      content,
       supportingClaimIds: [...new Set(result.output.supportingClaimIds)],
       actor: "ai",
       action: input.action,

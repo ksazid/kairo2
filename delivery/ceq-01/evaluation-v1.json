@@ -1,0 +1,48 @@
+{
+  "id": "EVAL-CEQ-01-R1",
+  "version": 1,
+  "authoringRunId": "CEQ-01-R1",
+  "rubricId": "ceq-01-regression-and-runtime",
+  "baseline": "a86ff616dac3ea3aa03a0b4399223008705710d4",
+  "decision": "keep-for-human-review",
+  "checks": {
+    "preflight": "passed",
+    "diffCheck": "passed"
+  },
+  "criteria": [
+    {
+      "criterion": "Product/version relevance",
+      "result": "passed",
+      "evidence": "researcher regression rejects architecture and Alphafly 3 even with unrelated size 4"
+    },
+    {
+      "criterion": "Selected supported claims",
+      "result": "passed",
+      "evidence": "drafter tests exclude unselected economics and stop unsupported facts before invocation"
+    },
+    {
+      "criterion": "Public copy",
+      "result": "passed",
+      "evidence": "known citations removed with metadata retained; unknown IDs and overflow rejected; no truncation"
+    },
+    {
+      "criterion": "Review diagnostics and authority",
+      "result": "passed",
+      "evidence": "current-version truth/critic findings projected; contradictory critic pass cannot approve"
+    },
+    {
+      "criterion": "Identity and media",
+      "result": "passed-with-limitations",
+      "evidence": "preview uses selected destination or brand; API blocks missing image and passes after attachment"
+    }
+  ],
+  "limitations": [
+    "No deployment or live re-test of these source changes",
+    "Factual sentence entailment remains model-backed; selected-claim prompts are not proof of factual correctness",
+    "Named-product anchoring is a lexical safeguard, not semantic source verification",
+    "Automatic image generation and a new asset-selection UI are not implemented; existing asset-library API remains the attachment path",
+    "Database integration suites require configured credentials and remain skipped"
+  ],
+  "next": "Human review and exact-commit certification before any merge, release or production enablement",
+  "logSha256": "b38a65d5a5d55a023b271c5240fadde16e3e9f62ce5b0787565bf0ce8115b0a6"
+}

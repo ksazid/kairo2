@@ -1,0 +1,58 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> @kairo/ui@0.1.0 build
+> next build
+
+▲ Next.js 16.3.4 (Turbopack)
+✓ Running next.config.ts took 38ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 189ms
+  Running TypeScript ...
+  Finished TypeScript in 1397ms ...
+  Collecting page data using 8 workers ...
+  Generating static pages using 8 workers (0/21) ...
+  Generating static pages using 8 workers (5/21) 
+  Generating static pages using 8 workers (10/21) 
+  Generating static pages using 8 workers (15/21) 
+✓ Generating static pages using 8 workers (21/21) in 229ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ○ /_not-found
+├ ƒ /api/brain
+├ ƒ /api/content/action
+├ ƒ /api/discover/action
+├ ƒ /api/discover/feedback
+├ ƒ /api/discover/refresh
+├ ƒ /api/home/analyse
+├ ƒ /api/home/generate
+├ ƒ /api/settings/presenter
+├ ƒ /auth/callback
+├ ƒ /auth/login
+├ ƒ /auth/logout
+├ ƒ /brand
+├ ƒ /brands/new
+├ ƒ /calendar
+├ ƒ /campaigns
+├ ƒ /campaigns/[campaignId]
+├ ƒ /channels/instagram/callback
+├ ƒ /channels/instagram/select
+├ ƒ /channels/instagram/start
+├ ƒ /channels/meta/[mode]/callback
+├ ƒ /channels/meta/[mode]/start
+├ ƒ /channels/meta/select
+├ ƒ /content
+├ ƒ /content/[campaignId]/[assetId]
+├ ƒ /discover
+├ ƒ /discover/[opportunityId]
+├ ƒ /insights
+└ ƒ /settings
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

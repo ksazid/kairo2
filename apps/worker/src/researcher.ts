@@ -65,7 +65,7 @@ export class ResearcherOrchestrator {
     const maxEvidence = Math.min(Math.max(input.maxEvidence ?? 8, 1), 12);
     const minimumRelevantEvidence = Math.min(2, maxEvidence);
     const pinnedEvidence = normalizePinnedEvidence(input.pinnedEvidence, maxEvidence);
-    const relevantPinnedEvidence = pinnedEvidence.filter((item) => isEvidenceRelevantToResearch(item, [query, ...(publicResearchQuery ? [publicResearchQuery] : [])]));
+    const relevantPinnedEvidence = pinnedEvidence.filter((item) => isEvidenceRelevantToResearch(item, [query, ...(publicResearchQuery ? [publicResearchQuery] : [])], input.idea.title));
     if (pinnedEvidence.length && relevantPinnedEvidence.length < Math.min(pinnedEvidence.length, minimumRelevantEvidence)) {
       throw new Error(`Explicit Research evidence is not sufficiently relevant: ${relevantPinnedEvidence.length}/${Math.min(pinnedEvidence.length, minimumRelevantEvidence)}`);
     }
@@ -104,7 +104,7 @@ export class ResearcherOrchestrator {
     }
 
     const candidateEvidence = balancedUniqueEvidence(groups, maxEvidence);
-    const relevantEvidence = candidateEvidence.filter((item) => isEvidenceRelevantToResearch(item, [query, ...(publicResearchQuery ? [publicResearchQuery] : [])]));
+    const relevantEvidence = candidateEvidence.filter((item) => isEvidenceRelevantToResearch(item, [query, ...(publicResearchQuery ? [publicResearchQuery] : [])], input.idea.title));
     if (relevantEvidence.length < minimumRelevantEvidence) {
       throw new Error(`Research has insufficient relevant evidence: ${relevantEvidence.length}/${minimumRelevantEvidence}`);
     }
@@ -264,9 +264,15 @@ function balancedUniqueEvidence(groups: DiscoveryEvidence[][], maxEvidence: numb
   return result;
 }
 
-function isEvidenceRelevantToResearch(evidence: DiscoveryEvidence, queries: string[]): boolean {
+function isEvidenceRelevantToResearch(evidence: DiscoveryEvidence, queries: string[], subject?: string): boolean {
   const evidenceTerms = new Set(tokenise(`${evidence.title} ${evidence.summary ?? ""}`));
   if (!evidenceTerms.size) return false;
+  const product = subject?.match(/\b([a-z][a-z0-9-]{2,})\s+(\d{1,4})\b/i);
+  if (product && !["top", "best", "step", "chapter", "part"].includes(product[1]!.toLowerCase())) {
+    const productName = product[1]!.toLowerCase();
+    const namedVersion = new RegExp(`\\b${productName}[\\s-]*${product[2]}\\b`, "i");
+    if (!namedVersion.test(`${evidence.title} ${evidence.summary ?? ""}`)) return false;
+  }
   const anchors = uniqueTerms(queries.flatMap((query) => distinctiveTerms(query).filter((term) => !OUTCOME_TERMS.has(term))));
   if (!anchors.length) return false;
   const overlap = relevantOverlap(anchors, evidenceTerms);

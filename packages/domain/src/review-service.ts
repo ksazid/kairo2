@@ -1,3 +1,4 @@
+import { publicCopyFindings } from "./publishable-copy";
 import { randomUUID } from "node:crypto";
 import { ConcurrencyConflictError, ResourceNotFoundError } from "./index";
 import type { CampaignRepository } from "./campaign-service";
@@ -96,6 +97,10 @@ export class ReviewService {
       });
     }
     const pending = requestContentReview({ id: randomUUID(), ...scope, truth, requestedAt });
+    const copyFindings = publicCopyFindings(entry.asset.channel, version.content);
+    const missingImage = entry.asset.channel === "instagram" && ["image", "post", "static"].includes(entry.asset.format.toLowerCase()) && !version.libraryAssetRefs?.some(ref => ref.kind === "image");
+    if (missingImage) copyFindings.push({code:"missing-production-media",severity:"revision",message:"Add an approved image from the asset library before approving this Instagram post."});
+    if (copyFindings.length) return this.reviews.saveReview(accountId, completeContentReview({review: pending,critic:{passed:false,score:0,findings:copyFindings},revisionCycle:input.revisionCycle,completedAt:this.now().toISOString()}));
     const critic = await this.critic.evaluate({
       workspaceId: scope.workspaceId,
       brandId,

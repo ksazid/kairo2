@@ -1,3 +1,4 @@
+import { appendContentVersion } from "@kairo/domain/campaign";
 import { describe, expect, it } from "vitest";
 import type { ExternalIdentity } from "@kairo/contracts";
 import { connectChannelAccount } from "@kairo/domain/publishing";
@@ -82,12 +83,17 @@ describe("VS-30 multi-channel distribution API", () => {
     });
     const linkedinAsset = linkedinAssetResponse.json().assets.at(-1).asset;
 
+    const missingMedia = await app.inject({method:"POST",url:`/api/v1/brands/${brand.id}/campaigns/${campaignId}/assets/${instagramAsset.id}/review`,headers,payload:{expectedVersion:1,brandContextVersion:`${brand.id}@1`,revisionCycle:0}});
+    expect(missingMedia.json()).toMatchObject({status:"revision-required",critic:{findings:[expect.objectContaining({code:"missing-production-media"})]}});
+    await campaigns.appendVersion(user.id,brand.id,campaignId,instagramAsset.id,1,(asset,parent) => appendContentVersion({id:"ig-with-media",asset,parent,expectedVersion:1,content:parent.content,supportingClaimIds:parent.supportingClaimIds,actor:"user",action:"manual-edit",createdAt:"2026-09-30T10:00:00Z",libraryAssetRefs:[{libraryId:"library",libraryAssetId:"hero",libraryName:"Approved images",provider:"google-drive",externalId:"hero",name:"Hero",kind:"image",mimeType:"image/jpeg",providerRef:"https://example.com/hero.jpg",indexedAt:"2026-09-30T10:00:00Z"}]}));
+    instagramAsset.currentVersion = 2;
+
     for (const asset of [instagramAsset, linkedinAsset]) {
       const reviewed = await app.inject({
         method: "POST",
         url: `/api/v1/brands/${brand.id}/campaigns/${campaignId}/assets/${asset.id}/review`,
         headers,
-        payload: { expectedVersion: 1, brandContextVersion: `${brand.id}@1`, revisionCycle: 0 },
+        payload: { expectedVersion: asset.currentVersion, brandContextVersion: `${brand.id}@1`, revisionCycle: 0 },
       });
       expect(reviewed.statusCode).toBe(201);
       expect(reviewed.json().status).toBe("passed");
@@ -121,7 +127,7 @@ describe("VS-30 multi-channel distribution API", () => {
       destinations: [
         {
           assetId: instagramAsset.id,
-          expectedVersion: 1,
+          expectedVersion: instagramAsset.currentVersion,
           channelAccountId: "ig-account",
           contentType: "image",
           mediaItems: [{ kind: "image", url: "https://media.example/kairo.png" }],

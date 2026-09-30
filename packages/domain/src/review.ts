@@ -39,7 +39,7 @@ export function completeContentReview(input: { review: ContentReview; critic: Cr
   if (!Number.isInteger(input.revisionCycle) || input.revisionCycle < 0 || input.revisionCycle > 2) throw new DomainValidationError("Revision cycles must be between zero and two");
   if (!Number.isFinite(input.critic.score) || input.critic.score < 0 || input.critic.score > 100) throw new DomainValidationError("Critic score must be between zero and 100");
   const findings = input.critic.findings.map((finding) => ({ code: text(finding.code, "finding.code", 120), severity: enumValue(finding.severity, ["advisory", "revision"], "finding.severity"), message: text(finding.message, "finding.message", 2_000) }));
-  const critic = { passed: input.critic.passed, score: input.critic.score, findings };
+  const critic = { passed: input.critic.passed && !findings.some(finding => finding.severity === "revision"), score: input.critic.score, findings };
   return { ...input.review, status: critic.passed ? "passed" : "revision-required", revisionCycle: input.revisionCycle, critic, completedAt: timestamp(input.completedAt, "completedAt") };
 }
 

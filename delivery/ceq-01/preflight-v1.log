@@ -1,0 +1,292 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> kairo2@0.7.0 preflight
+> npm run pes:validate && npm test && npm run runtime:verify
+
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> kairo2@0.7.0 pes:validate
+> node scripts/validate.mjs
+
+PES v2 validation passed: graph revision=36, 197 nodes, 174 edges, 36 graph event(s), 0 ratchet run(s), 22 certification(s), 0 execution benchmark(s), multiAgent=disabled, mode=lite
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> kairo2@0.7.0 test
+> node --test test/*.test.mjs
+
+✔ certification policy validates against governance vocabulary (1.586886ms)
+✔ candidate creation rejects non-exact commit identifiers (1.169636ms)
+✔ builds deterministic candidate tied to exact SHA, context, gate and graph trace (15.019659ms)
+✔ candidate verification fails when exact SHA changes (2.948322ms)
+✔ high-risk certification enforces larger linked evidence floor (0.494938ms)
+✔ unlinked artifact cannot enter certification trace (0.422659ms)
+✔ stale or contradictory context blocks candidate creation (1.323428ms)
+✔ blocking unresolved risk prevents certification (0.595949ms)
+✔ final certification approval must be human and bind exact SHA plus candidate hash (3.612655ms)
+✔ certified bundle verification detects tampering (2.401516ms)
+✔ certified bundle remains verifiable after unrelated append-only graph revisions (5.381366ms)
+✔ certification store is append-only and rejects duplicate bundle identity (2.050646ms)
+✔ context policy is explicit and bounded (1.491022ms)
+✔ verified and recent state outranks failed alternatives at the same hop (3.829342ms)
+✔ contradictory claims are surfaced together with explicit conflict metadata (5.675419ms)
+✔ context hash is deterministic and changes when relevant graph state changes (6.027772ms)
+✔ serialization stays inside declared token budget and omits lower-ranked nodes first (1.108494ms)
+✔ superseded seed resolves to current approved node before ranking (1.414335ms)
+✔ budget contract validates and detects overrun (0.885848ms)
+✔ ratchet keeps only declared metric improvement (0.227554ms)
+✔ graph requires provenance for evidence edges (0.228325ms)
+✔ bounded context respects hops and node limit (0.844425ms)
+✔ gate policy validates against PES governance vocabulary (1.56301ms)
+✔ low-risk approved slice can enter ready-for-implementation with valid human approvals and bounded context (1.720318ms)
+✔ agent cannot satisfy human policy approval (0.542529ms)
+✔ protected governance path triggers delivery graph and blocks implementation until graph is ready (0.797233ms)
+✔ ready delivery graph satisfies high-risk execution trigger but evidence floor still applies at testing (0.618804ms)
+✔ unlinked graph evidence does not satisfy evidence floor (0.481197ms)
+✔ certification is blocked when bounded context exposes unresolved contradictions (0.422888ms)
+✔ stale context blocks governed transition (0.364811ms)
+✔ lifecycle skipping is blocked even when approvals exist (2.707218ms)
+✔ released state requires human release and production-enable approvals plus production permission (1.508699ms)
+✔ release is blocked when production enable approval is missing (0.254965ms)
+✔ legacy graph normalizes without losing nodes (1.240082ms)
+✔ append is provenance-bearing, revisioned and idempotent (0.791835ms)
+✔ conflicting id rewrite is rejected (1.196006ms)
+✔ supersession is immutable and current resolution follows the chain (0.654719ms)
+✔ correction preserves original object and reason (0.369458ms)
+✔ artifact explanation reconstructs accepted and failed attempts (7.969424ms)
+✔ file store persists append-only revisions and rejects stale writes (2.299201ms)
+✔ strict provenance validation accepts fully tracked state (0.259592ms)
+✔ HI2-02R certified bundle remains valid after unrelated append-only graph revisions (25.484841ms)
+✔ HI2-03R certified bundle remains valid after unrelated append-only graph revisions (17.094622ms)
+✔ HI2-04R certified bundle remains valid after unrelated append-only graph revisions (18.198369ms)
+✔ HI2-05R certified bundle remains valid after unrelated append-only graph revisions (18.945196ms)
+✔ HI2-06R certified bundle remains valid after unrelated append-only graph revisions (336.675908ms)
+✔ HI2-07R certified bundle remains valid after append-only graph revisions (49.433947ms)
+✔ HI2-08R certified bundle remains valid after unrelated append-only graph revisions (27.380656ms)
+✔ HI2-09R certified bundle remains valid after unrelated append-only graph revisions (27.263239ms)
+✔ HI2-10E certified bundle remains valid after append-only graph revisions (43.978542ms)
+✔ HI2-10M certified bundle remains valid after append-only graph revisions (36.604408ms)
+✔ HI2-10M packages the approved migration range runner into the production image (0.962834ms)
+✔ HI2-10P certified bundle remains valid after append-only graph revisions (25.104574ms)
+✔ HI2-10R certified bundle remains valid after append-only graph revisions (33.922608ms)
+✔ HI2-10T certified bundle remains valid after append-only graph revisions (19.312669ms)
+✔ HI2-10V certified bundle remains valid after append-only graph revisions (25.045645ms)
+✔ HI2-10W certified bundle remains valid after append-only graph revisions (24.94908ms)
+✔ HI2-11 certified bundle remains valid after append-only graph revisions (24.699547ms)
+✔ HI2-11R certified bundle remains valid after append-only graph revisions (26.314231ms)
+✔ HI2-11R1 certified bundle remains valid after append-only graph revisions (26.071505ms)
+✔ HI2-11R2 certified bundle remains valid after append-only graph revisions (29.733939ms)
+✔ HI2-11R3 certified bundle remains valid after append-only graph revisions (22.323341ms)
+✔ HI2-01 certified bundle remains valid after unrelated append-only graph revisions (20.605046ms)
+✔ multi-agent policy validates conservative benchmark thresholds (0.906209ms)
+✔ plan requires reducer, isolation and acyclic dependencies (1.228014ms)
+✔ topology parallelizes independent non-overlapping tasks and respects dependencies (10.541687ms)
+✔ overlapping writes are not allowed in the same execution wave (0.565334ms)
+✔ benchmark passes only when value improves without quality, failure or cost regression beyond policy (2.489739ms)
+✔ faster multi-agent run is rejected when quality regresses (0.397581ms)
+✔ multi-agent mode is not justified when no measured benefit threshold is met (0.838466ms)
+✔ passing benchmark can make a plan activation-ready while PES keeps multi-agent disabled (1.418741ms)
+✔ execution is authorized only after explicit enablement and sufficient PES budgets (1.629821ms)
+✔ lite-style budget blocks multi-agent execution even with a good benchmark (0.68919ms)
+✔ high-risk plans remain ineligible by default (0.503751ms)
+✔ benchmark store is append-only (1.266062ms)
+✔ ratchet keeps measured improvement and retains failed lineage (3.641959ms)
+✔ evaluation cannot keep without required evidence (0.492253ms)
+✔ interrupted attempt restores checkpoint and remains in lineage (0.395717ms)
+✔ run store persists and reloads durable execution state atomically (0.968422ms)
+✔ file snapshot adapter reverses declared mutable files (1.912638ms)
+✔ git worktree adapter issues reversible isolated-workspace commands (1.957175ms)
+✔ finalized attempts publish valid graph lineage (0.606526ms)
+✔ evaluator contract must declare metric, direction, rubric and evidence floor (0.371311ms)
+ℹ tests 83
+ℹ suites 0
+ℹ pass 83
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 750.82378
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> kairo2@0.7.0 runtime:verify
+> npm run runtime:typecheck && npm run runtime:test && npm run runtime:build
+
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> kairo2@0.7.0 runtime:typecheck
+> npm run typecheck --workspaces --if-present
+
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> @kairo/api@0.1.0 typecheck
+> tsc -p tsconfig.json --noEmit
+
+
+> @kairo/ui@0.1.0 typecheck
+> tsc -p tsconfig.json --noEmit
+
+
+> @kairo/worker@0.1.0 typecheck
+> tsc -p tsconfig.json --noEmit
+
+
+> @kairo/agent-contracts@0.1.0 typecheck
+> tsc -p tsconfig.json --noEmit
+
+
+> @kairo/contracts@0.1.0 typecheck
+> tsc -p tsconfig.json --noEmit
+
+
+> @kairo/domain@0.1.0 typecheck
+> tsc -p tsconfig.json --noEmit
+
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> kairo2@0.7.0 runtime:test
+> npm run test --workspaces --if-present
+
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> @kairo/api@0.1.0 test
+> vitest run --no-file-parallelism
+
+
+ RUN  v4.1.11 /workspace/scratch/eb177a207bd7/kairo2/apps/api
+
+
+ Test Files  76 passed | 18 skipped (94)
+      Tests  314 passed | 40 skipped (354)
+   Start at  15:26:26
+   Duration  21.74s (transform 1.55s, setup 0ms, import 5.14s, tests 3.89s, environment 8ms)
+
+
+> @kairo/ui@0.1.0 test
+> vitest run
+
+
+ RUN  v4.1.11 /workspace/scratch/eb177a207bd7/kairo2/apps/ui
+
+
+ Test Files  26 passed (26)
+      Tests  86 passed (86)
+   Start at  15:26:48
+   Duration  1.10s (transform 1.16s, setup 0ms, import 2.04s, tests 270ms, environment 3ms)
+
+
+> @kairo/worker@0.1.0 test
+> vitest run
+
+
+ RUN  v4.1.11 /workspace/scratch/eb177a207bd7/kairo2/apps/worker
+
+
+ Test Files  53 passed (53)
+      Tests  358 passed (358)
+   Start at  15:26:49
+   Duration  2.80s (transform 2.22s, setup 0ms, import 3.74s, tests 4.52s, environment 5ms)
+
+
+> @kairo/agent-contracts@0.1.0 test
+> vitest run
+
+
+ RUN  v4.1.11 /workspace/scratch/eb177a207bd7/kairo2/packages/agent-contracts
+
+
+ Test Files  2 passed (2)
+      Tests  27 passed (27)
+   Start at  15:26:52
+   Duration  208ms (transform 63ms, setup 0ms, import 103ms, tests 31ms, environment 0ms)
+
+
+> @kairo/domain@0.1.0 test
+> vitest run
+
+
+ RUN  v4.1.11 /workspace/scratch/eb177a207bd7/kairo2/packages/domain
+
+
+ Test Files  50 passed (50)
+      Tests  283 passed (283)
+   Start at  15:26:53
+   Duration  1.87s (transform 1.77s, setup 0ms, import 2.97s, tests 557ms, environment 5ms)
+
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> kairo2@0.7.0 runtime:build
+> npm run build --workspaces --if-present
+
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> @kairo/api@0.1.0 build
+> node ../../node_modules/rolldown/bin/cli.mjs src/server.ts --file dist/server.js --platform node --format esm --sourcemap --external fastify,jose,pg && node ../../node_modules/rolldown/bin/cli.mjs src/publishing-worker-server.ts --file dist/publishing-worker-server.js --platform node --format esm --sourcemap --external pg && node ../../node_modules/rolldown/bin/cli.mjs src/marketing-shadow-quality-evaluation-worker.ts --file dist/marketing-shadow-quality-evaluation-worker.js --platform node --format esm --sourcemap --external pg
+
+<DIR>/server.js.map  asset │ size: 4,845.76 kB
+<DIR>/server.js      chunk │ size: 2,653.12 kB
+
+✔ rolldown v1.2.7 Finished in 236.28 ms
+<DIR>/publishing-worker-server.js.map  asset │ size: 125.00 kB
+<DIR>/publishing-worker-server.js      chunk │ size:  47.26 kB
+
+✔ rolldown v1.2.7 Finished in 22.48 ms
+<DIR>/marketing-shadow-quality-evaluation-worker.js.map  asset │ size: 174.79 kB
+<DIR>/marketing-shadow-quality-evaluation-worker.js      chunk │ size:  71.40 kB
+
+✔ rolldown v1.2.7 Finished in 22.92 ms
+
+> @kairo/ui@0.1.0 build
+> next build
+
+▲ Next.js 16.3.4 (Turbopack)
+✓ Running next.config.ts took 20ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 186ms
+  Running TypeScript ...
+  Finished TypeScript in 2.7s ...
+  Collecting page data using 8 workers ...
+  Generating static pages using 8 workers (0/21) ...
+  Generating static pages using 8 workers (5/21) 
+  Generating static pages using 8 workers (10/21) 
+  Generating static pages using 8 workers (15/21) 
+✓ Generating static pages using 8 workers (21/21) in 197ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ○ /_not-found
+├ ƒ /api/brain
+├ ƒ /api/content/action
+├ ƒ /api/discover/action
+├ ƒ /api/discover/feedback
+├ ƒ /api/discover/refresh
+├ ƒ /api/home/analyse
+├ ƒ /api/home/generate
+├ ƒ /api/settings/presenter
+├ ƒ /auth/callback
+├ ƒ /auth/login
+├ ƒ /auth/logout
+├ ƒ /brand
+├ ƒ /brands/new
+├ ƒ /calendar
+├ ƒ /campaigns
+├ ƒ /campaigns/[campaignId]
+├ ƒ /channels/instagram/callback
+├ ƒ /channels/instagram/select
+├ ƒ /channels/instagram/start
+├ ƒ /channels/meta/[mode]/callback
+├ ƒ /channels/meta/[mode]/start
+├ ƒ /channels/meta/select
+├ ƒ /content
+├ ƒ /content/[campaignId]/[assetId]
+├ ƒ /discover
+├ ƒ /discover/[opportunityId]
+├ ƒ /insights
+└ ƒ /settings
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
