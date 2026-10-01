@@ -17,6 +17,7 @@
     "context:build": "node scripts/context-builder.mjs",
     "agent:brief": "node scripts/agent-brief.mjs",
     "agent:verify": "node scripts/agent-verify.mjs",
+    "e2e:kairo": "playwright test --config apps/ui/playwright.config.mjs",
     "ratchet:evaluate": "node scripts/ratchet-evaluate.mjs",
     "ratchet:fixture": "node scripts/ratchet-fixture.mjs",
     "graph:memory": "node scripts/graph-memory.mjs",
