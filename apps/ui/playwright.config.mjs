@@ -19,13 +19,13 @@ export default defineConfig({
   },
   webServer: [
     {
-      command: "node apps/ui/e2e/stub-api.mjs",
+      command: "node e2e/stub-api.mjs",
       url: "http://127.0.0.1:4190/health",
       reuseExistingServer: !process.env.CI,
       timeout: 30_000
     },
     {
-      command: "npm run dev --workspace @kairo/ui -- --hostname 127.0.0.1 --port 4173",
+      command: "npm run dev -- --hostname 127.0.0.1 --port 4173",
       url: baseURL,
       reuseExistingServer: !process.env.CI,
       timeout: 120_000,
