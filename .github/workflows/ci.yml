@@ -17,4 +17,4 @@ jobs:
         with:
           node-version: '24'
       - run: npm ci --no-audit --no-fund
-      - run: npm run preflight
+      - run: npm run agent:verify -- --continue-on-failure

@@ -15,6 +15,8 @@
     "pes:validate": "node scripts/validate.mjs",
     "preflight": "npm run pes:validate && npm test && npm run runtime:verify",
     "context:build": "node scripts/context-builder.mjs",
+    "agent:brief": "node scripts/agent-brief.mjs",
+    "agent:verify": "node scripts/agent-verify.mjs",
     "ratchet:evaluate": "node scripts/ratchet-evaluate.mjs",
     "ratchet:fixture": "node scripts/ratchet-fixture.mjs",
     "graph:memory": "node scripts/graph-memory.mjs",
