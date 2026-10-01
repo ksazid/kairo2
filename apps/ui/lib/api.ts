@@ -89,7 +89,7 @@ export type CampaignDetailView = {
 };
 
 export type ContentReviewStatusView = {
-  review: { versionId: string; status: "review" | "revision-required" | "passed" | "archived"; critic?: { score: number; findings: Array<{ message: string }> } } | null;
+  review: { versionId: string; status: "review" | "revision-required" | "passed" | "archived"; truth?: { findings: Array<{ message: string }> }; critic?: { score: number; findings: Array<{ message: string }> } } | null;
   approval: { versionId: string; approvedAt: string; destination?: { channel: "linkedin" | "instagram" | "facebook" | "manual"; accountRef: string } } | null;
 };
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { contentFallback, contentPreviewHref, contentWithCaption, filterContent, toContentItems } from "./content";
+import { captionNeedsSave, contentFallback, contentPreviewHref, contentWithCaption, filterContent, toContentItems } from "./content";
 import type { CampaignDetailView, ContentReviewStatusView, PublishCommandView } from "./api";
 
 describe("Kairo UI v2 Content behavior", () => {
@@ -74,4 +74,11 @@ describe("Kairo UI v2 Content behavior", () => {
       expect.objectContaining({ id: "asset", caption: "Take the coast road.", channel: "LinkedIn", format: "reel", status: "in-review", image: "https://images.example/coast.jpg" }),
     ]);
   });
+});
+
+it("detects sanitized copy edits without false changes from JSON formatting or crashing on empty edits", () => {
+  expect(captionNeedsSave('{ "caption": "Road racing", "scenes": [] }', "Road racing")).toBe(false);
+  expect(captionNeedsSave("Road racing 【source:claim-1】", "Road racing")).toBe(true);
+  expect(captionNeedsSave("Road racing", "")).toBe(true);
+  expect(captionNeedsSave("Line one\n\nLine two", "Line one\n\nLine two")).toBe(false);
 });

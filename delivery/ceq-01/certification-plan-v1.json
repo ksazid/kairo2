@@ -1,0 +1,20 @@
+{
+  "id": "CEQ-01-R2",
+  "version": 1,
+  "objectiveId": "OBJ-CEQ-01",
+  "author": "Codex",
+  "scope": "Verify CI and prepare an exact-commit certification candidate",
+  "authorization": "User Go following proposal to inspect CI and prepare certification evidence",
+  "constraints": [
+    "No final certification without exact SHA and hash approval",
+    "No merge or deployment"
+  ],
+  "budget": {
+    "maxToolCalls": 30,
+    "maxModelCalls": 0,
+    "maxSubAgents": 0,
+    "maxGraphWrites": 3,
+    "maxWallClockMinutes": 20,
+    "maxFinancialCost": 0
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "allowed": true,
+  "sliceId": "CEQ-01",
+  "fromState": "ready-for-implementation",
+  "requestedState": "implementing",
+  "blockers": [],
+  "warnings": [],
+  "requiredApprovals": [
+    "scope",
+    "policy"
+  ],
+  "validApprovals": [
+    "scope",
+    "policy"
+  ],
+  "protectedPaths": [],
+  "evidence": {
+    "accepted": [
+      {
+        "id": "EVID-CEQ-01-LIVE",
+        "type": "Evidence",
+        "status": "verified",
+        "distance": 1
+      }
+    ],
+    "rejected": []
+  },
+  "deliveryGraph": {
+    "required": true,
+    "blocking": false,
+    "status": "ready",
+    "reasons": [
+      "signal:crossModule"
+    ]
+  },
+  "context": {
+    "hash": "bf28b01632c936a1edf5b5badace7313b13b003a3b0b0b2748564e937c6a2fcd",
+    "graphRevision": 36,
+    "contradictions": 0
+  }
+}

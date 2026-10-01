@@ -1,0 +1,43 @@
+{
+  "id": "CEQ-01",
+  "version": 1,
+  "author": "Codex",
+  "runId": "CEQ-01-R1",
+  "baseline": "a86ff616dac3ea3aa03a0b4399223008705710d4",
+  "objective": "Repair the observed Nike content evidence and review journey",
+  "scope": [
+    "named-subject evidence relevance",
+    "supported selected-claim drafting",
+    "publishable caption normalization and limits",
+    "current-version truth/critic diagnostics",
+    "correct preview brand identity",
+    "explicit missing-media recovery"
+  ],
+  "constraints": [
+    "No merge, certification, deployment or production enablement",
+    "No new media provider or paid model calls",
+    "Preserve existing truth/approval policy",
+    "Existing selected asset/render workflow remains the media authority"
+  ],
+  "budget": {
+    "maxModelCalls": 0,
+    "maxSubAgents": 0,
+    "maxConcurrentWorkers": 1,
+    "maxToolCalls": 40,
+    "maxTokens": 120000,
+    "maxFinancialCost": 0,
+    "maxWallClockMinutes": 45,
+    "maxRetries": 2,
+    "maxGraphWrites": 10,
+    "minEvidenceItems": 2
+  },
+  "rubricId": "ceq-01-regression-and-runtime",
+  "successCriteria": [
+    "Nike product evidence excludes architecture/economic matches",
+    "Draft rejects unsupported selected facts and unknown inline claim IDs",
+    "Social caption has no raw internal references or Markdown and is validated without truncation",
+    "Current-version review findings reach the UI",
+    "Preview uses selected account or current Brand identity",
+    "Missing media is explicit; approval never bypasses server checks"
+  ]
+}

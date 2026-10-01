@@ -32,7 +32,7 @@ export default async function ContentPreviewPage({ params, searchParams }: { par
       <div><h1>{item.title}</h1><p>{item.summary}</p><div className="content-preview-meta"><span><ChannelIcon aria-hidden="true"/>{item.channel}</span><span>{FormatIcon ? <FormatIcon aria-hidden="true"/> : null}{item.formatLabel}</span><span className={`content-status status-${item.status}`}><i/>{item.statusLabel}</span><small>Last updated {formatDate(item.updatedAt)} by Kairo</small></div></div>
       {data.authenticated ? <a href="#caption-editor">Edit in preview</a> : <Link href="/">Create content</Link>}
     </header>
-    <ContentPreviewClient item={item} authenticated={data.authenticated} actionContext={data.brandId ? { brandId: data.brandId, reviewStatus: review && review.versionId === currentVersionId ? review.status : null, approved: Boolean(approval && approval.versionId === currentVersionId), eligibleAccounts, ...(approvedAccount ? { approvedAccountId: approvedAccount.id } : {}) } : undefined}/>
+    <ContentPreviewClient item={item} brandName={data.brandName} authenticated={data.authenticated} actionContext={data.brandId ? { brandId: data.brandId, reviewStatus: review && review.versionId === currentVersionId ? review.status : null, approved: Boolean(approval && approval.versionId === currentVersionId), findings: review && review.versionId === currentVersionId ? [...(review.truth?.findings ?? []), ...(review.critic?.findings ?? [])].map(finding => finding.message) : [], eligibleAccounts, ...(approvedAccount ? { approvedAccountId: approvedAccount.id } : {}) } : undefined}/>
   </KairoShell>;
 }
 

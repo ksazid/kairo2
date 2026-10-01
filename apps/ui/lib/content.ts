@@ -1,4 +1,5 @@
 import type { CampaignDetailView, ContentReviewStatusView, PublishCommandView } from "./api";
+import { normalizePublishableCopy } from "@kairo/domain/publishable-copy";
 import { presentAiText } from "./ai-presentation";
 
 export type ContentStatus = "draft" | "in-review" | "scheduled" | "published";
@@ -84,7 +85,7 @@ export function toContentItems(details: CampaignDetailView[], reviews: Record<st
       campaignName: presentAiText(detail.campaign.name, "title", "Campaign"),
       title: presentAiText(asset.topic, "title", "Untitled content"),
       summary: presentAiText(summarize(content), "summary", "Generated content ready for review."),
-      caption: captionFrom(content),
+      caption: normalizePublishableCopy(captionFrom(content)),
       channel: channelLabel(asset.channel),
       format,
       formatLabel: format === "image" ? "Post" : format === "carousel" ? "Carousel" : "Reel",
@@ -102,6 +103,10 @@ export function toContentItems(details: CampaignDetailView[], reviews: Record<st
       rawContent: current?.content ?? "",
     } satisfies ContentItem;
   })).sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+}
+
+export function captionNeedsSave(rawContent: string, caption: string): boolean {
+  return caption.replace(/\r\n?/g, "\n").trim() !== captionFrom(rawContent);
 }
 
 export function contentWithCaption(rawContent: string, caption: string): string {
@@ -159,7 +164,7 @@ function captionFrom(value: string) {
     const parsed = JSON.parse(value) as Record<string, unknown>;
     for (const key of ["caption", "copy", "text", "body", "description"]) if (typeof parsed[key] === "string" && parsed[key]!.trim()) return parsed[key]!.trim();
   } catch {}
-  return value.replace(/\s+/g, " ").trim();
+  return value.replace(/\r\n?/g, "\n").trim();
 }
 
 function summarize(value: string) {

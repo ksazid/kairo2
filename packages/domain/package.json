@@ -57,7 +57,8 @@
     "./feedback-learning-v2": "./src/feedback-learning-v2.ts",
     "./hunter-outcome-attribution": "./src/hunter-outcome-attribution.ts",
     "./hunter-rollout": "./src/hunter-rollout.ts",
-    "./hunter-shadow-evidence": "./src/hunter-shadow-evidence.ts"
+    "./hunter-shadow-evidence": "./src/hunter-shadow-evidence.ts",
+    "./publishable-copy": "./src/publishable-copy.ts"
   },
   "types": "./src/index.ts",
   "scripts": {

@@ -121,3 +121,23 @@ describe("Drafter", () => {
     ).rejects.toThrow(/LinkedIn content exceeds 3000 characters/i);
   });
 });
+
+describe("Selected evidence drafting", () => {
+  it("excludes unselected claims from model context", async () => {
+    const runtime = new Runtime({content:"Supported",supportingClaimIds:["claim-1"]});
+    await new DrafterOrchestrator(runtime).run({...input, claims:[...input.claims,{id:"unrelated",text:"Post-Keynesian economics",classification:"fact",verificationState:"supported"}]});
+    expect(runtime.last?.task.context).toMatchObject({claims:input.claims});
+  });
+  it("stops unsupported selected facts before invoking the model", async () => {
+    const runtime = new Runtime({content:"Unsupported",supportingClaimIds:["claim-1"]});
+    await expect(new DrafterOrchestrator(runtime).run({...input,claims:[{...input.claims[0]!,verificationState:"unresolved"}]})).rejects.toThrow(/unsupported/i);
+    expect(runtime.last).toBeNull();
+  });
+  it("removes known inline citations but rejects unknown ones", async () => {
+    const selected = {...input,asset:{...asset,supportingClaimIds:["source:claim-1"]},claims:[{...input.claims[0]!,id:"source:claim-1"}]};
+    const version = await new DrafterOrchestrator(new Runtime({content:"**Road racing** 【source:claim-1】",supportingClaimIds:["source:claim-1"]})).run(selected);
+    expect(version.content).toBe("Road racing");
+    expect(version.supportingClaimIds).toEqual(["source:claim-1"]);
+    await expect(new DrafterOrchestrator(new Runtime({content:"Road racing 【other:claim-1】",supportingClaimIds:["source:claim-1"]})).run(selected)).rejects.toThrow(/unknown inline/i);
+  });
+});

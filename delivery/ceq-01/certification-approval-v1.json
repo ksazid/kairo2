@@ -1,0 +1,12 @@
+{
+  "type": "certification",
+  "status": "approved",
+  "actorType": "human",
+  "actorId": "user",
+  "scopeId": "CEQ-01",
+  "commitSha": "9951cdec41702790423c9b75e2a463f22a9c35d8",
+  "candidateHash": "2763088c108c5091e74b2c041d1f061e07c6ed0f1791df8327f4d6da7e3eaa32",
+  "approvedAt": "2026-09-30T18:18:27Z",
+  "source": "User Approved in direct response to the exact SHA and candidate-hash certification request",
+  "scope": "Finalize and persist certification only; merge and deployment remain separate"
+}

@@ -1,0 +1,33 @@
+{
+  "status": "ready",
+  "sliceId": "CEQ-01",
+  "stages": [
+    {
+      "id": "research",
+      "dependsOn": [],
+      "output": "Relevant source set"
+    },
+    {
+      "id": "draft",
+      "dependsOn": [
+        "research"
+      ],
+      "output": "Normalized selected-claim caption"
+    },
+    {
+      "id": "review-ui",
+      "dependsOn": [
+        "draft"
+      ],
+      "output": "Version-scoped findings and media recovery"
+    },
+    {
+      "id": "checks",
+      "dependsOn": [
+        "review-ui"
+      ],
+      "output": "Regression and governance evidence"
+    }
+  ],
+  "rollback": "Revert branch; no migrations or live configuration changes"
+}
