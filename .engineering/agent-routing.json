@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "default": {
+    "environment": "CODEX",
+    "modelClass": "coding",
+    "reasoningEffort": "medium",
+    "verification": ["agent:verify"],
+    "workAllowed": false
+  },
+  "routes": [
+    {
+      "task": "status",
+      "environment": "CHAT",
+      "modelClass": "general",
+      "reasoningEffort": "low",
+      "verification": [],
+      "workAllowed": false
+    },
+    {
+      "task": "planning",
+      "environment": "CHAT",
+      "modelClass": "general",
+      "reasoningEffort": "medium",
+      "verification": [],
+      "workAllowed": false
+    },
+    {
+      "task": "architecture",
+      "environment": "CHAT",
+      "modelClass": "reasoning",
+      "reasoningEffort": "high",
+      "verification": [],
+      "workAllowed": false
+    },
+    {
+      "task": "implementation",
+      "environment": "CODEX",
+      "modelClass": "coding",
+      "reasoningEffort": "medium",
+      "verification": ["agent:verify"],
+      "workAllowed": false
+    },
+    {
+      "task": "refactor",
+      "environment": "CODEX",
+      "modelClass": "coding",
+      "reasoningEffort": "medium",
+      "verification": ["agent:verify"],
+      "workAllowed": false
+    },
+    {
+      "task": "repo-search",
+      "environment": "CODEX",
+      "modelClass": "coding",
+      "reasoningEffort": "low",
+      "verification": [],
+      "workAllowed": false
+    },
+    {
+      "task": "unit-validation",
+      "environment": "CI-PLAYWRIGHT",
+      "modelClass": "none",
+      "reasoningEffort": "none",
+      "verification": ["agent:verify"],
+      "workAllowed": false
+    },
+    {
+      "task": "browser-regression",
+      "environment": "CI-PLAYWRIGHT",
+      "modelClass": "none",
+      "reasoningEffort": "none",
+      "verification": ["e2e:kairo"],
+      "workAllowed": false
+    },
+    {
+      "task": "authenticated-browser",
+      "environment": "WORK",
+      "modelClass": "general",
+      "reasoningEffort": "medium",
+      "verification": [],
+      "workAllowed": true
+    },
+    {
+      "task": "visual-qa",
+      "environment": "WORK",
+      "modelClass": "vision-reasoning",
+      "reasoningEffort": "medium",
+      "verification": [],
+      "workAllowed": true
+    },
+    {
+      "task": "browser-debug",
+      "environment": "WORK",
+      "modelClass": "reasoning",
+      "reasoningEffort": "high",
+      "verification": ["e2e:kairo"],
+      "workAllowed": true,
+      "requiresFailureEvidence": true
+    },
+    {
+      "task": "release-decision",
+      "environment": "CHAT",
+      "modelClass": "reasoning",
+      "reasoningEffort": "high",
+      "verification": ["agent:verify", "e2e:kairo"],
+      "workAllowed": false,
+      "humanApprovalRequired": true
+    }
+  ],
+  "escalation": {
+    "toWorkOnlyWhen": [
+      "authenticated browser interaction is required",
+      "visual inspection cannot be expressed as a deterministic assertion",
+      "browser-only failure remains after deterministic reproduction"
+    ],
+    "toHighReasoningOnlyWhen": [
+      "architecture or release risk is material",
+      "deterministic checks expose a non-obvious failure",
+      "cross-cutting debugging remains after bounded-context investigation"
+    ]
+  }
+}
