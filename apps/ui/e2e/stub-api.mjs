@@ -111,23 +111,28 @@ function opportunities() {
   return baseOpportunities.map((item) => ({ ...item, status: opportunityStatus.get(item.id) ?? item.status }));
 }
 
+function opportunitiesFor(brandId) {
+  return brandId === "brand-1" ? opportunities() : [];
+}
+
 function campaignDetail() {
   return { campaign, assets: [{ asset, versions: [version] }] };
 }
 
 function activation(brandId) {
+  const ready = brandId === "brand-1";
   return {
     brain: [],
     sources: [{ id: "src-1", type: "website", status: "active", title: "Public website", sourceUrl: "https://example.com" }],
-    status: "ready-for-hunter",
-    hunterReady: true,
+    status: ready ? "ready-for-hunter" : "needs-review",
+    hunterReady: ready,
     readiness: {
-      status: "ready",
-      score: 96,
-      brandIntelligenceScore: 94,
-      evidenceCoverage: 90,
-      confidence: 0.95,
-      gaps: []
+      status: ready ? "ready" : "needs-review",
+      score: ready ? 96 : 62,
+      brandIntelligenceScore: ready ? 94 : 62,
+      evidenceCoverage: ready ? 90 : 58,
+      confidence: ready ? 0.95 : 0.62,
+      gaps: ready ? [] : ["audience", "positioning"]
     },
     completeness: { score: 100, knownGroups: 7, totalGroups: 7 },
     fields: [],
@@ -215,21 +220,27 @@ const server = http.createServer(async (req, res) => {
   }
   if (/\/brain\/activation$/.test(path) && req.method === "GET") return send(res, 200, activation(brandId));
   if (/\/hunter-runs\/latest$/.test(path) && req.method === "GET") {
+    if (brandId !== "brand-1") return send(res, 200, null);
     return send(res, 200, {
-      status: "completed",
+      runId: "hunter-run-1",
+      trigger: "manual",
+      status: "succeeded",
+      startedAt: "2026-10-02T00:00:00Z",
+      completedAt: "2026-10-02T00:00:10Z",
       evidenceCount: 8,
       candidateCount: 5,
-      opportunityCount: opportunities().length,
+      opportunityCount: opportunitiesFor(brandId).length,
       sourcesScanned: ["web"],
       degradedSources: []
     });
   }
 
   if (/\/recommendations$/.test(path) && req.method === "POST") {
-    return send(res, 200, { evidenceCount: 8, candidateCount: 5, opportunityCount: opportunities().length, degradedSources: [] });
+    return send(res, 200, { evidenceCount: 8, candidateCount: 5, opportunityCount: opportunitiesFor(brandId).length, degradedSources: [] });
   }
 
-  if (/\/opportunities$/.test(path) && req.method === "GET") return send(res, 200, opportunities());
+  if (/\/opportunities$/.test(path) && req.method === "GET") return send(res, 200, opportunitiesFor(brandId));
+  if (/\/performance\/instagram-insights$/.test(path) && req.method === "GET") return send(res, 200, []);
 
   const opportunityMatch = path.match(/\/opportunities\/([^/]+)\/(develop|development)$/);
   if (opportunityMatch && req.method === "POST") {
