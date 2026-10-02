@@ -1,6 +1,6 @@
 import http from "node:http";
 
-const PORT = Number(process.env.KAIRO_E2E_STUB_PORT ?? 4190);
+const PORT = Number(process.env.KAIRO_E2E_STUB_PORT ?? 4189);
 const workspace = { id: "ws-1", name: "Kairo E2E", role: "owner" };
 const brands = [{ id: "brand-1", name: "Acme" }];
 
