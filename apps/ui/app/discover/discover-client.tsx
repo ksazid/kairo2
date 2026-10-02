@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
 import {
   Bookmark,
@@ -35,6 +35,7 @@ import { discoveryEmptyState, discoveryRefreshMessage } from "../../lib/discover
 import { DEFAULT_LISTING_VIEW, normalizeListingView, type ListingView } from "../../lib/listing-view";
 import type { HomeOpportunity, ManualHunterRun } from "../../lib/api";
 import type { HunterRunStatus } from "../../lib/hunter-run-status";
+import type { DataModeState } from "../../lib/data-mode";
 import { ListingViewToggle } from "../listing-view-toggle";
 
 const filters: Array<{ value: DiscoverFilter; label: string }> = [
@@ -51,14 +52,21 @@ export function DiscoverClient({
   brandId,
   authenticated,
   latestRun,
+  initialDataState,
+  hunterReady,
+  readinessScore,
 }: {
   initialCards: DiscoverCard[];
   brandId?: string;
   authenticated: boolean;
   latestRun?: HunterRunStatus | null;
+  initialDataState: DataModeState;
+  hunterReady?: boolean;
+  readinessScore?: number;
 }) {
   const router = useRouter();
   const [cards, setCards] = useState(initialCards);
+  const [dataState, setDataState] = useState(initialDataState);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<DiscoverFilter>("all");
   const [format, setFormat] = useState("all");
@@ -82,7 +90,6 @@ export function DiscoverClient({
   }
 
   function resetDiscovery() {
-    setCards(initialCards);
     setQuery("");
     setFilter("all");
     setFormat("all");
@@ -94,6 +101,10 @@ export function DiscoverClient({
 
   async function refreshDiscovery() {
     if (!brandId || pending) return;
+    if (hunterReady === false) {
+      setError("Brand Brain is not ready for Hunter yet. Confirm the missing Brand context first.");
+      return;
+    }
     setPending("refresh");
     setError("");
     setRefreshMessage("");
@@ -105,7 +116,24 @@ export function DiscoverClient({
       });
       const body = await response.json().catch(() => ({})) as { run?: ManualHunterRun; opportunities?: HomeOpportunity[]; error?: string };
       if (!response.ok || !body.opportunities) throw new Error(body.error ?? "Kairo could not refresh discovery.");
-      setCards(toDiscoverCards(body.opportunities));
+      if (body.opportunities.length) {
+        setCards(toDiscoverCards(body.opportunities));
+        setDataState({
+          mode: "live",
+          label: "Live Hunter data",
+          message: "These opportunities came from Hunter for this Brand.",
+          usesSampleData: false,
+          isLive: true,
+        });
+      } else {
+        setDataState({
+          mode: "preview",
+          label: "No strong real opportunities yet · Sample preview",
+          message: "Hunter completed without a strong new opportunity, so Kairo is keeping the clearly labelled sample preview visible.",
+          usesSampleData: true,
+          isLive: false,
+        });
+      }
       setQuery("");
       setFilter("all");
       setFormat("all");
@@ -146,8 +174,13 @@ export function DiscoverClient({
   return <>
     <header className="discover-page-header">
       <div><h1>Discover</h1><p>Find the next opportunity for your Brand.</p></div>
-      <div className="discover-header-actions"><ListingViewToggle value={view} onChange={chooseView}/><button type="button" onClick={() => void refreshDiscovery()} disabled={!brandId || pending === "refresh"}><RefreshCw aria-hidden="true"/>{pending === "refresh" ? "Refreshing…" : "Refresh discovery"}</button></div>
+      <div className="discover-header-actions"><ListingViewToggle value={view} onChange={chooseView}/><button type="button" onClick={() => void refreshDiscovery()} disabled={!brandId || hunterReady === false || pending === "refresh"} title={hunterReady === false ? "Complete Brand readiness before running Hunter." : undefined}><RefreshCw aria-hidden="true"/>{pending === "refresh" ? "Refreshing…" : "Refresh discovery"}</button></div>
     </header>
+
+    <section className={`kairo-data-mode-notice is-${dataState.mode}`} role="status" aria-label="Discover data mode">
+      <div><strong>{dataState.label}</strong><p>{dataState.message}</p></div>
+      {typeof readinessScore === "number" ? <span><small>Brand readiness</small><b>{Math.round(readinessScore)}%</b></span> : null}
+    </section>
 
     <section className="discover-toolbar" aria-label="Discover filters">
       <label className="discover-search"><Search aria-hidden="true"/><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search opportunities by topic or keyword…" aria-label="Search Discover"/></label>
@@ -162,7 +195,7 @@ export function DiscoverClient({
       </div>
     </section>
 
-    <div className="discover-result-line"><p>Showing <strong>{visible.length}</strong> of {cards.length} opportunities</p><span>{view === "table" ? "Detailed view" : "Visual view"} · grounded in Hunter results and your Brand fit</span></div>
+    <div className="discover-result-line"><p>Showing <strong>{visible.length}</strong> of {cards.length} {dataState.usesSampleData ? "sample opportunities" : "opportunities"}</p><span>{view === "table" ? "Detailed view" : "Visual view"} · {dataState.usesSampleData ? "examples only — not Brand evidence" : "grounded in Hunter results and your Brand fit"}</span></div>
     {error ? <p className="discover-inline-error" role="alert">{error}</p> : null}
     {refreshMessage ? <p className="discover-inline-status" role="status">{refreshMessage}</p> : null}
     {latestRun ? <div className="discover-run-status" role="status" aria-label="Latest Hunter run status">
@@ -172,11 +205,11 @@ export function DiscoverClient({
       {latestRun.degradedSources?.length ? <span>Unavailable: {latestRun.degradedSources.map(sourceLabel).join(", ")}</span> : null}
     </div> : null}
 
-    {visible.length ? view === "table" ? <DiscoverTable cards={visible} brandId={brandId} pending={pending} onAct={act}/> : <DiscoverGrid cards={visible} brandId={brandId} pending={pending} onAct={act}/> : cards.length === 0 ? <section className="discover-empty" aria-live="polite"><RefreshCw aria-hidden="true"/><h2>{emptyState.title}</h2><p>{emptyState.message}</p>{brandId ? <button type="button" onClick={() => void refreshDiscovery()} disabled={pending === "refresh"}>{pending === "refresh" ? "Refreshing…" : "Refresh discovery"}</button> : null}</section> : <section className="discover-empty" aria-live="polite"><Search aria-hidden="true"/><h2>No ideas match these filters</h2><p>Clear a filter or try a broader search. Kairo will not fill Discover with weak matches.</p><button type="button" onClick={resetDiscovery}>Clear filters</button></section>}
+    {visible.length ? view === "table" ? <DiscoverTable cards={visible} brandId={brandId} pending={pending} onAct={act} sample={dataState.usesSampleData}/> : <DiscoverGrid cards={visible} brandId={brandId} pending={pending} onAct={act} sample={dataState.usesSampleData}/> : cards.length === 0 ? <section className="discover-empty" aria-live="polite"><RefreshCw aria-hidden="true"/><h2>{emptyState.title}</h2><p>{emptyState.message}</p>{brandId ? <button type="button" onClick={() => void refreshDiscovery()} disabled={pending === "refresh"}>{pending === "refresh" ? "Refreshing…" : "Refresh discovery"}</button> : null}</section> : <section className="discover-empty" aria-live="polite"><Search aria-hidden="true"/><h2>No ideas match these filters</h2><p>Clear a filter or try a broader search. Kairo will not fill Discover with weak matches.</p><button type="button" onClick={resetDiscovery}>Clear filters</button></section>}
   </>;
 }
 
-function DiscoverTable({ cards, brandId, pending, onAct }: ViewProps) {
+function DiscoverTable({ cards, brandId, pending, onAct, sample }: ViewProps) {
   return <div className="discover-table-scroll" data-testid="discover-table-view"><div className="discover-table" role="table" aria-label="Discovery opportunities">
     <div className="discover-table-head" role="row"><span role="columnheader">Opportunity</span><span role="columnheader">Why it fits your Brand</span><span role="columnheader">Why it’s trending</span><span role="columnheader">Format</span><span role="columnheader">Source</span><span role="columnheader">BI confidence</span><span role="columnheader">Actions</span></div>
     <div role="rowgroup">{cards.map((card) => {
@@ -184,34 +217,40 @@ function DiscoverTable({ cards, brandId, pending, onAct }: ViewProps) {
       const ChannelIcon = channelIcon(card.channel);
       const confidenceLabel = card.confidence >= 90 ? "Very high" : card.confidence >= 82 ? "High" : "Good";
       return <div className="discover-table-row" role="row" key={card.id}>
-        <div className="discover-opportunity-cell" role="cell"><Link className={card.conceptMockup ? "discover-concept-thumb" : undefined} href={discoverPreviewHref(card.id, brandId)}>{card.conceptMockup ? <ConceptMockupPreview mockup={card.conceptMockup} mode="compact"/> : <Image src={card.image} alt={card.title} width={112} height={92}/>}</Link><span><strong><Link href={discoverPreviewHref(card.id, brandId)}>{card.title}</Link></strong><small>{card.developmentDirection ?? card.rationale}</small></span></div>
+        <div className="discover-opportunity-cell" role="cell"><OpportunityLink sample={sample} className={card.conceptMockup ? "discover-concept-thumb" : undefined} href={discoverPreviewHref(card.id, brandId)}>{card.conceptMockup ? <ConceptMockupPreview mockup={card.conceptMockup} mode="compact"/> : <Image src={card.image} alt={card.title} width={112} height={92}/>}</OpportunityLink><span><strong><OpportunityLink sample={sample} href={discoverPreviewHref(card.id, brandId)}>{card.title}</OpportunityLink></strong><small>{card.developmentDirection ?? card.rationale}</small></span></div>
         <div className="discover-reason-cell" role="cell"><p><ShieldCheck aria-hidden="true"/>{card.rationale ?? "Strong Brand alignment"}</p><small>Relevant to {card.details?.targetAudience ?? "your priority audience"}</small></div>
         <div className="discover-trend-cell" role="cell"><p><TrendingUp aria-hidden="true"/>{card.whyNow ?? "Public interest is growing around this topic."}</p><small>Strong {card.formatLabel.toLowerCase()} engagement potential</small></div>
         <div className="discover-format-cell" role="cell"><span><ChannelIcon aria-hidden="true"/><FormatIcon aria-hidden="true"/>{card.formatLabel}</span><small>{card.channel}</small></div>
         <div className="discover-source-cell" role="cell">{card.source}</div>
         <div className="discover-confidence-cell" role="cell"><span className="confidence-ring" style={{ "--confidence": `${card.confidence * 3.6}deg` } as CSSProperties}><b>{card.confidence}</b></span><small>{confidenceLabel}</small></div>
-        <CardActions card={card} brandId={brandId} pending={pending} onAct={onAct} inTable/>
+        <CardActions card={card} brandId={brandId} pending={pending} onAct={onAct} inTable sample={sample}/>
       </div>;
     })}</div>
   </div></div>;
 }
 
-function DiscoverGrid({ cards, brandId, pending, onAct }: ViewProps) {
+function DiscoverGrid({ cards, brandId, pending, onAct, sample }: ViewProps) {
   return <section className="discover-card-grid" aria-label="Discovery ideas" data-testid="discover-grid-view">{cards.map((card) => {
     const FormatIcon = formatIcon(card.format);
     const ChannelIcon = channelIcon(card.channel);
     return <article className="discover-card" key={card.id}>
-      <Link className={`discover-card-media${card.conceptMockup ? " discover-card-concept" : ""}`} href={discoverPreviewHref(card.id, brandId)} aria-label={`Preview ${card.title}`}>{card.conceptMockup ? <ConceptMockupPreview mockup={card.conceptMockup} mode="card"/> : <><Image src={card.image} alt="" fill sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"/><span className="discover-media-shade"/></>}<span className="discover-badges"><i><TrendingUp aria-hidden="true"/>{card.trend}</i><i><ShieldCheck aria-hidden="true"/>{card.fit}</i></span><span className="discover-channel"><ChannelIcon aria-hidden="true"/>{card.channel}</span></Link>
-      <div className="discover-card-body"><div className="discover-card-meta"><span><FormatIcon aria-hidden="true"/>{card.formatLabel}</span><span>{card.opportunity}</span></div><h2><Link href={discoverPreviewHref(card.id, brandId)}>{card.title}</Link></h2><p>{card.rationale ?? "A timely, Brand-fit direction ready for your review."}</p><CardActions card={card} brandId={brandId} pending={pending} onAct={onAct}/></div>
+      <OpportunityLink sample={sample} className={`discover-card-media${card.conceptMockup ? " discover-card-concept" : ""}`} href={discoverPreviewHref(card.id, brandId)} ariaLabel={`Preview ${card.title}`}>{card.conceptMockup ? <ConceptMockupPreview mockup={card.conceptMockup} mode="card"/> : <><Image src={card.image} alt="" fill sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"/><span className="discover-media-shade"/></>}<span className="discover-badges">{sample ? <i>SAMPLE</i> : null}<i><TrendingUp aria-hidden="true"/>{card.trend}</i><i><ShieldCheck aria-hidden="true"/>{card.fit}</i></span><span className="discover-channel"><ChannelIcon aria-hidden="true"/>{card.channel}</span></OpportunityLink>
+      <div className="discover-card-body"><div className="discover-card-meta"><span><FormatIcon aria-hidden="true"/>{card.formatLabel}</span><span>{sample ? "Sample opportunity" : card.opportunity}</span></div><h2><OpportunityLink sample={sample} href={discoverPreviewHref(card.id, brandId)}>{card.title}</OpportunityLink></h2><p>{card.rationale ?? "A timely, Brand-fit direction ready for your review."}</p><CardActions card={card} brandId={brandId} pending={pending} onAct={onAct} sample={sample}/></div>
     </article>;
   })}</section>;
 }
 
-type ViewProps = { cards: DiscoverCard[]; brandId?: string; pending: string; onAct: (card: DiscoverCard, action: "save" | "ignore") => Promise<void> };
+type ViewProps = { cards: DiscoverCard[]; brandId?: string; pending: string; onAct: (card: DiscoverCard, action: "save" | "ignore") => Promise<void>; sample: boolean };
 
-function CardActions({ card, brandId, pending, onAct, inTable = false }: { card: DiscoverCard; brandId?: string; pending: string; onAct: ViewProps["onAct"]; inTable?: boolean }) {
+function CardActions({ card, brandId, pending, onAct, inTable = false, sample }: { card: DiscoverCard; brandId?: string; pending: string; onAct: ViewProps["onAct"]; inTable?: boolean; sample: boolean }) {
   const saved = card.status === "saved";
+  if (sample) return <div className="discover-card-actions" role={inTable ? "cell" : undefined}><span className="discover-preview-button" aria-disabled="true"><Eye aria-hidden="true"/>Sample</span><button type="button" disabled aria-label="Sample opportunities cannot be saved"><Bookmark aria-hidden="true"/></button><button type="button" disabled aria-label="Sample opportunities cannot be dismissed"><X aria-hidden="true"/></button></div>;
   return <div className="discover-card-actions" role={inTable ? "cell" : undefined}><Link className="discover-preview-button" href={discoverPreviewHref(card.id, brandId)}><Eye aria-hidden="true"/>Preview</Link><button className={saved ? "saved" : ""} type="button" disabled={saved || Boolean(pending)} onClick={() => void onAct(card, "save")} aria-label={saved ? `${card.title} saved` : `Save ${card.title}`} title={saved ? "Saved" : "Save idea"}>{saved ? <Check aria-hidden="true"/> : <Bookmark aria-hidden="true"/>}</button><button type="button" disabled={Boolean(pending)} onClick={() => void onAct(card, "ignore")} aria-label={`Dismiss ${card.title}`} title="Dismiss idea"><X aria-hidden="true"/></button></div>;
+}
+
+function OpportunityLink({ sample, href, className, ariaLabel, children }: { sample: boolean; href: string; className?: string; ariaLabel?: string; children: ReactNode }) {
+  if (sample) return <span className={className} aria-label={ariaLabel}>{children}</span>;
+  return <Link className={className} href={href} aria-label={ariaLabel}>{children}</Link>;
 }
 
 function formatIcon(format: DiscoverCard["format"]) {

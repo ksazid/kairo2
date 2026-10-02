@@ -46,6 +46,33 @@ test("website onboarding creates a Brand and lands in Brand Brain", async ({ pag
   await expect(page.getByText("Brand Brain loaded from live Brand intelligence.")).toBeVisible();
 });
 
+test("not-ready Brand sees non-actionable sample Discover data with real readiness", async ({ page, request }) => {
+  await request.post("http://127.0.0.1:4189/api/v1/workspaces/ws-1/brands", {
+    data: { brandName: "Preview Brand" }
+  });
+
+  await page.goto("/discover?brand=brand-2");
+
+  const mode = page.getByRole("status", { name: "Discover data mode" });
+  await expect(mode).toContainText("Brand not ready");
+  await expect(mode).toContainText("Sample preview");
+  await expect(mode).toContainText("62%");
+  await expect(page.getByText(/Showing\s+6\s+of\s+6\s+sample opportunities/i)).toBeVisible();
+  await expect(page.getByRole("button", { name: "Refresh discovery" })).toBeDisabled();
+  await expect(page.locator(".discover-source-cell").filter({ hasText: "Sample Hunter preview" }).first()).toBeVisible();
+  await expect(page.getByRole("button", { name: "Sample opportunities cannot be saved" }).first()).toBeDisabled();
+});
+
+test("Insights stays an explicit sample dashboard until live aggregates exist", async ({ page }) => {
+  await page.goto("/insights?brand=brand-1");
+
+  const mode = page.getByRole("status", { name: "Insights data mode" });
+  await expect(mode).toContainText("Insights preview");
+  await expect(mode).toContainText("Sample data");
+  await expect(page.getByText("Preview only")).toBeVisible();
+  await expect(page.getByText("SAMPLE").first()).toBeVisible();
+});
+
 test("protected routes still redirect when the access token is missing", async ({ request }) => {
   const response = await request.get(`${appUrl}/discover`, { maxRedirects: 0 });
 
