@@ -28,7 +28,7 @@ test("Hunter opportunity can become reviewed, approved, and scheduled content", 
 
   await expect(page).toHaveURL(/\/content\/campaign-ai\/asset-ai\?brand=brand-1/, { timeout: 15_000 });
   await expect(page.getByRole("heading", { name: "AI workflows your team can use this week", exact: true })).toBeVisible();
-  await expect(page.getByText("Five practical AI workflows your operations team can use this week.")).toBeVisible();
+  await expect(page.getByLabel("Content caption")).toHaveValue("Five practical AI workflows your operations team can use this week.");
 
   const readiness = page.getByRole("button", { name: "Check readiness" });
   await expect(readiness).toBeEnabled();
