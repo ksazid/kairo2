@@ -45,6 +45,15 @@ let review = null;
 let approval = null;
 const commands = [];
 
+function resetState() {
+  brands.splice(1);
+  for (const item of baseOpportunities) opportunityStatus.set(item.id, item.status);
+  creationStarted = false;
+  review = null;
+  approval = null;
+  commands.splice(0, commands.length);
+}
+
 const campaign = {
   id: "campaign-ai",
   workspaceId: workspace.id,
@@ -176,6 +185,10 @@ const server = http.createServer(async (req, res) => {
   const path = url.pathname;
 
   if (path === "/health") return send(res, 200, { ok: true });
+  if (path === "/__e2e/reset" && req.method === "POST") {
+    resetState();
+    return send(res, 200, { ok: true });
+  }
 
   if (path === "/api/v1/session" && req.method === "GET") {
     return send(res, 200, {
