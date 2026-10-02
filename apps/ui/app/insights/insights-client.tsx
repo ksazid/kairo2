@@ -86,11 +86,11 @@ function Overview({ items, points, compare, brandId, sample }: { items: ContentI
       <article className="insights-performance">
         <header><div><h2>Performance over time {sample ? <SampleBadge/> : null}</h2><p>{sample ? "Example reach once published content has performance data" : "Reach across published content"}</p></div><div><span><i className="current"/>This period</span>{compare ? <span><i/>Previous period</span> : null}</div></header>
         <div className="insights-chart-wrap"><InsightsChart points={points} compare={compare}/><div className="insights-chart-tooltip"><small>Aug 26</small><strong>{points.at(-2)?.current ?? 0}K reach</strong><span>+31% vs previous</span></div></div>
-        <footer>Last synced 2 minutes ago</footer>
+        <footer>{sample ? "Sample timeline · not synced from your Brand" : "Last synced 2 minutes ago"}</footer>
       </article>
       <article className="insights-learned">
         <header><h2><Sparkles aria-hidden="true"/>Kairo learned</h2><span>{sample ? "SAMPLE PATTERN" : "High confidence"}</span></header>
-        <div className="insights-learned-image"><img src="/malta-harbour.webp" alt="Maltese coast and harbour"/><span>PROVEN PATTERN</span></div>
+        <div className="insights-learned-image"><img src="/malta-harbour.webp" alt="Maltese coast and harbour"/><span>{sample ? "SAMPLE PATTERN" : "PROVEN PATTERN"}</span></div>
         <section><h3>Practical Malta guides earn more saves and site visits.</h3><p>Your audience responds when local advice solves a specific travel problem. Short lists with a clear visual hook outperform general destination inspiration.</p><div><span><strong>+42%</strong><small>Saves</small></span><span><strong>+31%</strong><small>Site visits</small></span></div></section>
         {sample ? <span className="insights-preview-action" aria-disabled="true"><WandSparkles aria-hidden="true"/>Sample only</span> : <Link href={createFromInsightHref(brandId, "A practical Malta guide travellers will save")}><WandSparkles aria-hidden="true"/>Create similar content</Link>}
       </article>
@@ -108,7 +108,7 @@ function FocusedView({ tab, items, points, compare, brandId, sample }: { tab: Ex
 }
 
 function TopContent({ items, brandId, sample }: { items: ContentItem[]; brandId?: string; sample: boolean }) {
-  return <article id="insights-top-content" className="insights-top-content"><header><div><h2>Top content {sample ? <SampleBadge/> : null}</h2><p>{sample ? "Example ranking and performance layout" : "Assets driving the strongest results"}</p></div>{sample ? <span className="kairo-sample-badge">SAMPLE</span> : <Link href={brandId ? `/content?brand=${encodeURIComponent(brandId)}` : "/content"}>View all</Link>}</header><div className="insights-top-head"><span>Content</span><span>Reach</span><span>Engagement</span><span>Result</span><span/></div>{items.map((item, index) => <div className="insights-top-row" key={item.id}><div><img src={item.image} alt=""/><span><strong>{item.title}</strong><small><FormatIcon item={item}/>{item.formatLabel} · <ChannelIcon item={item}/>{item.channel}</small></span></div><strong>{["42.8K", "31.6K", "24.9K"][index]}</strong><strong>{["8.9%", "7.4%", "6.8%"][index]}</strong><span className="insights-result">{["1,284 saves", "762 clicks", "14 bookings"][index]}</span><Link href={contentPreviewHref(item, brandId)}><Eye aria-hidden="true"/>Open preview</Link></div>)}</article>;
+  return <article id="insights-top-content" className="insights-top-content"><header><div><h2>Top content {sample ? <SampleBadge/> : null}</h2><p>{sample ? "Example ranking and performance layout" : "Assets driving the strongest results"}</p></div>{sample ? <span className="kairo-sample-badge">SAMPLE</span> : <Link href={brandId ? `/content?brand=${encodeURIComponent(brandId)}` : "/content"}>View all</Link>}</header><div className="insights-top-head"><span>Content</span><span>Reach</span><span>Engagement</span><span>Result</span><span/></div>{items.map((item, index) => <div className="insights-top-row" key={item.id}><div><img src={item.image} alt=""/><span><strong>{item.title}</strong><small><FormatIcon item={item}/>{item.formatLabel} · <ChannelIcon item={item}/>{item.channel}</small></span></div><strong>{["42.8K", "31.6K", "24.9K"][index]}</strong><strong>{["8.9%", "7.4%", "6.8%"][index]}</strong><span className="insights-result">{["1,284 saves", "762 clicks", "14 bookings"][index]}</span>{sample ? <span className="insights-preview-action" aria-disabled="true"><Eye aria-hidden="true"/>Sample</span> : <Link href={contentPreviewHref(item, brandId)}><Eye aria-hidden="true"/>Open preview</Link>}</div>)}</article>;
 }
 
 function ChannelContribution({ sample }: { sample: boolean }) {
@@ -117,15 +117,15 @@ function ChannelContribution({ sample }: { sample: boolean }) {
     { label: "LinkedIn", value: 24, Icon: Linkedin, detail: "30.8K reach" },
     { label: "Facebook", value: 18, Icon: Facebook, detail: "23.1K reach" },
   ];
-  return <article className="insights-channels"><header><h2>Channel contribution {sample ? <SampleBadge/> : null}</h2><p>{sample ? "Example share of total reach" : "Share of total reach"}</p></header><div>{channels.map(({ label, value, Icon, detail }) => <section key={label}><span><Icon aria-hidden="true"/><strong>{label}</strong><small>{detail}</small></span><div><i style={{ width: `${value}%` }}/></div><b>{value}%</b></section>)}</div><p><Sparkles aria-hidden="true"/>Instagram is your strongest channel for practical travel content.</p></article>;
+  return <article className="insights-channels"><header><h2>Channel contribution {sample ? <SampleBadge/> : null}</h2><p>{sample ? "Example share of total reach" : "Share of total reach"}</p></header><div>{channels.map(({ label, value, Icon, detail }) => <section key={label}><span><Icon aria-hidden="true"/><strong>{label}</strong><small>{detail}</small></span><div><i style={{ width: `${value}%` }}/></div><b>{value}%</b></section>)}</div><p><Sparkles aria-hidden="true"/>{sample ? "Sample insight: Instagram is shown as the strongest example channel." : "Instagram is your strongest channel for practical travel content."}</p></article>;
 }
 
 function CampaignInsight({ sample }: { sample: boolean }) {
-  return <article className="insights-focus-card"><span><Target aria-hidden="true"/></span>{sample ? <SampleBadge/> : null}<h2>Malta Summer Rental Guide leads performance</h2><p>Coordinated practical advice is responsible for 61% of attributed bookings this period.</p><div><strong>28</strong><small>bookings</small><strong>7.9%</strong><small>engagement</small></div></article>;
+  return <article className="insights-focus-card"><span><Target aria-hidden="true"/></span>{sample ? <SampleBadge/> : null}<h2>{sample ? "Sample campaign performance" : "Malta Summer Rental Guide leads performance"}</h2><p>{sample ? "Example: coordinated practical advice could be compared against attributed outcomes once live metrics exist." : "Coordinated practical advice is responsible for 61% of attributed bookings this period."}</p><div><strong>28</strong><small>bookings</small><strong>7.9%</strong><small>engagement</small></div></article>;
 }
 
 function AudienceInsight({ sample }: { sample: boolean }) {
-  return <article className="insights-focus-card"><span><Users aria-hidden="true"/></span>{sample ? <SampleBadge/> : null}<h2>Trip planners are your most responsive audience</h2><p>People researching Malta 14–30 days before travel save guides and click rental advice most often.</p><div><strong>46%</strong><small>of reach</small><strong>2.3×</strong><small>more saves</small></div></article>;
+  return <article className="insights-focus-card"><span><Users aria-hidden="true"/></span>{sample ? <SampleBadge/> : null}<h2>{sample ? "Sample audience pattern" : "Trip planners are your most responsive audience"}</h2><p>{sample ? "Example: Kairo can surface which audience segments save, click, or convert most often once live metrics exist." : "People researching Malta 14–30 days before travel save guides and click rental advice most often."}</p><div><strong>46%</strong><small>of reach</small><strong>2.3×</strong><small>more saves</small></div></article>;
 }
 
 function SampleBadge() {
