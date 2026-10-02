@@ -90,7 +90,6 @@ export function DiscoverClient({
   }
 
   function resetDiscovery() {
-    setCards(initialCards);
     setQuery("");
     setFilter("all");
     setFormat("all");
