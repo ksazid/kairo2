@@ -35,6 +35,17 @@ export const discoverFallback: HomeOpportunity[] = [
   { id: "six", title: "Airport pickup in Malta: what to know before landing", rationale: "Answering arrival questions removes uncertainty at a high-intent moment.", whyNow: "Airport-transfer questions are rising alongside seasonal arrivals.", status: "new", scores: { relevance: .78, audienceFit: .79, overall: .79 }, details: { recommendedFormat: "image", recommendedChannel: "linkedin", targetAudience: "Business and leisure arrivals", objective: "Convert" } },
 ];
 
+export function discoverPreviewFallback(): HomeOpportunity[] {
+  return discoverFallback.map((item) => ({
+    ...item,
+    details: {
+      ...item.details,
+      source: "Sample Hunter preview",
+      evidenceSource: "Sample Hunter preview",
+    },
+  }));
+}
+
 export function toDiscoverCards(opportunities: HomeOpportunity[]): DiscoverCard[] {
   return opportunities.filter((item) => item.status !== "ignored").map((item, index) => {
     const opportunity = item as OpportunityWithConcept;
