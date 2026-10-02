@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "benchmark": "Kairo Agent Efficiency Phase 2",
+  "baseline": {
+    "id": "work-heavy-reference",
+    "measurementKind": "reference",
+    "description": "Reference route representing manual agentic browser validation for each covered phase. It is not a historical billing export.",
+    "stages": [
+      "refresh Hunter",
+      "open opportunity",
+      "develop and generate",
+      "open content preview",
+      "run readiness review",
+      "approve and lock",
+      "schedule publishing"
+    ],
+    "metrics": {
+      "workBrowserSteps": 7,
+      "deterministicChecks": 0,
+      "passRate": null,
+      "testRuntimeMs": null,
+      "ciRuntimeMs": null,
+      "modelCalls": null,
+      "toolCalls": null,
+      "tokens": null,
+      "credits": null
+    }
+  },
+  "optimized": {
+    "id": "playwright-phase2-ci-36946287373",
+    "measurementKind": "measured",
+    "description": "GitHub Actions Playwright run after Phase 2 implementation.",
+    "evidence": {
+      "workflowRunId": 36946287373,
+      "headSha": "4e3260c9036009a56eccf2a02dc65b9c9a753d62",
+      "result": "success",
+      "testsPassed": 4,
+      "testsFailed": 0
+    },
+    "stages": [
+      "core authenticated navigation",
+      "website onboarding",
+      "protected route enforcement",
+      "Hunter to publishing handoff"
+    ],
+    "metrics": {
+      "workBrowserSteps": 0,
+      "deterministicChecks": 4,
+      "passRate": 1,
+      "testRuntimeMs": 13900,
+      "ciRuntimeMs": 85000,
+      "modelCalls": null,
+      "toolCalls": null,
+      "tokens": null,
+      "credits": null
+    }
+  }
+}

@@ -30,7 +30,8 @@
     "runtime:typecheck": "npm run typecheck --workspaces --if-present",
     "runtime:test": "npm run test --workspaces --if-present",
     "runtime:build": "npm run build --workspaces --if-present",
-    "runtime:verify": "npm run runtime:typecheck && npm run runtime:test && npm run runtime:build"
+    "runtime:verify": "npm run runtime:typecheck && npm run runtime:test && npm run runtime:build",
+    "agent:benchmark": "node scripts/agent-efficiency-benchmark.mjs"
   },
   "devDependencies": {
     "@types/node": "26.1.2",
