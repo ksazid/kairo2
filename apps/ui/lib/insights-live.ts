@@ -188,7 +188,7 @@ export function buildLiveInsights(
   }).sort((a, b) => b.reach - a.reach)[0];
 
   const itemByAsset = new Map(input.items.map((item) => [item.id, item]));
-  const audienceRows = new Map<string, LiveMetricRow[]>();
+  const audienceRows = new Map<string, Array<LiveMetricRow & { value: number }>>();
   for (const row of selected) {
     const audience = itemByAsset.get(row.assetId)?.audience?.trim();
     if (!audience) continue;
