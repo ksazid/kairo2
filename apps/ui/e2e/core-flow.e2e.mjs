@@ -92,7 +92,7 @@ test("Insights switches to normalized live metrics when evidence gate passes", a
   await expect(page.getByRole("region", { name: "Performance summary" }).getByText("14.0%")).toBeVisible();
   await expect(page.getByRole("region", { name: "Performance summary" }).getByText("80")).toBeVisible();
   await expect(page.getByText("Current evidence")).toBeVisible();
-  await expect(page.getByText("100%")).toBeVisible();
+  await expect(page.getByText("100%", { exact: true })).toBeVisible();
   await expect(page.getByText("SAMPLE")).toHaveCount(0);
 });
 
