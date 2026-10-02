@@ -20,7 +20,7 @@ export default defineConfig({
   webServer: [
     {
       command: "node e2e/stub-api.mjs",
-      url: "http://127.0.0.1:4190/health",
+      url: "http://127.0.0.1:4189/health",
       reuseExistingServer: !process.env.CI,
       timeout: 30_000
     },
@@ -31,7 +31,7 @@ export default defineConfig({
       timeout: 120_000,
       env: {
         ...process.env,
-        KAIRO_API_URL: "http://127.0.0.1:4190",
+        KAIRO_API_URL: "http://127.0.0.1:4189",
         KAIRO_E2E: "1"
       }
     }
