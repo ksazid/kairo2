@@ -22,7 +22,7 @@ test("authenticated core journey stays inside Kairo and uses real page routing",
 
   await page.getByRole("searchbox", { name: "Search Discover" }).fill("AI workflows");
   await expect(page.getByText(/Showing\s+1\s+of\s+2\s+opportunities/i)).toBeVisible();
-  await expect(page.getByRole("link", { name: "AI workflows your team can use this week", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "AI workflows your team can use this week", exact: true })).toBeVisible();
 
   await page.getByRole("link", { name: "Content", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Content", exact: true })).toBeVisible();
