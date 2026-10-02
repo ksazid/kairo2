@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import type { ContentItem } from "./content";
 import { buildLiveInsights, hasSufficientLiveMetrics, type LiveMetricRow } from "./insights-live";
 
 const base = (overrides: Partial<LiveMetricRow>): LiveMetricRow => ({
@@ -35,7 +36,7 @@ describe("live Insights adapter", () => {
   });
 
   it("builds channel, campaign and audience evidence from lineage", () => {
-    const items = [{
+    const items: ContentItem[] = [{
       id: "asset-1", campaignId: "campaign-1", campaignName: "Launch", title: "Post", summary: "", caption: "",
       channel: "Instagram", format: "image", formatLabel: "Post", status: "published", statusLabel: "Published",
       updatedAt: "2026-10-01T00:00:00Z", image: "/x", media: ["/x"], audience: "Operators", objective: "Educate",
