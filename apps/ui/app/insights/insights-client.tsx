@@ -157,8 +157,8 @@ export function InsightsClient({
     </section>
 
     {tab === "overview"
-      ? <Overview items={sampleTopContent} points={points} compare={compare} brandId={brandId} sample={sample} liveView={liveView}/>
-      : <FocusedView tab={tab} items={sampleTopContent} points={points} compare={compare} brandId={brandId} sample={sample} liveView={liveView}/>}
+      ? <Overview items={sample ? sampleTopContent : items} points={points} compare={compare} brandId={brandId} sample={sample} liveView={liveView}/>
+      : <FocusedView tab={tab} items={sample ? sampleTopContent : items} points={points} compare={compare} brandId={brandId} sample={sample} liveView={liveView}/>}
   </>;
 }
 
