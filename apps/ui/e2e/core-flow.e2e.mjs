@@ -49,5 +49,6 @@ test("protected routes still redirect when the access token is missing", async (
   const response = await request.get(`${appUrl}/discover`, { maxRedirects: 0 });
 
   expect([307, 308]).toContain(response.status());
-  expect(response.headers().location).toBe("/auth/login?returnTo=%2Fdiscover");
+  const redirect = new URL(response.headers().location, appUrl);
+  expect(`${redirect.pathname}${redirect.search}`).toBe("/auth/login?returnTo=%2Fdiscover");
 });
