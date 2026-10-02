@@ -26,12 +26,12 @@ export default defineConfig({
     },
     {
       command: "node ../../node_modules/next/dist/bin/next dev --hostname 127.0.0.1 --port 4173",
-      url: baseURL,
+      url: `${baseURL}/api/e2e/health`,
       reuseExistingServer: !process.env.CI,
       timeout: 120_000,
       env: {
         ...process.env,
-        KAIRO_API_URL: "http://127.0.0.1:4190"
+        KAIRO_API_URL: "http://127.0.0.1:4190",\n        KAIRO_E2E: "1"
       }
     }
   ]
