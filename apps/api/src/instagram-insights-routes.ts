@@ -68,6 +68,37 @@ export class PgInstagramInsightsStatusStore {
       client.release();
     }
   }
+
+  async metrics(accountId: string, brandId: string) {
+    const client = await this.pool.connect();
+    try {
+      const workspaceId = await scope(client, accountId, brandId);
+      const rows = (
+        await client.query(
+          `select n.published_post_id,n.name,n.captured_at,n.status,n.value,n.unavailable_reason,
+                  s.campaign_id,s.asset_id,s.channel
+             from normalized_metrics n
+             join metric_snapshots s on s.id=n.source_snapshot_id
+            where n.workspace_id=$1 and n.brand_id=$2
+            order by n.captured_at asc,n.published_post_id,n.name`,
+          [workspaceId, brandId],
+        )
+      ).rows;
+      return rows.map((row) => ({
+        publishedPostId: String(row.published_post_id),
+        campaignId: String(row.campaign_id),
+        assetId: String(row.asset_id),
+        channel: String(row.channel),
+        name: String(row.name),
+        capturedAt: iso(row.captured_at),
+        status: row.status,
+        ...(row.value === null ? {} : { value: Number(row.value) }),
+        ...(row.unavailable_reason ? { reason: String(row.unavailable_reason) } : {}),
+      }));
+    } finally {
+      client.release();
+    }
+  }
 }
 export function registerInstagramInsightsRoutes(
   app: FastifyInstance,
@@ -84,6 +115,14 @@ export function registerInstagramInsightsRoutes(
       const account = await auth(request, reply, core, deps.identityVerifier);
       if (!account) return;
       return deps.store.list(account.id, request.params.brandId);
+    },
+  );
+  app.get<{ Params: { brandId: string } }>(
+    "/api/v1/brands/:brandId/performance/insights-data",
+    async (request, reply) => {
+      const account = await auth(request, reply, core, deps.identityVerifier);
+      if (!account) return;
+      return deps.store.metrics(account.id, request.params.brandId);
     },
   );
 }
