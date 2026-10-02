@@ -299,6 +299,7 @@ function OverviewPanel({ runtime, fields, editingField, fieldDraft, setFieldDraf
         </div>
       </div>
       <div className="brand-readiness-list" aria-label="Discovery readiness checklist">{readiness.map(([label, ready, Icon]) => <div key={label}><span><Icon aria-hidden="true"/>{label}</span><strong className={ready ? "is-ready" : "needs-review"}>{ready ? <Check aria-hidden="true"/> : <CircleAlert aria-hidden="true"/>}{ready ? "Ready" : "Needs confirmation"}</strong></div>)}</div>
+      <p className="brand-readiness-truth"><ShieldCheck aria-hidden="true"/>This readiness score always comes from real Brand evidence. Sample previews in Discover or Insights never increase readiness.</p>
     </div>
 
     <div className="brand-review-card">
