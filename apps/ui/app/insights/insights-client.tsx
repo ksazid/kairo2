@@ -206,7 +206,7 @@ function Overview({
       </article>
 
       {sample
-        ? <SampleLearningCard brandId={brandId}/>
+        ? <SampleLearningCard/>
         : <LiveEvidenceCard liveView={liveView} items={items}/>}
     </section>
 
