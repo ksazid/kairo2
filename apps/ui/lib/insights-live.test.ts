@@ -40,7 +40,7 @@ describe("live Insights adapter", () => {
       channel: "Instagram", format: "image", formatLabel: "Post", status: "published", statusLabel: "Published",
       updatedAt: "2026-10-01T00:00:00Z", image: "/x", media: ["/x"], audience: "Operators", objective: "Educate",
       cta: "Read", currentVersion: 1, rawChannel: "instagram", rawContent: "",
-    }] as const;
+    }];
     const rows = [
       base({ value: 1000 }),
       base({ name: "likes", value: 100 }),
