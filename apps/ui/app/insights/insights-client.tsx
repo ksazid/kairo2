@@ -62,13 +62,11 @@ const metricIcons = {
 export function InsightsClient({
   items,
   brandId,
-  authenticated,
   dataState,
   liveRows,
 }: {
   items: ContentItem[];
   brandId?: string;
-  authenticated: boolean;
   dataState: DataModeState;
   liveRows: LiveMetricRow[];
 }) {
@@ -255,7 +253,7 @@ function FocusedView({
   </section>;
 }
 
-function SampleLearningCard({ brandId }: { brandId?: string }) {
+function SampleLearningCard() {
   return <article className="insights-learned">
     <header><h2><Sparkles aria-hidden="true"/>Kairo learned</h2><span>SAMPLE PATTERN</span></header>
     <div className="insights-learned-image"><img src="/malta-harbour.webp" alt="Maltese coast and harbour"/><span>SAMPLE PATTERN</span></div>
@@ -282,7 +280,7 @@ function LiveEvidenceCard({ liveView, items }: { liveView?: LiveInsightsView; it
         : "Kairo has enough normalized evidence to show live metrics, but not enough channel evidence for a stronger conclusion."}</p>
       <div>
         <span><strong>{top ? compact(top.reach) : "—"}</strong><small>Measured reach</small></span>
-        <span><strong>{top ? `${top.engagementRate.toFixed(1)}%` : "—"}</strong><small>Engagement</small></span>
+        <span><strong>{top?.engagementRate !== undefined ? `${top.engagementRate.toFixed(1)}%` : "Unavailable"}</strong><small>Engagement</small></span>
       </div>
     </section>
   </article>;
@@ -319,7 +317,7 @@ function TopContent({
         return <div className="insights-top-row" key={metric.assetId}>
           <div><img src={item?.image ?? "/kairo-media-placeholder.svg"} alt=""/><span><strong>{item?.title ?? "Published content"}</strong><small>{item ? <><FormatIcon item={item}/>{item.formatLabel} · <ChannelIcon item={item}/>{item.channel}</> : "Published asset"}</small></span></div>
           <strong>{compact(metric.reach)}</strong>
-          <strong>{metric.engagementRate.toFixed(1)}%</strong>
+          <strong>{metric.engagementRate !== undefined ? `${metric.engagementRate.toFixed(1)}%` : "Unavailable"}</strong>
           <span className="insights-result">{result}</span>
           {item ? <Link href={contentPreviewHref(item, brandId)}><Eye aria-hidden="true"/>Open preview</Link> : <span className="insights-preview-action" aria-disabled="true"><Eye aria-hidden="true"/>Unavailable</span>}
         </div>;
@@ -387,7 +385,7 @@ function CampaignInsight({ sample, liveView, items }: { sample: boolean; liveVie
     <span><Target aria-hidden="true"/></span>
     <h2>{name} leads measured reach</h2>
     <p>This ranking is based only on normalized performance evidence in the selected channel and time range.</p>
-    <div><strong>{compact(campaign.reach)}</strong><small>reach</small><strong>{campaign.engagementRate.toFixed(1)}%</strong><small>engagement</small></div>
+    <div><strong>{compact(campaign.reach)}</strong><small>reach</small><strong>{campaign.engagementRate !== undefined ? `${campaign.engagementRate.toFixed(1)}%` : "Unavailable"}</strong><small>engagement</small></div>
   </article>;
 }
 
@@ -410,7 +408,7 @@ function AudienceInsight({ sample, liveView }: { sample: boolean; liveView?: Liv
     <span><Users aria-hidden="true"/></span>
     <h2>{audience.audience} has the strongest measured reach</h2>
     <p>This is an observed content-performance grouping, not a demographic inference.</p>
-    <div><strong>{compact(audience.reach)}</strong><small>reach</small><strong>{audience.engagementRate.toFixed(1)}%</strong><small>engagement</small></div>
+    <div><strong>{compact(audience.reach)}</strong><small>reach</small><strong>{audience.engagementRate !== undefined ? `${audience.engagementRate.toFixed(1)}%` : "Unavailable"}</strong><small>engagement</small></div>
   </article>;
 }
 
