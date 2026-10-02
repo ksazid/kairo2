@@ -119,6 +119,26 @@ function campaignDetail() {
   return { campaign, assets: [{ asset, versions: [version] }] };
 }
 
+function liveMetricsFor(brandId) {
+  if (brandId !== "brand-1") return [];
+  const common = {
+    publishedPostId: "post-ai",
+    campaignId: campaign.id,
+    assetId: asset.id,
+    channel: "instagram",
+    status: "available"
+  };
+  return [
+    { ...common, name: "reach", capturedAt: "2026-09-30T12:00:00Z", value: 1200 },
+    { ...common, name: "reach", capturedAt: "2026-10-01T12:00:00Z", value: 2000 },
+    { ...common, name: "impressions", capturedAt: "2026-10-01T12:00:00Z", value: 2500 },
+    { ...common, name: "likes", capturedAt: "2026-10-01T12:00:00Z", value: 160 },
+    { ...common, name: "comments", capturedAt: "2026-10-01T12:00:00Z", value: 40 },
+    { ...common, name: "saves", capturedAt: "2026-10-01T12:00:00Z", value: 80 },
+    { ...common, name: "videoViews", capturedAt: "2026-10-01T12:00:00Z", value: 1500 }
+  ];
+}
+
 function activation(brandId) {
   const ready = brandId === "brand-1";
   return {
@@ -240,7 +260,20 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (/\/opportunities$/.test(path) && req.method === "GET") return send(res, 200, opportunitiesFor(brandId));
-  if (/\/performance\/instagram-insights$/.test(path) && req.method === "GET") return send(res, 200, []);
+  if (/\/performance\/instagram-insights$/.test(path) && req.method === "GET") {
+    return send(res, 200, brandId === "brand-1" ? [{
+      id: "metric-job-1",
+      publishedPostId: "post-ai",
+      window: "24h",
+      scheduledFor: "2026-10-01T12:00:00Z",
+      status: "complete",
+      attempt: 1,
+      permission: "granted",
+      freshness: "fresh",
+      completedAt: "2026-10-01T12:00:10Z"
+    }] : []);
+  }
+  if (/\/performance\/insights-data$/.test(path) && req.method === "GET") return send(res, 200, liveMetricsFor(brandId));
 
   const opportunityMatch = path.match(/\/opportunities\/([^/]+)\/(develop|development)$/);
   if (opportunityMatch && req.method === "POST") {

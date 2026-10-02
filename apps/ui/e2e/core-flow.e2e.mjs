@@ -63,14 +63,37 @@ test("not-ready Brand sees non-actionable sample Discover data with real readine
   await expect(page.getByRole("button", { name: "Sample opportunities cannot be saved" }).first()).toBeDisabled();
 });
 
-test("Insights stays an explicit sample dashboard until live aggregates exist", async ({ page }) => {
-  await page.goto("/insights?brand=brand-1");
+test("Insights stays an explicit sample dashboard until live aggregates exist", async ({ page, request }) => {
+  await request.post("http://127.0.0.1:4189/api/v1/workspaces/ws-1/brands", {
+    data: { brandName: "Preview Brand" }
+  });
+
+  await page.goto("/insights?brand=brand-2");
 
   const mode = page.getByRole("status", { name: "Insights data mode" });
   await expect(mode).toContainText("Insights preview");
   await expect(mode).toContainText("Sample data");
   await expect(page.getByText("Preview only")).toBeVisible();
   await expect(page.getByText("SAMPLE").first()).toBeVisible();
+});
+
+test("Insights switches to normalized live metrics when evidence gate passes", async ({ page, request }) => {
+  await request.post("http://127.0.0.1:4189/api/v1/brands/brand-1/simple-creations", {
+    data: { goal: "Prepare published content evidence" }
+  });
+
+  await page.goto("/insights?brand=brand-1");
+
+  const mode = page.getByRole("status", { name: "Insights data mode" });
+  await expect(mode).toContainText("Live Brand data");
+  await expect(mode).toContainText("Data type");
+  await expect(mode).toContainText("Live");
+  await expect(page.getByRole("region", { name: "Performance summary" }).getByText("2K")).toBeVisible();
+  await expect(page.getByRole("region", { name: "Performance summary" }).getByText("14.0%")).toBeVisible();
+  await expect(page.getByRole("region", { name: "Performance summary" }).getByText("80")).toBeVisible();
+  await expect(page.getByText("Current evidence")).toBeVisible();
+  await expect(page.getByText("100%", { exact: true })).toBeVisible();
+  await expect(page.getByText("SAMPLE")).toHaveCount(0);
 });
 
 test("protected routes still redirect when the access token is missing", async ({ request }) => {

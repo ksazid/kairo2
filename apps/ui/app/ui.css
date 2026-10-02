@@ -1652,3 +1652,15 @@ main { min-width: 0; margin-left: 218px; }
   .kairo-data-mode-notice { align-items: flex-start; flex-direction: column; }
   .kairo-data-mode-notice > span { width: 100%; border-left: 0; border-top: 1px solid #293646; padding: 10px 0 0; justify-items: start; }
 }
+
+
+.insights-metrics article > div em.live { color: var(--lime); }
+.insights-live-empty {
+  min-height: 72px;
+  color: #8390a1;
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  font-size: 10px;
+  line-height: 1.45;
+}

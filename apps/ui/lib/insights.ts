@@ -5,7 +5,7 @@ export type InsightChannel = "all" | ContentItem["channel"];
 export type InsightTab = "overview" | "content" | "campaigns" | "audience";
 
 export type InsightMetric = {
-  id: "reach" | "engagement" | "clicks" | "bookings";
+  id: "reach" | "engagement" | "clicks" | "bookings" | "saves" | "videoViews" | "impressions";
   label: string;
   value: string;
   delta: string;
