@@ -40,6 +40,6 @@ export default async function InsightsPage({ searchParams }: { searchParams: Sea
     proTipHref="#insights-top-content"
   >
     {params.authError ? <p className="auth-error" role="alert">{params.authError}</p> : null}
-    <InsightsClient items={items} brandId={data.brandId} authenticated={data.authenticated} dataState={dataState} liveRows={liveRows}/>
+    <InsightsClient items={items} brandId={data.brandId} dataState={dataState} liveRows={liveRows}/>
   </KairoShell>;
 }
