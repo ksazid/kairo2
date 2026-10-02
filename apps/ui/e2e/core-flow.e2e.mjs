@@ -2,7 +2,8 @@ import { test, expect } from "@playwright/test";
 
 const appUrl = "http://127.0.0.1:4173";
 
-test.beforeEach(async ({ context }) => {
+test.beforeEach(async ({ context, request }) => {
+  await request.post("http://127.0.0.1:4189/__e2e/reset");
   await context.addCookies([{
     name: "kairo_access_token",
     value: "e2e-token",
