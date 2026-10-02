@@ -70,11 +70,12 @@ export function buildLiveInsights(
   }
 
   const available = rows.filter(isAvailable);
-  const latestAt = available.map((row) => Date.parse(row.capturedAt)).filter(Number.isFinite).sort((a, b) => b - a)[0];
+  const channelRows = available.filter((row) => channelMatches(row.channel, input.channel));
+  const latestAt = channelRows.map((row) => Date.parse(row.capturedAt)).filter(Number.isFinite).sort((a, b) => b - a)[0];
   if (!latestAt) return { ready: false, metrics: [], points: [], topContent: [], channels: [] };
   const rangeDays = Number(input.range);
   const start = latestAt - rangeDays * 86_400_000;
-  const ranged = available.filter((row) => Date.parse(row.capturedAt) >= start && channelMatches(row.channel, input.channel));
+  const ranged = channelRows.filter((row) => Date.parse(row.capturedAt) >= start);
   const selected = latestPerPostMetric(ranged);
   const totals = aggregate(selected);
   const exposure = totals.reach || totals.impressions;
@@ -254,8 +255,15 @@ function group<T, K>(rows: T[], key: (row: T) => K) {
 function buildSeries(rows: Array<LiveMetricRow & { value: number }>): InsightPoint[] {
   const exposure = rows.filter((row) => row.name === "reach" || row.name === "impressions");
   const preferredName = exposure.some((row) => row.name === "reach") ? "reach" : "impressions";
-  const byDay = new Map<string, number>();
+  const latestByPostDay = new Map<string, LiveMetricRow & { value: number }>();
   for (const row of exposure.filter((item) => item.name === preferredName)) {
+    const day = row.capturedAt.slice(0, 10);
+    const key = `${day}:${row.publishedPostId}`;
+    const current = latestByPostDay.get(key);
+    if (!current || Date.parse(row.capturedAt) > Date.parse(current.capturedAt)) latestByPostDay.set(key, row);
+  }
+  const byDay = new Map<string, number>();
+  for (const row of latestByPostDay.values()) {
     const day = row.capturedAt.slice(0, 10);
     byDay.set(day, (byDay.get(day) ?? 0) + row.value);
   }
