@@ -45,12 +45,9 @@ test("website onboarding creates a Brand and lands in Brand Brain", async ({ pag
   await expect(page.getByText("Brand Brain loaded from live Brand intelligence.")).toBeVisible();
 });
 
-test("protected routes still redirect when the access token is missing", async ({ browser }) => {
-  const context = await browser.newContext();
-  const page = await context.newPage();
+test("protected routes still redirect when the access token is missing", async ({ request }) => {
+  const response = await request.get(`${appUrl}/discover`, { maxRedirects: 0 });
 
-  await page.goto("/discover");
-  await expect(page).toHaveURL(/\/auth\/login\?returnTo=%2Fdiscover/);
-
-  await context.close();
+  expect([307, 308]).toContain(response.status());
+  expect(response.headers().location).toBe("/auth/login?returnTo=%2Fdiscover");
 });
