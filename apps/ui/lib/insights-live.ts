@@ -18,7 +18,7 @@ export type LiveMetricRow = {
 export type LiveTopContent = {
   assetId: string;
   reach: number;
-  engagementRate: number;
+  engagementRate?: number;
   saves?: number;
   clicks?: number;
   views?: number;
@@ -33,13 +33,13 @@ export type LiveChannel = {
 export type LiveCampaign = {
   campaignId: string;
   reach: number;
-  engagementRate: number;
+  engagementRate?: number;
 };
 
 export type LiveAudience = {
   audience: string;
   reach: number;
-  engagementRate: number;
+  engagementRate?: number;
 };
 
 export type LiveInsightsView = {
@@ -58,7 +58,8 @@ export function hasSufficientLiveMetrics(rows: LiveMetricRow[]): boolean {
   const posts = new Set(available.map((row) => row.publishedPostId));
   const names = new Set(available.map((row) => row.name));
   const hasExposure = names.has("reach") || names.has("impressions");
-  return posts.size >= 1 && names.size >= 2 && hasExposure;
+  const hasSupportingMetric = [...names].some((name) => name !== "reach" && name !== "impressions");
+  return posts.size >= 1 && hasExposure && hasSupportingMetric;
 }
 
 export function buildLiveInsights(
@@ -78,30 +79,32 @@ export function buildLiveInsights(
   const ranged = channelRows.filter((row) => Date.parse(row.capturedAt) >= start);
   const selected = latestPerPostMetric(ranged);
   const totals = aggregate(selected);
-  const exposure = totals.reach || totals.impressions;
+  const present = new Set(selected.map((row) => row.name));
+  const exposure = present.has("reach") ? totals.reach : totals.impressions;
   const interactions = totals.likes + totals.comments + totals.shares + totals.saves + totals.reactions;
-  const engagementRate = exposure > 0 ? interactions / exposure * 100 : 0;
+  const hasEngagementEvidence = ["likes", "comments", "shares", "saves", "reactions"].some((name) => present.has(name as LiveMetricName));
+  const engagementRate = hasEngagementEvidence && exposure > 0 ? interactions / exposure * 100 : undefined;
 
   const metrics: InsightMetric[] = [
     {
       id: "reach",
-      label: totals.reach > 0 ? "Reach" : "Impressions",
-      value: compact(totals.reach || totals.impressions),
+      label: present.has("reach") ? "Reach" : "Impressions",
+      value: compact(exposure),
       delta: "Live",
       direction: "up",
-      description: totals.reach > 0 ? "Latest available reach across published content" : "Latest available impressions across published content",
-    },
-    {
-      id: "engagement",
-      label: "Engagement rate",
-      value: `${engagementRate.toFixed(1)}%`,
-      delta: "Live",
-      direction: "up",
-      description: "Likes, comments, shares, saves and reactions divided by reach/impressions",
+      description: present.has("reach") ? "Latest available reach across published content" : "Latest available impressions across published content",
     },
   ];
+  if (engagementRate !== undefined) metrics.push({
+    id: "engagement",
+    label: "Engagement rate",
+    value: `${engagementRate.toFixed(1)}%`,
+    delta: "Live",
+    direction: "up",
+    description: "Available interactions divided by reach/impressions",
+  });
 
-  if (totals.saves > 0) metrics.push({
+  if (present.has("saves")) metrics.push({
     id: "saves",
     label: "Saves",
     value: compact(totals.saves),
@@ -126,7 +129,7 @@ export function buildLiveInsights(
     description: "Latest available video views across published content",
   });
 
-  if (totals.videoViews > 0 && !metrics.some((metric) => metric.id === "videoViews")) metrics.push({
+  if (present.has("videoViews") && !metrics.some((metric) => metric.id === "videoViews")) metrics.push({
     id: "videoViews",
     label: "Video views",
     value: compact(totals.videoViews),
@@ -134,7 +137,7 @@ export function buildLiveInsights(
     direction: "up",
     description: "Latest available video views across published content",
   });
-  if (totals.impressions > 0 && totals.reach > 0 && metrics.length < 4) metrics.push({
+  if (present.has("impressions") && present.has("reach") && metrics.length < 4) metrics.push({
     id: "impressions",
     label: "Impressions",
     value: compact(totals.impressions),
@@ -146,15 +149,17 @@ export function buildLiveInsights(
   const assetGroups = group(selected, (row) => row.assetId);
   const topContent = [...assetGroups.entries()].map(([assetId, metricRows]) => {
     const total = aggregate(metricRows);
-    const base = total.reach || total.impressions;
+    const presentNames = new Set(metricRows.map((row) => row.name));
+    const base = presentNames.has("reach") ? total.reach : total.impressions;
     const engagement = total.likes + total.comments + total.shares + total.saves + total.reactions;
+    const hasEngagement = ["likes", "comments", "shares", "saves", "reactions"].some((name) => presentNames.has(name as LiveMetricName));
     return {
       assetId,
       reach: base,
-      engagementRate: base > 0 ? engagement / base * 100 : 0,
-      ...(total.saves > 0 ? { saves: total.saves } : {}),
-      ...(total.clicks > 0 ? { clicks: total.clicks } : {}),
-      ...(total.videoViews > 0 ? { views: total.videoViews } : {}),
+      ...(hasEngagement && base > 0 ? { engagementRate: engagement / base * 100 } : {}),
+      ...(presentNames.has("saves") ? { saves: total.saves } : {}),
+      ...(presentNames.has("clicks") ? { clicks: total.clicks } : {}),
+      ...(presentNames.has("videoViews") ? { views: total.videoViews } : {}),
     };
   }).sort((a, b) => b.reach - a.reach).slice(0, 3);
 
@@ -175,9 +180,11 @@ export function buildLiveInsights(
   const campaignGroups = group(selected, (row) => row.campaignId);
   const topCampaign = [...campaignGroups.entries()].map(([campaignId, metricRows]) => {
     const total = aggregate(metricRows);
-    const base = total.reach || total.impressions;
+    const presentNames = new Set(metricRows.map((row) => row.name));
+    const base = presentNames.has("reach") ? total.reach : total.impressions;
     const engagement = total.likes + total.comments + total.shares + total.saves + total.reactions;
-    return { campaignId, reach: base, engagementRate: base > 0 ? engagement / base * 100 : 0 };
+    const hasEngagement = ["likes", "comments", "shares", "saves", "reactions"].some((name) => presentNames.has(name as LiveMetricName));
+    return { campaignId, reach: base, ...(hasEngagement && base > 0 ? { engagementRate: engagement / base * 100 } : {}) };
   }).sort((a, b) => b.reach - a.reach)[0];
 
   const itemByAsset = new Map(input.items.map((item) => [item.id, item]));
@@ -191,9 +198,11 @@ export function buildLiveInsights(
   }
   const topAudience = [...audienceRows.entries()].map(([audience, metricRows]) => {
     const total = aggregate(metricRows);
-    const base = total.reach || total.impressions;
+    const presentNames = new Set(metricRows.map((row) => row.name));
+    const base = presentNames.has("reach") ? total.reach : total.impressions;
     const engagement = total.likes + total.comments + total.shares + total.saves + total.reactions;
-    return { audience, reach: base, engagementRate: base > 0 ? engagement / base * 100 : 0 };
+    const hasEngagement = ["likes", "comments", "shares", "saves", "reactions"].some((name) => presentNames.has(name as LiveMetricName));
+    return { audience, reach: base, ...(hasEngagement && base > 0 ? { engagementRate: engagement / base * 100 } : {}) };
   }).sort((a, b) => b.reach - a.reach)[0];
 
   return {
