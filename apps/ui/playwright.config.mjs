@@ -25,7 +25,7 @@ export default defineConfig({
       timeout: 30_000
     },
     {
-      command: "npm run dev -- --hostname 127.0.0.1 --port 4173",
+      command: "node ../../node_modules/next/dist/bin/next dev --hostname 127.0.0.1 --port 4173",
       url: baseURL,
       reuseExistingServer: !process.env.CI,
       timeout: 120_000,
