@@ -59,7 +59,7 @@ test("not-ready Brand sees non-actionable sample Discover data with real readine
   await expect(mode).toContainText("62%");
   await expect(page.getByText(/Showing\s+6\s+of\s+6\s+sample opportunities/i)).toBeVisible();
   await expect(page.getByRole("button", { name: "Refresh discovery" })).toBeDisabled();
-  await expect(page.getByText("Sample Hunter preview").first()).toBeVisible();
+  await expect(page.locator(".discover-source-cell").filter({ hasText: "Sample Hunter preview" }).first()).toBeVisible();
   await expect(page.getByRole("button", { name: "Sample opportunities cannot be saved" }).first()).toBeDisabled();
 });
 
