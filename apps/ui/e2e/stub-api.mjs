@@ -4,7 +4,7 @@ const PORT = Number(process.env.KAIRO_E2E_STUB_PORT ?? 4189);
 const workspace = { id: "ws-1", name: "Kairo E2E", role: "owner" };
 const brands = [{ id: "brand-1", name: "Acme" }];
 
-const opportunities = [
+const baseOpportunities = [
   {
     id: "opp-ai",
     title: "AI workflows your team can use this week",
@@ -39,6 +39,73 @@ const opportunities = [
   }
 ];
 
+const opportunityStatus = new Map(baseOpportunities.map((item) => [item.id, item.status]));
+let creationStarted = false;
+let review = null;
+let approval = null;
+const commands = [];
+
+const campaign = {
+  id: "campaign-ai",
+  workspaceId: workspace.id,
+  brandId: "brand-1",
+  ideaId: "idea-ai",
+  name: "AI Workflow Education",
+  objective: "Educate operations teams with practical AI workflows",
+  status: "draft",
+  createdAt: "2026-10-02T00:00:00Z"
+};
+
+const asset = {
+  id: "asset-ai",
+  campaignId: campaign.id,
+  channel: "instagram",
+  format: "carousel",
+  audience: "Operations teams",
+  topic: "AI workflows your team can use this week",
+  hookType: "practical-guide",
+  cta: "Save this workflow guide",
+  currentVersion: 1,
+  status: "draft",
+  createdAt: "2026-10-02T00:00:00Z"
+};
+
+const version = {
+  id: "version-ai-1",
+  assetId: asset.id,
+  version: 1,
+  content: JSON.stringify({
+    caption: "Five practical AI workflows your operations team can use this week.",
+    slides: [
+      "Start with one repeatable task",
+      "Define the input clearly",
+      "Add a human review point",
+      "Measure the result",
+      "Keep the workflow if it saves time"
+    ]
+  }),
+  actor: "ai",
+  createdAt: "2026-10-02T00:00:00Z",
+  libraryAssetRefs: [{ kind: "image", previewRef: "/malta-car.webp" }]
+};
+
+const account = {
+  id: "channel-instagram-1",
+  channel: "instagram",
+  accountRef: "ig-acme",
+  displayName: "Acme Instagram",
+  capabilities: ["publish-image", "publish-carousel", "publish-reel", "publish-video"],
+  status: "connected"
+};
+
+function opportunities() {
+  return baseOpportunities.map((item) => ({ ...item, status: opportunityStatus.get(item.id) ?? item.status }));
+}
+
+function campaignDetail() {
+  return { campaign, assets: [{ asset, versions: [version] }] };
+}
+
 function activation(brandId) {
   return {
     brain: [],
@@ -58,7 +125,7 @@ function activation(brandId) {
     weakFields: [],
     recommendedSources: [],
     evidenceSourceCount: 1,
-    updatedAt: "2026-10-01T12:00:00Z",
+    updatedAt: "2026-10-02T00:00:00Z",
     discoveryPlan: {
       schemaVersion: "1",
       workspaceId: workspace.id,
@@ -76,7 +143,7 @@ function activation(brandId) {
         sourceClasses: ["web"]
       }],
       excludedTopics: [],
-      updatedAt: "2026-10-01T12:00:00Z"
+      updatedAt: "2026-10-02T00:00:00Z"
     },
     discoveryRun: null,
     schedule: null
@@ -134,13 +201,105 @@ const server = http.createServer(async (req, res) => {
     return send(res, 200, activation(brandId), { "x-kairo-runtime": "e2e-stub" });
   }
   if (/\/brain\/activation$/.test(path) && req.method === "GET") return send(res, 200, activation(brandId));
-  if (/\/hunter-runs\/latest$/.test(path) && req.method === "GET") return send(res, 200, null);
-  if (/\/opportunities$/.test(path) && req.method === "GET") return send(res, 200, opportunities);
-  if (/\/campaigns$/.test(path) && req.method === "GET") return send(res, 200, []);
+  if (/\/hunter-runs\/latest$/.test(path) && req.method === "GET") {
+    return send(res, 200, {
+      status: "completed",
+      evidenceCount: 8,
+      candidateCount: 5,
+      opportunityCount: opportunities().length,
+      sourcesScanned: ["web"],
+      degradedSources: []
+    });
+  }
+
+  if (/\/recommendations$/.test(path) && req.method === "POST") {
+    return send(res, 200, { evidenceCount: 8, candidateCount: 5, opportunityCount: opportunities().length, degradedSources: [] });
+  }
+
+  if (/\/opportunities$/.test(path) && req.method === "GET") return send(res, 200, opportunities());
+
+  const opportunityMatch = path.match(/\/opportunities\/([^/]+)\/(develop|development)$/);
+  if (opportunityMatch && req.method === "POST") {
+    const [, opportunityId, action] = opportunityMatch;
+    if (action === "develop") {
+      opportunityStatus.set(opportunityId, "developing");
+      return send(res, 200, opportunities().find((item) => item.id === opportunityId));
+    }
+    return send(res, 200, { ideaId: "idea-ai" });
+  }
+
+  if (/\/opportunities\/[^/]+\/feedback\/[^/]+$/.test(path) && req.method === "POST") {
+    return send(res, 200, { ok: true });
+  }
+
+  if (/\/simple-creations$/.test(path) && req.method === "POST") {
+    creationStarted = true;
+    return send(res, 202, {
+      id: "creation-ai",
+      status: "queued",
+      progress: { message: "Starting content generation…" }
+    });
+  }
+
+  if (/\/simple-creations\/creation-ai$/.test(path) && req.method === "GET") {
+    return send(res, 200, {
+      id: "creation-ai",
+      status: "ready",
+      progress: { message: "Content ready for review." },
+      campaignId: campaign.id,
+      assetId: asset.id
+    });
+  }
+
+  if (/\/campaigns$/.test(path) && req.method === "GET") {
+    return send(res, 200, creationStarted ? [campaign] : []);
+  }
+
+  if (path.endsWith(`/campaigns/${campaign.id}`) && req.method === "GET") {
+    return send(res, 200, campaignDetail());
+  }
+
   if (/\/ideas$/.test(path) && req.method === "GET") return send(res, 200, []);
   if (/\/learnings$/.test(path) && req.method === "GET") return send(res, 200, []);
-  if (/\/calendar$/.test(path) && req.method === "GET") return send(res, 200, []);
-  if (/\/channel-accounts$/.test(path) && req.method === "GET") return send(res, 200, []);
+  if (/\/calendar$/.test(path) && req.method === "GET") return send(res, 200, commands);
+  if (/\/channel-accounts$/.test(path) && req.method === "GET") return send(res, 200, [account]);
+
+  if (path.endsWith(`/assets/${asset.id}/review-status`) && req.method === "GET") {
+    return send(res, 200, { review, approval });
+  }
+
+  if (path.endsWith(`/campaigns/${campaign.id}/assets/${asset.id}/review`) && req.method === "POST") {
+    review = {
+      versionId: version.id,
+      status: "passed",
+      truth: { findings: [] },
+      critic: { score: 0.96, findings: [] }
+    };
+    return send(res, 200, review);
+  }
+
+  if (path.endsWith(`/campaigns/${campaign.id}/assets/${asset.id}/approve`) && req.method === "POST") {
+    const input = await body(req);
+    approval = {
+      versionId: version.id,
+      approvedAt: "2026-10-02T00:10:00Z",
+      destination: input.destination ?? { channel: account.channel, accountRef: account.accountRef }
+    };
+    return send(res, 200, approval);
+  }
+
+  if (path.endsWith(`/campaigns/${campaign.id}/assets/${asset.id}/schedule`) && req.method === "POST") {
+    const input = await body(req);
+    const command = {
+      assetId: asset.id,
+      versionId: version.id,
+      scheduledFor: input.scheduledFor,
+      status: "scheduled",
+      createdAt: "2026-10-02T00:12:00Z"
+    };
+    commands.splice(0, commands.length, command);
+    return send(res, 200, command);
+  }
 
   return send(res, 404, { detail: `Unhandled E2E stub route: ${req.method} ${path}` });
 });
