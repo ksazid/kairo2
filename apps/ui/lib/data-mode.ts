@@ -121,14 +121,14 @@ export function resolveInsightsDataMode(input: {
   if (statuses.some((item) => item.status === "running" || item.status === "queued" || item.freshness === "due")) return {
     mode: "collecting",
     label: "Collecting live metrics · Sample data",
-    message: "Real performance collection is in progress. Sample values stay visible until live metric aggregation is connected.",
+    message: "Real performance collection is in progress. Sample values stay visible until enough normalized evidence is available.",
     usesSampleData: true,
     isLive: false,
   };
   if (statuses.some((item) => item.status === "complete")) return {
     mode: "preview",
     label: "Metrics collected · Sample dashboard",
-    message: "Kairo has collected provider metrics. This dashboard remains explicitly sample until the live aggregation view is enabled.",
+    message: "Kairo has collected provider metrics, but the evidence gate is not complete yet. The dashboard stays explicitly sample until enough normalized metrics are available.",
     usesSampleData: true,
     isLive: false,
   };
