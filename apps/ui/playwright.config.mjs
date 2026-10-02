@@ -31,7 +31,8 @@ export default defineConfig({
       timeout: 120_000,
       env: {
         ...process.env,
-        KAIRO_API_URL: "http://127.0.0.1:4190",\n        KAIRO_E2E: "1"
+        KAIRO_API_URL: "http://127.0.0.1:4190",
+        KAIRO_E2E: "1"
       }
     }
   ]
