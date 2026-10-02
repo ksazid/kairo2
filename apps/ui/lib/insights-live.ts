@@ -57,9 +57,9 @@ export function hasSufficientLiveMetrics(rows: LiveMetricRow[]): boolean {
   const available = rows.filter(isAvailable);
   const posts = new Set(available.map((row) => row.publishedPostId));
   const names = new Set(available.map((row) => row.name));
-  const hasExposure = names.has("reach") || names.has("impressions");
+  const hasReach = names.has("reach");
   const hasSupportingMetric = [...names].some((name) => name !== "reach" && name !== "impressions");
-  return posts.size >= 1 && hasExposure && hasSupportingMetric;
+  return posts.size >= 1 && hasReach && hasSupportingMetric;
 }
 
 export function buildLiveInsights(
@@ -80,7 +80,7 @@ export function buildLiveInsights(
   const selected = latestPerPostMetric(ranged);
   const totals = aggregate(selected);
   const present = new Set(selected.map((row) => row.name));
-  const exposure = present.has("reach") ? totals.reach : totals.impressions;
+  const exposure = totals.reach;
   const interactions = totals.likes + totals.comments + totals.shares + totals.saves + totals.reactions;
   const hasEngagementEvidence = ["likes", "comments", "shares", "saves", "reactions"].some((name) => present.has(name as LiveMetricName));
   const engagementRate = hasEngagementEvidence && exposure > 0 ? interactions / exposure * 100 : undefined;
@@ -88,11 +88,11 @@ export function buildLiveInsights(
   const metrics: InsightMetric[] = [
     {
       id: "reach",
-      label: present.has("reach") ? "Reach" : "Impressions",
+      label: "Reach",
       value: compact(exposure),
       delta: "Live",
       direction: "up",
-      description: present.has("reach") ? "Latest available reach across published content" : "Latest available impressions across published content",
+      description: "Latest available reach across published content",
     },
   ];
   if (engagementRate !== undefined) metrics.push({
@@ -147,10 +147,10 @@ export function buildLiveInsights(
   });
 
   const assetGroups = group(selected, (row) => row.assetId);
-  const topContent = [...assetGroups.entries()].map(([assetId, metricRows]) => {
+  const topContent = [...assetGroups.entries()].filter(([, metricRows]) => metricRows.some((row) => row.name === "reach")).map(([assetId, metricRows]) => {
     const total = aggregate(metricRows);
     const presentNames = new Set(metricRows.map((row) => row.name));
-    const base = presentNames.has("reach") ? total.reach : total.impressions;
+    const base = total.reach;
     const engagement = total.likes + total.comments + total.shares + total.saves + total.reactions;
     const hasEngagement = ["likes", "comments", "shares", "saves", "reactions"].some((name) => presentNames.has(name as LiveMetricName));
     return {
@@ -166,7 +166,7 @@ export function buildLiveInsights(
   const channelGroups = group(selected, (row) => channelLabel(row.channel));
   const channelReach = [...channelGroups.entries()].map(([label, metricRows]) => {
     const total = aggregate(metricRows);
-    return { label, reach: total.reach || total.impressions };
+    return { label, reach: total.reach };
   }).filter((item) => item.reach > 0);
   const allChannelReach = channelReach.reduce((sum, item) => sum + item.reach, 0);
   const channels = channelReach
@@ -178,10 +178,10 @@ export function buildLiveInsights(
     }));
 
   const campaignGroups = group(selected, (row) => row.campaignId);
-  const topCampaign = [...campaignGroups.entries()].map(([campaignId, metricRows]) => {
+  const topCampaign = [...campaignGroups.entries()].filter(([, metricRows]) => metricRows.some((row) => row.name === "reach")).map(([campaignId, metricRows]) => {
     const total = aggregate(metricRows);
     const presentNames = new Set(metricRows.map((row) => row.name));
-    const base = presentNames.has("reach") ? total.reach : total.impressions;
+    const base = total.reach;
     const engagement = total.likes + total.comments + total.shares + total.saves + total.reactions;
     const hasEngagement = ["likes", "comments", "shares", "saves", "reactions"].some((name) => presentNames.has(name as LiveMetricName));
     return { campaignId, reach: base, ...(hasEngagement && base > 0 ? { engagementRate: engagement / base * 100 } : {}) };
@@ -196,10 +196,10 @@ export function buildLiveInsights(
     list.push(row);
     audienceRows.set(audience, list);
   }
-  const topAudience = [...audienceRows.entries()].map(([audience, metricRows]) => {
+  const topAudience = [...audienceRows.entries()].filter(([, metricRows]) => metricRows.some((row) => row.name === "reach")).map(([audience, metricRows]) => {
     const total = aggregate(metricRows);
     const presentNames = new Set(metricRows.map((row) => row.name));
-    const base = presentNames.has("reach") ? total.reach : total.impressions;
+    const base = total.reach;
     const engagement = total.likes + total.comments + total.shares + total.saves + total.reactions;
     const hasEngagement = ["likes", "comments", "shares", "saves", "reactions"].some((name) => presentNames.has(name as LiveMetricName));
     return { audience, reach: base, ...(hasEngagement && base > 0 ? { engagementRate: engagement / base * 100 } : {}) };
@@ -262,10 +262,9 @@ function group<T, K>(rows: T[], key: (row: T) => K) {
 }
 
 function buildSeries(rows: Array<LiveMetricRow & { value: number }>): InsightPoint[] {
-  const exposure = rows.filter((row) => row.name === "reach" || row.name === "impressions");
-  const preferredName = exposure.some((row) => row.name === "reach") ? "reach" : "impressions";
+  const exposure = rows.filter((row) => row.name === "reach");
   const latestByPostDay = new Map<string, LiveMetricRow & { value: number }>();
-  for (const row of exposure.filter((item) => item.name === preferredName)) {
+  for (const row of exposure) {
     const day = row.capturedAt.slice(0, 10);
     const key = `${day}:${row.publishedPostId}`;
     const current = latestByPostDay.get(key);
