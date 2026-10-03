@@ -13,13 +13,13 @@ node evaluation/context-dev/collect.mjs
 node --experimental-transform-types evaluation/context-dev/collect.mjs --live
 ```
 
-The live collector makes at most 12 sequential Context.dev calls: brand, styleguide, five-page crawl and one ten-result search for each of Nike, Dishoom and Linear. Planned maximum: 78 credits. No retries. A missing credential prevents every Context.dev request. Raw successful responses and normalized references are recorded in ignored `artifacts/context-dev/`; error text and secrets are excluded. Failure retains prior results. Failed/partial results remain explicit.
+The checked-in credential-based runner makes at most 12 sequential Context.dev calls: brand, styleguide, five-page crawl and one ten-result search for each of Nike, Dishoom and Linear. Planned maximum: 78 credits. No retries. A missing API key blocks its API calls. The connected-Context execution produced a bounded evidence summary in `live-results.json`; it omits secrets and keeps source URLs and request IDs. Failed or partial results remain explicit.
 
 ## Scope and interpretation
 
-The included baseline calls Kairo's actual `PublicBrandReferenceHttpReader` for one homepage per brand. This is a **component diagnostic**, not the complete onboarding baseline. Production onboarding uses `SourceIntelligenceBrandReferenceReader`, its source router, additional page selection and media analyzer. Network failures in this environment do not establish production failures.
+The baseline calls Kairo's actual `PublicBrandReferenceHttpReader` for one homepage per brand. All three returned `unavailable` in the isolated runner. This is a **component diagnostic**, not a complete onboarding baseline. Production onboarding uses `SourceIntelligenceBrandReferenceReader`, its source router, additional page selection and media analyzer. These failures do not establish production failures.
 
-The collector does not generate Brand Brains or run Hunter. It prepares provider evidence; it does not prove recommendation improvement. Full paired evaluation still requires an isolated Kairo runtime:
+The collector does not generate Brand Brains or run Hunter. The live Context.dev calls likewise did not run either downstream stage, so quality improvement is unmeasured. Full paired evaluation still requires an isolated Kairo runtime:
 
 1. Run the complete existing onboarding reader, retaining its limits and selected URLs, for each brand.
 2. Record both a paired same-page comparison and the five-page enrichment arm separately. Normalize provider documents into active source extracts; preserve field-level provenance. Website style observations remain provisional and require owner review.
@@ -27,7 +27,7 @@ The collector does not generate Brand Brains or run Hunter. It prepares provider
 4. Run identical Hunter retrieval plans through the existing shadow runner with identical budgets; compare Exa, Context.dev and combined retrieval separately. Do not call Context.dev results `agent-reach`. Search results retained by this collector are diagnostics, not already-qualified Hunter evidence.
 5. Blind-review sector relevance, actionability, specificity, unsupported claims, duplicates, latency and cost. Publish per-brand paired measurements and failures; adopt only after the declared gate passes.
 
-No downstream model-call budget is authorized by this plan. Declare the bounded budget before that stage; do not claim it ran from retrieval-only results.
+The recorded plan authorizes zero model calls. Declare a bounded budget before that stage; do not claim it ran from retrieval-only results.
 
 ## Verified contracts
 
@@ -44,4 +44,4 @@ Checked 2026-10-03 against https://docs.context.dev/openapi.json and official gu
 
 ## Current state
 
-Prepared locally. Credentials unavailable at preparation time. Live Context.dev results, full Brand Brain comparison and Hunter comparison are pending. The POC is not complete or certified.
+Live Context.dev brand, styleguide, crawl and search calls completed on 2026-10-03. The connected tool did not expose per-request credit accounting, so actual credits remain unknown. Brand profiles varied in cache age; styleguide calls returned cache misses. Crawls returned 2 Nike, 1 Dishoom and 5 Linear pages. Kairo's baseline HTTP reader returned `unavailable` for all three in this environment. Brand Brain/Hunter comparison and quality judgment are pending. The POC is not complete or certified.

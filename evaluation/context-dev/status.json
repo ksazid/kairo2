@@ -1,20 +1,29 @@
 {
   "authoringRun": "context-dev-poc-2026-10-03",
   "version": 1,
-  "status": "blocked-live-evaluation",
+  "status": "live-evidence-collected-downstream-evaluation-blocked",
   "baselineCommit": "a8a563afe1aa1ff5c166a2e1ac0d8f34f87fb25b",
   "checks": {
-    "collectorTests": {
-      "passed": 10,
-      "failed": 0
-    },
-    "pesValidation": "passed",
-    "diffWhitespace": "passed"
+    "collectorTests": "10 passed on baseline",
+    "pesValidation": "passed on baseline",
+    "diffWhitespace": "passed on baseline"
   },
   "live": {
-    "contextRequests": 0,
-    "contextCredits": 0,
-    "contextStatus": "missing-credentials",
+    "contextRequests": 12,
+    "creditsConsumed": "not surfaced by connected tool",
+    "creditsCap": 78,
+    "brandProfiles": "3 returned; cache age varies",
+    "styleguides": "3 successful; cache misses",
+    "crawlPages": {
+      "nike": 2,
+      "dishoom": 1,
+      "linear": 5
+    },
+    "searchResults": {
+      "nike": 10,
+      "dishoom": 10,
+      "linear": 10
+    },
     "baselineReader": {
       "nike": "unavailable",
       "dishoom": "unavailable",
@@ -24,5 +33,10 @@
     "hunter": "not-run",
     "qualityImprovement": "unmeasured"
   },
-  "next": "Connect Context.dev, then execute isolated paired evaluation; do not adopt from collector-only evidence"
+  "next": "Run a paired Brand Brain/Hunter evaluation only after reliable baseline egress, required Kairo credentials, and a declared model/retrieval budget are available.",
+  "blockers": [
+    "baseline reader could not fetch the public sites from this isolated runtime",
+    "model/Exa/deployed Kairo credentials unavailable",
+    "declared model call budget is zero"
+  ]
 }
