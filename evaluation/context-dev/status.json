@@ -1,0 +1,28 @@
+{
+  "authoringRun": "context-dev-poc-2026-10-03",
+  "version": 1,
+  "status": "blocked-live-evaluation",
+  "baselineCommit": "a8a563afe1aa1ff5c166a2e1ac0d8f34f87fb25b",
+  "checks": {
+    "collectorTests": {
+      "passed": 10,
+      "failed": 0
+    },
+    "pesValidation": "passed",
+    "diffWhitespace": "passed"
+  },
+  "live": {
+    "contextRequests": 0,
+    "contextCredits": 0,
+    "contextStatus": "missing-credentials",
+    "baselineReader": {
+      "nike": "unavailable",
+      "dishoom": "unavailable",
+      "linear": "unavailable"
+    },
+    "brandBrain": "not-run",
+    "hunter": "not-run",
+    "qualityImprovement": "unmeasured"
+  },
+  "next": "Connect Context.dev, then execute isolated paired evaluation; do not adopt from collector-only evidence"
+}

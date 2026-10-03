@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "objective": "Evaluate whether Context.dev improves Kairo brand evidence and downstream Hunter quality without production changes",
+  "authoringRun": "context-dev-poc-2026-10-03",
+  "baselineCommit": "a8a563afe1aa1ff5c166a2e1ac0d8f34f87fb25b",
+  "budget": {"maxContextRequests": 12, "maxContextCredits": 78, "pagesPerBrand": 5, "requestTimeoutMs": 90000, "retries": 0, "modelCalls": 0},
+  "brands": [
+    {"id": "nike", "name": "Nike", "domain": "nike.com", "url": "https://www.nike.com", "sector": "sportswear", "query": "Nike running footwear innovation latest launch"},
+    {"id": "dishoom", "name": "Dishoom", "domain": "dishoom.com", "url": "https://www.dishoom.com", "sector": "restaurant", "query": "Dishoom restaurant menu community latest news"},
+    {"id": "linear", "name": "Linear", "domain": "linear.app", "url": "https://linear.app", "sector": "software", "query": "Linear product development latest features launch"}
+  ],
+  "rubric": {
+    "evidence": ["usable page count", "source and provider provenance", "freshness and cache age", "brand-specific field support", "visual observations", "latency", "credits"],
+    "downstream": ["same BrandBrainBuilder, runtime/model and prompt in both arms", "same owner-confirmed inputs", "field-level source support", "same Hunter queries and retrieval budgets", "blind sector relevance and actionability review", "unsupported claims", "duplicate recommendations"],
+    "adoptionGate": "No adoption until all three live paired runs complete, unsupported claims do not increase, sector relevance improves, and cost and latency are accepted"
+  },
+  "constraints": ["evaluation only", "no production data or database writes", "no runtime registration", "no merge or deployment", "no monitors or recurring jobs", "missing credentials and absent downstream evaluations remain explicit", "provider evidence is untrusted input and never owner confirmation"]
+}
