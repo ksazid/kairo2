@@ -1,0 +1,522 @@
+{
+  "schemaVersion": 1,
+  "authoringRun": "context-dev-poc-2026-10-03",
+  "status": "live-evidence-collected-downstream-evaluation-blocked",
+  "baselineCommit": "a8a563afe1aa1ff5c166a2e1ac0d8f34f87fb25b",
+  "evaluationBranch": "eval/context-dev-three-brand",
+  "plan": {
+    "maxContextRequests": 12,
+    "maxCredits": 78,
+    "requestTimeoutMs": 90000,
+    "retries": 0,
+    "modelCalls": 0
+  },
+  "requests": {
+    "successful": 12,
+    "invalidToolShapeRejectedBeforeRequest": 1,
+    "brands": 3,
+    "styleguides": 3,
+    "crawls": 3,
+    "searches": 3,
+    "reportedCreditsUnavailable": true,
+    "creditsConsumed": "not surfaced by connected tool"
+  },
+  "brands": {
+    "nike": {
+      "brand": {
+        "requestId": "c33bcc2a-a0aa-403d-ab28-505751e564c6",
+        "cache": {
+          "status": "hit",
+          "age_ms": 54299118
+        },
+        "industry": [
+          {
+            "industry": "Sports",
+            "subindustry": "Sportswear & Equipment"
+          }
+        ],
+        "title": "Nike",
+        "slogan": "Every Day Speed"
+      },
+      "style": {
+        "status": "ok",
+        "requestId": "1ba6778c-dabd-4fc8-abfd-08a8b94207b6",
+        "cache": {
+          "status": "miss",
+          "age_ms": 0
+        },
+        "finalDOMState": "loaded",
+        "styleguide": {
+          "colors": {
+            "accent": "#000000",
+            "background": "#ffffff",
+            "text": "#111111"
+          },
+          "h1": {
+            "fontFamily": "Helvetica Now Text",
+            "fontSize": "96px",
+            "fontWeight": 700,
+            "lineHeight": "115px",
+            "letterSpacing": "0px",
+            "fontFallbacks": [
+              "Helvetica Now Text",
+              "Helvetica",
+              "Arial",
+              "sans-serif"
+            ]
+          },
+          "elementSpacing": {
+            "xs": "6px",
+            "sm": "16px",
+            "md": "36px",
+            "lg": "48px",
+            "xl": "120px"
+          }
+        }
+      },
+      "crawl": {
+        "status": "received",
+        "requestId": "74362baf-1655-44db-8b0f-41eaf9050ca9",
+        "cache": {
+          "age_ms": 0,
+          "status": "miss"
+        },
+        "pages": [
+          {
+            "url": "https://www.nike.com/",
+            "title": "Nike. Just Do It",
+            "success": true,
+            "depth": 0,
+            "markdownChars": 15189
+          },
+          {
+            "url": "https://www.nike.com/jordan",
+            "title": "Jordan",
+            "success": true,
+            "depth": 1,
+            "markdownChars": 6335
+          }
+        ]
+      },
+      "search": {
+        "status": "received",
+        "requestId": "0cc6b6be-6a9c-4c43-a830-96d78666ac09",
+        "cache": {
+          "status": "miss",
+          "age_ms": 0
+        },
+        "count": 10,
+        "results": [
+          {
+            "title": "Nike Debuts a Race-Day System of Speed Designed for ...",
+            "url": "https://about.nike.com/en/newsroom/releases/nike-debuts-a-race-day-system-of-speed-designed-for-every-runner",
+            "relevance": "high"
+          },
+          {
+            "title": "Nike Alphafly 4 Helps More Runners Go the Distance With ...",
+            "url": "https://about.nike.com/en/newsroom/releases/nike-alphafly-4-helps-more-runners-go-the-distance-with-speed-and-confidence",
+            "relevance": "high"
+          },
+          {
+            "title": "Introducing Nike Apex: The Next Leap in Marathon Speed",
+            "url": "https://about.nike.com/en/newsroom/releases/introducing-nike-apex-the-next-leap-in-marathon-speed",
+            "relevance": "high"
+          },
+          {
+            "title": "Nike's running business has been a bright spot for ...",
+            "url": "https://www.instagram.com/p/Dd66oMAF2EL/",
+            "relevance": "high"
+          },
+          {
+            "title": "Nike Swooshfly Makes Race Day Feel More Possible",
+            "url": "https://about.nike.com/en/newsroom/releases/nike-swooshfly-makes-race-day-feel-more-possible",
+            "relevance": "high"
+          },
+          {
+            "title": "Nike's newest line up of racing shoes. The Apex looks ...",
+            "url": "https://www.facebook.com/rossrunningnews/posts/nikes-newest-line-up-of-racing-shoes-the-apex-looks-especially-interesting/1566657642167476/",
+            "relevance": "high"
+          },
+          {
+            "title": "Nike's New Race Day Line Up : r/RunningShoeGeeks",
+            "url": "https://www.reddit.com/r/RunningShoeGeeks/comments/1wu5vup/nikes_new_race_day_line_up/",
+            "relevance": "high"
+          },
+          {
+            "title": "Nike's Super Shoe Architect on the Alphafly 4, Zero-Drop ...",
+            "url": "https://www.youtube.com/watch?v=OohrW6SdhQ0",
+            "relevance": "high"
+          },
+          {
+            "title": "Apex — $350 Nike's most aggressive race-day shoe, built ...",
+            "url": "https://www.instagram.com/reel/Dd71WtLxHN2/",
+            "relevance": "high"
+          },
+          {
+            "title": "Nike's New Super Shoe Is Half the Price of Competitors",
+            "url": "https://www.gearpatrol.com/footwear/nike-swooshfly-announcement/",
+            "relevance": "medium"
+          }
+        ]
+      },
+      "baselineReader": {
+        "status": "failed",
+        "kind": "unavailable"
+      }
+    },
+    "dishoom": {
+      "brand": {
+        "status": "ok",
+        "requestId": "9f4f3f2c-663d-40d1-903b-7c11b0734b86",
+        "cache": {
+          "status": "hit",
+          "age_ms": 7442868832
+        },
+        "title": "Dishoom",
+        "description": "Dishoom is a UK‑based restaurant group that celebrates the flavors and culture of Bombay. Operating a network of stylish cafés in cities such as London, Birmingham, Edinburgh and Glasgow, Dishoom serves all‑day menus of Indian comfort food, from breakfast and street‑style snacks to dinner and late‑night drinks. The brand also offers outdoor dining, private permit rooms for larger gatherings, and a delivery service. Beyond the restaurants, Dishoom runs an online store selling meal kits, food and drink, clothing, homeware and curated gift sets. With a focus on authentic recipes, vibrant storytelling and community‑focused spaces, Dishoom provides a modern, immersive dining experience that brings the spirit of Bombay to its guests.",
+        "slogan": "Each Dishoom is a love letter to Bombay—food and culture",
+        "industry": [
+          {
+            "industry": "Hospitality & Tourism",
+            "subindustry": "Restaurant Tech & Management"
+          },
+          {
+            "industry": "Retail & E-commerce",
+            "subindustry": "Direct-to-Consumer (DTC) Brands"
+          },
+          {
+            "industry": "Retail & E-commerce",
+            "subindustry": "Food, Beverage & Grocery E-commerce"
+          }
+        ]
+      },
+      "style": {
+        "status": "ok",
+        "requestId": "1f953269-ae9d-40e6-a650-d5b6d465c9ff",
+        "cache": {
+          "status": "miss",
+          "age_ms": 0
+        },
+        "finalDOMState": "loaded",
+        "styleguide": {
+          "colors": {
+            "accent": "#e1a894",
+            "background": "#151515",
+            "text": "#fffdf9"
+          },
+          "h1": {
+            "fontFamily": "cheltenhamBT",
+            "fontSize": "32px",
+            "fontWeight": 400,
+            "lineHeight": "41.6px",
+            "letterSpacing": "3.2px",
+            "fontFallbacks": [
+              "cheltenhamBT",
+              "cheltenhamBT Fallback",
+              "ui-serif",
+              "Georgia",
+              "Cambria",
+              "Times New Roman",
+              "Times",
+              "serif"
+            ]
+          },
+          "elementSpacing": {
+            "xs": "8px",
+            "sm": "16px",
+            "md": "40px",
+            "lg": "64px",
+            "xl": "144px"
+          }
+        }
+      },
+      "crawl": {
+        "status": "received",
+        "requestId": "aca63183-1e35-47b5-aaca-8fc829d443ba",
+        "cache": {
+          "age_ms": 0,
+          "status": "miss"
+        },
+        "pages": [
+          {
+            "url": "https://www.dishoom.com/",
+            "title": "Dishoom | Indian Restaurants | From Bombay with Love",
+            "success": true,
+            "depth": 0,
+            "markdownChars": 2078
+          }
+        ]
+      },
+      "search": {
+        "status": "received",
+        "requestId": "03d6aef8-ee2a-4e47-9220-b2d7c93ed87d",
+        "cache": {
+          "status": "miss",
+          "age_ms": 0
+        },
+        "count": 10,
+        "results": [
+          {
+            "title": "Dishoom launches first set menu for diners seeking a speedy lunch",
+            "url": "https://www.thecaterer.com/news/dishoom-launches-first-set-menu-for-diners-seeking-a-speedy-lunch",
+            "relevance": "high"
+          },
+          {
+            "title": "Dishoom opens eighth London restaurant with half-price food offer",
+            "url": "https://www.london-now.co.uk/news/26551185.dishoom-borough-opening-borough-food-offer/",
+            "relevance": "high"
+          },
+          {
+            "title": "Dishoom launches first set menu for diners seeking a speedy lunch",
+            "url": "https://www.thecaterer.com/all-content/dishoom-launches-first-set-menu-for-diners-seeking-a-speedy-lunch",
+            "relevance": "high"
+          },
+          {
+            "title": "Autumn's properly here now — and we think that calls for a ...",
+            "url": "https://www.facebook.com/HeathHayesSpiceTakeaway/posts/autumns-properly-here-now-and-we-think-that-calls-for-a-feastthe-evenings-are-dr/1736058141853423/",
+            "relevance": "high"
+          },
+          {
+            "title": "ALL NEW: Dishoom Manchester announces revamped menu",
+            "url": "https://tasteofmanchester.com/news/all-new-dishoom-manchester-announces-revamped-menu/",
+            "relevance": "high"
+          },
+          {
+            "title": "DISHOOM WELCOMES A FEAST OF BRAND NEW ...",
+            "url": "https://mcrpulse.co.uk/2026/09/24/dishoom-welcomes-a-feast-of-brand-new-dishes-and-drinks-to-its-breakfast-and-all-day-menus/",
+            "relevance": "high"
+          },
+          {
+            "title": "Dishoom posts double digit turnover growth as profits slide",
+            "url": "https://www.thecaterer.com/news/dishoom-posts-double-digit-turnover-growth-as-profits-slide",
+            "relevance": "medium"
+          },
+          {
+            "title": "Dishoom's turnover climbs amid UK expansion",
+            "url": "https://www.facebook.com/RestaurantMagUK/posts/dishooms-turnover-climbs-amid-uk-expansion/1730559005742308/",
+            "relevance": "medium"
+          },
+          {
+            "title": "Dishoom Dinner Tickets, Tuesday 20 October",
+            "url": "https://www.eventbrite.com/e/dishoom-dinner-tickets-2002422357174",
+            "relevance": "medium"
+          },
+          {
+            "title": "Chai Pe Charcha - 9th October 2026",
+            "url": "https://www.dishoom.com/journal/events/chai-pe-charcha-unlearning-taboos-and-writing-your-own-story/",
+            "relevance": "medium"
+          }
+        ]
+      },
+      "baselineReader": {
+        "status": "failed",
+        "kind": "unavailable"
+      }
+    },
+    "linear": {
+      "brand": {
+        "status": "ok",
+        "requestId": "3561db03-1893-4546-9966-683122498d71",
+        "cache": {
+          "status": "hit",
+          "age_ms": 32881273
+        },
+        "title": "Linear",
+        "description": "Linear is a product development platform designed for modern teams and AI‑augmented workflows. It provides a fast, purpose‑built system for planning, tracking, and shipping software, integrating issue tracking, project roadmaps, and PR management in a single interface. Linear’s AI agents help automate tasks such as turning conversations and customer feedback into actionable issues, drafting PRDs, and pushing pull requests. The tool emphasizes speed and clarity, reducing noise and accelerating high‑velocity releases. With deep integrations for Slack, GitHub, and other developer tools, Linear enables teams to move from idea to launch efficiently while maintaining visibility across initiatives and performance metrics.",
+        "slogan": "Purpose-built product development for teams and agents, in the AI era.",
+        "industry": [
+          {
+            "industry": "Technology",
+            "subindustry": "Software (B2B)"
+          },
+          {
+            "industry": "Technology",
+            "subindustry": "Developer Tools & APIs"
+          }
+        ]
+      },
+      "style": {
+        "status": "ok",
+        "requestId": "3d546a89-e06b-4851-82aa-905383e4e49d",
+        "cache": {
+          "status": "miss",
+          "age_ms": 0
+        },
+        "finalDOMState": "loaded",
+        "styleguide": {
+          "colors": {
+            "accent": "#7170ff",
+            "background": "#08090a",
+            "text": "#f7f8f8"
+          },
+          "h1": {
+            "fontFamily": "Inter Variable",
+            "fontSize": "72px",
+            "fontWeight": 510,
+            "lineHeight": "86px",
+            "letterSpacing": "-1.408px",
+            "fontFallbacks": [
+              "Inter Variable",
+              "SF Pro Display",
+              "-apple-system",
+              "BlinkMacSystemFont",
+              "Segoe UI",
+              "Roboto",
+              "Oxygen",
+              "Ubuntu",
+              "Cantarell",
+              "Open Sans",
+              "Helvetica Neue",
+              "sans-serif"
+            ]
+          },
+          "elementSpacing": {
+            "xs": "6px",
+            "sm": "14px",
+            "md": "24px",
+            "lg": "32px",
+            "xl": "112px"
+          }
+        }
+      },
+      "crawl": {
+        "status": "received",
+        "requestId": "b6e92c87-47c6-45ba-8dd7-b341cc82005a",
+        "cache": {
+          "age_ms": 0,
+          "status": "miss"
+        },
+        "pages": [
+          {
+            "url": "https://linear.app/",
+            "title": "Linear – The system for product development",
+            "success": true,
+            "depth": 0,
+            "markdownChars": 10719
+          },
+          {
+            "url": "https://linear.app/customers",
+            "title": "Linear Customers",
+            "success": true,
+            "depth": 1,
+            "markdownChars": 4719
+          },
+          {
+            "url": "https://linear.app/pricing",
+            "title": "Pricing – Linear",
+            "success": true,
+            "depth": 1,
+            "markdownChars": 3286
+          },
+          {
+            "url": "https://linear.app/now",
+            "title": "Now – Updates from the Linear team",
+            "success": true,
+            "depth": 1,
+            "markdownChars": 10086
+          },
+          {
+            "url": "https://linear.app/homepage",
+            "title": "Linear – The system for product development",
+            "success": true,
+            "depth": 1
+          }
+        ]
+      },
+      "search": {
+        "status": "received",
+        "requestId": "5fa0b840-d41b-4811-9ba1-37dddad14a6d",
+        "cache": {
+          "status": "miss",
+          "age_ms": 0
+        },
+        "count": 10,
+        "results": [
+          {
+            "title": "Linear - Product | The Launch Feed",
+            "url": "https://thelaunchfeed.com/product/linear",
+            "relevance": "high"
+          },
+          {
+            "title": "Linear AI features: What the PM tool can do (2026)",
+            "url": "https://www.eesel.ai/blog/linear-ai",
+            "relevance": "medium"
+          },
+          {
+            "title": "Best AI Tools for Product Launch Planning",
+            "url": "https://www.simpliaxis.com/resources/ai-tools-for-product-launch-planning",
+            "relevance": "medium"
+          },
+          {
+            "title": "Linear — Product Marketing Analysis - Koxtra",
+            "url": "https://koxtra.com/companies/linear",
+            "relevance": "medium"
+          },
+          {
+            "title": "Change for the better",
+            "url": "https://linear.app/change",
+            "relevance": "low"
+          },
+          {
+            "title": "Linear Software Pricing, Alternatives & More 2026",
+            "url": "https://www.capterra.com/p/10026109/Linear/",
+            "relevance": "low"
+          },
+          {
+            "title": "Anyone using Linear for product work?",
+            "url": "https://www.reddit.com/r/ProductManagement/comments/1wvn7ta/anyone_using_linear_for_product_work/",
+            "relevance": "low"
+          },
+          {
+            "title": "Review of \"Effective Platform Product Management\" by ...",
+            "url": "https://www.facebook.com/DrSalonen/posts/book-review-for-my-friends-working-in-software-engineering-and-techa-week-ago-i-/10165725582141528/",
+            "relevance": "low"
+          },
+          {
+            "title": "Kiro and Cursor for Efficient Code and PM Collaboration",
+            "url": "https://www.linkedin.com/posts/chrissuh1000_not-just-claude-code-for-me-its-been-kiro-activity-7503431069774303233-YGTr",
+            "relevance": "low"
+          },
+          {
+            "title": "What product looks like when coding is solved",
+            "url": "https://www.youtube.com/watch?v=ZG8Mf3P9xzI",
+            "relevance": "low"
+          }
+        ]
+      },
+      "baselineReader": {
+        "status": "failed",
+        "kind": "unavailable"
+      }
+    }
+  },
+  "downstream": {
+    "brandBrain": "not-run",
+    "hunter": "not-run",
+    "qualityImprovement": "unmeasured",
+    "blockers": [
+      "Kairo public homepage reader returned unavailable for all three brands in this runtime",
+      "No Kairo model, Exa or deployed API credentials are configured in this isolated runtime",
+      "Recorded POC plan set modelCalls to zero"
+    ]
+  },
+  "qualitativeFindings": [
+    "All three site style guides returned colors, heading typography and spacing; each reports a successful response. Style calls used maxAgeMs=0 and each response reported a cache miss.",
+    "Crawl returned 2 Nike pages, 1 Dishoom page and 5 Linear pages. It reached the five-page cap only for Linear; it does not promise five usable pages per site.",
+    "Search returned 10 results per query. Candidate relevance differs by sector and includes third-party publishers; outputs need normal Kairo evidence gates and source review.",
+    "Dishoom brand lookup reports questionable categories including Restaurant Tech & Management and DTC brands. Review against primary sources before using it in Brand Brain.",
+    "Brand lookup results are cached: Dishoom profile age about 86 days; Nike about 15 hours; Linear about 9 hours. Freshness differs across brands.",
+    "Estimated charge is 71 credits at published endpoint rates; actual account credit use is unavailable from the connected tool response."
+  ],
+  "checks": {
+    "collectorUnitTests": "10 passed earlier on branch baseline",
+    "pesValidation": "passed before live test; no code changed during live collection"
+  },
+  "productionChanges": false,
+  "estimatedCredits": {
+    "value": 71,
+    "calculation": "3 brand profiles x 10 + 3 style guides x 10 + 8 successful crawl pages x 1 + 3 searches x 1",
+    "source": "published request prices; connector did not return account credit usage",
+    "isActualUsage": false
+  }
+}
