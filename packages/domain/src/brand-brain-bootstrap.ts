@@ -393,6 +393,7 @@ function editorialWebsiteFallback(references: Array<PublicBrandReference & { sou
       return !["github.com", "instagram.com", "www.instagram.com", "facebook.com", "www.facebook.com"].includes(host)
         && !["substack.com", "www.substack.com", "on.substack.com"].includes(host)
         && !host.endsWith(".substack.com")
+        && !isOutdoorApparelText(`${reference.title ?? ""} ${reference.excerpt}`)
         && isEditorialPublisherText(`${reference.title ?? ""} ${reference.excerpt}`);
     } catch {
       return false;
@@ -492,6 +493,7 @@ function escapeRegExp(value: string): string {
 
 function deriveWebsiteOfferings(title: string, excerpt: string): string {
   const text = `${title} ${excerpt}`;
+  if (isOutdoorApparelText(text)) return "Outdoor clothing, apparel, gear and equipment for outdoor activities";
   if (isEditorialPublisherText(text)) return "Editorial news, culture, lifestyle and community media content";
   if (isVehicleRentalText(text)) return "Vehicle rental and fleet booking services, including online reservations";
   if (isAutomotiveText(text)) return "Automotive, vehicle or mobility products and related owner services";
@@ -502,6 +504,7 @@ function deriveWebsiteOfferings(title: string, excerpt: string): string {
 
 function deriveWebsiteCategory(title: string, excerpt: string): string {
   const text = `${title} ${excerpt}`;
+  if (isOutdoorApparelText(text)) return "Outdoor apparel and gear retailer";
   if (isEditorialPublisherText(text)) return "News, culture and lifestyle media publisher";
   if (isVehicleRentalText(text)) return "Vehicle rental, fleet and mobility services";
   if (isAutomotiveText(text)) return "Automotive, vehicles and mobility";
@@ -512,6 +515,7 @@ function deriveWebsiteCategory(title: string, excerpt: string): string {
 
 function deriveWebsitePositioning(title: string, excerpt: string): string {
   const text = `${title} ${excerpt}`;
+  if (isOutdoorApparelText(text)) return `${title} offers clothing and gear for outdoor activities.`;
   if (isEditorialPublisherText(text)) return `${title} publishes timely local news, culture, lifestyle and community stories for its audience.`;
   if (isVehicleRentalText(text)) return `${title} provides vehicle rental, booking and mobility services for customers and fleets.`;
   if (isAutomotiveText(text)) return `${title} provides vehicle, mobility or ownership value for drivers and riders.`;
@@ -523,6 +527,7 @@ function deriveWebsitePositioning(title: string, excerpt: string): string {
 
 function deriveWebsiteAudience(title: string, excerpt: string): string {
   const text = `${title} ${excerpt}`;
+  if (isOutdoorApparelText(text)) return "Outdoor enthusiasts looking for clothing and gear for their activities";
   if (isEditorialPublisherText(text)) return "Readers seeking timely local news, culture, entertainment, events and lifestyle updates";
   if (isVehicleRentalText(text)) return "People and businesses seeking vehicle rental, mobility or fleet services";
   if (isAutomotiveText(text)) return "Drivers, riders, owners and people researching vehicles or mobility";
@@ -533,6 +538,7 @@ function deriveWebsiteAudience(title: string, excerpt: string): string {
 
 function deriveWebsitePillars(title: string, excerpt: string): string {
   const text = `${title} ${excerpt}`;
+  if (isOutdoorApparelText(text)) return "Outdoor clothing and gear, product use and care, and stories about outdoor activities";
   if (isEditorialPublisherText(text)) return "Local news, culture, entertainment, food, sport, events and community stories";
   if (isDeveloperSoftwareText(text)) return "Software development, programming tutorials, documentation, releases and community updates";
   if (isVehicleRentalText(text)) return "Vehicle selection, rental booking guidance, mobility and fleet updates";
@@ -543,6 +549,7 @@ function deriveWebsitePillars(title: string, excerpt: string): string {
 
 function deriveWebsitePreferredTopics(title: string, excerpt: string): string {
   const text = `${title} ${excerpt}`;
+  if (isOutdoorApparelText(text)) return "Outdoor gear selection, clothing and layering, product care, and outdoor activities";
   if (isEditorialPublisherText(text)) return "Timely local news, events, culture, entertainment, food, sport and community conversations";
   if (isDeveloperSoftwareText(text)) return "Programming capabilities, developer tutorials, documentation, releases and ecosystem news";
   if (isVehicleRentalText(text)) return "Vehicle availability, rental booking, trip planning, mobility guidance and fleet updates";
@@ -560,6 +567,12 @@ function isEditorialPublisherText(value: string): boolean {
   if (/\b(?:news|journalism|journalist|editorial|publication|publisher|magazine|media outlet)\b/.test(normalized)) return true;
   const editorialSignals = ["culture", "lifestyle", "entertainment", "music", "sport", "sports", "shows", "events", "community stories"];
   return editorialSignals.filter((signal) => normalized.includes(signal)).length >= 2;
+}
+
+function isOutdoorApparelText(value: string): boolean {
+  const hasApparel = /\b(?:clothing|apparel|outerwear|jackets|fleece|footwear|worn wear)\b/i.test(value);
+  const hasOutdoorContext = /\b(?:outdoor|climbing|hiking|trail|surf|ski|snow|gear|packs)\b/i.test(value);
+  return hasApparel && hasOutdoorContext;
 }
 
 function isVehicleRentalText(value: string): boolean {

@@ -124,8 +124,8 @@ export function ContentPreviewClient({ item, brandName = "Brand", authenticated,
           <article className="social-preview-card" aria-label={`${item.channel} ${item.formatLabel} preview`}>
             <header><span className="social-brand-avatar">{identity.charAt(0)}</span><strong>{identity}</strong><MoreHorizontal aria-hidden="true"/></header>
             <div className={`social-media-stage format-${item.format}`}>
-              <img src={currentMedia} alt={`${item.title}${media.length > 1 ? ` card ${slide + 1}` : ""}`}/>
-              {item.format === "reel" ? <button type="button" aria-label="Play Reel"><Play aria-hidden="true"/></button> : null}
+              {missingMedia ? <div className="social-media-concept" aria-label="Text concept preview; production media is missing"><span>TEXT CONCEPT</span><strong>{item.title}</strong><p>{caption}</p><small>Attach approved media to complete this preview.</small></div> : <img src={currentMedia} alt={`${item.title}${media.length > 1 ? ` card ${slide + 1}` : ""}`}/>}
+              {item.format === "reel" && !missingMedia ? <button type="button" aria-label="Play Reel"><Play aria-hidden="true"/></button> : null}
               {media.length > 1 ? <><button className="media-previous" type="button" disabled={slide === 0} onClick={() => setSlide((value) => Math.max(0, value - 1))} aria-label="Previous card"><ChevronLeft aria-hidden="true"/></button><button className="media-next" type="button" disabled={slide === media.length - 1} onClick={() => setSlide((value) => Math.min(media.length - 1, value + 1))} aria-label="Next card"><ChevronRight aria-hidden="true"/></button><span className="media-count">{slide + 1}/{item.cardCount ?? media.length}</span></> : null}
             </div>
             <div className="social-actions" aria-hidden="true"><Heart/><MessageCircle/><Send/><Bookmark className="push-right"/></div>
