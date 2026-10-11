@@ -169,6 +169,7 @@ type OpportunityRow = {
   concept_mockup_version: number | null;
   concept_mockup_generated_at: Date | string | null;
   opportunity_intelligence: OpportunityIntelligenceDto | null;
+  evidence_sources: Array<{ id: string; title: string; summary: string | null; sourceUrl: string; publisher: string | null; publishedAt: string | null; retrievedAt: string; provider: string }> | null;
 };
 
 function opportunitySelect(tail: string): string {
@@ -177,7 +178,15 @@ function opportunitySelect(tail: string): string {
                  o.scoring_version,o.brand_context_version,o.opportunity_details,o.concept_mockup,o.concept_mockup_version,
                  o.concept_mockup_generated_at,o.created_at,o.updated_at,
                  max(oi.payload::text)::jsonb as opportunity_intelligence,
-                 coalesce(array_agg(os.signal_id order by os.signal_id) filter (where os.signal_id is not null),'{}'::text[]) as signal_ids
+                 coalesce(array_agg(os.signal_id order by os.signal_id) filter (where os.signal_id is not null),'{}'::text[]) as signal_ids,
+                 coalesce((
+                   select jsonb_agg(jsonb_build_object('id',s.id,'title',s.title,'summary',s.summary,'sourceUrl',s.source_url,
+                     'publisher',s.publisher,'publishedAt',s.published_at,'retrievedAt',s.retrieved_at,'provider',s.provider)
+                     order by s.retrieved_at desc,s.id)
+                     from brand_opportunity_signals evidence_link
+                     join public_signals s on s.id=evidence_link.signal_id
+                    where evidence_link.opportunity_id=o.id and evidence_link.workspace_id=o.workspace_id and evidence_link.brand_id=o.brand_id
+                 ), '[]'::jsonb) as evidence_sources
             from brand_opportunities o
             left join brand_opportunity_signals os on os.opportunity_id=o.id and os.workspace_id=o.workspace_id and os.brand_id=o.brand_id
             left join opportunity_intelligence_v2 oi on oi.opportunity_id=o.id and oi.workspace_id=o.workspace_id and oi.brand_id=o.brand_id
@@ -247,6 +256,13 @@ function toOpportunity(row: OpportunityRow): BrandOpportunityWithConceptDto {
     developmentDirection: row.development_direction,
     status: row.status,
     signalIds: row.signal_ids ?? [],
+    evidenceSources: (row.evidence_sources ?? []).map(({ summary, publisher, publishedAt, ...source }) => ({
+      ...source,
+      ...(summary ? { summary } : {}),
+      ...(publisher ? { publisher } : {}),
+      ...(publishedAt ? { publishedAt: iso(publishedAt) } : {}),
+      retrievedAt: iso(source.retrievedAt),
+    })),
     scores: {
       relevance: Number(row.relevance), evidence: Number(row.evidence), novelty: Number(row.novelty), timeliness: Number(row.timeliness),
       brandAuthority: Number(row.brand_authority), audienceFit: Number(row.audience_fit), overall: Number(row.overall), scoringVersion: row.scoring_version,
