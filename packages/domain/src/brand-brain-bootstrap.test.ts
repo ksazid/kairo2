@@ -197,6 +197,24 @@ describe("BrandBrainBootstrapService", () => {
     }
   });
 
+  it("keeps an outdoor apparel brand out of the publisher category when its source mentions news", async () => {
+    const repository = new FakeRepository();
+    repository.brand = { id: "brand-1", workspaceId: "workspace-1", name: "Patagonia", publicSourceUrl: "https://eu.patagonia.com/gb/en/home" };
+    const service = new BrandBrainBootstrapService(repository, undefined, { read: async (url) => ({
+      url,
+      title: "Patagonia UK | Outdoor Clothing & Gear",
+      excerpt: "Shop outdoor clothing, jackets, fleece, packs and gear. Read news and stories from the field.",
+      retrievedAt: NOW,
+    }) });
+
+    await service.build("account-1", "brand-1", {});
+
+    expect(repository.fields.find((field) => field.fieldKey === "identity.category")?.value).toBe("Outdoor apparel and gear retailer");
+    expect(repository.fields.find((field) => field.fieldKey === "identity.products-services")?.value).toMatch(/outdoor clothing, apparel, gear/i);
+    expect(repository.fields.find((field) => field.fieldKey === "audience.primary")?.value).toMatch(/outdoor enthusiasts/i);
+    expect(repository.fields.find((field) => field.fieldKey === "positioning.value-proposition")?.value).toMatch(/offers clothing and gear/i);
+  });
+
   it("keeps editorial publisher core context truthful when the model returns a conflicting category", async () => {
     const repository = new FakeRepository();
     repository.brand = { id: "brand-1", workspaceId: "workspace-1", name: "Lovin Malta", publicSourceUrl: "https://lovinmalta.com/" };

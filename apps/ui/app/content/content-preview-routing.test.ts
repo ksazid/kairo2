@@ -13,5 +13,8 @@ describe("content preview routing", () => {
     expect(client).not.toContain("legacyHref");
     expect(client).not.toContain("window.location.assign");
     expect(client).toContain('fetch("/api/content/action"');
+    expect(client).toContain("Text concept preview; production media is missing");
+    expect(client).toContain("Attach approved media to complete this preview.");
+    expect(client).toContain("missingMedia ? <div className=\"social-media-concept\"");
   });
 });
