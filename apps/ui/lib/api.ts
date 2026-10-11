@@ -11,6 +11,7 @@ export type HomeOpportunity = {
   whyNow?: string;
   developmentDirection?: string;
   status?: "new" | "saved" | "ignored" | "developing";
+  evidenceSources?: Array<{ id: string; title: string; summary?: string; sourceUrl: string; publisher?: string; publishedAt?: string; retrievedAt: string; provider: string }>;
   createdAt?: string;
   updatedAt?: string;
   scores?: { relevance?: number; audienceFit?: number; overall?: number };
