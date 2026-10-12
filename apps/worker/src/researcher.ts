@@ -181,6 +181,13 @@ export function buildFocusedResearchQuery(subject: string | { title: string; pre
   return focused.length >= 2 ? focused.join(" ") : raw;
 }
 
+/** Build a public-only supplementary query from sources already linked to a Hunter opportunity. */
+export function buildPublicEvidenceQuery(evidence: readonly Pick<DiscoveryEvidence, "title" | "summary">[]): string | undefined {
+  const sourceText = evidence.slice(0, 3).map((item) => `${item.title} ${item.summary ?? ""}`).join(" ").trim();
+  if (!sourceText) return undefined;
+  return buildFocusedResearchQuery(sourceText).slice(0, 1_000) || undefined;
+}
+
 export function extractResearchUrls(idea: { title: string; premise: string }): string[] {
   const raw = `${idea.title} ${idea.premise}`;
   const matches = raw.match(/https?:\/\/[^\s<>"']+/gi) ?? [];

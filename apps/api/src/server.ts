@@ -1,4 +1,5 @@
 import { Pool } from "pg";
+import type { DiscoveryEvidence } from "@kairo/agent-contracts";
 import { buildApp } from "./app";
 import { OidcJwtVerifier } from "./auth";
 import { PgDiscoveryRepository } from"./discovery-postgres-store";
@@ -37,7 +38,7 @@ import{PgBrandCreator}from"./brand-creator";
 import{registerBrandRoutes}from"./brand-routes";
 import {AgentRuntimeRouter,DirectModelRuntime,hermesBridgeRuntimeFromEnv}from"@kairo/worker/agent-runtime";import{openAICompatibleGatewayFromEnv}from"@kairo/worker/model-gateway";import{BrandBrainBuilder}from"@kairo/worker/brand-brain-builder";import{isHunterDeepAnalysisOutput}from"@kairo/worker/hunter-shadow-lane-adapters";import{DrafterGenerationAdapter}from"./drafter-adapter";
 import{HunterOrchestrator,isHunterJudgmentOutput}from"@kairo/worker/hunter";
-import{ResearcherOrchestrator,buildFocusedResearchQuery,extractResearchUrls,isResearcherOutput}from"@kairo/worker/researcher";
+import{ResearcherOrchestrator,buildFocusedResearchQuery,buildPublicEvidenceQuery,extractResearchUrls,isResearcherOutput}from"@kairo/worker/researcher";
 import{StrategistOrchestrator,isStrategistOutput}from"@kairo/worker/strategist";
 import{PgIdeaDevelopmentLock}from"./idea-development-lock";
 import{deterministicFallbackAngles}from"./deterministic-angle-fallback";
@@ -139,12 +140,17 @@ const researcher=runtime?new ResearcherOrchestrator(researchTools,runtime,resear
 const strategist=runtime?new StrategistOrchestrator(runtime,researchStore):undefined;
 const ideaDevelopmentLock=new PgIdeaDevelopmentLock(pool);
 const ideaDeveloper=researcher&&strategist?{
-  async develop(input:{accountId:string;workspaceId:string;brandId:string;brandContextVersion:string;idea:{id:string;title:string;premise:string}}){
+  async develop(input:{accountId:string;workspaceId:string;brandContextVersion:string;brandId:string;idea:{id:string;title:string;premise:string;source?:{type:"opportunity";opportunityId:string}|{type:"user"}}}){
    return ideaDevelopmentLock.run(input.brandId,input.idea.id,async()=>{
     let bundle=await researchStore.getIdeaBundle(input.accountId,input.brandId,input.idea.id);
     if(!bundle)throw new Error("Idea not found");
     if(!bundle.research){
-      const pinnedEvidence=await loadExplicitResearchEvidence(input.idea);
+      const explicitEvidence=await loadExplicitResearchEvidence(input.idea);
+      const opportunityEvidence=input.idea.source?.type==="opportunity"
+        ? await loadOpportunityResearchEvidence(input.accountId,input.brandId,input.idea.source.opportunityId)
+        : [];
+      const pinnedEvidence=[...new Map([...explicitEvidence,...opportunityEvidence].map((item)=>[item.sourceUrl,item])).values()];
+      const publicResearchQuery=buildPublicEvidenceQuery(pinnedEvidence);
       await researcher.run({
         accountId:input.accountId,
         workspaceId:input.workspaceId,
@@ -153,6 +159,7 @@ const ideaDeveloper=researcher&&strategist?{
         idea:input.idea,
         query:researchQuery(input.idea),
         ...(pinnedEvidence.length?{pinnedEvidence}:{}),
+        ...(publicResearchQuery?{publicResearchQuery}:{}),
         maxEvidence:8,
       });
       bundle=await researchStore.getIdeaBundle(input.accountId,input.brandId,input.idea.id);
@@ -437,6 +444,19 @@ async function loadExplicitResearchEvidence(idea:{title:string;premise:string}){
 
 function researchQuery(idea:{title:string;premise:string}){
   return buildFocusedResearchQuery(idea);
+}
+
+async function loadOpportunityResearchEvidence(accountId:string,brandId:string,opportunityId:string):Promise<DiscoveryEvidence[]>{
+  const opportunity=await discoveryStore.getBrandOpportunity(accountId,brandId,opportunityId);
+  return (opportunity?.evidenceSources??[]).map(source=>({
+    title:source.title,
+    ...(source.summary?{summary:source.summary}:{}),
+    sourceUrl:source.sourceUrl,
+    platform:"web",
+    ...(source.publishedAt?{publishedAt:source.publishedAt}:{}),
+    retrievedAt:source.retrievedAt,
+    provider:source.provider,
+  }));
 }
 
 function metaInstagramConfig(){
