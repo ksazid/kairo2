@@ -33,7 +33,7 @@ export interface IdeaDevelopmentPort {
     workspaceId: string;
     brandId: string;
     brandContextVersion: string;
-    idea: { id: string; title: string; premise: string };
+    idea: { id: string; title: string; premise: string; source?: { type: "opportunity"; opportunityId: string } | { type: "user" } };
   }): Promise<void>;
 }
 

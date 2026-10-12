@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { AgentInvocationRequest, AgentRuntimePort, AgentRuntimeResult, DiscoveryEvidence, ToolGatewayPort, ToolRequest, ToolResult } from "@kairo/agent-contracts";
 import type { ResearchDossier } from "@kairo/domain/research";
-import { buildFocusedResearchQuery, extractResearchUrls, ResearcherOrchestrator, type ResearcherOutput } from "./researcher";
+import { buildFocusedResearchQuery, buildPublicEvidenceQuery, extractResearchUrls, ResearcherOrchestrator, type ResearcherOutput } from "./researcher";
 
 const evidence: DiscoveryEvidence[] = [
   {
@@ -197,6 +197,46 @@ describe("VS-72 Research evidence relevance", () => {
 });
 
 describe("VS-73 explicit public Research grounding", () => {
+  it("uses linked Hunter evidence as pinned context and derives supplemental search only from public source text", async () => {
+    const linked: DiscoveryEvidence = {
+      title: "ECOSTEP footwear ecodesign framework",
+      summary: "The project maps EU product design requirements to footwear sourcing and construction.",
+      sourceUrl: "https://example.com/ecostep",
+      platform: "web",
+      retrievedAt: "2026-10-12T00:00:00.000Z",
+      provider: "hunter",
+    };
+    const independent: DiscoveryEvidence = {
+      title: "EU Ecodesign for Sustainable Products Regulation: footwear policy overview",
+      summary: "EU ecodesign product rules establish requirements for footwear design and sourcing.",
+      sourceUrl: "https://example.com/eu-footwear-rules",
+      platform: "web",
+      retrievedAt: "2026-10-12T00:01:00.000Z",
+      provider: "fixture",
+    };
+    const tools = new FakeTools([independent]);
+    const runtime = new FakeRuntime(output());
+    const sink = new FakeSink();
+    const publicResearchQuery = buildPublicEvidenceQuery([linked]);
+    expect(publicResearchQuery).toMatch(/ecostep|footwear|ecodesign/i);
+    expect(publicResearchQuery).not.toMatch(/allbirds|private brand/i);
+
+    const result = await new ResearcherOrchestrator(tools, runtime, sink).run({
+      ...input,
+      idea: { id: "idea-ecostep", title: "ECOSTEP footwear ecodesign rules", premise: "Explain EU product design requirements" },
+      query: "ECOSTEP footwear ecodesign rules",
+      pinnedEvidence: [linked],
+      publicResearchQuery,
+    });
+
+    expect(result.evidenceCount).toBe(2);
+    expect(tools.requests.map((request) => request.input.source ?? "general")).toEqual(["general", "openalex", "crossref"]);
+    expect(sink.saved[0]?.evidence.map((item) => item.sourceUrl)).toEqual([
+      linked.sourceUrl,
+      independent.sourceUrl,
+    ]);
+  });
+
   it("extracts distinct credential-free HTTP(S) URLs from an Idea", () => {
     const urls = extractResearchUrls({
       title: "2026 KTM 390 Duke",
