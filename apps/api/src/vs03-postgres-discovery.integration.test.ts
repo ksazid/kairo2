@@ -117,4 +117,37 @@ describePostgres("PostgreSQL VS-03 Hunter and Discover repository", () => {
     const audit = await pool.query<{ event_type: string }>("select event_type from audit_events where subject_id=$1 order by created_at", [id]);
     expect(audit.rows.map((row) => row.event_type)).toEqual(["opportunity.created", "opportunity.saved", "opportunity.developing"]);
   });
+
+  it("returns the opportunity's actual public evidence references for Discover", async () => {
+    const account = await owner("evidence-reader");
+    const recorded = await service.recordCandidate(account.account.id, account.brand.id, {
+      signal: {
+        title: "Natural materials in footwear",
+        summary: "A public source describing wool footwear materials.",
+        sourceUrl: "https://example.com/materials",
+        platform: "web",
+        publisher: "Example Journal",
+        publishedAt: "2026-10-01T00:00:00.000Z",
+        retrievedAt: "2026-10-02T00:00:00.000Z",
+        provider: "fixture",
+      },
+      title: "Natural materials in footwear",
+      rationale: "Relevant to the Brand",
+      whyNow: "Fresh public evidence",
+      developmentDirection: "Explain the materials",
+      brandContextVersion: "brand@1",
+      scores,
+    });
+
+    const opportunity = recorded.opportunity!;
+    await expect(repository.getBrandOpportunity(account.account.id, account.brand.id, opportunity.id)).resolves.toMatchObject({
+      evidenceSources: [{
+        title: "Natural materials in footwear",
+        summary: "A public source describing wool footwear materials.",
+        sourceUrl: "https://example.com/materials",
+        publisher: "Example Journal",
+        publishedAt: "2026-10-01T00:00:00.000Z",
+      }],
+    });
+  });
 });

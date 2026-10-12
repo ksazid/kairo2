@@ -46,7 +46,7 @@ export class DrafterOrchestrator {
       capabilities: [],
       task: {
         instruction:
-          "Produce only the requested bounded draft revision. Use only the supplied supported selected Claims. Every factual sentence and product specification must be supported by those Claims; omit unsupported specifics and training advice. Preserve the supplied audience, objective and CTA. Return a plain-text publishable caption in content, with no Markdown or inline claim IDs; keep citation IDs only in supportingClaimIds. Obey the supplied channelProfile requirements. Do not invent evidence, results, first-person experience, policy, tools or approval state.",
+          "Produce only the requested bounded draft revision. Use only the supplied supported selected Claims. Every factual sentence and product specification must be supported by those Claims; omit unsupported specifics and training advice. Treat general marketing or platform research as context, never as proof of this Brand's product performance, customers, or outcomes unless a selected Claim explicitly links that evidence to this Brand and claim. Do not invent discounts, offers, endorsements, demographics, product benefits, test results, first-person experience, policies, tools, or approval state; include them only when directly supported by selected Claims or supplied Brand context. Preserve the supplied audience, objective and CTA. Return a plain-text publishable caption in content, with no Markdown or inline claim IDs; keep citation IDs only in supportingClaimIds. Obey the supplied channelProfile requirements.",
         context: {
           campaign: input.campaign,
           asset: {

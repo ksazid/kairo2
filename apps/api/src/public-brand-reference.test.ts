@@ -60,6 +60,16 @@ describe("PublicBrandReferenceHttpReader", () => {
     expect(result.excerpt).not.toContain("office directory");
   });
 
+  it("filters leaked carousel selectors while preserving product copy", async () => {
+    const reader = new PublicBrandReferenceHttpReader({
+      resolveHost: publicHost,
+      transport: async () => ({ status: 200, headers: { "content-type": "text/html" }, body: "<main><h1>Natural wool shoes</h1><p>Comfortable shoes made with merino wool.</p><div>li.swiper-slide-active]:z-1'> SHOP MEN SHOP WOMEN</div></main>" }),
+    });
+    const result = await reader.read("https://example.com");
+    expect(result.excerpt).toContain("Comfortable shoes made with merino wool");
+    expect(result.excerpt).not.toContain("swiper-slide-active");
+  });
+
   it("decodes common typographic HTML entities in extracted website text", async () => {
     const reader = new PublicBrandReferenceHttpReader({
       resolveHost: publicHost,

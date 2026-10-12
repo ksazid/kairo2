@@ -269,6 +269,7 @@ export interface BrandOpportunityDto {
   developmentDirection: string;
   status: OpportunityStatus;
   signalIds: string[];
+  evidenceSources?: Array<Pick<PublicSignalDto, "id" | "title" | "summary" | "sourceUrl" | "publisher" | "publishedAt" | "retrievedAt" | "provider">>;
   scores: OpportunityScoresDto;
   brandContextVersion: string;
   details?: OpportunityDetailsDto;

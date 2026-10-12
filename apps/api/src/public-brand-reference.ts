@@ -342,10 +342,19 @@ function extractHtmlContext(html: string, pageUrl: URL): { title?: string; summa
   const body = firstMatch(withoutNoise, /<main\b[^>]*>([\s\S]*?)<\/main>/i)
     || firstMatch(withoutNoise, /<body\b[^>]*>([\s\S]*?)<\/body>/i)
     || withoutNoise;
-  const visible = normalizeWhitespace(removeKnownFallbackBoilerplate(decodeEntities(body.replace(/<[^>]+>/g, " "))));
+  const visible = normalizeWhitespace(removeKnownFallbackBoilerplate(cleanVisibleHtmlText(decodeEntities(body.replace(/<[^>]+>/g, " ")))));
   const excerpt = joinUnique([title, summary, structured, visible]).slice(0, MAX_EXCERPT);
   const links = extractSameDomainLinks(html, pageUrl);
   return { ...(title ? { title } : {}), ...(summary ? { summary } : {}), excerpt, ...(links.length ? { links } : {}) };
+}
+
+function cleanVisibleHtmlText(value: string): string {
+  return value
+    // Some storefronts interpolate carousel class selectors into visible text when
+    // their markup is malformed (for example: `li.swiper-slide-active]:z-1'>`).
+    .replace(/\b(?:[a-z][\w-]*\.)+[\w:[\]#>.'"=-]+/gi, " ")
+    .replace(/(?:^|\s)[\w-]+\s*\{[^}]{0,240}\}/g, " ")
+    .replace(/\s+/g, " ");
 }
 
 function removeKnownFallbackBoilerplate(value: string): string {

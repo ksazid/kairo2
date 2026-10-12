@@ -66,7 +66,7 @@ export default async function DiscoverPreviewPage({ params, searchParams }: { pa
       </aside>
     </section>
     <section className="discover-evidence" id="public-evidence">
-      <div><span>01</span><h2>Source</h2><p>{card.source}</p></div>
+      <div><span>01</span><h2>Sources</h2>{card.evidenceSources?.length ? <ul>{card.evidenceSources.map((source) => <li key={source.id}><a href={safeSourceUrl(source.sourceUrl)} target="_blank" rel="noreferrer">{source.title}</a>{source.publisher ? <small> · {source.publisher}</small> : null}{source.publishedAt ? <small> · {new Date(source.publishedAt).toLocaleDateString("en", { dateStyle: "medium", timeZone: "UTC" })}</small> : null}{source.summary ? <p>{source.summary}</p> : null}</li>)}</ul> : <p>{card.source}</p>}</div>
       <div><span>02</span><h2>Audience</h2><p>{card.details?.targetAudience ?? "Your most relevant audience"}</p></div>
       <div><span>03</span><h2>Confidence</h2><p>{card.confidence}% Brand Intelligence confidence for this opportunity.</p></div>
     </section>
@@ -78,4 +78,13 @@ function channelIcon(channel: string) {
   if (channel === "Facebook") return Facebook;
   if (channel === "YouTube") return Youtube;
   return Instagram;
+}
+
+function safeSourceUrl(value: string) {
+  try {
+    const url = new URL(value);
+    return ["https:", "http:"].includes(url.protocol) ? url.toString() : "#public-evidence";
+  } catch {
+    return "#public-evidence";
+  }
 }

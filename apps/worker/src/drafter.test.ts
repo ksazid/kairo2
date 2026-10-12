@@ -108,6 +108,14 @@ describe("Drafter", () => {
     });
   });
 
+  it("instructs the model to keep research context separate from Brand-specific claims", async () => {
+    const runtime = new Runtime({ content: "Supported", supportingClaimIds: ["claim-1"] });
+    await new DrafterOrchestrator(runtime).run(input);
+    const instruction = runtime.last?.task.instruction ?? "";
+    expect(instruction).toMatch(/general marketing or platform research as context, never as proof/i);
+    expect(instruction).toMatch(/Do not invent discounts, offers, endorsements, demographics/i);
+  });
+
   it("rejects invented Claim references before persistence", async () => {
     await expect(
       new DrafterOrchestrator(new Runtime({ content: "Invented", supportingClaimIds: ["unknown"] })).run(input),
