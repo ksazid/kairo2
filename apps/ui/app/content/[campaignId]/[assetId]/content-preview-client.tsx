@@ -8,6 +8,7 @@ import {
   ChevronRight,
   Facebook,
   Heart,
+  ImagePlus,
   Instagram,
   Linkedin,
   Lock,
@@ -33,6 +34,9 @@ type ActionContext = {
   approvedAccountId?: string;
 };
 
+type LibraryAsset = { id: string; name: string; kind: string; mimeType: string; previewRef?: string; libraryId: string };
+type MediaLibraryResponse = { libraries: Array<{ id: string; name: string; status: string; provider: string }>; assets: LibraryAsset[] };
+
 export function ContentPreviewClient({ item, brandName = "Brand", authenticated, actionContext }: { item: ContentItem; brandName?: string; authenticated: boolean; actionContext?: ActionContext }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -46,6 +50,9 @@ export function ContentPreviewClient({ item, brandName = "Brand", authenticated,
   const [accountId, setAccountId] = useState(actionContext?.approvedAccountId ?? actionContext?.eligibleAccounts[0]?.id ?? "");
   const [scheduledFor, setScheduledFor] = useState(defaultScheduleTime);
   const [reviewFindings, setReviewFindings] = useState(actionContext?.findings ?? []);
+  const [mediaLibrary, setMediaLibrary] = useState<MediaLibraryResponse | null>(null);
+  const [selectedMedia, setSelectedMedia] = useState<string[]>([]);
+  const [mediaLoading, setMediaLoading] = useState(false);
   const identity = actionContext?.eligibleAccounts.find(account => account.id === accountId)?.displayName ?? brandName;
   const missingMedia = !item.media.some(ref => ref !== "/kairo-media-placeholder.svg");
   const copyChanged = captionNeedsSave(item.rawContent, caption);
@@ -114,6 +121,31 @@ export function ContentPreviewClient({ item, brandName = "Brand", authenticated,
     setNotice("Preview scheduled for the next available slot.");
   }
 
+  async function openMediaLibrary() {
+    if (!actionContext) return;
+    setMediaLoading(true); setError(""); setNotice("");
+    try {
+      const response = await fetch(`/api/content/media?brandId=${encodeURIComponent(actionContext.brandId)}`);
+      const result = await response.json() as MediaLibraryResponse & { error?: string };
+      if (!response.ok) throw new Error(result.error ?? "Kairo could not load the Brand media library.");
+      setMediaLibrary(result);
+      setSelectedMedia([]);
+    } catch (failure) { setError(failure instanceof Error ? failure.message : "Kairo could not load media."); }
+    finally { setMediaLoading(false); }
+  }
+
+  async function attachMedia() {
+    if (!actionContext || !selectedMedia.length) return;
+    setMediaLoading(true); setError(""); setNotice("");
+    try {
+      const response = await fetch("/api/content/media", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ brandId: actionContext.brandId, campaignId: item.campaignId, assetId: item.id, expectedVersion: item.currentVersion, libraryAssetIds: selectedMedia }) });
+      const result = await response.json() as { error?: string; message?: string };
+      if (!response.ok) throw new Error(result.error ?? "Kairo could not attach these assets.");
+      setMediaLibrary(null); setNotice(result.message ?? "Media attached."); router.refresh();
+    } catch (failure) { setError(failure instanceof Error ? failure.message : "Kairo could not attach media."); }
+    finally { setMediaLoading(false); }
+  }
+
   return <>
     <div className="content-preview-grid">
       <section className="content-preview-panel" aria-labelledby="preview-heading">
@@ -144,7 +176,7 @@ export function ContentPreviewClient({ item, brandName = "Brand", authenticated,
       </aside>
     </div>
 
-    {authenticated && (reviewFindings.length > 0 || missingMedia || !accountId || copyChanged) ? <section aria-label="Required changes" className="content-review-findings"><h2>Before approval</h2><ul>{reviewFindings.map((finding,index) => <li key={index}>{finding}</li>)}{missingMedia ? <li>Production media is missing. Attach an approved image through the asset-library workflow, then review the new version.</li> : null}{!accountId ? <li>Connect a publishing account in Settings before approving.</li> : null}{copyChanged ? <li>Save the cleaned caption as a new version, then run readiness review.</li> : null}</ul></section> : null}
+    {authenticated && (reviewFindings.length > 0 || missingMedia || !accountId || copyChanged) ? <section aria-label="Required changes" className="content-review-findings"><h2>Before approval</h2><ul>{reviewFindings.map((finding,index) => <li key={index}>{finding}</li>)}{missingMedia ? <li>Production media is missing. Choose approved image assets from the Brand library to complete this post.</li> : null}{!accountId ? <li>Connect a publishing account in Settings before approving.</li> : null}{copyChanged ? <li>Save the cleaned caption as a new version, then run readiness review.</li> : null}</ul>{missingMedia && actionContext && !approved ? <div className="content-media-picker"><button type="button" disabled={mediaLoading || pending} onClick={() => void openMediaLibrary()}><ImagePlus aria-hidden="true"/>{mediaLoading ? "Loading media…" : "Choose media"}</button>{mediaLibrary ? <><p>{mediaLibrary.assets.length ? `Select production image${mediaLibrary.assets.length === 1 ? "" : "s"} from the Brand library.` : "No indexed images are available in the Brand library."}</p><div role="group" aria-label="Production media library">{mediaLibrary.assets.filter((asset) => asset.kind === "image" && asset.previewRef).map((asset) => <label key={asset.id}><input type="checkbox" checked={selectedMedia.includes(asset.id)} onChange={(event) => setSelectedMedia((current) => event.target.checked ? [...current, asset.id] : current.filter((id) => id !== asset.id))}/>{asset.previewRef ? <img src={asset.previewRef} alt=""/> : null}<span>{asset.name}</span></label>)}</div>{mediaLibrary.libraries.length === 0 ? <small>No media libraries are configured. Connect Google Drive from Settings to add approved assets.</small> : null}{mediaLibrary.assets.length > 0 ? <button type="button" disabled={mediaLoading || pending || selectedMedia.length === 0 || selectedMedia.length > 12} onClick={() => void attachMedia()}>{mediaLoading ? "Attaching…" : `Attach ${selectedMedia.length || "selected"} image${selectedMedia.length === 1 ? "" : "s"}`}</button> : null}</> : null}</div> : null}</section> : null}
     <section className="content-approval-bar" aria-label="Approval actions"><div><span><Lock aria-hidden="true"/></span><p><strong>{scheduled ? "Scheduled" : approved ? "Approved & locked" : reviewStatus === "passed" ? "Ready to approve" : reviewStatus === "revision-required" ? "Changes needed" : "Needs review"}</strong><small>{scheduled ? "This content is ready for its publishing slot." : approved ? "This exact version is locked for its destination." : reviewStatus === "revision-required" ? "Make the required changes and run the review again." : "Run readiness review before approval."}</small></p></div><div className="content-approval-controls">{authenticated && !approved && reviewStatus !== "passed" ? <button type="button" disabled={pending || copyChanged} onClick={() => run("review")}><Sparkles/>{reviewStatus === "revision-required" ? "Check again" : "Check readiness"}</button> : null}{authenticated && !approved && actionContext && actionContext.eligibleAccounts.length > 1 ? <select aria-label="Publishing destination" value={accountId} disabled={pending} onChange={(event) => setAccountId(event.target.value)}>{actionContext.eligibleAccounts.map((account) => <option key={account.id} value={account.id}>{account.displayName}</option>)}</select> : null}<button className="approve" type="button" disabled={pending || approved || (authenticated && (reviewStatus !== "passed" || !accountId || copyChanged))} onClick={approve}>{approved ? <Check/> : <Lock/>}{approved ? "Approved & Locked" : "Approve & Lock"}</button>{authenticated && approved && !scheduled ? <input aria-label="Publishing time" type="datetime-local" value={scheduledFor} min={defaultScheduleTime()} disabled={pending} onChange={(event) => setScheduledFor(event.target.value)}/> : null}<button type="button" disabled={pending || !approved || scheduled || (authenticated && !actionContext?.approvedAccountId)} onClick={schedule}><CalendarDays/>{scheduled ? "Scheduled" : "Schedule"}</button></div></section>
   </>;
 }
