@@ -76,6 +76,8 @@ import{MetaMcpToolHandler}from"./meta-mcp-tools";
 import{registerMetaMcpRoutes}from"./meta-mcp-routes";
 import{SimpleCreationService}from"./simple-creation";import{PgSimpleCreationStore}from"./simple-creation-postgres";import{registerSimpleCreationRoutes}from"./simple-creation-routes";
 import{homeMediaServiceFromEnv}from"./home-media-factory";
+import{imageGeneratorFromEnv}from"./image-generator";
+import{registerContentImageGenerationRoutes}from"./content-image-generation-routes";
 import{BrandPresenterService}from"./brand-presenter";import{registerBrandPresenterRoutes}from"./brand-presenter-routes";
 import{SimplePublishFlowService}from"@kairo/domain/simple-publish-flow";import{PgSimplePublishFlowRepository}from"./simple-publish-flow-postgres";import{registerSimplePublishFlowRoutes}from"./simple-publish-flow-routes";
 import{PgCommandSearchRepository}from"./command-search-postgres";import{registerCommandSearchRoutes}from"./command-search-routes";
@@ -197,8 +199,10 @@ const app = buildApp({
 });
 const simpleCreationStore=new PgSimpleCreationStore(pool);
 const homeMediaService=homeMediaServiceFromEnv(simpleCreationStore.homeMedia);
+const imageGenerator=imageGeneratorFromEnv();
 const simpleCreationReviewer=criticEvaluator?new ReviewService(campaignStore,researchStore,reviewStore,criticEvaluator):undefined;
 registerBrandPresenterRoutes(app,{coreStore,identityVerifier,service:new BrandPresenterService(simpleCreationStore)});
+registerContentImageGenerationRoutes(app,{coreStore,campaignStore,libraryStore:contentAssetLibraryStore,identityVerifier,...(homeMediaService?{homeMedia:homeMediaService}:{}),...(imageGenerator?{imageGenerator}:{})});
 let simpleCreationService:SimpleCreationService|undefined;let simpleCreationRunning=false;
 if(ideaDeveloper){simpleCreationService=new SimpleCreationService(simpleCreationStore,researchStore,campaignStore,ideaDeveloper,undefined,undefined,contentGenerator,(accountId,brandId)=>coreStore.listBrandBrainFields(accountId,brandId),simpleCreationReviewer);registerSimpleCreationRoutes(app,{coreStore,identityVerifier,service:simpleCreationService,...(homeMediaService?{homeMedia:homeMediaService}:{}),trigger:()=>void collectSimpleCreationTick()});}
 registerBrandRoutes(app,{store:coreStore,creator:brandCreator,identityVerifier});

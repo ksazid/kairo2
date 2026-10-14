@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const api = vi.hoisted(() => ({
-  approveContentVersion: vi.fn(), getContentData: vi.fn(), reviewContentVersion: vi.fn(), saveContentVersion: vi.fn(), scheduleContentVersion: vi.fn(),
+  approveContentVersion: vi.fn(), generateContentImage: vi.fn(), getContentData: vi.fn(), reviewContentVersion: vi.fn(), saveContentVersion: vi.fn(), scheduleContentVersion: vi.fn(),
 }));
 vi.mock("../../../../lib/api", () => api);
 import { POST } from "./route";
@@ -28,6 +28,14 @@ describe("V2 content actions", () => {
     api.reviewContentVersion.mockResolvedValue({ status: "passed" });
     expect((await POST(request("review"))).status).toBe(200);
     expect(api.reviewContentVersion).toHaveBeenCalledWith("brand-1", "campaign-1", "asset-1", 2);
+  });
+
+  it("generates an image for the authenticated Brand and campaign asset", async () => {
+    api.generateContentImage.mockResolvedValue({ mediaAssetId: "media-1", source: "generated", mimeType: "image/png", contentVersion: 3 });
+    const response = await POST(request("generate-image"));
+    expect(response.status).toBe(200);
+    expect(api.generateContentImage).toHaveBeenCalledWith("brand-1", "campaign-1", "asset-1", 2);
+    expect(await response.json()).toMatchObject({ message: expect.stringContaining("generated an image") });
   });
 
   it("binds approval to a server-verified connected destination", async () => {

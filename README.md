@@ -12,6 +12,10 @@ Standalone Kairo v2: brand intelligence, discovery, content creation, campaign p
 
 Kairo 2 uses the PES v2 template below as its governance and certification foundation.
 
+## Draft image generation
+
+Authenticated users can generate a single-image Instagram or Facebook Post from its preview. Kairo stores the image in private, Brand-scoped media, attaches it as a new content version, and leaves it in draft for human review. Generation requires `OPENAI_API_KEY` and the existing private object-storage environment (`OBJECT_STORAGE_ENDPOINT`, `OBJECT_STORAGE_REGION`, `OBJECT_STORAGE_BUCKET`, `OBJECT_STORAGE_ACCESS_KEY_ID`, and `OBJECT_STORAGE_SECRET_ACCESS_KEY`). `KAIRO_IMAGE_MODEL` optionally selects the image model; the default is `gpt-image-1.5`. The provider is called only when a user clicks **Generate image**.
+
 # Product Engineering Starter v2 (PES v2)
 
 PES v2 is a **graph-aware product engineering governance system**. It preserves PES governance—typed approvals, vertical slices, deterministic gates, exact-SHA certification, rollback and human release authority—while making execution, evidence lineage and durable product memory first-class.

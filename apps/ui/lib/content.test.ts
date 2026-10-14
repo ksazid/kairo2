@@ -74,6 +74,17 @@ describe("Kairo UI v2 Content behavior", () => {
       expect.objectContaining({ id: "asset", caption: "Take the coast road.", channel: "LinkedIn", format: "reel", status: "in-review", image: "https://images.example/coast.jpg" }),
     ]);
   });
+
+  it("resolves private Brand media references from signed home-media previews", () => {
+    const details = [{
+      campaign: { id: "campaign", ideaId: "idea", name: "Summer Guide", objective: "Drive bookings", status: "draft", createdAt: "2026-08-01T00:00:00Z" },
+      assets: [{
+        asset: { id: "asset", campaignId: "campaign", topic: "Malta coast", format: "image", channel: "instagram", audience: "Visitors", cta: "Book now", createdAt: "2026-08-01T00:00:00Z" },
+        versions: [{ id: "version", assetId: "asset", content: "Take the coast road.", libraryAssetRefs: [{ libraryAssetId: "generated-1", kind: "image" }], createdAt: "2026-08-02T00:00:00Z" }],
+      }],
+    }] as CampaignDetailView[];
+    expect(toContentItems(details, {}, [], { "generated-1": "https://private-media.example/signed.png" })[0]?.media).toEqual(["https://private-media.example/signed.png"]);
+  });
 });
 
 it("detects sanitized copy edits without false changes from JSON formatting or crashing on empty edits", () => {

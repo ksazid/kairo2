@@ -108,9 +108,10 @@ export function toCampaignItems(
   details: CampaignDetailView[],
   reviews: Record<string, ContentReviewStatusView | null>,
   commands: PublishCommandView[],
+  mediaPreviews: Record<string, string> = {},
 ): CampaignItem[] {
   return details.map((detail) => {
-    const assets = toContentItems([detail], reviews, commands);
+    const assets = toContentItems([detail], reviews, commands, mediaPreviews);
     const created = new Date(detail.campaign.createdAt);
     const end = new Date(created);
     end.setUTCDate(end.getUTCDate() + 30);

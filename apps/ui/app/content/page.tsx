@@ -9,7 +9,7 @@ type SearchParams = Promise<{ brand?: string; authError?: string }>;
 export default async function ContentPage({ searchParams }: { searchParams: SearchParams }) {
   const params = await searchParams;
   const data = requirePageAuthentication(await getContentData(params.brand), "/content");
-  const projected = toContentItems(data.details, data.reviews, data.commands);
+  const projected = toContentItems(data.details, data.reviews, data.commands, data.mediaPreviews);
   const items = projected;
 
   return <KairoShell
