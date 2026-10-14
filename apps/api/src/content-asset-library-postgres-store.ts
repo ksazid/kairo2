@@ -50,7 +50,14 @@ export class PgContentAssetLibraryRepository implements ContentAssetLibraryRepos
       if (query.libraryId) { values.push(query.libraryId); clauses.push(`library_id=$${values.length}`); }
       if (query.kind) { values.push(query.kind); clauses.push(`kind=$${values.length}`); }
       if (query.query) { values.push(`%${escapeLike(query.query)}%`); clauses.push(`(lower(name) like $${values.length} escape '\\' or lower(mime_type) like $${values.length} escape '\\')`); }
-      const result = await client.query(`select * from content_library_assets where ${clauses.join(" and ")} order by modified_at desc nulls last, lower(name), id`, values);
+      const result = await client.query(
+        `select a.* from content_library_assets a
+         join content_asset_libraries l
+           on l.id=a.library_id and l.workspace_id=a.workspace_id and l.brand_id=a.brand_id
+         where ${clauses.map((clause) => clause.replace(/\\b(workspace_id|brand_id|library_id|kind|name|mime_type)\\b/g, "a.$1")).join(" and ")}
+         order by a.modified_at desc nulls last, lower(a.name), a.id`,
+        values,
+      );
       return result.rows.map(mapAsset);
     } finally { client.release(); }
   }
@@ -61,7 +68,10 @@ export class PgContentAssetLibraryRepository implements ContentAssetLibraryRepos
     try {
       const workspaceId = await scope(client, accountId, brandId);
       const result = await client.query(
-        `select * from content_library_assets where workspace_id=$1 and brand_id=$2 and id=any($3::text[])`,
+        `select a.* from content_library_assets a
+         join content_asset_libraries l
+           on l.id=a.library_id and l.workspace_id=a.workspace_id and l.brand_id=a.brand_id
+         where a.workspace_id=$1 and a.brand_id=$2 and a.id=any($3::text[])`,
         [workspaceId, brandId, assetIds],
       );
       return result.rows.map(mapAsset);
