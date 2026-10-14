@@ -55,6 +55,11 @@ export class PgContentAssetLibraryRepository implements ContentAssetLibraryRepos
          join content_asset_libraries l
            on l.id=a.library_id and l.workspace_id=a.workspace_id and l.brand_id=a.brand_id
          where ${clauses.join(" and ")}
+           and not exists (
+             select 1 from content_library_asset_exclusions x
+             where x.workspace_id=a.workspace_id and x.brand_id=a.brand_id
+               and x.library_id=a.library_id and x.external_id=a.external_id
+           )
          order by a.modified_at desc nulls last, lower(a.name), a.id`,
         values,
       );
@@ -71,7 +76,12 @@ export class PgContentAssetLibraryRepository implements ContentAssetLibraryRepos
         `select a.* from content_library_assets a
          join content_asset_libraries l
            on l.id=a.library_id and l.workspace_id=a.workspace_id and l.brand_id=a.brand_id
-         where a.workspace_id=$1 and a.brand_id=$2 and a.id=any($3::text[])`,
+         where a.workspace_id=$1 and a.brand_id=$2 and a.id=any($3::text[])
+           and not exists (
+             select 1 from content_library_asset_exclusions x
+             where x.workspace_id=a.workspace_id and x.brand_id=a.brand_id
+               and x.library_id=a.library_id and x.external_id=a.external_id
+           )`,
         [workspaceId, brandId, assetIds],
       );
       return result.rows.map(mapAsset);
