@@ -54,7 +54,7 @@ export class PgContentAssetLibraryRepository implements ContentAssetLibraryRepos
         `select a.* from content_library_assets a
          join content_asset_libraries l
            on l.id=a.library_id and l.workspace_id=a.workspace_id and l.brand_id=a.brand_id
-         where ${clauses.map((clause) => clause.replace(/\\b(workspace_id|brand_id|library_id|kind|name|mime_type)\\b/g, "a.$1")).join(" and ")}
+         where ${clauses.join(" and ")}
          order by a.modified_at desc nulls last, lower(a.name), a.id`,
         values,
       );
