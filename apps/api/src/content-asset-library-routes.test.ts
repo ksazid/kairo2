@@ -48,11 +48,6 @@ describe("VS-59 Content Asset Library API", () => {
     const foreign = await app.inject({ method: "GET", url: `/api/v1/brands/${brandId}/content-asset-libraries`, headers: { authorization: "Bearer test:bob" } });
     expect(foreign.statusCode).toBe(404);
 
-
-
-    await app.close();
-  });
-
     await app.close();
   });
 
@@ -81,4 +76,7 @@ describe("VS-59 Content Asset Library API", () => {
     const response = await app.inject({ method: "GET", url: `/api/v1/brands/${brandId}/content-assets?kind=image`, headers: { authorization: "Bearer test:alice" } });
     expect(response.statusCode).toBe(200);
     expect(response.json().map((item: ContentLibraryAsset) => item.id)).toEqual(["kairo-photo"]);
+
+    await app.close();
+  });
 });
