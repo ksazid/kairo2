@@ -50,4 +50,33 @@ describe("VS-59 Content Asset Library API", () => {
 
     await app.close();
   });
+
+  it("excludes assets whose library belongs to another brand", async () => {
+    const core = new MemoryKairoRepository();
+    const store = new MemoryLibraryStore();
+    const verifier = new Verifier();
+    const app = buildApp({ store: core, identityVerifier: verifier });
+    registerContentAssetLibraryRoutes(app, { coreStore: core, libraryStore: store, identityVerifier: verifier });
+
+    const setup = await app.inject({ method: "POST", url: "/api/v1/workspaces", headers: { authorization: "Bearer test:alice" }, payload: { workspaceName: "Studio", brandName: "Kairo" } });
+    const brandId = setup.json().brand.id as string;
+    const created = await app.inject({ method: "POST", url: `/api/v1/brands/${brandId}/content-asset-libraries`, headers: { authorization: "Bearer test:alice" }, payload: { name: "Kairo Photos", provider: "manual" } });
+    const currentLibrary = created.json() as ContentAssetLibrary;
+    const foreignLibrary: ContentAssetLibrary = { ...currentLibrary, id: "foreign-library", workspaceId: "foreign-workspace", brandId: "foreign-brand", name: "Cafejubilee" };
+    store.libraries.push(currentLibrary, foreignLibrary);
+    const indexedAt = new Date().toISOString();
+    const asset = (id: string, libraryId: string, workspaceId: string, name: string): ContentLibraryAsset => ({
+      id, workspaceId, brandId, libraryId, externalId: id, name, kind: "image", mimeType: "image/jpeg", indexedAt,
+    });
+    store.assets.push(
+      asset("kairo-photo", currentLibrary.id, currentLibrary.workspaceId, "KTM Duke"),
+      asset("foreign-photo", foreignLibrary.id, currentLibrary.workspaceId, "Cafejubilee dashboard"),
+    );
+
+    const response = await app.inject({ method: "GET", url: `/api/v1/brands/${brandId}/content-assets?kind=image`, headers: { authorization: "Bearer test:alice" } });
+    expect(response.statusCode).toBe(200);
+    expect(response.json().map((item: ContentLibraryAsset) => item.id)).toEqual(["kairo-photo"]);
+
+    await app.close();
+  });
 });

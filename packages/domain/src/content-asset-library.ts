@@ -87,13 +87,26 @@ export class ContentAssetLibraryService {
   }
 
   async listAssets(accountId: string, brandId: string, query: ContentAssetLibraryQuery = {}) {
-    await this.requireBrand(accountId, brandId);
+    const brand = await this.requireBrand(accountId, brandId);
     const normalized = normalizeQuery(query);
     if (normalized.libraryId) {
       const library = await this.repository.getLibrary(accountId, brandId, normalized.libraryId);
       if (!library) throw new ResourceNotFoundError("Content Asset Library not found");
     }
-    return this.repository.listAssets(accountId, brandId, normalized);
+    const [libraries, assets] = await Promise.all([
+      this.repository.listLibraries(accountId, brandId),
+      this.repository.listAssets(accountId, brandId, normalized),
+    ]);
+    const scopedLibraryIds = new Set(
+      libraries
+        .filter((library) => library.workspaceId === brand.workspaceId && library.brandId === brandId)
+        .map((library) => library.id),
+    );
+    return assets.filter((asset) =>
+      asset.workspaceId === brand.workspaceId &&
+      asset.brandId === brandId &&
+      scopedLibraryIds.has(asset.libraryId),
+    );
   }
 
   async createLibrary(accountId: string, brandId: string, input: { name: string; provider?: ContentAssetProvider }) {
