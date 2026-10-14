@@ -64,6 +64,7 @@ interface StoredMediaAsset {
 
 export interface HomeMediaRepository {
   createUploading(value: StoredMediaAsset): Promise<void>;
+  createGeneratedReady(value: StoredMediaAsset, readyAt: string): Promise<StoredMediaAsset>;
   getUploadingForCompletion(accountId: string, brandId: string, assetId: string): Promise<StoredMediaAsset | null>;
   markReady(asset: StoredMediaAsset, readyAt: string): Promise<StoredMediaAsset>;
   listReady(accountId: string, brandId: string): Promise<StoredMediaAsset[]>;
@@ -100,6 +101,37 @@ export class PgHomeMediaRepository implements HomeMediaRepository {
         value.createdAt,
       ],
     );
+  }
+
+  async createGeneratedReady(value: StoredMediaAsset, readyAt: string) {
+    if (value.source !== "generated" || value.status !== "ready") throw new DomainValidationError("Generated media must be ready and Brand scoped");
+    const client = await this.pool.connect();
+    try {
+      await client.query("begin");
+      const membership = await client.query(
+        `select 1 from workspace_memberships where workspace_id=$1 and account_id=$2 and active=true`,
+        [value.workspaceId, value.accountId],
+      );
+      if (!membership.rowCount) throw new ResourceNotFoundError("Brand not found");
+      const libraryId = await ensureKairoMediaLibrary(client, value.workspaceId, value.brandId, readyAt);
+      await client.query(
+        `insert into media_assets(
+          id,account_id,workspace_id,brand_id,source,object_key,original_filename,kind,mime_type,size_bytes,status,ready_at,library_asset_id,created_at,updated_at
+        ) values($1,$2,$3,$4,'generated',$5,$6,'image',$7,$8,'ready',$9,$1,$9,$9)`,
+        [value.id,value.accountId,value.workspaceId,value.brandId,value.objectKey,value.fileName,value.mimeType,value.sizeBytes,readyAt],
+      );
+      await client.query(
+        `insert into content_library_assets(
+          id,workspace_id,brand_id,library_id,external_id,name,kind,mime_type,size_bytes,modified_at,provider_ref,preview_ref,indexed_at
+        ) values($1,$2,$3,$4,$1,$5,'image',$6,$7,$8,null,null,$8)`,
+        [value.id,value.workspaceId,value.brandId,libraryId,value.fileName,value.mimeType,value.sizeBytes,readyAt],
+      );
+      await client.query("commit");
+      return { ...value, readyAt };
+    } catch (error) {
+      await client.query("rollback");
+      throw error;
+    } finally { client.release(); }
   }
 
   async getUploadingForCompletion(accountId: string, brandId: string, assetId: string) {
@@ -260,6 +292,26 @@ export class HomeMediaService {
 
   requireAssets(accountId: string, brandId: string, ids: string[]) {
     return this.repository.requireAssets(accountId, brandId, ids);
+  }
+
+  async saveGeneratedImage(accountId: string, workspaceId: string, brandId: string, input: { name: string; mimeType: string; bytes: Uint8Array }) {
+    const fileName = typeof input?.name === "string" ? input.name.trim().slice(0, 240) : "";
+    const mimeType = typeof input?.mimeType === "string" ? input.mimeType.trim().toLowerCase() : "";
+    const bytes = input?.bytes;
+    if (!fileName) throw new DomainValidationError("Generated image name is required");
+    if (!IMAGE_MIME.has(mimeType)) throw new DomainValidationError("Generated image must be JPEG, PNG, or WebP");
+    if (!(bytes instanceof Uint8Array) || bytes.byteLength < 1 || bytes.byteLength > IMAGE_MAX_BYTES) throw new DomainValidationError("Generated image must be 25 MiB or smaller");
+    const createdAt = this.now();
+    const id = randomUUID();
+    const objectKey = privateMediaObjectKey(workspaceId, brandId, id);
+    const uploadUrl = await this.uploadSigner.signPut({ objectKey, contentType: mimeType, expiresInSeconds: 300 });
+    const response = await this.fetcher(uploadUrl, { method: "PUT", headers: { "content-type": mimeType }, body: Buffer.from(bytes) });
+    if (!response.ok) throw new Error("Generated image could not be saved to private Brand media");
+    const asset = await this.repository.createGeneratedReady({
+      id, accountId, workspaceId, brandId, source: "generated", objectKey, fileName, kind: "image", mimeType,
+      sizeBytes: bytes.byteLength, status: "ready", createdAt: createdAt.toISOString(), updatedAt: createdAt.toISOString(),
+    }, createdAt.toISOString());
+    return this.toView(asset);
   }
 
   private async verifyObject(upload: StoredMediaAsset) {

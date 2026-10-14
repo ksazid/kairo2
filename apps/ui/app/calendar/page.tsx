@@ -10,7 +10,7 @@ type SearchParams = Promise<{ brand?: string; authError?: string }>;
 export default async function CalendarPage({ searchParams }: { searchParams: SearchParams }) {
   const params = await searchParams;
   const data = requirePageAuthentication(await getContentData(params.brand), "/calendar");
-  const projected = toContentItems(data.details, data.reviews, data.commands);
+  const projected = toContentItems(data.details, data.reviews, data.commands, data.mediaPreviews);
   const items = projected.length ? toCalendarItems(projected, data.commands) : calendarFallback();
 
   return <KairoShell

@@ -12,7 +12,7 @@ type SearchParams = Promise<{ brand?: string; authError?: string }>;
 export default async function InsightsPage({ searchParams }: { searchParams: SearchParams }) {
   const params = await searchParams;
   const data = requirePageAuthentication(await getContentData(params.brand), "/insights");
-  const projected = toContentItems(data.details, data.reviews, data.commands);
+  const projected = toContentItems(data.details, data.reviews, data.commands, data.mediaPreviews);
   const [statuses, liveRows] = data.authenticated
     ? await Promise.all([
         getInstagramInsightCollectionStatus(data.brandId),

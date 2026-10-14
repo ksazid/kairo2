@@ -70,7 +70,7 @@ export function ContentPreviewClient({ item, brandName = "Brand", authenticated,
     setError("");
   }
 
-  async function perform(action: "save" | "review" | "approve" | "schedule", extra: Record<string, unknown> = {}) {
+  async function perform(action: "save" | "review" | "approve" | "schedule" | "generate-image", extra: Record<string, unknown> = {}) {
     if (!actionContext) return;
     setError("");
     setNotice("");
@@ -88,7 +88,7 @@ export function ContentPreviewClient({ item, brandName = "Brand", authenticated,
     router.refresh();
   }
 
-  function run(action: "save" | "review" | "approve" | "schedule", extra: Record<string, unknown> = {}) {
+  function run(action: "save" | "review" | "approve" | "schedule" | "generate-image", extra: Record<string, unknown> = {}) {
     startTransition(async () => {
       try { await perform(action, extra); }
       catch (failure) { setError(failure instanceof Error ? failure.message : "Kairo could not update this content."); }
@@ -134,7 +134,7 @@ export function ContentPreviewClient({ item, brandName = "Brand", authenticated,
           {media.length > 1 ? <div className="social-dots" aria-label="Carousel position">{media.map((_, index) => <button type="button" key={index} aria-label={`Show card ${index + 1}`} aria-pressed={slide === index} onClick={() => setSlide(index)}/>)}</div> : null}
         </div>
 
-        <section className="content-ai-assistance"><div><h3>AI assistance</h3><p>Improve your content with Kairo.</p></div><div><button type="button" disabled={pending} onClick={() => refine("improve")}><Sparkles/>Improve copy</button><button type="button" disabled={pending} onClick={() => refine("shorten")}><WandSparkles/>Shorten</button><button type="button" disabled={pending} onClick={() => refine("tone")}><WandSparkles/>Change tone</button><button type="button" disabled={pending} onClick={() => refine("ideas")}><Sparkles/>More ideas</button>{authenticated && copyChanged ? <button className="save-content-version" type="button" disabled={pending} onClick={() => run("save", { content: contentWithCaption(item.rawContent, caption) })}><Check/>Save version</button> : null}</div>{notice ? <p role="status">{notice}</p> : null}{error ? <p className="content-action-error" role="alert">{error}</p> : null}</section>
+        <section className="content-ai-assistance"><div><h3>AI assistance</h3><p>Improve your content with Kairo.</p></div><div><button type="button" disabled={pending} onClick={() => refine("improve")}><Sparkles/>Improve copy</button><button type="button" disabled={pending} onClick={() => refine("shorten")}><WandSparkles/>Shorten</button><button type="button" disabled={pending} onClick={() => refine("tone")}><WandSparkles/>Change tone</button><button type="button" disabled={pending} onClick={() => refine("ideas")}><Sparkles/>More ideas</button>{authenticated && copyChanged ? <button className="save-content-version" type="button" disabled={pending} onClick={() => run("save", { content: contentWithCaption(item.rawContent, caption) })}><Check/>Save version</button> : null}{authenticated && actionContext && missingMedia && item.format === "image" && !approved ? <button className="save-content-version" type="button" disabled={pending || copyChanged} onClick={() => run("generate-image")}><Sparkles/>Generate image</button> : null}</div>{authenticated && missingMedia && item.format === "image" ? <p>Generated images are saved to Brand media and need your review before approval.</p> : null}{notice ? <p role="status">{notice}</p> : null}{error ? <p className="content-action-error" role="alert">{error}</p> : null}</section>
       </section>
 
       <aside className="content-preview-rail" aria-label="Content context">

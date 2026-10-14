@@ -69,14 +69,14 @@ export function contentFallback(): ContentItem[] {
   return fallbackContent.map((item) => ({ ...item, media: [...item.media] }));
 }
 
-export function toContentItems(details: CampaignDetailView[], reviews: Record<string, ContentReviewStatusView | null>, commands: PublishCommandView[]): ContentItem[] {
+export function toContentItems(details: CampaignDetailView[], reviews: Record<string, ContentReviewStatusView | null>, commands: PublishCommandView[], mediaPreviews: Record<string, string> = {}): ContentItem[] {
   return details.flatMap((detail) => detail.assets.map(({ asset, versions }, index) => {
     const current = versions.at(-1);
     const command = commands.filter((item) => item.assetId === asset.id).sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
     const review = reviews[asset.id];
     const status = statusFor(command, review, current?.id);
     const format = normalizeFormat(asset.format);
-    const libraryMedia = current?.libraryAssetRefs?.filter((item) => (item.kind === "image" || item.kind === "video") && item.previewRef).map((item) => item.previewRef!) ?? [];
+    const libraryMedia = current?.libraryAssetRefs?.filter((item) => item.kind === "image" || item.kind === "video").map((item) => item.previewRef ?? (item.libraryAssetId ? mediaPreviews[item.libraryAssetId] : undefined)).filter((url): url is string => Boolean(url)) ?? [];
     const image = libraryMedia[0] ?? "/kairo-media-placeholder.svg";
     const content = current?.content?.trim() || asset.topic;
     return {

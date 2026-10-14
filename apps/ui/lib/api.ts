@@ -81,7 +81,7 @@ export type ContentVersionView = {
   content: string;
   actor: "user" | "ai";
   createdAt: string;
-  libraryAssetRefs?: Array<{ kind: "image" | "video" | "document" | "other"; previewRef?: string }>;
+  libraryAssetRefs?: Array<{ libraryAssetId?: string; kind: "image" | "video" | "document" | "other"; previewRef?: string }>;
 };
 
 export type CampaignDetailView = {
@@ -116,6 +116,7 @@ export type ContentData = HomeData & {
   reviews: Record<string, ContentReviewStatusView | null>;
   commands: PublishCommandView[];
   channelAccounts: ChannelAccountView[];
+  mediaPreviews: Record<string, string>;
 };
 
 export type SimpleCreation = {
@@ -298,18 +299,21 @@ export async function saveSettingsPresenter(brandId: string, body: Record<string
 
 export async function getContentData(requestedBrandId?: string): Promise<ContentData> {
   const identity = await getHomeData(requestedBrandId);
-  if (!identity.authenticated || !identity.brandId) return { ...identity, details: [], reviews: {}, commands: [], channelAccounts: [] };
+  if (!identity.authenticated || !identity.brandId) return { ...identity, details: [], reviews: {}, commands: [], channelAccounts: [], mediaPreviews: {} };
   const token = await accessToken();
-  if (!token) return { ...identity, details: [], reviews: {}, commands: [], channelAccounts: [] };
+  if (!token) return { ...identity, details: [], reviews: {}, commands: [], channelAccounts: [], mediaPreviews: {} };
   const brand = encodeURIComponent(identity.brandId);
-  const [campaignsResponse, commandsResponse, accountsResponse] = await Promise.all([
+  const [campaignsResponse, commandsResponse, accountsResponse, mediaResponse] = await Promise.all([
     api(token, `/api/v1/brands/${brand}/campaigns`),
     api(token, `/api/v1/brands/${brand}/calendar`),
     api(token, `/api/v1/brands/${brand}/channel-accounts`),
+    api(token, `/api/v1/brands/${brand}/home-media`),
   ]);
   const campaigns = campaignsResponse.ok ? await campaignsResponse.json() as CampaignView[] : [];
   const commands = commandsResponse.ok ? await commandsResponse.json() as PublishCommandView[] : [];
   const channelAccounts = accountsResponse.ok ? await accountsResponse.json() as ChannelAccountView[] : [];
+  const mediaAssets = mediaResponse.ok ? await mediaResponse.json() as Array<{ id: string; previewUrl: string }> : [];
+  const mediaPreviews = Object.fromEntries(mediaAssets.map((asset) => [asset.id, asset.previewUrl]));
   const details = await Promise.all(campaigns.map(async (campaign) => {
     const response = await api(token, `/api/v1/brands/${brand}/campaigns/${encodeURIComponent(campaign.id)}`);
     return response.ok ? await response.json() as CampaignDetailView : { campaign, assets: [] };
@@ -319,7 +323,16 @@ export async function getContentData(requestedBrandId?: string): Promise<Content
     const response = await api(token, `/api/v1/brands/${brand}/assets/${encodeURIComponent(asset.id)}/review-status`);
     return [asset.id, response.ok ? await response.json() as ContentReviewStatusView : null] as const;
   })));
-  return { ...identity, details, reviews, commands, channelAccounts };
+  return { ...identity, details, reviews, commands, channelAccounts, mediaPreviews };
+}
+
+export async function generateContentImage(brandId: string, campaignId: string, assetId: string, expectedVersion: number) {
+  const token = await accessToken();
+  if (!token) throw new Error("Sign in to generate a content image.");
+  return bodyOrError<{ mediaAssetId: string; source: "generated"; mimeType: string; contentVersion: number }>(
+    await api(token, `/api/v1/brands/${encodeURIComponent(brandId)}/campaigns/${encodeURIComponent(campaignId)}/assets/${encodeURIComponent(assetId)}/generate-image`, { method: "POST", body: JSON.stringify({ expectedVersion }) }),
+    "Kairo could not generate this image.",
+  );
 }
 
 export async function saveContentVersion(brandId: string, campaignId: string, assetId: string, input: { expectedVersion: number; content: string }): Promise<CampaignDetailView> {

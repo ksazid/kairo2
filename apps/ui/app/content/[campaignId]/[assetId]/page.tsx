@@ -13,7 +13,7 @@ type SearchParams = Promise<{ brand?: string }>;
 export default async function ContentPreviewPage({ params, searchParams }: { params: Params; searchParams: SearchParams }) {
   const [{ campaignId, assetId }, query] = await Promise.all([params, searchParams]);
   const data = requirePageAuthentication(await getContentData(query.brand), `/content/${encodeURIComponent(campaignId)}/${encodeURIComponent(assetId)}`);
-  const projected = toContentItems(data.details, data.reviews, data.commands);
+  const projected = toContentItems(data.details, data.reviews, data.commands, data.mediaPreviews);
   const items = projected;
   const item = items.find((candidate) => candidate.id === assetId && candidate.campaignId === campaignId);
   if (!item) notFound();

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { approveContentVersion, getContentData, reviewContentVersion, saveContentVersion, scheduleContentVersion } from "../../../../lib/api";
+import { approveContentVersion, generateContentImage, getContentData, reviewContentVersion, saveContentVersion, scheduleContentVersion } from "../../../../lib/api";
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null) as Record<string, unknown> | null;
@@ -23,6 +23,15 @@ export async function POST(request: Request) {
     if (action === "review") {
       const review = await reviewContentVersion(brandId, campaignId, assetId, expectedVersion);
       return NextResponse.json({ message: review?.status === "passed" ? "Readiness review passed." : "Review completed with required changes.", review });
+    }
+
+    if (action === "generate-image") {
+      const data = await getContentData(brandId);
+      if (!data.authenticated || data.brandId !== brandId) return problem("Sign in and choose this Brand before generating media.", 401);
+      const entry = data.details.find((detail) => detail.campaign.id === campaignId)?.assets.find((candidate) => candidate.asset.id === assetId);
+      if (!entry || entry.asset.currentVersion !== expectedVersion) return problem("Content Version is stale.", 409);
+      await generateContentImage(brandId, campaignId, assetId, expectedVersion);
+      return NextResponse.json({ message: "Kairo generated an image and saved it to this Brand’s media library. Review it and run readiness again." });
     }
 
     const data = await getContentData(brandId);
