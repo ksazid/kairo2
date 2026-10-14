@@ -46,10 +46,10 @@ export class PgContentAssetLibraryRepository implements ContentAssetLibraryRepos
     try {
       const workspaceId = await scope(client, accountId, brandId);
       const values: unknown[] = [workspaceId, brandId];
-      const clauses = ["workspace_id=$1", "brand_id=$2"];
-      if (query.libraryId) { values.push(query.libraryId); clauses.push(`library_id=$${values.length}`); }
-      if (query.kind) { values.push(query.kind); clauses.push(`kind=$${values.length}`); }
-      if (query.query) { values.push(`%${escapeLike(query.query)}%`); clauses.push(`(lower(name) like $${values.length} escape '\\' or lower(mime_type) like $${values.length} escape '\\')`); }
+      const clauses = ["a.workspace_id=$1", "a.brand_id=$2"];
+      if (query.libraryId) { values.push(query.libraryId); clauses.push(`a.library_id=${values.length}`); }
+      if (query.kind) { values.push(query.kind); clauses.push(`a.kind=${values.length}`); }
+      if (query.query) { values.push(`%${escapeLike(query.query)}%`); clauses.push(`(lower(a.name) like $${values.length} escape '\\' or lower(a.mime_type) like $${values.length} escape '\\')`); }
       const result = await client.query(
         `select a.* from content_library_assets a
          join content_asset_libraries l
