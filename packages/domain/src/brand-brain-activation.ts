@@ -45,7 +45,7 @@ const GROUP_KEYS: Record<BrandDnaReadinessGap, readonly string[]> = {
   audience: ["audience.primary"],
   positioning: ["positioning.value-proposition", "positioning.differentiation", "positioning.market-position"],
   topics: ["content.core-topics", "content.preferred-topics", "content.pillars", "content.related-topics"],
-  boundaries: ["boundaries.excluded-topics", "boundaries.prohibited-subjects", "boundaries.claims-to-avoid"],
+  boundaries: ["boundaries.excluded-topics", "boundaries.prohibited-subjects", "boundaries.claims-to-avoid", "boundaries.owner-directive"],
   geography: ["identity.geography"],
 };
 

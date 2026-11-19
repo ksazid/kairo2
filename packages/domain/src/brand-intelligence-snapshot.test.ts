@@ -71,6 +71,14 @@ const completeFields = () => [
 ];
 
 describe("Brand Intelligence snapshot", () => {
+  it("retains owner restrictions in the Hunter-ready agent context", () => {
+    const fields = completeFields().filter((item) => item.section !== "boundaries");
+    fields.push(field("boundaries.owner-directive", "boundaries", "Never promote dangerous riding or speeding", "confirmed", []));
+    const snapshot = projectBrandIntelligenceSnapshot({ brand: { id: "brand-1", workspaceId: "workspace-1", name: "TheDukeMan" }, fields });
+    expect(snapshot.hunterReady).toBe(true);
+    expect(compactBrandIntelligenceSnapshot(snapshot).brand.boundaries).toContain("Never promote dangerous riding or speeding");
+  });
+
   it("projects one versioned canonical context from Brain, sources and accepted learnings", () => {
     const snapshot = projectBrandIntelligenceSnapshot({
       brand: { id: "brand-1", workspaceId: "workspace-1", name: "Malta Guide" },
