@@ -16,7 +16,7 @@ export class PgPublishingRepository implements PublishingRepository {
     const client = await this.pool.connect();
     try {
       const workspaceId = await scope(client, accountId, brandId);
-      const result = await client.query(`select library_asset_id,object_key,kind from media_assets where workspace_id=$1 and brand_id=$2 and status='ready' and library_asset_id=any($3::uuid[])`, [workspaceId, brandId, ids]);
+      const result = await client.query(`select library_asset_id,object_key,kind from media_assets where workspace_id=$1 and brand_id=$2 and status='ready' and library_asset_id=any($3::text[])`, [workspaceId, brandId, ids]);
       const signer = new S3TemporaryObjectSigner(config);
       return Promise.all(ids.map(async id => {
         const row = result.rows.find(row => row.library_asset_id === id);
