@@ -28,6 +28,8 @@ export function HeroControls({ brandId, selectedFormat }: { brandId?: string; se
   const [analysing, setAnalysing] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState("");
+  const [ownTitle, setOwnTitle] = useState("");
+  const [ownDirection, setOwnDirection] = useState("");
 
   function selectFormat(format: CreationFormat) {
     const next = new URL(window.location.href);
@@ -81,6 +83,10 @@ export function HeroControls({ brandId, selectedFormat }: { brandId?: string; se
       <div className="viral-input"><input aria-label="Viral content URL" type="url" inputMode="url" value={url} onChange={event => { setUrl(event.target.value); setConcept(null); setError(""); }} placeholder="Paste Instagram, YouTube or TikTok link..."/><button type="button" disabled={!url.trim() || analysing} onClick={() => void analyse()}>{analysing ? "Analysing…" : "Analyse link"}</button></div>
       {error ? <p className="viral-error" role="alert">{error}</p> : null}
       {concept ? <div className="viral-concept" role="status"><span><Sparkles aria-hidden="true"/><small>Concept preview · {concept.sourceLabel}</small><strong>{concept.title}</strong><em>{creationFormatLabel(concept.format)} · {concept.reason}</em></span><button type="button" disabled={generating} onClick={() => void createFromConcept()}><Sparkles aria-hidden="true"/>{generating ? "Creating…" : "Create with Kairo"}</button></div> : null}
+    </section>
+    <section className="viral-strip" aria-label="Create your own idea">
+      <div className="viral-copy"><Sparkles aria-hidden="true"/><span><strong>Your idea</strong><small>Use a specific Brand topic when Hunter has no relevant signal.</small></span></div>
+      <div className="viral-input"><input aria-label="Idea title" value={ownTitle} maxLength={240} onChange={event => setOwnTitle(event.target.value)} placeholder="What should this carousel explain?"/><input aria-label="Idea direction" value={ownDirection} maxLength={1000} onChange={event => setOwnDirection(event.target.value)} placeholder="Audience and evidence boundary"/><button type="button" disabled={!ownTitle.trim() || !ownDirection.trim() || generating} onClick={() => { if (!brandId) { window.location.assign("/auth/login"); return; } setGenerating(true); setError(""); void generateAndOpen({ brandId, format: selectedFormat, title: ownTitle.trim(), direction: ownDirection.trim() }, () => undefined).catch(caught => { setError(friendlyError(caught, "Kairo could not create this content.")); setGenerating(false); }); }}>{generating ? "Creating…" : "Create idea"}</button></div>
     </section>
   </>;
 }
