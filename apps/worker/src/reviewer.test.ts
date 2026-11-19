@@ -19,6 +19,9 @@ describe("VS-06 independent Critic and Judge", () => {
     const result = await new CriticOrchestrator(runtime).run({ ...base, version: { id: "v2", content: "A measured draft", supportingClaimIds: ["c1"] }, claims: [{ id: "c1", text: "Supported evidence" }], rubric: ["brand-fit", "clarity", "usefulness"] });
     expect(runtime.last).toMatchObject({ role: "critic", capabilities: [], budget: { maxToolCalls: 0 } });
     expect(JSON.stringify(runtime.last?.task.context)).not.toMatch(/reasoning|chain.of.thought|scratchpad/i);
+    expect(runtime.last?.task.instruction).toContain("not mandatory talking points");
+    expect(runtime.last?.task.instruction).toContain("Flag any unsupported assertion that is present");
+    expect(runtime.last?.task.instruction).toContain("do not infer brand identity");
     expect(result).toMatchObject({ passed: false, score: 72, provenance: { model: "review-1" } });
   });
 
