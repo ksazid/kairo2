@@ -22,7 +22,7 @@ async function proxy(request: Request, method: "GET" | "POST" | "PATCH") {
   try {
     const response = await fetch(`${apiBase}${path}`, { method: verb, cache: "no-store", headers: { authorization: `Bearer ${token}`, ...(verb === "GET" ? {} : { "content-type": "application/json" }) }, ...(verb === "GET" ? {} : { body: JSON.stringify(body) }) });
     const result = await response.json().catch(() => null);
-    return NextResponse.json(response.ok ? result : { error: result?.detail ?? result?.message ?? "Carousel request failed." }, { status: response.status });
+    return NextResponse.json(response.ok ? result : { error: result?.detail ?? result?.message ?? result?.error ?? "Carousel request failed." }, { status: response.status });
   } catch (error) { return NextResponse.json({ error: error instanceof Error ? error.message : "Carousel request failed." }, { status: 502 }); }
 }
 
