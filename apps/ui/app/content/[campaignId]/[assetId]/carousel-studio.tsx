@@ -6,7 +6,7 @@ type Slide = { id: string; headline: string; body: string; renderedUrl?: string;
 type Review = { id: string; assetVersion: number; renderVersionId: string; status: string; slides: Slide[]; qualitySummary: { errors: number; warnings: number; advisories: number } };
 type Delivery = { slides: Array<{ publicUrl?: string }> };
 
-export function CarouselStudio({ brandId, campaignId, assetId }: { brandId: string; campaignId: string; assetId: string }) {
+export function CarouselStudio({ brandId, campaignId, assetId, onImages }: { brandId: string; campaignId: string; assetId: string; onImages?: (images: string[]) => void }) {
   const [review, setReview] = useState<Review | null>(null);
   const [drafts, setDrafts] = useState<Record<string, { headline: string; body: string }>>({});
   const [images, setImages] = useState<string[]>([]);
@@ -22,15 +22,15 @@ export function CarouselStudio({ brandId, campaignId, assetId }: { brandId: stri
     return result;
   }
   function accept(next: Review) { setReview(next); setDrafts(Object.fromEntries(next.slides.map(slide => [slide.id, { headline: slide.headline, body: slide.body }]))); }
-  useEffect(() => { void call().then(accept).catch(() => undefined); }, [brandId, campaignId, assetId]);
+  useEffect(() => { void call().then(async next => { accept(next); if (next.renderVersionId) { const delivery = await call("delivery", { projectId: next.id, versionId: next.renderVersionId }) as Delivery; const urls = delivery.slides.map(slide => slide.publicUrl ?? ""); setImages(urls); onImages?.(urls); } }).catch(() => undefined); }, [brandId, campaignId, assetId]);
   async function run(action: string, fields: Record<string, unknown> = {}) {
     setBusy(true); setError(""); setNotice("");
     try {
       const result = await call(action, fields);
-      if (action === "delivery") setImages((result as Delivery).slides.map(slide => slide.publicUrl ?? ""));
-      else if (action === "render") { const fresh = await call(); accept(fresh); const delivery = await call("delivery", { projectId: fresh.id, versionId: fresh.renderVersionId }) as Delivery; setImages(delivery.slides.map(slide => slide.publicUrl ?? "")); }
+      if (action === "delivery") { const urls = (result as Delivery).slides.map(slide => slide.publicUrl ?? ""); setImages(urls); onImages?.(urls); }
+      else if (action === "render") { const fresh = await call(); accept(fresh); const delivery = await call("delivery", { projectId: fresh.id, versionId: fresh.renderVersionId }) as Delivery; const urls = delivery.slides.map(slide => slide.publicUrl ?? ""); setImages(urls); onImages?.(urls); }
       else if (action === "approve") { accept(await call()); setNotice("Rendered slides approved and locked. Run the content readiness review below."); }
-      else { accept(result); setImages([]); }
+      else { accept(result); setImages([]); onImages?.([]); }
     } catch (caught) { setError(caught instanceof Error ? caught.message : "Carousel request failed."); }
     finally { setBusy(false); }
   }
