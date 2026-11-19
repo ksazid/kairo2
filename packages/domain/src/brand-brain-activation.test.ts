@@ -27,6 +27,35 @@ const complete = () => [
 ];
 
 describe("Brand Brain activation", () => {
+  it("accepts the confirmed owner boundary shown and edited by Brand DNA", () => {
+    const fields = complete().filter((item) => item.section !== "boundaries");
+    fields.push(field("boundaries.owner-directive", "Never promote dangerous riding or speeding", "confirmed", []));
+    const result = createBrandBrainActivationSnapshot(fields);
+    expect(result).toMatchObject({ status: "ready-for-hunter", hunterReady: true });
+    expect(result.readiness.gaps).not.toContain("boundaries");
+    expect(result.fields.find((item) => item.fieldKey === "boundaries.owner-directive")).toMatchObject({ critical: true, weak: false, origin: "user-confirmed" });
+  });
+
+  it.each(["", "No excluded topics identified in the public reference; confirm before Hunter activation"])("does not accept an empty or placeholder owner boundary: %s", (value) => {
+    const fields = complete().filter((item) => item.section !== "boundaries");
+    fields.push(field("boundaries.owner-directive", value, "confirmed", []));
+    const result = createBrandBrainActivationSnapshot(fields);
+    expect(result.hunterReady).toBe(false);
+    expect(result.readiness.gaps).toContain("boundaries");
+  });
+
+  it("does not activate Hunter with a stale owner boundary", () => {
+    const fields = complete().filter((item) => item.section !== "boundaries");
+    fields.push(field("boundaries.owner-directive", "Never promote dangerous riding", "stale", []));
+    expect(createBrandBrainActivationSnapshot(fields).hunterReady).toBe(false);
+  });
+
+  it("requires review for an unconfirmed owner directive without evidence", () => {
+    const fields = complete().filter((item) => item.section !== "boundaries");
+    fields.push(field("boundaries.owner-directive", "Never promote dangerous riding", "inferred", []));
+    expect(createBrandBrainActivationSnapshot(fields)).toMatchObject({ status: "needs-review", hunterReady: false });
+  });
+
   it("marks source-backed inferred Brand DNA as high confidence and Hunter-ready", () => {
     const result = createBrandBrainActivationSnapshot(complete());
     expect(result).toMatchObject({ status: "ready-for-hunter", hunterReady: true, completeness: { score: 100, knownGroups: 6, totalGroups: 6 } });
