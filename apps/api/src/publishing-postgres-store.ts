@@ -1,3 +1,4 @@
+import { S3TemporaryObjectSigner, s3PrivateObjectStorageConfigFromEnv } from "./private-object-storage";
 import type { Pool, PoolClient } from "pg";
 import { ConcurrencyConflictError, ResourceNotFoundError } from "@kairo/domain";
 import type { ChannelAccount, PublishAttempt, PublishCommand, PublishedPost } from "@kairo/domain/publishing";
@@ -6,6 +7,24 @@ import{enqueueInstagramMetricJobs}from"./instagram-metric-runner";
 
 export class PgPublishingRepository implements PublishingRepository {
   constructor(private pool: Pool) {}
+
+  async resolvePrivateMedia(accountId: string, brandId: string, ids: string[], scheduledFor: string) {
+    const config = s3PrivateObjectStorageConfigFromEnv(process.env);
+    if (!config) throw new Error("Private publishing storage is unavailable");
+    const ttl = Math.ceil((Date.parse(scheduledFor) - Date.now()) / 1000) + 900;
+    if (!Number.isFinite(ttl) || ttl < 900 || ttl > 3600) throw new Error("Private image publishing currently requires a slot within the next 45 minutes");
+    const client = await this.pool.connect();
+    try {
+      const workspaceId = await scope(client, accountId, brandId);
+      const result = await client.query(`select library_asset_id,object_key,kind from media_assets where workspace_id=$1 and brand_id=$2 and status='ready' and library_asset_id=any($3::uuid[])`, [workspaceId, brandId, ids]);
+      const signer = new S3TemporaryObjectSigner(config);
+      return Promise.all(ids.map(async id => {
+        const row = result.rows.find(row => row.library_asset_id === id);
+        if (!row || !["image", "video"].includes(row.kind)) throw new ResourceNotFoundError("Approved private media not found in Brand");
+        return { kind: row.kind as "image" | "video", url: await signer.sign({storageProvider: config.provider, objectKey: row.object_key, expiresInSeconds: ttl}) };
+      }));
+    } finally { client.release(); }
+  }
 
   async saveChannelAccount(accountId: string, channel: ChannelAccount) {
     const client = await this.pool.connect();

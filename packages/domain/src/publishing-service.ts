@@ -27,6 +27,7 @@ import {
 } from "./publishing";
 
 export interface PublishingRepository {
+  resolvePrivateMedia?(accountId: string, brandId: string, ids: string[], scheduledFor: string): Promise<PublishMediaItem[]>;
   saveChannelAccount(accountId: string, channel: ChannelAccount): Promise<ChannelAccount>;
   getChannelAccount(accountId: string, brandId: string, id: string): Promise<ChannelAccount | null>;
   listChannelAccounts(accountId: string, brandId: string): Promise<ChannelAccount[]>;
@@ -110,9 +111,12 @@ export class PublishingService {
     if (request.contentType === "carousel" && !renderedApproval) {
       throw new ResourceNotFoundError("Approved rendered media not found for Content Asset");
     }
-    const mediaItems = input.mediaItems ?? (version.libraryAssetRefs ?? [])
+    const privateRefs = (version.libraryAssetRefs ?? []).filter(item => (item.kind === "image" || item.kind === "video") && !item.previewRef);
+    const privateMedia = !input.mediaItems && privateRefs.length && this.publishing.resolvePrivateMedia
+      ? await this.publishing.resolvePrivateMedia(accountId, brandId, privateRefs.map(item => item.libraryAssetId), request.scheduledFor) : [];
+    const mediaItems = input.mediaItems ?? [...privateMedia, ...(version.libraryAssetRefs ?? [])
       .filter((item) => (item.kind === "image" || item.kind === "video") && item.previewRef)
-      .map((item) => ({ kind: item.kind as "image" | "video", url: item.previewRef! }));
+      .map((item) => ({ kind: item.kind as "image" | "video", url: item.previewRef! }))];
     const commandInput = {
         id: randomUUID(),
         approval,
@@ -310,7 +314,7 @@ function sameScheduleRequest(
 ): boolean {
   if (command.channelAccountId !== input.channelAccountId || command.contentType !== input.contentType) return false;
   if (Number.isNaN(Date.parse(input.scheduledFor)) || Date.parse(command.scheduledFor) !== Date.parse(input.scheduledFor)) return false;
-  if (!sameMedia(command.mediaItems ?? [], input.mediaItems ?? [])) return false;
+  if (input.mediaItems !== undefined && !sameMedia(command.mediaItems ?? [], input.mediaItems)) return false;
   return command.options?.instagram?.shareToFeed === input.options?.instagram?.shareToFeed;
 }
 
