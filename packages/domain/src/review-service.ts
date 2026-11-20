@@ -30,7 +30,7 @@ export interface CriticEvaluationPort {
     brandId: string;
     versionId: string;
     content: string;
-    supportingClaims: Array<{ id: string; text: string }>;
+    supportingClaims: Array<{ id: string; text: string; verificationState: string; freshness: string; evidence: Array<{ sourceUrl: string; sourceTitle: string }> }>;
     brandContextVersion: string;
   }): Promise<CriticResult>;
 }
@@ -111,7 +111,19 @@ export class ReviewService {
         campaignId,
         assetId,
       }),
-      supportingClaims: version.supportingClaimIds.map((id) => ({ id, text: claims.get(id)?.text ?? "" })),
+      supportingClaims: version.supportingClaimIds.map((id) => {
+        const claim = claims.get(id);
+        return {
+          id,
+          text: claim?.text ?? "",
+          verificationState: claim?.verificationState ?? "unresolved",
+          freshness: claim?.freshness ?? "unknown",
+          evidence: (claim?.evidenceIds ?? []).flatMap((evidenceId) => {
+            const source = bundle.research!.evidence.find((item) => item.id === evidenceId);
+            return source ? [{ sourceUrl: source.sourceUrl, sourceTitle: source.sourceTitle }] : [];
+          }),
+        };
+      }),
       brandContextVersion: input.brandContextVersion,
     });
     return this.reviews.saveReview(
