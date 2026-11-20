@@ -25,6 +25,13 @@ describe("VS-06 independent Critic and Judge", () => {
     expect(result).toMatchObject({ passed: false, score: 72, provenance: { model: "review-1" } });
   });
 
+  it("passes claim provenance to the critic without treating a URL as proof", async () => {
+    const runtime = new Runtime({ passed: false, score: 70, findings: [{ code: "unsupported-spec", severity: "revision", message: "Verify the specification" }] });
+    await new CriticOrchestrator(runtime).run({ ...base, version: { id: "v2", content: "45 PS", supportingClaimIds: ["c1"] }, claims: [{ id: "c1", text: "45 PS", verificationState: "supported", freshness: "fresh", evidence: [{ sourceUrl: "https://example.com/specs", sourceTitle: "Technical specifications" }] }], rubric: ["truth-consistency"] });
+    expect(runtime.last?.task.context).toMatchObject({ claims: [{ verificationState: "supported", freshness: "fresh", evidence: [{ sourceUrl: "https://example.com/specs" }] }] });
+    expect(runtime.last?.task.instruction).toContain("a source URL alone does not establish a claim");
+  });
+
   it("rejects malformed Critic output before application persistence", async () => {
     await expect(new CriticOrchestrator(new Runtime({ passed: true, score: 120, findings: [] })).run({ ...base, version: { id: "v2", content: "Draft", supportingClaimIds: [] }, claims: [], rubric: ["clarity"] })).rejects.toThrow(/critic output/i);
   });
