@@ -20,6 +20,7 @@ export type ContentItem = {
   updatedAt: string;
   image: string;
   media: string[];
+  mediaKind?: "image" | "video";
   duration?: string;
   cardCount?: number;
   audience: string;
@@ -76,7 +77,7 @@ export function toContentItems(details: CampaignDetailView[], reviews: Record<st
     const review = reviews[asset.id];
     const status = statusFor(command, review, current?.id);
     const format = normalizeFormat(asset.format);
-    const libraryMedia = current?.libraryAssetRefs?.filter((item) => item.kind === "image" || item.kind === "video").map((item) => item.previewRef ?? (item.libraryAssetId ? mediaPreviews[item.libraryAssetId] : undefined)).filter((url): url is string => Boolean(url)) ?? [];
+    const libraryMedia = current?.libraryAssetRefs?.filter((item) => item.kind === (format === "reel" ? "video" : "image")).map((item) => item.previewRef ?? (item.libraryAssetId ? mediaPreviews[item.libraryAssetId] : undefined)).filter((url): url is string => Boolean(url)) ?? [];
     const image = libraryMedia[0] ?? "/kairo-media-placeholder.svg";
     const content = current?.content?.trim() || asset.topic;
     return {
@@ -94,6 +95,7 @@ export function toContentItems(details: CampaignDetailView[], reviews: Record<st
       updatedAt: command?.createdAt ?? current?.createdAt ?? asset.createdAt,
       image,
       media: libraryMedia.length ? libraryMedia : [image],
+      ...(format === "reel" && libraryMedia.length ? { mediaKind: "video" as const } : {}),
       ...(format === "carousel" ? { cardCount: Math.max(libraryMedia.length, 1) } : {}),
       audience: presentAiText(asset.audience, "audience", "Your priority audience"),
       objective: presentAiText(detail.campaign.objective, "objective", "Build relevant engagement"),

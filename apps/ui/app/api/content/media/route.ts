@@ -5,6 +5,7 @@ const apiBase = (process.env.KAIRO_API_URL ?? "http://127.0.0.1:4000").replace(/
 
 export async function GET(request: Request) {
   const brandId = new URL(request.url).searchParams.get("brandId")?.trim();
+  const kind = new URL(request.url).searchParams.get("kind") === "video" ? "video" : "image";
   if (!brandId) return NextResponse.json({ error: "Choose a Brand first." }, { status: 400 });
   const token = (await cookies()).get("kairo_access_token")?.value;
   if (!token) return NextResponse.json({ error: "Sign in to select production media." }, { status: 401 });
@@ -12,7 +13,7 @@ export async function GET(request: Request) {
     const headers = { authorization: `Bearer ${token}` };
     const [librariesResponse, assetsResponse, uploadsResponse] = await Promise.all([
       fetch(`${apiBase}/api/v1/brands/${encodeURIComponent(brandId)}/content-asset-libraries`, { headers, cache: "no-store" }),
-      fetch(`${apiBase}/api/v1/brands/${encodeURIComponent(brandId)}/content-assets?kind=image`, { headers, cache: "no-store" }),
+      fetch(`${apiBase}/api/v1/brands/${encodeURIComponent(brandId)}/content-assets?kind=${kind}`, { headers, cache: "no-store" }),
       fetch(`${apiBase}/api/v1/brands/${encodeURIComponent(brandId)}/home-media`, { headers, cache: "no-store" }),
     ]);
     if (!librariesResponse.ok || !assetsResponse.ok) throw new Error("Kairo could not load the Brand media library.");
@@ -39,8 +40,10 @@ export async function POST(request: Request) {
     const name = typeof body?.name === "string" ? body.name.trim() : "";
     const mimeType = typeof body?.mimeType === "string" ? body.mimeType : "";
     const sizeBytes = body?.sizeBytes;
-    if (!name || name.length > 240 || !["image/jpeg", "image/png", "image/webp"].includes(mimeType) || !Number.isInteger(sizeBytes) || Number(sizeBytes) < 1 || Number(sizeBytes) > 25 * 1024 * 1024) {
-      return NextResponse.json({ error: "Choose a JPEG, PNG or WebP image up to 25 MB." }, { status: 400 });
+    const image = ["image/jpeg", "image/png", "image/webp"].includes(mimeType) && Number(sizeBytes) <= 25 * 1024 * 1024;
+    const video = mimeType === "video/mp4" && Number(sizeBytes) <= 512 * 1024 * 1024;
+    if (!name || name.length > 240 || !Number.isInteger(sizeBytes) || Number(sizeBytes) < 1 || (!image && !video)) {
+      return NextResponse.json({ error: "Choose a JPEG, PNG or WebP image up to 25 MB, or an MP4 video up to 512 MB." }, { status: 400 });
     }
     return proxyHomeMedia(brandId, "/uploads", token, { method: "POST", body: JSON.stringify({ name, mimeType, sizeBytes }) });
   }
@@ -54,7 +57,7 @@ export async function POST(request: Request) {
   const expectedVersion = body?.expectedVersion;
   const libraryAssetIds = body?.libraryAssetIds;
   if (!brandId || !campaignId || !assetId || !Number.isInteger(expectedVersion) || !Array.isArray(libraryAssetIds) || libraryAssetIds.length < 1 || libraryAssetIds.length > 12 || !libraryAssetIds.every((id) => typeof id === "string")) {
-    return NextResponse.json({ error: "Choose between 1 and 12 image assets." }, { status: 400 });
+    return NextResponse.json({ error: "Choose between 1 and 12 media assets." }, { status: 400 });
   }
   try {
     const response = await fetch(`${apiBase}/api/v1/brands/${encodeURIComponent(brandId)}/campaigns/${encodeURIComponent(campaignId)}/assets/${encodeURIComponent(assetId)}/library-assets`, {
