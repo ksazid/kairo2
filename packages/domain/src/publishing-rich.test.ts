@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { connectChannelAccount, createPublishCommand } from "./publishing";
+import { connectChannelAccount, createPublishCommand, createVerifiedPublishCommand } from "./publishing";
 import type { ContentApproval } from "./review";
 
 const approval: ContentApproval = {
@@ -79,6 +79,13 @@ describe("VS-15 rich publishing domain", () => {
       ...times,
     });
     expect(carousel.status).toBe("scheduled");
+  });
+
+  it("schedules an approved render for just-in-time carousel delivery", () => {
+    const renderedApproval = { id: "render-approval", workspaceId: "ws-1", brandId: "brand-1", assetId: "asset-1", contentVersionId: "version-1", assetVersionId: "render-1", mediaFingerprint: "a".repeat(64), approvedAt: "2026-08-15T02:02:00Z" };
+    const command = createVerifiedPublishCommand({ id: "rendered-carousel", approval, renderedApproval, currentVersionId: "version-1", channelAccount: account(["publish-carousel"]), contentType: "carousel", ...times });
+    expect(command).toMatchObject({ status: "scheduled", mediaItems: [], approvedAssetVersionId: "render-1", approvedMediaFingerprint: "a".repeat(64) });
+    expect(() => createPublishCommand({ id: "unverified-carousel", approval, currentVersionId: "version-1", channelAccount: account(["publish-carousel"]), contentType: "carousel", ...times })).toThrow(/2.*10.*images/i);
   });
 
   it("requires publish-reel capability and normalizes options instead of retaining arbitrary input", () => {
