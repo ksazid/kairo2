@@ -65,13 +65,13 @@ describe("Kairo UI v2 Content behavior", () => {
       campaign: { id: "campaign", ideaId: "idea", name: "Summer Guide", objective: "Drive bookings", status: "draft", createdAt: "2026-08-01T00:00:00Z" },
       assets: [{
         asset: { id: "asset", campaignId: "campaign", topic: "Malta coast", format: "reel", channel: "linkedin", audience: "Visitors", cta: "Book now", createdAt: "2026-08-01T00:00:00Z" },
-        versions: [{ id: "version", assetId: "asset", content: JSON.stringify({ caption: "Take the coast road." }), libraryAssetRefs: [{ kind: "image", previewRef: "https://images.example/coast.jpg" }], createdAt: "2026-08-02T00:00:00Z" }],
+        versions: [{ id: "version", assetId: "asset", content: JSON.stringify({ caption: "Take the coast road." }), libraryAssetRefs: [{ kind: "video", previewRef: "https://media.example/coast.mp4" }], createdAt: "2026-08-02T00:00:00Z" }],
       }],
     }] as CampaignDetailView[];
     const reviews: Record<string, ContentReviewStatusView> = { asset: { review: { versionId: "version", status: "review" }, approval: null } };
     const commands = [] as PublishCommandView[];
     expect(toContentItems(details, reviews, commands)).toEqual([
-      expect.objectContaining({ id: "asset", caption: "Take the coast road.", channel: "LinkedIn", format: "reel", status: "in-review", image: "https://images.example/coast.jpg" }),
+      expect.objectContaining({ id: "asset", caption: "Take the coast road.", channel: "LinkedIn", format: "reel", status: "in-review", image: "https://media.example/coast.mp4", mediaKind: "video" }),
     ]);
   });
 
