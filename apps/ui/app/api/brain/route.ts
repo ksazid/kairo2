@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { addBrandBrainSource, saveBrandBrainField, saveBrandDiscoveryTopic } from "../../../lib/brand-brain-api";
+import { addBrandBrainSource, saveBrandBrainField, saveBrandDiscoveryTopic, setBrandBrainSourceStatus } from "../../../lib/brand-brain-api";
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null) as Record<string, unknown> | null;
@@ -23,6 +23,15 @@ export async function POST(request: Request) {
       if (!url) return NextResponse.json({ error: "Enter a valid public HTTP(S) URL." }, { status: 400 });
       const activation = await addBrandBrainSource({ brandId, url });
       return NextResponse.json(activation);
+    }
+
+    if (action === "set-source-status") {
+      const sourceId = text(body?.sourceId, 200);
+      const status = body?.status;
+      if (!sourceId || (status !== "active" && status !== "disabled")) {
+        return NextResponse.json({ error: "Source and a valid status are required." }, { status: 400 });
+      }
+      return NextResponse.json(await setBrandBrainSourceStatus({ brandId, sourceId, status }));
     }
 
     if (action === "edit-topic") {

@@ -38,13 +38,20 @@ export function resolveDiscoveryDataMode(input: {
   };
   if (input.realItemCount > 0) return {
     mode: "live",
-    label: "Live Hunter data",
-    message: "These opportunities came from Hunter for this Brand.",
+    label: "Brand opportunities",
+    message: "These are stored opportunities for this Brand. Check Latest Hunter below to see what the most recent run found.",
     usesSampleData: false,
     isLive: true,
   };
 
   const score = typeof input.readinessScore === "number" ? ` Brand readiness is ${Math.round(input.readinessScore)}%.` : "";
+  if (input.latestRunStatus === "succeeded") return {
+    mode: "empty",
+    label: "No strong opportunities yet",
+    message: `The latest Hunter run completed without a strong opportunity.${score} Try a more specific Discovery topic or refresh later.`,
+    usesSampleData: false,
+    isLive: false,
+  };
   if (input.latestRunStatus === "running") return {
     mode: "collecting",
     label: "Hunter is running · Sample preview",

@@ -83,6 +83,16 @@ export async function addBrandBrainSource(input: { brandId: string; url: string 
   return bodyOrError<BrandBrainRuntimeData>(await api(token, `/api/v1/brands/${brand}/brain/activation`), "Kairo could not refresh Brand Brain.");
 }
 
+export async function setBrandBrainSourceStatus(input: { brandId: string; sourceId: string; status: "active" | "disabled" }): Promise<BrandBrainRuntimeData> {
+  const token = await accessToken();
+  if (!token) throw new Error("Sign in to manage Brand sources.");
+  const brand = encodeURIComponent(input.brandId);
+  const source = encodeURIComponent(input.sourceId);
+  const action = input.status === "active" ? "enable" : "disable";
+  await bodyOrError(await api(token, `/api/v1/brands/${brand}/sources/${source}/${action}`, { method: "POST" }), "Kairo could not update this source.");
+  return bodyOrError<BrandBrainRuntimeData>(await api(token, `/api/v1/brands/${brand}/brain/activation`), "Kairo could not refresh Brand Brain.");
+}
+
 export async function saveBrandDiscoveryTopic(input: {
   brandId: string;
   topicId: string;
