@@ -1,0 +1,3 @@
+alter table external_instagram_post_links alter column channel_account_id drop not null;
+alter table external_instagram_post_links drop constraint external_instagram_post_links_channel_account_id_shortcode_key;
+alter table external_instagram_post_links add constraint external_instagram_post_links_brand_shortcode_key unique(brand_id,shortcode);
