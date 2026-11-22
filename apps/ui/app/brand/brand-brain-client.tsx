@@ -176,6 +176,27 @@ export function BrandBrainClient({ brandId, activation }: { brandId?: string; ac
     }
   }
 
+  async function setSourceStatus(source: BrandSourceUi) {
+    if (!brandId || (source.status !== "active" && source.status !== "disabled")) return;
+    const status = source.status === "active" ? "disabled" : "active";
+    setSaving(true);
+    try {
+      const response = await fetch("/api/brain", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ action: "set-source-status", brandId, sourceId: source.id, status }),
+      });
+      const body = await response.json() as BrandBrainRuntimeData & { error?: string };
+      if (!response.ok) throw new Error(body.error ?? "Kairo could not update this source.");
+      applyRuntime(body);
+      setNotice(`${source.title} ${status === "disabled" ? "paused" : "enabled"}. Review Brand DNA and refresh Discovery to use the updated sources.`);
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "Kairo could not update this source.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
   async function editTopic(topic: DiscoveryTopic) {
     if (!brandId || !runtime?.discoveryPlan) {
       setNotice(!brandId ? "Choose a Brand before editing Discovery Intelligence." : "Discovery Plan is not available yet.");
@@ -264,7 +285,7 @@ export function BrandBrainClient({ brandId, activation }: { brandId?: string; ac
     {activeTab === "overview" ? <OverviewPanel runtime={runtime} fields={fields} editingField={editingField} fieldDraft={fieldDraft} setFieldDraft={setFieldDraft} startFieldEdit={startFieldEdit} saveField={saveField} cancelEdit={() => setEditingField(null)} reviewSuggestions={reviewSuggestions} brandId={brandId} saving={saving}/> : null}
     {activeTab === "dna" ? <DnaPanel fields={fields} editingField={editingField} fieldDraft={fieldDraft} setFieldDraft={setFieldDraft} startFieldEdit={startFieldEdit} saveField={saveField} confirmNoBoundaries={confirmNoBoundaries} cancelEdit={() => setEditingField(null)} saving={saving}/> : null}
     {activeTab === "discovery" ? <DiscoveryPanel runtime={runtime} topics={topics} brandId={brandId} onEditTopic={editTopic} saving={saving}/> : null}
-    {activeTab === "sources" ? <SourcesPanel runtime={runtime} sources={sources} onAddSource={addSource} saving={saving}/> : null}
+    {activeTab === "sources" ? <SourcesPanel runtime={runtime} sources={sources} onAddSource={addSource} onSetStatus={setSourceStatus} saving={saving}/> : null}
     {activeTab === "learning" ? <LearningPanel learnings={learnings} brandId={brandId}/> : null}
   </section>;
 }
@@ -347,11 +368,11 @@ function DiscoveryPanel({ runtime, topics, brandId, onEditTopic, saving }: { run
   </div>;
 }
 
-function SourcesPanel({ runtime, sources, onAddSource, saving }: { runtime?: BrandBrainRuntimeData; sources: BrandSourceUi[]; onAddSource: () => void; saving: boolean }) {
+function SourcesPanel({ runtime, sources, onAddSource, onSetStatus, saving }: { runtime?: BrandBrainRuntimeData; sources: BrandSourceUi[]; onAddSource: () => void; onSetStatus: (source: BrandSourceUi) => void; saving: boolean }) {
   return <div id="brand-panel-sources" role="tabpanel" aria-labelledby="brand-tab-sources" className="brand-section-panel">
     <header className="brand-section-header"><div><span><Globe2 aria-hidden="true"/>Evidence coverage</span><h2>Sources</h2><p>Manage where Kairo learns this Brand. Publishing destinations remain separate.</p></div><button className="brand-primary-button" type="button" onClick={onAddSource} disabled={saving}><Plus aria-hidden="true"/>{saving ? "Updating…" : "Add source"}</button></header>
     <div className="brand-source-summary"><div><strong>{sources.filter((source) => source.status === "active").length}</strong><span>Active sources</span></div><div><strong>{runtime?.readiness.evidenceCoverage ?? 0}%</strong><span>Evidence coverage</span></div><div><strong>{runtime?.updatedAt ? formatTimestamp(runtime.updatedAt) : "—"}</strong><span>Most recent sync</span></div></div>
-    <div className="brand-source-list">{sources.length ? sources.map((source) => { const Icon = sourceIcon(source); return <article key={source.id}><span className="brand-source-icon"><Icon aria-hidden="true"/></span><div><small>{source.type}</small><strong>{source.title}</strong><p>{source.detail}</p></div><span className="brand-source-sync"><small>Last updated</small><strong>{source.synced}</strong></span><span className="brand-source-health"><CheckCircle2 aria-hidden="true"/>{source.status}</span><div className="brand-source-actions"><button type="button" disabled title="Source-specific refresh is activated with the source-management flow"><RefreshCw aria-hidden="true"/>Refresh</button><button type="button" disabled title="Source management is activated with the source-management flow">Manage</button></div></article>; }) : <div className="brand-review-complete"><CircleAlert aria-hidden="true"/><span><strong>No active sources yet.</strong><small>Add a public website or profile to build Brand Intelligence.</small></span></div>}</div>
+    <div className="brand-source-list">{sources.length ? sources.map((source) => { const Icon = sourceIcon(source); return <article key={source.id}><span className="brand-source-icon"><Icon aria-hidden="true"/></span><div><small>{source.type}</small><strong>{source.title}</strong><p>{source.detail}</p></div><span className="brand-source-sync"><small>Last updated</small><strong>{source.synced}</strong></span><span className="brand-source-health"><CheckCircle2 aria-hidden="true"/>{source.status}</span><div className="brand-source-actions"><button type="button" disabled title="Source-specific refresh is not available yet"><RefreshCw aria-hidden="true"/>Refresh</button>{source.status === "active" || source.status === "disabled" ? <button type="button" disabled={saving} onClick={() => onSetStatus(source)} aria-label={`${source.status === "active" ? "Pause" : "Enable"} ${source.title}`}>{source.status === "active" ? "Pause" : "Enable"}</button> : null}</div></article>; }) : <div className="brand-review-complete"><CircleAlert aria-hidden="true"/><span><strong>No active sources yet.</strong><small>Add a public website or profile to build Brand Intelligence.</small></span></div>}</div>
     <p className="brand-source-note"><ShieldCheck aria-hidden="true"/>Private notes stay inside this Brand. Credentials and provider details are never exposed here.</p>
   </div>;
 }

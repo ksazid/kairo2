@@ -25,6 +25,15 @@ describe("Kairo unified data mode", () => {
       latestRunStatus: "succeeded",
     });
     expect(result).toMatchObject({ mode: "live", usesSampleData: false, isLive: true });
+    expect(result.message).toContain("stored opportunities");
+  });
+
+  it("does not show sample cards after Hunter succeeds with no opportunities", () => {
+    const result = resolveDiscoveryDataMode({
+      authenticated: true, brandId: "brand-1", realItemCount: 0,
+      hunterReady: true, latestRunStatus: "succeeded",
+    });
+    expect(result).toMatchObject({ mode: "empty", usesSampleData: false, isLive: false });
   });
 
   it("marks Insights as collecting while preserving sample values", () => {
