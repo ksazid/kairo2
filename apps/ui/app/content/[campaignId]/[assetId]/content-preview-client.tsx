@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
-import type { ChannelAccountView } from "../../../../lib/api";
+import type { ChannelAccountView, ExternalInstagramPostLink } from "../../../../lib/api";
 import type { ContentItem } from "../../../../lib/content";
 import { captionNeedsSave, contentWithCaption } from "../../../../lib/content";
 import { CarouselStudio } from "./carousel-studio";
@@ -37,7 +37,7 @@ type ActionContext = {
 type LibraryAsset = { id: string; name: string; kind: string; mimeType: string; previewRef?: string; libraryId: string };
 type MediaLibraryResponse = { libraries: Array<{ id: string; name: string; status: string; provider: string }>; assets: LibraryAsset[]; uploadsAvailable?: boolean };
 
-export function ContentPreviewClient({ item, brandName = "Brand", authenticated, actionContext }: { item: ContentItem; brandName?: string; authenticated: boolean; actionContext?: ActionContext }) {
+export function ContentPreviewClient({ item, brandName = "Brand", authenticated, actionContext, externalPost }: { item: ContentItem; brandName?: string; authenticated: boolean; actionContext?: ActionContext; externalPost?: ExternalInstagramPostLink | null }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [slide, setSlide] = useState(0);
@@ -55,6 +55,8 @@ export function ContentPreviewClient({ item, brandName = "Brand", authenticated,
   const [mediaLoading, setMediaLoading] = useState(false);
   const [carouselImages, setCarouselImages] = useState<string[]>([]);
   const [companionCaption, setCompanionCaption] = useState("");
+  const [externalUrl, setExternalUrl] = useState("");
+  const [linkedPost, setLinkedPost] = useState(externalPost ?? null);
   const identity = actionContext?.eligibleAccounts.find(account => account.id === accountId)?.displayName ?? brandName;
   const missingMedia = !carouselImages.length && !item.media.some(ref => ref !== "/kairo-media-placeholder.svg");
   const copyChanged = captionNeedsSave(item.rawContent, caption);
@@ -65,13 +67,14 @@ export function ContentPreviewClient({ item, brandName = "Brand", authenticated,
   const ChannelIcon = item.channel === "Facebook" ? Facebook : item.channel === "LinkedIn" ? Linkedin : Instagram;
 
   useEffect(() => {
+    setLinkedPost(externalPost ?? null);
     setCaption(item.caption);
     setReviewFindings(actionContext?.findings ?? []);
     setApproved(item.status === "published" || item.status === "scheduled" || Boolean(actionContext?.approved));
     setScheduled(item.status === "scheduled");
     setReviewStatus(actionContext?.reviewStatus ?? null);
     setAccountId(actionContext?.approvedAccountId ?? actionContext?.eligibleAccounts[0]?.id ?? "");
-  }, [item.currentVersion, item.caption, item.status, actionContext]);
+  }, [item.currentVersion, item.caption, item.status, actionContext, externalPost]);
 
   function refine(action: "improve" | "shorten" | "tone" | "ideas") {
     if (action === "shorten") setCaption(item.caption.split(/[.!?]/)[0]?.trim().concat(".") || item.caption);
@@ -81,7 +84,7 @@ export function ContentPreviewClient({ item, brandName = "Brand", authenticated,
     setError("");
   }
 
-  async function perform(action: "save" | "review" | "approve" | "schedule" | "generate-image", extra: Record<string, unknown> = {}) {
+  async function perform(action: "save" | "review" | "approve" | "schedule" | "generate-image" | "link-external-reel", extra: Record<string, unknown> = {}) {
     if (!actionContext) return;
     setError("");
     setNotice("");
@@ -90,16 +93,17 @@ export function ContentPreviewClient({ item, brandName = "Brand", authenticated,
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ action, brandId: actionContext.brandId, campaignId: item.campaignId, assetId: item.id, expectedVersion: item.currentVersion, ...extra }),
     });
-    const result = await response.json().catch(() => null) as { message?: string; error?: string; review?: { status?: typeof reviewStatus; truth?: { findings?: Array<{message:string}> }; critic?: { findings?: Array<{message:string}> } } } | null;
+    const result = await response.json().catch(() => null) as { message?: string; error?: string; link?: ExternalInstagramPostLink; review?: { status?: typeof reviewStatus; truth?: { findings?: Array<{message:string}> }; critic?: { findings?: Array<{message:string}> } } } | null;
     if (!response.ok) throw new Error(result?.error ?? "Kairo could not update this content.");
     if (action === "review") { setReviewStatus(result?.review?.status ?? null); setReviewFindings([...(result?.review?.truth?.findings ?? []), ...(result?.review?.critic?.findings ?? [])].map(finding => finding.message)); }
     if (action === "approve") setApproved(true);
     if (action === "schedule") setScheduled(true);
+    if (action === "link-external-reel" && result?.link) setLinkedPost(result.link);
     setNotice(result?.message ?? "Content updated.");
     router.refresh();
   }
 
-  function run(action: "save" | "review" | "approve" | "schedule" | "generate-image", extra: Record<string, unknown> = {}) {
+  function run(action: "save" | "review" | "approve" | "schedule" | "generate-image" | "link-external-reel", extra: Record<string, unknown> = {}) {
     startTransition(async () => {
       try { await perform(action, extra); }
       catch (failure) { setError(failure instanceof Error ? failure.message : "Kairo could not update this content."); }
@@ -202,7 +206,8 @@ export function ContentPreviewClient({ item, brandName = "Brand", authenticated,
     {authenticated && (reviewFindings.length > 0 || missingMedia || !accountId || copyChanged || (item.format === "reel" && !approved)) ? <section aria-label="Required changes" className="content-review-findings"><h2>Before approval</h2><ul>{reviewFindings.map((finding,index) => <li key={index}>{finding}</li>)}{missingMedia ? <li>Production media is missing. Choose approved media from the Brand library to complete this post.</li> : null}{!accountId ? <li>Connect a publishing account in Settings before approving.</li> : null}{copyChanged ? <li>Save the cleaned caption as a new version, then run readiness review.</li> : null}</ul>{(missingMedia || item.format === "reel") && item.format !== "carousel" && actionContext && !approved ? <div className="content-media-picker"><button type="button" disabled={mediaLoading || pending} onClick={() => void openMediaLibrary()}><ImagePlus aria-hidden="true"/>{mediaLoading ? "Loading media…" : missingMedia ? "Choose media" : "Replace video"}</button><label>Upload an approved {mediaKind}<input aria-label={`Upload an approved ${mediaKind}`} type="file" accept={mediaKind === "video" ? "video/mp4" : "image/jpeg,image/png,image/webp"} disabled={mediaLoading || pending} onChange={(event) => void uploadMedia(event.target.files?.[0])}/></label>{mediaLibrary ? <><p>{mediaLibrary.assets.length ? `Select production ${mediaKind}${mediaLibrary.assets.length === 1 ? "" : "s"} from the Brand library.` : `No indexed ${mediaKind} assets are available in the Brand library.`}</p><div role="group" aria-label="Production media library">{mediaLibrary.assets.filter((asset) => asset.kind === mediaKind && asset.previewRef).map((asset) => <label key={asset.id}><input type="checkbox" checked={selectedMedia.includes(asset.id)} onChange={(event) => setSelectedMedia((current) => event.target.checked ? [...current, asset.id] : current.filter((id) => id !== asset.id))}/>{asset.previewRef ? (mediaKind === "video" ? <video src={asset.previewRef} preload="metadata" aria-label={asset.name}/> : <img src={asset.previewRef} alt=""/>) : null}<span>{asset.name}</span></label>)}</div>{mediaLibrary.libraries.length === 0 ? <small>No media libraries are configured. Upload approved media or connect Google Drive from Settings.</small> : null}{mediaLibrary.assets.some((asset) => asset.kind === mediaKind && asset.previewRef) ? <button type="button" disabled={mediaLoading || pending || selectedMedia.length === 0 || (mediaKind === "video" ? selectedMedia.length !== 1 : selectedMedia.length > 12)} onClick={() => void attachMedia()}>{mediaLoading ? "Attaching…" : `Attach ${selectedMedia.length || "selected"} ${mediaKind}${selectedMedia.length === 1 ? "" : "s"}`}</button> : null}</> : null}{mediaLibrary?.uploadsAvailable === false ? <small>Private media uploads are unavailable right now.</small> : null}</div> : null}</section> : null}
     {authenticated && actionContext && item.status === "published" && item.channel === "Instagram" ? <section className="content-review-findings" aria-label="Campaign companion"><h2>Carousel companion</h2><p>Create a new carousel within this campaign and its reviewed Claim lineage.</p><textarea aria-label="Companion caption" value={companionCaption} onChange={event => setCompanionCaption(event.target.value)} placeholder="Write the carousel caption" maxLength={5000}/><button type="button" disabled={pending || !companionCaption.trim()} onClick={() => startTransition(async () => { try { setError(""); const response = await fetch("/api/content/companion", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ brandId: actionContext.brandId, campaignId: item.campaignId, caption: companionCaption }) }); const result = await response.json() as { assetId?: string; error?: string }; if (!response.ok || !result.assetId) throw new Error(result.error ?? "Carousel creation failed."); router.push(`/content/${encodeURIComponent(item.campaignId)}/${encodeURIComponent(result.assetId)}?brand=${encodeURIComponent(actionContext.brandId)}`); } catch (failure) { setError(failure instanceof Error ? failure.message : "Carousel creation failed."); } })}>Create carousel companion</button>{error ? <p role="alert">{error}</p> : null}</section> : null}
     {authenticated && actionContext && item.format === "carousel" && !approved ? <CarouselStudio brandId={actionContext.brandId} campaignId={item.campaignId} assetId={item.id} onImages={setCarouselImages}/> : null}
-    <section className="content-approval-bar" aria-label="Approval actions"><div><span><Lock aria-hidden="true"/></span><p><strong>{scheduled ? "Scheduled" : approved ? "Approved & locked" : reviewStatus === "passed" ? "Ready to approve" : reviewStatus === "revision-required" ? "Changes needed" : "Needs review"}</strong><small>{scheduled ? "This content is ready for its publishing slot." : approved ? "This exact version is locked for its destination." : reviewStatus === "revision-required" ? "Make the required changes and run the review again." : "Run readiness review before approval."}</small></p></div><div className="content-approval-controls">{authenticated && !approved && reviewStatus !== "passed" ? <button type="button" disabled={pending || copyChanged} onClick={() => run("review")}><Sparkles/>{reviewStatus === "revision-required" ? "Check again" : "Check readiness"}</button> : null}{authenticated && !approved && actionContext && actionContext.eligibleAccounts.length > 1 ? <select aria-label="Publishing destination" value={accountId} disabled={pending} onChange={(event) => setAccountId(event.target.value)}>{actionContext.eligibleAccounts.map((account) => <option key={account.id} value={account.id}>{account.displayName}</option>)}</select> : null}<button className="approve" type="button" disabled={pending || approved || (authenticated && (reviewStatus !== "passed" || !accountId || copyChanged))} onClick={approve}>{approved ? <Check/> : <Lock/>}{approved ? "Approved & Locked" : "Approve & Lock"}</button>{authenticated && approved && !scheduled ? <input aria-label="Publishing time" type="datetime-local" value={scheduledFor} min={defaultScheduleTime()} disabled={pending} onChange={(event) => setScheduledFor(event.target.value)}/> : null}<button type="button" disabled={pending || !approved || scheduled || (authenticated && !actionContext?.approvedAccountId)} onClick={schedule}><CalendarDays/>{scheduled ? "Scheduled" : "Schedule"}</button></div></section>
+    {authenticated && actionContext && item.format === "reel" && item.channel === "Instagram" ? <section className="content-review-findings" aria-label="Existing Instagram post"><h2>Existing Instagram Reel</h2>{linkedPost ? <><a href={linkedPost.published_url} target="_blank" rel="noopener noreferrer">View the linked Reel</a><p>Published through Meta. Kairo has recorded the link; performance metrics are unavailable until external post sync is connected.</p></> : <><p>Already posted through Meta? Link the live Reel here to avoid publishing it twice.</p><label>Instagram Reel URL <input type="url" value={externalUrl} onChange={event => setExternalUrl(event.target.value)} placeholder="https://www.instagram.com/reel/…/"/></label><button type="button" disabled={pending || !accountId || !/^https:\/\/(?:www\.)?instagram\.com\/(?:[A-Za-z0-9._]+\/)?reel\/[A-Za-z0-9_-]+\/?$/.test(externalUrl.trim())} onClick={() => run("link-external-reel", { publishedUrl: externalUrl, channelAccountId: accountId })}>Link existing Reel</button></>}</section> : null}
+    <section className="content-approval-bar" aria-label="Approval actions"><div><span><Lock aria-hidden="true"/></span><p><strong>{linkedPost ? "Linked to live Reel" : scheduled ? "Scheduled" : approved ? "Approved & locked" : reviewStatus === "passed" ? "Ready to approve" : reviewStatus === "revision-required" ? "Changes needed" : "Needs review"}</strong><small>{linkedPost ? "This Reel was published outside Kairo. Do not schedule it again." : scheduled ? "This content is ready for its publishing slot." : approved ? "This exact version is locked for its destination." : reviewStatus === "revision-required" ? "Make the required changes and run the review again." : "Run readiness review before approval."}</small></p></div><div className="content-approval-controls">{authenticated && !approved && reviewStatus !== "passed" ? <button type="button" disabled={pending || copyChanged || Boolean(linkedPost)} onClick={() => run("review")}><Sparkles/>{reviewStatus === "revision-required" ? "Check again" : "Check readiness"}</button> : null}{authenticated && !approved && actionContext && actionContext.eligibleAccounts.length > 1 ? <select aria-label="Publishing destination" value={accountId} disabled={pending} onChange={(event) => setAccountId(event.target.value)}>{actionContext.eligibleAccounts.map((account) => <option key={account.id} value={account.id}>{account.displayName}</option>)}</select> : null}<button className="approve" type="button" disabled={pending || approved || Boolean(linkedPost) || (authenticated && (reviewStatus !== "passed" || !accountId || copyChanged))} onClick={approve}>{approved ? <Check/> : <Lock/>}{approved ? "Approved & Locked" : "Approve & Lock"}</button>{authenticated && approved && !scheduled && !linkedPost ? <input aria-label="Publishing time" type="datetime-local" value={scheduledFor} min={defaultScheduleTime()} disabled={pending} onChange={(event) => setScheduledFor(event.target.value)}/> : null}<button type="button" disabled={pending || !approved || scheduled || Boolean(linkedPost) || (authenticated && !actionContext?.approvedAccountId)} onClick={schedule}><CalendarDays/>{scheduled ? "Scheduled" : "Schedule"}</button></div></section>
   </>;
 }
 
