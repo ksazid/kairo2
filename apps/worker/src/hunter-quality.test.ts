@@ -83,7 +83,7 @@ function context(items: DiscoveryEvidence[], extras: Partial<Parameters<typeof r
 
 describe("Hunter deterministic candidate quality", () => {
   it("uses a versioned deterministic quality boundary", () => {
-    expect(HUNTER_QUALITY_VERSION).toBe("hunter-quality-v1");
+    expect(HUNTER_QUALITY_VERSION).toBe("hunter-quality-v2");
   });
 
   it("ignores model ordering and ranks stronger evidence-adjusted candidates first", () => {
@@ -113,6 +113,25 @@ describe("Hunter deterministic candidate quality", () => {
     });
 
     expect(rankAndFilterHunterCandidates([inflated], context([unrelated]))).toEqual([]);
+  });
+
+  it("rejects mountain-bike parts proposed as Duke 390 motorcycle gear", () => {
+    const cycling = evidence("mtb", "Shimano rotors and Met mountain bike helmets", "Downhill and e-bike rotors; convertible mountain bike helmet from Met.");
+    const motorcycleProfile = { ...profile, sector: "Motorcycles", topics: ["Duke 390", "rider safety"] };
+    const proposed = candidate(cycling, "Duke 390 safety gear guide", "Recommend the Shimano rotors and Met helmet to Duke 390 riders", {
+      topic: "Duke 390 rider safety", targetAudience: "Duke 390 riders",
+      rationale: "Gear update for Duke 390 riders", scores: strongScores,
+    });
+    expect(rankAndFilterHunterCandidates([proposed], context([cycling], { intelligenceProfile: motorcycleProfile }))).toEqual([]);
+  });
+
+  it("keeps motorcycle evidence that compares cycling gear", () => {
+    const comparison = evidence("comparison", "Motorcycle helmet standards versus mountain bike helmets", "A motorcycle safety guide explains that mountain bike helmets are not motorcycle protection.");
+    const motorcycleProfile = { ...profile, sector: "Motorcycles", topics: ["motorcycle helmet", "rider safety"] };
+    const proposed = candidate(comparison, "Motorcycle helmet standards for riders", "Explain why motorcycle-rated helmets matter", {
+      topic: "motorcycle helmet", targetAudience: "riders", rationale: "Relevant motorcycle helmet guidance for riders",
+    });
+    expect(rankAndFilterHunterCandidates([proposed], context([comparison], { intelligenceProfile: motorcycleProfile }))).toHaveLength(1);
   });
 
   it("rejects excluded topics and previously surfaced ideas before persistence", () => {
