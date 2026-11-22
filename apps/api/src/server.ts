@@ -80,6 +80,7 @@ import{imageGeneratorFromEnv}from"./image-generator";
 import{registerContentImageGenerationRoutes}from"./content-image-generation-routes";
 import{BrandPresenterService}from"./brand-presenter";import{registerBrandPresenterRoutes}from"./brand-presenter-routes";
 import{SimplePublishFlowService}from"@kairo/domain/simple-publish-flow";import{PgSimplePublishFlowRepository}from"./simple-publish-flow-postgres";import{registerSimplePublishFlowRoutes}from"./simple-publish-flow-routes";
+import{registerExternalInstagramPostRoutes}from"./external-instagram-post-routes";
 import{PgCommandSearchRepository}from"./command-search-postgres";import{registerCommandSearchRoutes}from"./command-search-routes";
 import{PgBrandNotificationRepository}from"./brand-notifications-postgres";import{registerBrandNotificationRoutes}from"./brand-notifications-routes";
 import{ConceptMockupAssetService}from"./concept-mockup-assets";import{registerConceptMockupAssetRoutes}from"./concept-mockup-asset-routes";
@@ -218,6 +219,7 @@ const carouselStore=new PgCarouselStudioStore(pool,undefined,undefined,carouselS
 registerCarouselStudioRoutes(app,{coreStore,identityVerifier,store:carouselStore,...(carouselRenderer?{renderer:carouselRenderer}:{})});
 registerConceptMockupAssetRoutes(app,{store:coreStore,identityVerifier,service:conceptMockupAssets});
 registerSimplePublishFlowRoutes(app,{coreStore,identityVerifier,service:new SimplePublishFlowService(new PgSimplePublishFlowRepository(pool,carouselSigner))});
+registerExternalInstagramPostRoutes(app,{pool,coreStore,identityVerifier});
 registerBrandNotificationRoutes(app,{coreStore,identityVerifier,repository:new PgBrandNotificationRepository(pool)});
 
 const googleDrive=googleDriveConfig();

@@ -359,6 +359,21 @@ export async function scheduleContentVersion(brandId: string, campaignId: string
   return bodyOrError<PublishCommandView>(await api(token, `/api/v1/brands/${encodeURIComponent(brandId)}/campaigns/${encodeURIComponent(campaignId)}/assets/${encodeURIComponent(assetId)}/schedule`, { method: "POST", body: JSON.stringify(input) }), "Kairo could not schedule this content.");
 }
 
+export type ExternalInstagramPostLink = { published_url: string; shortcode: string; version_id: string; linked_at: string };
+function externalPostPath(brandId: string, campaignId: string, assetId: string) {
+  return `/api/v1/brands/${encodeURIComponent(brandId)}/campaigns/${encodeURIComponent(campaignId)}/assets/${encodeURIComponent(assetId)}/external-instagram-post`;
+}
+export async function getExternalInstagramPostLink(brandId: string, campaignId: string, assetId: string): Promise<ExternalInstagramPostLink | null> {
+  const token = await accessToken(); if (!token) return null;
+  const response = await api(token, externalPostPath(brandId, campaignId, assetId));
+  if (!response.ok) return null;
+  return (await response.json() as { link: ExternalInstagramPostLink | null }).link;
+}
+export async function linkExternalInstagramPost(brandId: string, campaignId: string, assetId: string, input: { publishedUrl: string; channelAccountId: string; expectedVersion: number }) {
+  const token = await accessToken(); if (!token) throw new Error("Sign in to link an Instagram post.");
+  return bodyOrError<{ link: ExternalInstagramPostLink; metricsStatus: "unavailable" }>(await api(token, externalPostPath(brandId, campaignId, assetId), { method: "POST", body: JSON.stringify(input) }), "Kairo could not link this Instagram post.");
+}
+
 export async function startHomeCreation(input: {
   brandId: string;
   format: CreationFormat;

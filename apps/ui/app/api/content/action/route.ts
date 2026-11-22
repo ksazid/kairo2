@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { approveContentVersion, generateContentImage, getContentData, reviewContentVersion, saveContentVersion, scheduleContentVersion } from "../../../../lib/api";
+import { approveContentVersion, generateContentImage, getContentData, linkExternalInstagramPost, reviewContentVersion, saveContentVersion, scheduleContentVersion } from "../../../../lib/api";
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null) as Record<string, unknown> | null;
@@ -32,6 +32,13 @@ export async function POST(request: Request) {
       if (!entry || entry.asset.currentVersion !== expectedVersion) return problem("Content Version is stale.", 409);
       await generateContentImage(brandId, campaignId, assetId, expectedVersion);
       return NextResponse.json({ message: "Kairo generated an image and saved it to this Brand’s media library. Review it and run readiness again." });
+    }
+
+    if (action === "link-external-reel") {
+      const publishedUrl = text(body?.publishedUrl, 300);
+      const channelAccountId = text(body?.channelAccountId, 200);
+      const result = await linkExternalInstagramPost(brandId, campaignId, assetId, { publishedUrl, channelAccountId, expectedVersion });
+      return NextResponse.json({ message: "Existing Instagram Reel linked. Metrics are not yet synced.", ...result });
     }
 
     const data = await getContentData(brandId);

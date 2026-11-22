@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Facebook, Grid2X2, Instagram, Linkedin, PlaySquare } from "lucide-react";
-import { getContentData } from "../../../../lib/api";
+import { getContentData, getExternalInstagramPostLink } from "../../../../lib/api";
 import { toContentItems } from "../../../../lib/content";
 import { requirePageAuthentication } from "../../../../lib/page-auth";
 import { KairoShell } from "../../../kairo-shell";
@@ -25,6 +25,7 @@ export default async function ContentPreviewPage({ params, searchParams }: { par
   const contentHref = data.brandId ? `/content?brand=${encodeURIComponent(data.brandId)}` : "/content";
   const ChannelIcon = item.channel === "Facebook" ? Facebook : item.channel === "LinkedIn" ? Linkedin : Instagram;
   const FormatIcon = item.format === "carousel" ? Grid2X2 : item.format === "reel" ? PlaySquare : undefined;
+  const externalPost = data.brandId && item.channel === "Instagram" && item.format === "reel" ? await getExternalInstagramPostLink(data.brandId, campaignId, assetId) : null;
 
   return <KairoShell active="Content" authenticated={data.authenticated} brandId={data.brandId} brandName={data.brandName} workspaceClassName="content-preview-workspace" proTip="Review the visual, caption and destination before approving content." proTipAction="Back to Content" proTipHref={contentHref}>
     <Link className="content-preview-back" href={contentHref}><ArrowLeft aria-hidden="true"/>Back to Content</Link>
@@ -32,7 +33,7 @@ export default async function ContentPreviewPage({ params, searchParams }: { par
       <div><h1>{item.title}</h1><p>{item.summary}</p><div className="content-preview-meta"><span><ChannelIcon aria-hidden="true"/>{item.channel}</span><span>{FormatIcon ? <FormatIcon aria-hidden="true"/> : null}{item.formatLabel}</span><span className={`content-status status-${item.status}`}><i/>{item.statusLabel}</span><small>Last updated {formatDate(item.updatedAt)} by Kairo</small></div></div>
       {data.authenticated ? <a href="#caption-editor">Edit in preview</a> : <Link href="/">Create content</Link>}
     </header>
-    <ContentPreviewClient item={item} brandName={data.brandName} authenticated={data.authenticated} actionContext={data.brandId ? { brandId: data.brandId, reviewStatus: review && review.versionId === currentVersionId ? review.status : null, approved: Boolean(approval && approval.versionId === currentVersionId), findings: review && review.versionId === currentVersionId ? [...(review.truth?.findings ?? []), ...(review.critic?.findings ?? [])].map(finding => finding.message) : [], eligibleAccounts, ...(approvedAccount ? { approvedAccountId: approvedAccount.id } : {}) } : undefined}/>
+    <ContentPreviewClient item={item} brandName={data.brandName} authenticated={data.authenticated} externalPost={externalPost} actionContext={data.brandId ? { brandId: data.brandId, reviewStatus: review && review.versionId === currentVersionId ? review.status : null, approved: Boolean(approval && approval.versionId === currentVersionId), findings: review && review.versionId === currentVersionId ? [...(review.truth?.findings ?? []), ...(review.critic?.findings ?? [])].map(finding => finding.message) : [], eligibleAccounts, ...(approvedAccount ? { approvedAccountId: approvedAccount.id } : {}) } : undefined}/>
   </KairoShell>;
 }
 
