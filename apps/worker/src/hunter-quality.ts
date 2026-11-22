@@ -6,8 +6,9 @@ import {
   type OpportunityEvaluationInput,
 } from "@kairo/domain/discovery";
 import type { BrandIntelligenceProfile } from "@kairo/domain/source-policy";
+import { selectSectorIntelligencePack } from "@kairo/domain/sector-packs";
 
-export const HUNTER_QUALITY_VERSION = "hunter-quality-v1" as const;
+export const HUNTER_QUALITY_VERSION = "hunter-quality-v2" as const;
 export const HUNTER_SCORE_CALIBRATION_VERSION = "hunter-score-calibration-v1" as const;
 
 export type HunterScoreDimension = keyof OpportunityEvaluationInput;
@@ -91,6 +92,7 @@ export function rankAndFilterHunterCandidates<TCandidate extends HunterQualityCa
     const source = context.evidenceByUrl.get(candidate.sourceUrl);
     if (!source) continue;
     if (matchesExcludedTopic(candidate, context.intelligenceProfile)) continue;
+    if (isMotorcycleCyclingMismatch(source, context)) continue;
 
     const previousSimilarity = maxPreviousSimilarity(candidate.title, context.existingOpportunityTitles);
     if (previousSimilarity >= 0.72) continue;
@@ -137,6 +139,17 @@ export function rankAndFilterHunterCandidates<TCandidate extends HunterQualityCa
   }
 
   return accepted;
+}
+
+function isMotorcycleCyclingMismatch(source: DiscoveryEvidence, context: HunterQualityContext): boolean {
+  const profile = context.intelligenceProfile;
+  if (!profile || selectSectorIntelligencePack(profile).id !== "motorcycles") return false;
+  const document = context.documentsByUrl.get(source.sourceUrl);
+  const evidence = `${source.title} ${source.summary ?? ""} ${document?.title ?? ""} ${document?.body?.slice(0, 4_000) ?? ""}`;
+  // Cycling equipment is not interchangeable with motorcycle equipment. Only exclude sources
+  // that explicitly describe cycling and provide no motorcycle context of their own.
+  return /\b(?:mountain bikes?|e-bikes?|bicycles?|mtb|cross-country cycling|road bikes?)\b/i.test(evidence)
+    && !/\b(?:motorcycles?|motorbikes?|motorcycling|ktm|duke 390)\b/i.test(evidence);
 }
 
 
