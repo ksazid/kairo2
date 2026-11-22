@@ -15,6 +15,7 @@ const approvedMigrations = new Set([
   "0045_content_asset_library_scope_integrity.sql",
   "0046_quarantine_known_cross_brand_media.sql",
   "0047_fix_carousel_immutable_trigger.sql",
+  "0048_external_instagram_post_links.sql",
 ]);
 const approvedRanges = new Set([
   "0023_meta_multichannel_connections.sql..0028_performance_pattern_memory.sql",
