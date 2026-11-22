@@ -35,16 +35,17 @@ describe("manually linked Instagram Reel", () => {
     await setupApp.close();
     const app = buildApp({ store: coreStore, identityVerifier: verifier });
     const canonical = "https://www.instagram.com/reel/Df9ddr2EYGp/";
-    const query = vi.fn(async (sql: string) => {
+    const query = vi.fn(async (sql: string, _params?: unknown[]) => {
       if (sql.includes("select a.workspace_id")) return { rows: [{ workspace_id: "ws", current_version: 4, version_id: "version-4" }] };
       if (sql.includes("select published_url,shortcode")) return { rows: [{ published_url: canonical, shortcode: "Df9ddr2EYGp", version_id: "version-4", linked_at: new Date().toISOString() }] };
       return { rows: [] };
     });
     registerExternalInstagramPostRoutes(app, { coreStore, identityVerifier: verifier, pool: { connect: vi.fn(async () => ({ query, release: vi.fn() })) } as unknown as Pool });
-    const response = await app.inject({ method: "POST", url: `/api/v1/brands/${brandId}/campaigns/campaign/assets/asset/external-instagram-post`, headers: { authorization: "Bearer test:alice" }, payload: { publishedUrl: "https://www.instagram.com/_dukeman390/reel/Df9ddr2EYGp/", channelAccountId: "account", expectedVersion: 4 } });
+    const response = await app.inject({ method: "POST", url: `/api/v1/brands/${brandId}/campaigns/campaign/assets/asset/external-instagram-post`, headers: { authorization: "Bearer test:alice" }, payload: { publishedUrl: "https://www.instagram.com/_dukeman390/reel/Df9ddr2EYGp/", expectedVersion: 4 } });
     expect(response.statusCode).toBe(200);
     expect(response.json()).toMatchObject({ link: { published_url: canonical }, metricsStatus: "unavailable", source: "manually-linked" });
     expect(query.mock.calls.some(([sql]) => sql.includes("insert into publish_commands"))).toBe(false);
+    expect(query.mock.calls.find(([sql]) => sql.includes("insert into external_instagram_post_links"))?.[1]?.[5]).toBeNull();
     await app.close();
   });
 });

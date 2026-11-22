@@ -36,7 +36,7 @@ export async function POST(request: Request) {
 
     if (action === "link-external-reel") {
       const publishedUrl = text(body?.publishedUrl, 300);
-      const channelAccountId = text(body?.channelAccountId, 200);
+      const channelAccountId = text(body?.channelAccountId, 200) || undefined;
       const result = await linkExternalInstagramPost(brandId, campaignId, assetId, { publishedUrl, channelAccountId, expectedVersion });
       return NextResponse.json({ message: "Existing Instagram Reel linked. Metrics are not yet synced.", ...result });
     }
