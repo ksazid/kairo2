@@ -369,7 +369,7 @@ export async function getExternalInstagramPostLink(brandId: string, campaignId: 
   if (!response.ok) return null;
   return (await response.json() as { link: ExternalInstagramPostLink | null }).link;
 }
-export async function linkExternalInstagramPost(brandId: string, campaignId: string, assetId: string, input: { publishedUrl: string; channelAccountId: string; expectedVersion: number }) {
+export async function linkExternalInstagramPost(brandId: string, campaignId: string, assetId: string, input: { publishedUrl: string; channelAccountId?: string; expectedVersion: number }) {
   const token = await accessToken(); if (!token) throw new Error("Sign in to link an Instagram post.");
   return bodyOrError<{ link: ExternalInstagramPostLink; metricsStatus: "unavailable" }>(await api(token, externalPostPath(brandId, campaignId, assetId), { method: "POST", body: JSON.stringify(input) }), "Kairo could not link this Instagram post.");
 }
