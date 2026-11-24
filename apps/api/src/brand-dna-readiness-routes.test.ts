@@ -48,7 +48,7 @@ describe("Brand DNA readiness route", () => {
       hunterReady: false,
       brain: [],
       sources: [],
-      completeness: { score: 0, knownGroups: 0, totalGroups: 6 },
+      completeness: { score: 0, knownGroups: 0, totalGroups: 7 },
     });
 
     const confirmed = await app.inject({

@@ -8,6 +8,7 @@ import type {
 import { DomainValidationError, type KairoRepository } from "./index";
 import { sanitizeBrandEvidenceAtBoundary } from "./brand-brain-evidence-boundary";
 import { validateAndDeduplicateBrandBrainProposals } from "./brand-brain-write-gate";
+import { BRAND_SECTOR_FIELD_KEY, resolveBrandSectorClassification } from "./brand-sector";
 
 export interface PublicBrandReference {
   url: string;
@@ -178,7 +179,7 @@ export class BrandBrainBootstrapService {
 
     if (!this.generator) {
       const fallback = fallbackProposals(successfulReferences);
-      const brain = await this.persistFallback(accountId, brandId, fallback);
+      const brain = await this.persistFallback(accountId, brandId, fallback, !syntheticFallback);
       return {
         brain,
         generatorStatus: fallback.length ? "generated" : "unavailable",
@@ -202,7 +203,7 @@ export class BrandBrainBootstrapService {
       });
     } catch {
       const fallback = fallbackProposals(successfulReferences);
-      const brain = await this.persistFallback(accountId, brandId, fallback);
+      const brain = await this.persistFallback(accountId, brandId, fallback, !syntheticFallback);
       return {
         brain,
         generatorStatus: fallback.length ? "generated" : "unavailable",
@@ -218,7 +219,7 @@ export class BrandBrainBootstrapService {
     }
     if (!proposals.length) {
       const fallback = fallbackProposals(successfulReferences);
-      const brain = await this.persistFallback(accountId, brandId, fallback);
+      const brain = await this.persistFallback(accountId, brandId, fallback, !syntheticFallback);
       return {
         brain,
         generatorStatus: fallback.length ? "generated" : "unavailable",
@@ -265,7 +266,7 @@ export class BrandBrainBootstrapService {
     }
 
     return {
-      brain: await this.repository.listBrandBrainFields(accountId, brandId),
+      brain: syntheticFallback ? await this.repository.listBrandBrainFields(accountId, brandId) : await this.persistSector(accountId, brandId),
       generatorStatus: "generated",
       proposedCount,
       skippedConfirmedCount,
@@ -273,7 +274,7 @@ export class BrandBrainBootstrapService {
     };
   }
 
-  private async persistFallback(accountId: string, brandId: string, proposals: BrandBrainProposal[]) {
+  private async persistFallback(accountId: string, brandId: string, proposals: BrandBrainProposal[], allowSectorInference = true) {
     for (const proposal of proposals) {
       const section = PROPOSAL_FIELDS.get(proposal.fieldKey);
       if (!section || proposal.section !== section) throw new DomainValidationError("Brand Brain proposal is outside the guided allow-list");
@@ -294,6 +295,24 @@ export class BrandBrainBootstrapService {
         ...(existing ? { expectedVersion: existing.version } : {}),
       });
     }
+    return allowSectorInference ? this.persistSector(accountId, brandId) : this.repository.listBrandBrainFields(accountId, brandId);
+  }
+
+  private async persistSector(accountId: string, brandId: string) {
+    const [fields, sources] = await Promise.all([
+      this.repository.listBrandBrainFields(accountId, brandId), this.repository.listKnowledgeSources(accountId, brandId),
+    ]);
+    const existing = fields.find((field) => field.fieldKey === BRAND_SECTOR_FIELD_KEY);
+    if (existing?.state === "confirmed") return fields;
+    const classification = resolveBrandSectorClassification(fields.filter((field) => field.fieldKey !== BRAND_SECTOR_FIELD_KEY), sources.filter((source) => source.status === "active").map((source) => source.id));
+    const sectorPackId = classification.candidatePackIds[0];
+    if (classification.candidatePackIds.length !== 1 || !sectorPackId || !classification.sourceIds.length) return fields;
+    if (existing?.value === sectorPackId && existing.state === "inferred"
+      && [...existing.sourceIds].sort().join() === classification.sourceIds.join()) return fields;
+    await this.repository.recordInferredBrandBrainField(accountId, brandId, {
+      section: "identity", fieldKey: BRAND_SECTOR_FIELD_KEY, value: sectorPackId, sourceIds: classification.sourceIds,
+      ...(existing ? { expectedVersion: existing.version } : {}),
+    });
     return this.repository.listBrandBrainFields(accountId, brandId);
   }
 

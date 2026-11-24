@@ -67,6 +67,7 @@ async function readyBrand(store: MemoryKairoRepository) {
   const created = await store.createWorkspaceWithBrand(account.id, { workspaceName: "Studio", brandName: "Kairo" });
   const brandId = created.brand.id;
   const fields = [
+    ["identity.sector-pack-id", "identity", "ai-technology"],
     ["identity.description", "identity", "AI-assisted content intelligence for modern brands"],
     ["identity.products-services", "identity", "Brand intelligence and content discovery"],
     ["audience.primary", "audience", "Technical founders and marketing teams"],

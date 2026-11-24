@@ -50,4 +50,12 @@ describe("Brand Brain runtime projection", () => {
     expect(projectRuntimeSources(activation)).toEqual([expect.objectContaining({ id: "source-1", title: "Kairo", status: "active" })]);
     expect(projectRuntimeLearnings(activation)).toEqual([]);
   });
+
+  it("shows the sector suggestion as needing review and exposes the persisted selection", () => {
+    const sectorClassification = { status: "needs-confirmation" as const, candidatePackIds: ["motorcycles"], evidenceFieldKeys: ["content.pillars"], sourceIds: ["source-1"], reason: "Confirm the Brand sector." };
+    expect(projectRuntimeFields({ ...activation, sectorClassification }).find((field) => field.key === "sector")).toMatchObject({ fieldKey: "identity.sector-pack-id", value: "motorcycles", state: "review" });
+    const selected = { ...activation, sectorClassification: { ...sectorClassification, status: "ready" as const, sectorPackId: "motorcycles" }, brain: [...activation.brain, { fieldKey: "identity.sector-pack-id", section: "identity" as const, value: "motorcycles", state: "confirmed" as const, sourceIds: [], version: 2, updatedAt: activation.updatedAt! }] };
+    expect(projectRuntimeFields(selected).find((field) => field.key === "sector")).toMatchObject({ value: "motorcycles", state: "confirmed", version: 2 });
+    expect(projectRuntimeFields({ ...selected, sectorClassification: { ...sectorClassification, status: "conflicting" } }).find((field) => field.key === "sector")?.state).toBe("review");
+  });
 });

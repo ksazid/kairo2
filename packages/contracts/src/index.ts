@@ -102,7 +102,7 @@ export interface BrandBrainBuildResponse {
 }
 
 export type BrandDnaReadinessStatus = "ready" | "needs-enrichment";
-export type BrandDnaReadinessGap = "business" | "offerings" | "audience" | "positioning" | "topics" | "boundaries" | "geography";
+export type BrandDnaReadinessGap = "business" | "offerings" | "audience" | "positioning" | "topics" | "boundaries" | "geography" | "sector";
 export type BrandDnaReadinessAction =
   | { type: "add-source"; prompt: string; acceptedSource: "website" | "public-link" }
   | { type: "confirm-field"; fieldKey: string; prompt: string }

@@ -1,4 +1,5 @@
 import type { BrandBrainFieldDto, BrandDnaReadinessAction, BrandDnaReadinessGap, BrandDnaReadinessResponse } from "@kairo/contracts";
+import { BRAND_SECTOR_FIELD_KEY, resolveBrandSectorClassification } from "./brand-sector";
 
 const PLACEHOLDER = /to be confirmed|not yet confirmed|could not be identified|category not yet|connected or readable source evidence|brand's audience|people interested in this brand's products|what the brand offers|brand-relevant topics grounded|business or organization website|products or services described in (?:the|its) public reference|customers seeking .+ products or services|brand story, products or services|no excluded topics identified in the public reference/i;
 
@@ -10,12 +11,14 @@ const FIELD_KEYS = {
   topics: ["content.core-topics", "content.preferred-topics", "content.pillars", "content.related-topics"],
   boundaries: ["boundaries.excluded-topics", "boundaries.prohibited-subjects", "boundaries.claims-to-avoid", "boundaries.owner-directive"],
   geography: ["identity.geography"],
+  sector: [BRAND_SECTOR_FIELD_KEY],
 } as const satisfies Record<BrandDnaReadinessGap, readonly string[]>;
 
 export interface BrandDnaReadinessOptions {
   now?: () => Date;
   /** Location is only required when the caller has identified a location-dependent business. */
   geographyRequired?: boolean;
+  activeSourceIds?: readonly string[];
 }
 
 export function evaluateBrandDnaReadiness(fields: readonly BrandBrainFieldDto[], options: BrandDnaReadinessOptions = {}): BrandDnaReadinessResponse {
@@ -27,12 +30,17 @@ export function evaluateBrandDnaReadiness(fields: readonly BrandBrainFieldDto[],
   }
 
   const gaps: BrandDnaReadinessGap[] = [];
+  const classification = resolveBrandSectorClassification(fields, options.activeSourceIds);
   for (const gap of Object.keys(FIELD_KEYS) as BrandDnaReadinessGap[]) {
     if (gap === "geography" && !options.geographyRequired) continue;
+    if (gap === "sector") {
+      if (classification.status !== "ready") gaps.push(gap);
+      continue;
+    }
     if (!FIELD_KEYS[gap].some((key) => usable.has(key))) gaps.push(gap);
   }
 
-  const total = options.geographyRequired ? 7 : 6;
+  const total = options.geographyRequired ? 8 : 7;
   const score = Math.round(((total - gaps.length) / total) * 100);
   const relevant = [...usable.values()].filter((field) => FIELD_KEYS[gapForField(field.fieldKey)] !== undefined);
   const evidenceCoverage = relevant.length ? Math.round((relevant.filter((field) => field.sourceIds.length > 0).length / relevant.length) * 100) : 0;
@@ -61,6 +69,7 @@ function gapForField(fieldKey: string): BrandDnaReadinessGap {
 function nextReadinessAction(gaps: readonly BrandDnaReadinessGap[], usable: ReadonlyMap<string, BrandBrainFieldDto>): BrandDnaReadinessAction | undefined {
   const gap = gaps[0];
   if (!gap) return undefined;
+  if (gap === "sector") return { type: "confirm-field", fieldKey: BRAND_SECTOR_FIELD_KEY, prompt: "Review the Brand sector in Brand DNA. Correct conflicting Category, Products & services or Content focus before running Hunter." };
   if (gap === "offerings") return { type: "add-source", acceptedSource: "website", prompt: "Add your website so Kairo can understand your products or services." };
   if (gap === "business") return { type: "add-source", acceptedSource: "public-link", prompt: "Add a public Brand link so Kairo can identify what your business does." };
   if (gap === "audience") return { type: "confirm-field", fieldKey: "audience.primary", prompt: "Who is the primary customer or audience for this Brand?" };

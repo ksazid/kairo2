@@ -37,10 +37,11 @@ async function addReadyBrain(
   store: MemoryKairoRepository,
   accountId: string,
   brandId: string,
-  input: { category?: string; topics?: string } = {},
+  input: { category?: string; topics?: string; sectorPackId?: string } = {},
 ) {
   const fields = [
-    ["identity.description", "identity", "AI-powered content intelligence for brands"],
+    ["identity.description", "identity", "Content intelligence for brands"],
+    ["identity.sector-pack-id", "identity", input.sectorPackId ?? "ai-technology"],
     ["identity.products-services", "identity", "Content discovery and creation"],
     ["identity.category", "identity", input.category ?? "AI"],
     ["audience.primary", "audience", "Software teams"],
@@ -142,11 +143,11 @@ describe("VS-97 Hunter recommendations API", () => {
     await app.close();
   });
 
-  it("uses the generic intelligence pack when no bespoke sector pack matches the Brand", async () => {
+  it("uses the persisted hospitality sector for a restaurant Brand", async () => {
     const store = new MemoryKairoRepository();
     const verifier = new Verifier();
     const { account, brand } = await setupBrand(store);
-    await addReadyBrain(store, account.id, brand.id, { category: "Restaurant", topics: "seasonal menus" });
+    await addReadyBrain(store, account.id, brand.id, { category: "Restaurant", topics: "seasonal menus", sectorPackId: "hospitality" });
     let captured: HunterRunInput | undefined;
     const app = buildApp({ store, identityVerifier: verifier });
     registerHunterRecommendationRoutes(app, {
@@ -167,7 +168,7 @@ describe("VS-97 Hunter recommendations API", () => {
     });
 
     expect(response.statusCode).toBe(200);
-    expect(captured?.intelligenceProfile).toMatchObject({ sector: "Restaurant", topics: ["seasonal menus"] });
+    expect(captured?.intelligenceProfile).toMatchObject({ sector: "Restaurant", sectorPackId: "hospitality", topics: ["seasonal menus"] });
     expect(captured?.query).toBeUndefined();
     await app.close();
   });

@@ -223,10 +223,11 @@ function buildRuntime(modelCalls: { value: number }): AgentRuntimePort {
 async function addReadyBrand(
   store: MemoryKairoRepository,
   accountId: string,
-  input: { name: string; category: string; audience: string; topics: string; boundaries: string },
+  input: { name: string; category: string; audience: string; topics: string; boundaries: string; sectorPackId: string },
 ) {
   const created = await store.createWorkspaceWithBrand(accountId, { workspaceName: `${input.name} Studio`, brandName: input.name });
   const fields = [
+    ["identity.sector-pack-id", "identity", input.sectorPackId],
     ["identity.description", "identity", `${input.name} provides useful expertise for its audience`],
     ["identity.products-services", "identity", `${input.name} products and services`],
     ["identity.category", "identity", input.category],
@@ -251,6 +252,7 @@ describe("Hunter Chunks 1-4 integrated certification", () => {
     const kairo = await addReadyBrand(store, account.id, {
       name: "Kairo",
       category: "AI developer technology",
+      sectorPackId: "ai-technology",
       audience: "Software teams",
       topics: "AI agents, software architecture",
       boundaries: "Celebrity gossip, unsupported claims",
@@ -258,6 +260,7 @@ describe("Hunter Chunks 1-4 integrated certification", () => {
     const restaurant = await addReadyBrand(store, account.id, {
       name: "Harbour Kitchen",
       category: "Restaurant hospitality",
+      sectorPackId: "hospitality",
       audience: "Restaurant operators",
       topics: "seasonal menus",
       boundaries: "Unsafe food claims",
@@ -265,6 +268,7 @@ describe("Hunter Chunks 1-4 integrated certification", () => {
     const noorpath = await addReadyBrand(store, account.id, {
       name: "Noorpath",
       category: "Umrah religious travel",
+      sectorPackId: "umrah-religious-travel",
       audience: "First-time Umrah travellers",
       topics: "Umrah guidance",
       boundaries: "Unverified visa promises",

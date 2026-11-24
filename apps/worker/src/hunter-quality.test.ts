@@ -83,7 +83,7 @@ function context(items: DiscoveryEvidence[], extras: Partial<Parameters<typeof r
 
 describe("Hunter deterministic candidate quality", () => {
   it("uses a versioned deterministic quality boundary", () => {
-    expect(HUNTER_QUALITY_VERSION).toBe("hunter-quality-v2");
+    expect(HUNTER_QUALITY_VERSION).toBe("hunter-quality-v3");
   });
 
   it("ignores model ordering and ranks stronger evidence-adjusted candidates first", () => {
@@ -122,6 +122,13 @@ describe("Hunter deterministic candidate quality", () => {
       topic: "Duke 390 rider safety", targetAudience: "Duke 390 riders",
       rationale: "Gear update for Duke 390 riders", scores: strongScores,
     });
+    expect(rankAndFilterHunterCandidates([proposed], context([cycling], { intelligenceProfile: motorcycleProfile }))).toEqual([]);
+  });
+
+  it.each(["e-bike", "ebike", "e bike", "e‑bike", "electric bike", "MTB"])("rejects %s-only gear with the canonical sector and generic website category", (word) => {
+    const cycling = evidence("cycling", `New ${word} helmet`, `A safer helmet designed for ${word} riders.`);
+    const motorcycleProfile = { ...profile, sector: "Business or organization website", sectorPackId: "motorcycles" as const, topics: ["Duke 390", "rider safety"] };
+    const proposed = candidate(cycling, "Duke 390 rider safety guide", "Recommend this helmet for Duke 390 riders", { topic: "Duke 390", targetAudience: "Duke 390 riders", scores: strongScores });
     expect(rankAndFilterHunterCandidates([proposed], context([cycling], { intelligenceProfile: motorcycleProfile }))).toEqual([]);
   });
 

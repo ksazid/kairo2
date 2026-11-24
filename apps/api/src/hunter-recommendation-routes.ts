@@ -105,20 +105,21 @@ export function registerHunterRecommendationRoutes(app: FastifyInstance, options
           type: "about:blank",
           title: "Brand Brain is not ready for Hunter",
           status: 409,
-          detail: "Complete or confirm the required Brand Brain context before running discovery.",
+          detail: activation.sectorClassification.status !== "ready" ? activation.sectorClassification.reason : "Complete or confirm the required Brand Brain context before running discovery.",
           code: "hunter_not_ready",
           correlationId: request.id,
           readiness: snapshot.status,
           gaps: snapshot.readinessGaps,
           weakFields: snapshot.weakFields,
           snapshotVersion: snapshot.snapshotVersion,
+          sectorClassification: activation.sectorClassification,
         });
       }
 
       const discoveryPlan = plans
         ? await plans.ensure(account.id, snapshot)
         : projectInitialBrandDiscoveryPlan(snapshot);
-      const baseProfile = projectBrandIntelligenceProfile(brain);
+      const baseProfile = { ...projectBrandIntelligenceProfile(brain), sectorPackId: activation.sectorClassification.sectorPackId };
       const intelligenceProfile = applyDiscoveryPlan(baseProfile, discoveryPlan);
       const pack = selectSectorIntelligencePack(intelligenceProfile);
       const graphRecord = options.graphStore

@@ -1,10 +1,12 @@
 import type { BrandBrainFieldDto } from "@kairo/contracts";
 import { DomainValidationError } from "./index";
+import { resolveBrandSectorClassification, type CanonicalSectorPackId } from "./brand-sector";
 
 export type DiscoverySourceKey = string;
 export type DiscoverySourceCapability = "discovery" | "research" | "verification";
 
 export interface BrandIntelligenceProfile {
+  sectorPackId?: CanonicalSectorPackId;
   sector?: string;
   subsector?: string;
   geographies: string[];
@@ -96,6 +98,7 @@ const SOURCE_CLASS_PREFERENCES: Readonly<Record<string, readonly DiscoverySource
 };
 
 export function projectBrandIntelligenceProfile(fields: readonly BrandBrainFieldDto[]): BrandIntelligenceProfile {
+  const classification = resolveBrandSectorClassification(fields);
   const active = fields.filter((field) => field.state !== "stale");
   const identity = active.filter((field) => field.section === "identity");
   const sector = firstValue(identity, (field) => SECTOR_KEYS.has(fieldKeyLeaf(field.fieldKey)));
@@ -111,6 +114,7 @@ export function projectBrandIntelligenceProfile(fields: readonly BrandBrainField
   const goals = collectValues(active.filter((field) => field.section === "goals"));
 
   return {
+    ...(classification.status === "ready" ? { sectorPackId: classification.sectorPackId } : {}),
     ...(sector ? { sector } : {}),
     ...(subsector ? { subsector } : {}),
     geographies,

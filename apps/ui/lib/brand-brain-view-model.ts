@@ -14,6 +14,14 @@ export interface BrandBrainActivationInput {
   sources: Array<{ id: string; type: string; status: string; title?: string; sourceUrl?: string }>;
   status: BrainActivationStatus;
   hunterReady: boolean;
+  sectorClassification?: {
+    status: "ready" | "missing" | "needs-confirmation" | "conflicting";
+    sectorPackId?: string;
+    candidatePackIds: string[];
+    evidenceFieldKeys: string[];
+    sourceIds: string[];
+    reason: string;
+  };
   readiness: {
     status: "ready" | "needs-enrichment";
     score: number;

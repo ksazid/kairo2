@@ -33,6 +33,7 @@ describe("Brand DNA readiness", () => {
 
   it("accepts source-backed inferred context while keeping it non-authoritative", () => {
     const result = evaluateBrandDnaReadiness([
+      field("identity.sector-pack-id", "generic", "confirmed"),
       field("identity.description", "A Malta grocery delivery service"),
       field("identity.products-services", "Same-day grocery delivery"),
       field("audience.primary", "Busy households in Malta"),
@@ -44,7 +45,7 @@ describe("Brand DNA readiness", () => {
   });
 
   it("asks for geography only for location-dependent brands", () => {
-    const base = [field("identity.description", "A software company"), field("identity.products-services", "Developer tools"), field("audience.primary", "Developers"), field("positioning.value-proposition", "Faster builds"), field("content.core-topics", "Software engineering"), field("boundaries.excluded-topics", "None")];
+    const base = [field("identity.sector-pack-id", "ai-technology"), field("identity.description", "A software company"), field("identity.products-services", "Developer tools"), field("audience.primary", "Developers"), field("positioning.value-proposition", "Faster builds"), field("content.core-topics", "Software engineering"), field("boundaries.excluded-topics", "None")];
     expect(evaluateBrandDnaReadiness(base).status).toBe("ready");
     expect(evaluateBrandDnaReadiness(base, { geographyRequired: true }).gaps).toEqual(["geography"]);
   });

@@ -54,6 +54,7 @@ export interface BrandLearningUi {
 
 const FIELD_DEFS: Array<{ key: string; label: string; description: string; section: string; candidates: string[] }> = [
   { key: "category", label: "Category", description: "What your Brand does", section: "identity", candidates: ["identity.category", "identity.sector", "identity.description"] },
+  { key: "sector", label: "Brand sector", description: "The subject area Hunter uses to choose sources and check relevance", section: "identity", candidates: ["identity.sector-pack-id"] },
   { key: "offerings", label: "Products & services", description: "What you provide", section: "identity", candidates: ["identity.products-services", "identity.offers"] },
   { key: "audience", label: "Primary audience", description: "Who you serve", section: "audience", candidates: ["audience.primary"] },
   { key: "positioning", label: "Positioning", description: "Why you are meaningfully different", section: "positioning", candidates: ["positioning.value-proposition", "positioning.differentiation", "positioning.market-position"] },
@@ -70,12 +71,16 @@ export function projectRuntimeFields(input?: BrandBrainRuntimeData): BrandBrainF
   const sources = new Map(input.sources.map((source) => [source.id, source] as const));
   return FIELD_DEFS.map((definition) => {
     const source = definition.candidates.map((key) => input.brain.find((field) => field.fieldKey === key && field.state !== "stale")).find(Boolean);
-    if (!source) return emptyField(definition);
+    if (!source) {
+      const suggestion = definition.key === "sector" && input.sectorClassification?.candidatePackIds.length === 1
+        ? input.sectorClassification.candidatePackIds[0] : undefined;
+      return suggestion ? { ...emptyField(definition), value: suggestion, evidence: ["Suggested from Brand context; confirm before Discovery"] } : emptyField(definition);
+    }
     const meta = activation.get(source.fieldKey);
     const evidence = source.sourceIds.map((sourceId) => sourceLabel(sources.get(sourceId))).filter(Boolean) as string[];
     const origin = meta?.origin ?? (source.state === "confirmed" ? "user-confirmed" : source.sourceIds.length ? "source-backed" : "ai-inferred");
     const confidence = meta?.confidence.level ?? (source.state === "confirmed" || source.sourceIds.length ? "high" : "medium");
-    const state = source.state === "confirmed" ? "confirmed" : meta?.weak || confidence === "low" ? "review" : "suggested";
+    const state = definition.key === "sector" && input.sectorClassification?.status !== "ready" ? "review" : source.state === "confirmed" ? "confirmed" : meta?.weak || confidence === "low" ? "review" : "suggested";
     return {
       key: definition.key,
       fieldKey: source.fieldKey,
@@ -90,6 +95,19 @@ export function projectRuntimeFields(input?: BrandBrainRuntimeData): BrandBrainF
       confidence,
     };
   });
+}
+
+export const BRAND_SECTOR_OPTIONS = [
+  { value: "generic", label: "General / another sector" },
+  { value: "ai-technology", label: "AI, SaaS & developer technology" },
+  { value: "umrah-religious-travel", label: "Umrah & religious travel" },
+  { value: "motorcycles", label: "Motorcycles" },
+  { value: "ias-upsc-education", label: "IAS & UPSC education" },
+  { value: "hospitality", label: "Restaurants & hospitality" },
+] as const;
+
+export function brandSectorLabel(value: string): string {
+  return BRAND_SECTOR_OPTIONS.find((option) => option.value === value)?.label ?? value;
 }
 
 export function projectRuntimeTopics(input?: BrandBrainRuntimeData): DiscoveryTopic[] {

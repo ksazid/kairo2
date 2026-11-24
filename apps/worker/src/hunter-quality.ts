@@ -8,7 +8,7 @@ import {
 import type { BrandIntelligenceProfile } from "@kairo/domain/source-policy";
 import { selectSectorIntelligencePack } from "@kairo/domain/sector-packs";
 
-export const HUNTER_QUALITY_VERSION = "hunter-quality-v2" as const;
+export const HUNTER_QUALITY_VERSION = "hunter-quality-v3" as const;
 export const HUNTER_SCORE_CALIBRATION_VERSION = "hunter-score-calibration-v1" as const;
 
 export type HunterScoreDimension = keyof OpportunityEvaluationInput;
@@ -148,7 +148,7 @@ function isMotorcycleCyclingMismatch(source: DiscoveryEvidence, context: HunterQ
   const evidence = `${source.title} ${source.summary ?? ""} ${document?.title ?? ""} ${document?.body?.slice(0, 4_000) ?? ""}`;
   // Cycling equipment is not interchangeable with motorcycle equipment. Only exclude sources
   // that explicitly describe cycling and provide no motorcycle context of their own.
-  return /\b(?:mountain bikes?|e-bikes?|bicycles?|mtb|cross-country cycling|road bikes?)\b/i.test(evidence)
+  return /\b(?:mountain bikes?|e[-\s‑–]?bikes?|electric bikes?|bicycles?|mtb|cross-country cycling|road bikes?)\b/i.test(evidence)
     && !/\b(?:motorcycles?|motorbikes?|motorcycling|ktm|duke 390)\b/i.test(evidence);
 }
 
