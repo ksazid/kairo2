@@ -580,6 +580,7 @@ function compactBrand(brand: BrandContextProjection) {
 
 function compactIntelligenceProfile(profile: BrandIntelligenceProfile) {
   return {
+    ...(profile.sectorPackId ? { sectorPackId: profile.sectorPackId } : {}),
     ...(profile.sector ? { sector: profile.sector.slice(0, 200) } : {}),
     ...(profile.subsector ? { subsector: profile.subsector.slice(0, 200) } : {}),
     geographies: boundedStrings(profile.geographies, 10, 120),

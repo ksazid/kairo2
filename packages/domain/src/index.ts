@@ -13,6 +13,7 @@ import type {
   PutBrandBrainFieldRequest,
   WorkspaceDto,
 } from "@kairo/contracts";
+import { BRAND_SECTOR_FIELD_KEY, isCanonicalSectorPackId } from "./brand-sector";
 
 export class DomainValidationError extends Error {
   readonly code = "validation_error";
@@ -309,6 +310,9 @@ export class KairoService {
     const fieldKey = normalizeFieldKey(fieldKeyInput);
     const section = normalizeSection(input.section);
     const value = requiredText(input.value, "value", MAX_BRAIN_VALUE);
+    if (fieldKey === BRAND_SECTOR_FIELD_KEY && (section !== "identity" || !isCanonicalSectorPackId(value))) {
+      throw new DomainValidationError("Choose a supported Brand sector");
+    }
     const expectedVersion = normalizeExpectedVersion(input.expectedVersion);
     return this.repository.putConfirmedBrandBrainField(accountId, brandId, fieldKey, {
       section,

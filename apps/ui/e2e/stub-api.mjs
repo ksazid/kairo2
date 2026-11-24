@@ -44,6 +44,8 @@ let creationStarted = false;
 let review = null;
 let approval = null;
 const commands = [];
+let sectorReviewRequired = false;
+let confirmedSector = null;
 
 function resetState() {
   brands.splice(1);
@@ -52,6 +54,8 @@ function resetState() {
   review = null;
   approval = null;
   commands.splice(0, commands.length);
+  sectorReviewRequired = false;
+  confirmedSector = null;
 }
 
 const campaign = {
@@ -140,19 +144,22 @@ function liveMetricsFor(brandId) {
 }
 
 function activation(brandId) {
-  const ready = brandId === "brand-1";
+  const sectorMissing = brandId === "brand-1" && sectorReviewRequired && !confirmedSector;
+  const ready = brandId === "brand-1" && !sectorMissing;
+  const sector = confirmedSector ?? (sectorMissing ? null : "ai-technology");
   return {
-    brain: [],
+    brain: sector ? [{ fieldKey: "identity.sector-pack-id", section: "identity", value: sector, state: "confirmed", sourceIds: [], version: 1, updatedAt: "2026-11-24T00:00:00Z" }] : [],
     sources: [{ id: "src-1", type: "website", status: "active", title: "Public website", sourceUrl: "https://example.com" }],
     status: ready ? "ready-for-hunter" : "needs-review",
     hunterReady: ready,
+    sectorClassification: { status: sectorMissing ? "needs-confirmation" : "ready", ...(sector ? { sectorPackId: sector } : {}), candidatePackIds: ["ai-technology"], evidenceFieldKeys: ["content.pillars"], sourceIds: ["src-1"], reason: sectorMissing ? "Confirm the suggested Brand sector before running Hunter." : "Owner-confirmed Brand sector." },
     readiness: {
       status: ready ? "ready" : "needs-review",
       score: ready ? 96 : 62,
       brandIntelligenceScore: ready ? 94 : 62,
       evidenceCoverage: ready ? 90 : 58,
       confidence: ready ? 0.95 : 0.62,
-      gaps: ready ? [] : ["audience", "positioning"]
+      gaps: sectorMissing ? ["sector"] : ready ? [] : ["audience", "positioning"]
     },
     completeness: { score: 100, knownGroups: 7, totalGroups: 7 },
     fields: [],
@@ -214,6 +221,11 @@ const server = http.createServer(async (req, res) => {
     resetState();
     return send(res, 200, { ok: true });
   }
+  if (path === "/__e2e/require-sector-review" && req.method === "POST") {
+    sectorReviewRequired = true;
+    confirmedSector = null;
+    return send(res, 200, { ok: true });
+  }
 
   if (path === "/api/v1/session" && req.method === "GET") {
     return send(res, 200, {
@@ -234,6 +246,13 @@ const server = http.createServer(async (req, res) => {
   }
 
   const brandId = brandIdFrom(path);
+
+  if (path.endsWith("/brain/identity.sector-pack-id") && req.method === "PUT") {
+    const input = await body(req);
+    if (input.section !== "identity" || input.value !== "ai-technology") return send(res, 400, { detail: "Choose the sector matching this fixture's Brand context." });
+    confirmedSector = input.value;
+    return send(res, 200, activation(brandId).brain[0]);
+  }
 
   if (/\/brain\/bootstrap$/.test(path) && req.method === "POST") {
     return send(res, 200, activation(brandId), { "x-kairo-runtime": "e2e-stub" });

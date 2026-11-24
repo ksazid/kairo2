@@ -1,4 +1,5 @@
 import type { BrandIntelligenceProfile, SectorIntelligencePack } from "./source-policy";
+import { DomainValidationError } from "./index";
 
 export const SECTOR_INTELLIGENCE_PACKS = {
   generic: {
@@ -119,6 +120,11 @@ export function selectSectorIntelligencePack(
   profile: BrandIntelligenceProfile,
   packs: readonly SectorIntelligencePack[] = Object.values(SECTOR_INTELLIGENCE_PACKS),
 ): SectorIntelligencePack {
+  if (profile.sectorPackId !== undefined) {
+    const canonical = packs.find((pack) => pack.id === profile.sectorPackId);
+    if (!canonical) throw new DomainValidationError("Canonical Brand sector pack is unavailable");
+    return canonical;
+  }
   const classifications = [profile.sector, profile.subsector]
     .filter((value): value is string => typeof value === "string" && value.trim().length > 0)
     .map(normalize);

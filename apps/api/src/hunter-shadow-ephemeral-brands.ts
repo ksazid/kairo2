@@ -23,6 +23,7 @@ import {
   type BrandIntelligenceProfile,
 } from "@kairo/domain/source-policy";
 import { selectSectorIntelligencePack } from "@kairo/domain/sector-packs";
+import { BRAND_SECTOR_FIELD_KEY, resolveBrandSectorClassification } from "@kairo/domain/brand-sector";
 import type { HunterRunInput } from "@kairo/worker/hunter";
 import type { HunterShadowExecutionContext } from "@kairo/worker/hunter-shadow-lane-adapters";
 import { SourceIntelligenceBrandReferenceReader } from "./source-intelligence";
@@ -335,6 +336,14 @@ async function buildEphemeralPublicBrandContext(
     updatedAt: reference.retrievedAt,
   }));
 
+  const classification = resolveBrandSectorClassification(brain, sources.map((source) => source.id));
+  if (classification.candidatePackIds.length === 1 && classification.sourceIds.length) {
+    brain.push({
+      id: deterministicUuid("field:" + fixture.id + ":" + BRAND_SECTOR_FIELD_KEY), workspaceId, brandId,
+      section: "identity", fieldKey: BRAND_SECTOR_FIELD_KEY, value: classification.candidatePackIds[0]!,
+      state: "inferred", sourceIds: classification.sourceIds, version: 1, updatedAt: now,
+    });
+  }
   const activation = createBrandBrainActivationSnapshot(brain, sources);
   if (!activation.hunterReady) {
     throw new Error(

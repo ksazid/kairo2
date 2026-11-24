@@ -47,6 +47,7 @@ async function setup() {
   const verifier = new Verifier();
   const account = await store.resolveAccount({ provider: "test", subject: "alice" });
   const created = await store.createWorkspaceWithBrand(account.id, { workspaceName: "Studio", brandName: "Kairo" });
+  await store.putConfirmedBrandBrainField(account.id, created.brand.id, "identity.sector-pack-id", { section: "identity", value: "ai-technology" });
   await store.putConfirmedBrandBrainField(account.id, created.brand.id, "identity.description", { section: "identity", value: "AI-assisted content intelligence for modern brands" });
   await store.putConfirmedBrandBrainField(account.id, created.brand.id, "identity.products-services", { section: "identity", value: "Brand intelligence and content discovery" });
   await store.putConfirmedBrandBrainField(account.id, created.brand.id, "audience.primary", { section: "audience", value: "Technical founders and marketing teams" });

@@ -45,6 +45,8 @@ import {
   projectRuntimeLearnings,
   projectRuntimeSources,
   projectRuntimeTopics,
+  BRAND_SECTOR_OPTIONS,
+  brandSectorLabel,
   type BrandBrainRuntimeData,
   type BrandLearningUi,
   type BrandSourceUi,
@@ -111,7 +113,9 @@ export function BrandBrainClient({ brandId, activation }: { brandId?: string; ac
       applyRuntime(body);
       setEditingField(null);
       setFieldDraft("");
-      setNotice(`${field.label} confirmed. Brand Intelligence and the Discovery Plan were recalculated.`);
+      setNotice(body.sectorClassification && body.sectorClassification.status !== "ready"
+        ? `${field.label} saved. ${body.sectorClassification.reason}`
+        : `${field.label} confirmed. Brand Intelligence and the Discovery Plan were recalculated.`);
     } catch (error) {
       setNotice(error instanceof Error ? error.message : "Kairo could not save this field.");
     } finally {
@@ -231,7 +235,8 @@ export function BrandBrainClient({ brandId, activation }: { brandId?: string; ac
 
   function reviewSuggestions() {
     setActiveTab("dna");
-    const next = fields.find((field) => field.state !== "confirmed");
+    const next = (runtime?.readiness.gaps.includes("sector") ? fields.find((field) => field.key === "sector") : undefined)
+      ?? fields.find((field) => field.state !== "confirmed");
     if (next) startFieldEdit(next);
   }
 
@@ -298,6 +303,7 @@ function OverviewPanel({ runtime, fields, editingField, fieldDraft, setFieldDraf
   const gaps = new Set(runtime?.readiness.gaps ?? []);
   const readiness = [
     ["Business", !gaps.has("business"), BriefcaseBusiness],
+    ["Brand sector", !gaps.has("sector"), SearchCheck],
     ["Offerings", !gaps.has("offerings"), Sparkles],
     ["Audience", !gaps.has("audience") && audience.state !== "review", UsersRound],
     ["Positioning", !gaps.has("positioning"), Target],
@@ -320,6 +326,7 @@ function OverviewPanel({ runtime, fields, editingField, fieldDraft, setFieldDraf
         </div>
       </div>
       <div className="brand-readiness-list" aria-label="Discovery readiness checklist">{readiness.map(([label, ready, Icon]) => <div key={label}><span><Icon aria-hidden="true"/>{label}</span><strong className={ready ? "is-ready" : "needs-review"}>{ready ? <Check aria-hidden="true"/> : <CircleAlert aria-hidden="true"/>}{ready ? "Ready" : "Needs confirmation"}</strong></div>)}</div>
+      {runtime?.sectorClassification && runtime.sectorClassification.status !== "ready" ? <p role="status">{runtime.sectorClassification.reason} <button className="brand-text-button" type="button" onClick={reviewSuggestions}>Review Brand sector</button></p> : null}
       <p className="brand-readiness-truth"><ShieldCheck aria-hidden="true"/>This readiness score always comes from real Brand evidence. Sample previews in Discover or Insights never increase readiness.</p>
     </div>
 
@@ -390,7 +397,7 @@ function FieldReviewRow({ field, expanded, draft, setDraft, onEdit, onSave, onCa
 }
 
 function BrandFieldRow({ field, editing, draft, setDraft, onEdit, onSave, onConfirmNone, onCancel, saving }: { field: BrandBrainField; editing: boolean; draft: string; setDraft: (value: string) => void; onEdit: () => void; onSave: () => void; onConfirmNone?: () => void; onCancel: () => void; saving: boolean }) {
-  return <div className={`brand-field-row ${editing ? "is-editing" : ""}`} role="listitem"><div className="brand-field-value"><span><strong>{field.label}</strong><small>{field.description}</small></span>{editing ? <textarea aria-label={`Edit ${field.label}`} value={draft} onChange={(event) => setDraft(event.target.value)} rows={2}/> : <p>{field.value}</p>}</div><div className="brand-field-evidence">{field.evidence.map((item) => <span key={item}>{item}</span>)}</div><StateLabel state={field.state}/><div className="brand-field-actions">{editing ? <><button className="save" type="button" onClick={onSave} disabled={saving}><Check aria-hidden="true"/>{saving ? "Saving…" : "Save"}</button><button type="button" onClick={onCancel} disabled={saving}><X aria-hidden="true"/>Cancel</button></> : <>{onConfirmNone ? <button className="save" type="button" onClick={onConfirmNone} disabled={saving}><Check aria-hidden="true"/>Confirm none</button> : null}<button type="button" onClick={onEdit} aria-label={`Edit ${field.label}`}><Pencil aria-hidden="true"/></button></>}</div></div>;
+  return <div className={`brand-field-row ${editing ? "is-editing" : ""}`} role="listitem"><div className="brand-field-value"><span><strong>{field.label}</strong><small>{field.description}</small></span>{editing ? field.key === "sector" ? <select aria-label="Edit Brand sector" value={draft} onChange={(event) => setDraft(event.target.value)}><option value="">Choose a sector</option>{BRAND_SECTOR_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select> : <textarea aria-label={`Edit ${field.label}`} value={draft} onChange={(event) => setDraft(event.target.value)} rows={2}/> : <p>{field.key === "sector" ? brandSectorLabel(field.value) : field.value}</p>}</div><div className="brand-field-evidence">{field.evidence.map((item) => <span key={item}>{item}</span>)}</div><StateLabel state={field.state}/><div className="brand-field-actions">{editing ? <><button className="save" type="button" onClick={onSave} disabled={saving}><Check aria-hidden="true"/>{saving ? "Saving…" : "Save"}</button><button type="button" onClick={onCancel} disabled={saving}><X aria-hidden="true"/>Cancel</button></> : <>{onConfirmNone ? <button className="save" type="button" onClick={onConfirmNone} disabled={saving}><Check aria-hidden="true"/>Confirm none</button> : null}<button type="button" onClick={onEdit} aria-label={`Edit ${field.label}`}><Pencil aria-hidden="true"/></button></>}</div></div>;
 }
 
 function TopicRow({ topic, index, onEdit, saving }: { topic: DiscoveryTopic; index: number; onEdit: () => void; saving: boolean }) {

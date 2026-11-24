@@ -62,6 +62,7 @@ function acceptedLearning(): CandidateLearning {
 }
 
 const completeFields = () => [
+  field("identity.sector-pack-id", "identity", "generic", "confirmed", []),
   field("identity.description", "identity", "A practical Malta travel Brand"),
   field("identity.products-services", "identity", "Malta travel guides"),
   field("audience.primary", "audience", "Independent Malta travellers"),

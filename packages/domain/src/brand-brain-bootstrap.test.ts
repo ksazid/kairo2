@@ -187,7 +187,7 @@ describe("BrandBrainBootstrapService", () => {
     await service.build("account-1", "brand-1", {});
     expect(repository.fields.find((field) => field.fieldKey === "identity.products-services")?.value).toMatch(offering);
     expect(repository.fields.find((field) => field.fieldKey === "content.pillars")?.value).toMatch(pillars);
-    expect(evaluateBrandDnaReadiness(repository.fields).gaps).toEqual(["boundaries"]);
+    expect(evaluateBrandDnaReadiness(repository.fields).gaps).toEqual(_kind === "vehicle rental" || _kind === "editorial publisher" ? ["boundaries", "sector"] : ["boundaries"]);
     if (_kind === "automotive owner content") {
       expect(repository.fields.find((field) => field.fieldKey === "identity.products-services")?.value).not.toMatch(/rental|fleet booking/i);
     }
@@ -268,6 +268,7 @@ describe("BrandBrainBootstrapService", () => {
     expect(result.generatorStatus).toBe("generated");
     expect(repository.fields.find((field) => field.fieldKey === expectedKey)?.value).toMatch(expectedValue);
     expect(repository.fields.find((field) => field.fieldKey === expectedKey)?.sourceIds).toHaveLength(1);
+    expect(repository.fields.some((field) => field.fieldKey === "identity.sector-pack-id")).toBe(false);
   });
 
   it("records owner objective/directive as confirmed and generated strategy as source-backed inferred context", async () => {

@@ -18,6 +18,7 @@ function field(fieldKey: string, value: string, state: BrandBrainFieldDto["state
 }
 
 const complete = () => [
+  field("identity.sector-pack-id", "generic", "confirmed", []),
   field("identity.description", "A practical travel Brand"),
   field("identity.products-services", "Malta travel guides"),
   field("audience.primary", "Independent Malta travellers"),
@@ -58,8 +59,8 @@ describe("Brand Brain activation", () => {
 
   it("marks source-backed inferred Brand DNA as high confidence and Hunter-ready", () => {
     const result = createBrandBrainActivationSnapshot(complete());
-    expect(result).toMatchObject({ status: "ready-for-hunter", hunterReady: true, completeness: { score: 100, knownGroups: 6, totalGroups: 6 } });
-    expect(result.fields.every((item) => item.origin === "source-backed" && item.confidence.level === "high")).toBe(true);
+    expect(result).toMatchObject({ status: "ready-for-hunter", hunterReady: true, completeness: { score: 100, knownGroups: 7, totalGroups: 7 } });
+    expect(result.fields.filter((item) => item.fieldKey !== "identity.sector-pack-id").every((item) => item.origin === "source-backed" && item.confidence.level === "high")).toBe(true);
   });
 
   it("gives user-confirmed values precedence and maximum confidence", () => {
@@ -85,7 +86,7 @@ describe("Brand Brain activation", () => {
 
   it("requires review when the only evidence for a required group is AI-only", () => {
     const fields = complete();
-    fields[2] = field("audience.primary", "Likely travellers", "inferred", []);
+    fields[3] = field("audience.primary", "Likely travellers", "inferred", []);
     const result = createBrandBrainActivationSnapshot(fields);
     expect(result.readiness.status).toBe("ready");
     expect(result).toMatchObject({ status: "needs-review", hunterReady: false });

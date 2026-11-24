@@ -7,6 +7,7 @@
     ".": "./src/index.ts",
     "./brand-brain-activation": "./src/brand-brain-activation.ts",
     "./brand-brain-bootstrap": "./src/brand-brain-bootstrap.ts",
+    "./brand-sector": "./src/brand-sector.ts",
     "./brand-brain-evidence-sanitizer": "./src/brand-brain-evidence-sanitizer.ts",
     "./brand-brain-sanitizing-reader": "./src/brand-brain-sanitizing-reader.ts",
     "./brand-dna-readiness": "./src/brand-dna-readiness.ts",

@@ -1,5 +1,6 @@
 import type { BrandBrainFieldDto, BrandDnaReadinessGap, BrandDnaReadinessResponse, KnowledgeSourceDto } from "@kairo/contracts";
 import { evaluateBrandDnaReadiness, type BrandDnaReadinessOptions } from "./brand-dna-readiness";
+import { BRAND_SECTOR_FIELD_KEY, resolveBrandSectorClassification, type BrandSectorClassification } from "./brand-sector";
 
 export type BrandBrainValueOrigin = "user-confirmed" | "source-backed" | "ai-inferred";
 export type BrandBrainConfidenceLevel = "high" | "medium" | "low";
@@ -26,6 +27,7 @@ export interface BrandBrainSourceRecommendation {
 export interface BrandBrainActivationSnapshot {
   status: BrandBrainActivationStatus;
   hunterReady: boolean;
+  sectorClassification: BrandSectorClassification;
   readiness: BrandDnaReadinessResponse;
   completeness: {
     score: number;
@@ -47,6 +49,7 @@ const GROUP_KEYS: Record<BrandDnaReadinessGap, readonly string[]> = {
   topics: ["content.core-topics", "content.preferred-topics", "content.pillars", "content.related-topics"],
   boundaries: ["boundaries.excluded-topics", "boundaries.prohibited-subjects", "boundaries.claims-to-avoid", "boundaries.owner-directive"],
   geography: ["identity.geography"],
+  sector: [BRAND_SECTOR_FIELD_KEY],
 };
 
 const CANONICAL_CONFIRM_FIELD: Partial<Record<BrandDnaReadinessGap, string>> = {
@@ -57,16 +60,18 @@ const CANONICAL_CONFIRM_FIELD: Partial<Record<BrandDnaReadinessGap, string>> = {
   topics: "content.pillars",
   boundaries: "boundaries.excluded-topics",
   geography: "identity.geography",
+  sector: BRAND_SECTOR_FIELD_KEY,
 };
 
 const CRITICAL_KEYS = new Set(Object.values(GROUP_KEYS).flat());
 
 export function createBrandBrainActivationSnapshot(
   fields: readonly BrandBrainFieldDto[],
-  sources: readonly KnowledgeSourceDto[] = [],
+  sources?: readonly KnowledgeSourceDto[],
   options: BrandDnaReadinessOptions = {},
 ): BrandBrainActivationSnapshot {
-  const readiness = evaluateBrandDnaReadiness(fields, options);
+  const activeSourceIds = sources?.filter((source) => source.status === "active").map((source) => source.id);
+  const readiness = evaluateBrandDnaReadiness(fields, { ...options, ...(activeSourceIds ? { activeSourceIds } : {}) });
   const fieldActivation = newestByField(fields).map(activateField);
   const requiredGroups = (Object.keys(GROUP_KEYS) as BrandDnaReadinessGap[]).filter((gap) => gap !== "geography" || options.geographyRequired);
   const reviewGroups = requiredGroups.filter((gap) => {
@@ -80,7 +85,7 @@ export function createBrandBrainActivationSnapshot(
     : hunterReady
       ? "ready-for-hunter"
       : "needs-review";
-  const totalGroups = options.geographyRequired ? 7 : 6;
+  const totalGroups = options.geographyRequired ? 8 : 7;
   const knownGroups = Math.max(0, totalGroups - readiness.gaps.length);
   const weakFields = [...new Set([
     ...readiness.gaps.map((gap) => CANONICAL_CONFIRM_FIELD[gap] ?? GROUP_KEYS[gap][0]).filter((value): value is string => Boolean(value)),
@@ -88,7 +93,7 @@ export function createBrandBrainActivationSnapshot(
   ])];
   const recommendedSources = recommendations(readiness.gaps, reviewGroups);
   const evidenceSourceCount = new Set([
-    ...sources.filter((source) => source.status === "active").map((source) => source.id),
+    ...(sources ?? []).filter((source) => source.status === "active").map((source) => source.id),
     ...fields.flatMap((field) => field.sourceIds),
   ]).size;
   const updatedAt = fields.map((field) => field.updatedAt).sort().at(-1) ?? null;
@@ -96,6 +101,7 @@ export function createBrandBrainActivationSnapshot(
   return {
     status,
     hunterReady,
+    sectorClassification: resolveBrandSectorClassification(fields, activeSourceIds),
     readiness,
     completeness: { score: readiness.score, knownGroups, totalGroups },
     fields: fieldActivation,

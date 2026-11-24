@@ -31,8 +31,8 @@ export function registerBrandDnaReadinessRoutes(app: FastifyInstance, options: {
   app.get<{ Params: { brandId: string } }>("/api/v1/brands/:brandId/brain/readiness", async (request, reply) => {
     const account = await authenticate(request, reply, core, options.identityVerifier);
     if (!account) return;
-    const fields = await core.listBrandBrain(account.id, request.params.brandId);
-    return evaluateBrandDnaReadiness(fields);
+    const [fields, sources] = await Promise.all([core.listBrandBrain(account.id, request.params.brandId), core.listKnowledgeSources(account.id, request.params.brandId)]);
+    return evaluateBrandDnaReadiness(fields, { activeSourceIds: sources.filter((source) => source.status === "active").map((source) => source.id) });
   });
 
   app.get<{ Params: { brandId: string } }>("/api/v1/brands/:brandId/brain/activation", async (request, reply) => {
